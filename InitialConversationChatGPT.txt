@@ -1,0 +1,1096 @@
+Wir sind Lehrer für transzendentale Meditation, haben allerdings das Problem, dass sich nicht besonders viele Leute für unseren Infovortrag, für unsere Infovorträge, die wir sowohl online als auch in Präsenz anbieten, anmelden. Normalerweise, wenn die Leute bei uns in der Umgebung sind, da schaltet auch irgendwie nationale Organisationen Werbung und dann müssen die unsere TM-Seite in München finden, auf der nationalen Webpage aufrufen, dann können sie sich dort für einen Infovortrag anmelden. Da kommen eben aber nicht so viele Anmeldungen rein. Daher war unsere Idee, dass wir selbst Anzeigen schalten auf Instagram und so weiter mit attraktivem Bild und Slogan zum Beispiel, du willst tiefen Stress loswerden, einfach und natürlich, wissenschaftlich getestet, dann melde dich an für TM. Also an den Anzeigen müssen wir auch noch feilen. Aber das Wichtigste ist jetzt, dass wir eine center-eigene Website haben. Wir haben da auch schon eine Domain bei EMVX, tm-muenchen.de Wo, nachdem die Leute auf die Instagram-Werbung geklickt haben, sie auf diese Seite weitergeleitet kommen. Wir haben schon vorher Instagram-Werbung geschaltet und sie dann einfach auf die Meditation.de slash München-Seite weitergeleitet, wo sie sich auch anmelden können für einen Infovortrag, aber die Conversion Rate war quasi Zero. Und wir wollen, dass die Leute sich dann bei Info-Vorträgen anmelden. Und ähm daher eine attraktive Seite bauen. Da wissen wir ja schon so ein bisschen, was wir machen können mit Hero und nice im Slogan und auf jeden Fall zeigen, was TM unique macht, einzigartig macht, gleichzeitig professionell, aber auch persönlich sein und äh ja, so, dass die Leute dann sich begeistert beim Infotag anmelden. Da ein zweiter Nutzen dieser Domain wäre, dass Leute, die bereits meditieren, schon sich bei Events anmelden können, gemeinsamen Gruppenmeditationen, die wir im Center haben oder äh Retreats oder irgendwelche Infos abrufen können. Das wäre so der zweite Punkt dieser Domain, der jetzt aber auch weniger vordergründig ist. Wir würden gerne nicht mehr als 120 Euro im Jahr ausgeben, aber wenn es sein muss, sind 20 Euro pro Monat auch in Ordnung. Ich habe mal ein bisschen mit Framer angefangen. ähm Das ist ganz gut, aber ich denke, ich müsste dann ein richtig ein Tutorial angucken, um das besser zu verstehen. Ich bin Software Developer im Hintergrund. Ich habe Erfahrung mit React und Frontend und auch Backend und all dem. Aber dann mit so Plug and Play und da müsste ich mich noch ein bisschen einfinden. Das Ziel ist natürlich auch, dass nicht nur ich der einzige bin, sondern auch andere Leute vom Center die Webseite einfach bearbeiten können. Der Kollege, mit dem ich mich zusammengesetzt hat, der sich ein bisschen mit dem auskennt, hat gemeint, dass OneNote vielleicht OnePage, meine ich, vielleicht eine gute Alternative wäre. Da müssen wir halt 20 Euro pro Monat zahlen, aber die ist vielleicht einfacher zu bedienen. Dann gibt es noch Card, C-A-R oder C-A-R-R-D, irgendwie sowas. weil wir brauchen auch vielleicht auch Formulare, dass die Leute sich dann halt auch anmelden können und so, aber weniger wichtig fürs Erste. Was sind so deine Gedanken bezüglich Technologie und so weiter?
+
+PS:
+Eine Sache, die man noch dazu sagen müsste, ist, dass wenn die Leute sich für einen Infovortrag anmelden, wir müssten dann, da gibt es eine Website tnw Meditation tnw.meditation.de, wo wir derzeit unsere Vorträge eintragen und dann wird es automatisch gefetcht von der nationalen Seite. Ich bin derzeit noch im Kontakt mit dem Typ, der das macht, aber idealerweise würden wir dann die Daten auch einfach von denen fetchen und automatisch anzeigen lassen, wenn man sich dann für einen kostenlosen Infovortrag anmeldet. Wenn nicht, könnte man das auch manuell machen, wäre nicht ganz so ideal natürlich.
+
+Ihr Problem ist weniger “Website bauen” als Conversion-Flow optimieren:
+Instagram-Ad → Landingpage → Anmeldung zum Infovortrag.
+Die nationale Seite hat vermutlich zu viele Schritte + wenig lokale Persönlichkeit → Conversion ~0.
+Ihr braucht deshalb eine ultra-fokussierte Landingpage, nicht primär eine große Website.
+
+Ich gehe das strukturiert durch: (1) Anforderungen → (2) Technologievergleich → (3) klare Empfehlung → (4) Architektur-Vorschlag.
+
+1. Eure echten Anforderungen (technisch)
+
+Was ihr wirklich braucht:
+
+Must-have
+
+1 Landingpage für Ads (high conversion)
+einfache Bearbeitung durch Nicht-Techniker
+Formular / Anmeldung
+mobil perfekt
+schnell ladend
+SEO optional
+
+Nice-to-have
+
+Events für bestehende Meditierende
+mehrere Seiten
+CMS
+automatische Event-Fetch API
+
+Budget
+
+ideal <120€/Jahr
+ok bis ~20€/Monat
+
+Bonus
+
+ihr seid devs → könnt API integrieren
+
+Das ist wichtig: Ihr braucht kein großes CMS.
+
+2. Tools Vergleich (ehrlich & praxisnah)
+Option 1 — Framer
+
+Pro
+
+Sehr gute Landingpages
+perfekt für Ads
+schnell
+Forms integriert
+Hosting inkl.
+mehrere Leute können bearbeiten
+SEO ok
+Custom Code möglich (für API fetch!)
+
+Contra
+
+etwas Lernkurve
+15–20€/Monat
+
+👉 Für euren Use Case: sehr stark
+
+Option 2 — Carrd (CARRD)
+
+Pro
+
+ultra günstig (~19$/Jahr)
+perfekt für simple landing pages
+schnell
+forms möglich
+minimalistisch
+
+Contra
+
+kein richtiges CMS
+schlechter für Events
+schwierig für API fetch
+weniger flexibel
+
+👉 gut für MVP, aber wächst schlecht
+
+Option 3 — Onepage / Onepage.io
+
+Pro
+
+sehr einfach
+landingpage-focused
+form builder
+marketing oriented
+
+Contra
+
+teuer für das was es kann
+weniger flexibel
+vendor lock-in
+
+👉 ich würde das nicht nehmen
+
+Option 4 — Webflow
+
+Pro
+
+sehr mächtig
+CMS
+forms
+animations
+team editing
+
+Contra
+
+overkill
+teuer
+komplex
+
+👉 zu viel für euch
+
+Option 5 — Next.js / selbst bauen
+
+Du könntest:
+
+Next.js
+Vercel hosting (free)
+CMS: Sanity / Notion / Payload
+fetch von meditation API
+
+Pro
+
+maximale Kontrolle
+günstig
+API integration perfekt
+
+Contra
+
+nicht-editierbar für Kollegen
+maintenance
+Zeitaufwand
+
+👉 nicht ideal für Center-Team
+
+3. Meine klare Empfehlung
+
+→ Framer nehmen.
+
+Warum?
+
+perfekt für conversion landing pages
+visuell
+einfach für team
+API fetch möglich
+skalierbar
+professionell
+
+Ihr seid genau Zielgruppe.
+
+4. Architektur (empfohlen)
+
+So würde ich es bauen:
+
+Landingpage Struktur
+
+Hero:
+"Stress tief loslassen. Mühelos meditieren lernen."
+
+CTA:
+"Kostenlosen Infovortrag besuchen"
+
+↓
+
+Warum TM einzigartig
+
+mühelos
+wissenschaftlich
+kein Konzentrationsaufwand
+20 Minuten
+
+↓
+
+Wie es funktioniert
+
+kostenloser Vortrag
+persönlicher Unterricht
+selbstständig meditieren
+
+↓
+
+Nächste Termine (AUTO gefetched)
+
+Datum
+online / Präsenz
+Button "Platz sichern"
+
+↓
+
+Testimonials München
+
+↓
+
+FAQ
+
+↓
+
+CTA wieder
+
+5. API fetch Idee
+
+Wenn die nationale Seite sowas hat:
+
+tnw.meditation.de/api/events?city=munich
+
+Dann in Framer:
+
+Custom Code:
+
+fetch(...)
+
+Events rendern.
+
+Wenn nicht:
+→ Google Sheet als CMS
+→ Framer fetch
+
+Super einfach.
+
+6. Conversion Verbesserung (wichtig!)
+
+Euer bisheriger Fehler:
+
+Instagram → nationale Seite
+
+Das tötet conversion.
+
+Besser:
+
+Instagram → lokale Landingpage
+Landingpage → nur eine Aktion
+
+ANMELDEN
+
+Keine Navigation
+Kein Menü
+Keine Ablenkung
+
+7. Kosten
+
+Framer:
+
+15€/monat
+Domain: habt ihr schon
+Forms: inkl.
+
+→ fertig
+
+8. Mein konkreter Vorschlag
+
+Phase 1 (jetzt)
+
+Framer
+1 landing page
+manuelle Termine
+
+Phase 2
+
+API fetch
+
+Phase 3
+
+zweite Seite für meditierende
+events / retreats
+Wichtigste Entscheidung
+
+Wenn ihr:
+
+schnell starten wollt → Framer
+billig → Carrd
+technisch → Next.js
+
+Ich würde zu Framer greifen.
+
+Ich kann euch auch helfen mit:
+
+Landingpage Struktur
+Conversion Text
+Hero Slogan
+UX wireframe
+API fetch code
+Framer setup
+
+Was wollt ihr als nächstes?
+
+Landingpage Struktur
+Tool Entscheidung finalisieren
+Framer Setup
+Conversion Text / Slogan
+API Integration design
+Framer sind, glaube ich, nur 10 Euro im Monat für das, was wir bräuchten, by the way. Und äh Wenn ich Next nehmen würde und das selbst baue, vielleicht auch React sogar. Ich habe Claude in meinem Code sitzen. Das geht schon ziemlich klasse. Könnte ich da nicht selbst Anfängern das beibringen, wie man das editieren kann?
+
+Kurz gesagt: Ja, du kannst es mit React/Next selbst bauen — aber Nicht-Technikern das Editieren beizubringen ist deutlich schwieriger als es klingt. Der Knackpunkt ist nicht der Code, sondern Content-Editing ohne Angst, etwas kaputt zu machen.
+
+Ich würde die Entscheidung so betrachten:
+
+Option A — Selbst bauen (Next.js + CMS) → technisch beste Lösung
+
+Das funktioniert sehr gut, wenn du ein Headless CMS davor setzt.
+
+Dann editieren Nicht-Techniker nicht den Code, sondern Inhalte wie:
+
+Überschrift ändern
+Bild austauschen
+Termin hinzufügen
+CTA Text ändern
+Gute Setup-Kombinationen
+Beste Option (meine Empfehlung)
+
+Next.js + Sanity CMS
+
+Warum:
+
+super editierbar
+live preview
+strukturiert
+team friendly
+kostenlos
+
+Alternative:
+
+Next.js + Notion (super einfach)
+Next.js + Payload CMS
+Next.js + TinaCMS
+Architektur (perfekt für euch)
+Landingpage (Next.js)
+      ↓
+CMS (Sanity / Notion)
+      ↓
+Events API (meditation.de)
+
+Nicht-Techniker bearbeiten:
+
+Hero Text
+Bilder
+Termine
+Testimonials
+FAQ
+
+Du kontrollierst Layout.
+
+Das ist perfekt.
+
+Beispiel Editing Workflow
+
+Kollege öffnet:
+
+cms.tm-muenchen.de
+
+Dann:
+
+Hero Titel:
+"Stress tief loslassen"
+
+ändern zu:
+
+"Mühelos meditieren lernen"
+
+→ fertig
+→ live auf website
+
+Kein Code.
+
+Der große Vorteil gegenüber Framer
+
+Mit eigenem Setup könnt ihr:
+
+beliebige Integrationen
+API fetch meditation.de
+A/B testing
+analytics
+CRM integration
+pixel tracking
+funnel pages
+
+Framer wird da irgendwann limitieren.
+
+Aber: Der entscheidende Nachteil
+
+Wenn du React nutzt ohne CMS:
+
+Dann müssten Kollegen:
+
+Git öffnen
+Markdown editieren
+deployen
+branchen
+
+Das funktioniert nie langfristig.
+
+Also:
+
+React ohne CMS → nein
+React mit CMS → sehr gut
+
+Budget
+
+Next.js setup:
+
+Hosting:
+
+Vercel → kostenlos
+
+CMS:
+
+Sanity → kostenlos
+
+Domain:
+
+habt ihr schon
+
+Kosten:
+→ 0€
+
+Das ist unschlagbar.
+
+Ich würde das so entscheiden
+
+Wenn ihr:
+
+langfristig denkt
+du dev bist
+API integration willst
+
+→ Next.js + CMS bauen
+
+Wenn ihr:
+
+sofort starten wollt
+minimal effort
+kein maintenance
+
+→ Framer
+
+Meine ehrliche Empfehlung für euch
+
+Ich würde tatsächlich selbst bauen.
+
+Warum?
+
+du bist dev
+du hast Claude
+ihr braucht API integration
+ihr wollt wachsen
+ihr wollt später Funnels
+
+Ihr werdet Framer sonst bald wieder ersetzen.
+
+Tech Stack (mein Vorschlag)
+Next.js 14
+Tailwind
+Sanity CMS
+Vercel hosting
+optional: React Server Components
+
+Das ist sehr clean.
+
+Seitenstruktur
+/
+Hero
+Benefits
+Was ist TM
+Nächste Termine
+Testimonials
+FAQ
+CTA
+
+/events
+Für meditierende
+
+/admin
+CMS
+Bonus: Events automatisch fetchen
+
+Du kannst:
+
+meditation API pollen
+Daten in CMS schreiben
+rendern
+
+oder direkt:
+
+getServerSideProps()
+fetch(...)
+
+fertig.
+
+Mein Fazit
+
+Ja — selbst bauen ist für euch wahrscheinlich sogar die beste Lösung.
+
+Aber nur wenn:
+
+👉 du ein CMS davor setzt
+👉 nicht React editieren lässt
+
+Ich kann dir auch:
+
+CMS Setup empfehlen (Sanity vs Notion)
+Starter Template geben
+Datenstruktur definieren
+Landingpage Layout designen
+
+Was willst du?
+
+Sanity vs Notion Vergleich
+Beispiel Tech Stack
+Landingpage Struktur
+CMS Datenmodell
+Beispiel Code
+Ich hätte auch Bock, das selber zu bauen, ehrlich gesagt. Mit dem Layout, weiss nicht, also ich könnte natürlich auch ein Framer Tutorial machen und mir das Ganze beibringen lassen, wie man das macht. Vielleicht kriege ich da ein besseres Layout, vielleicht aber auch nicht. Vielleicht ist Cloud auch schon ziemlich gut mit Layouts, sodass ich dann einfach in Sachen nachbauen lassen kann oder iteraten und ich kann mir einfach mit Google Stitch ein Design machen und ihn das dann nachbauen lassen. Das wäre eine ein Punkt. Ein anderer Punkt wäre, das einzige Problem wäre wahrscheinlich, wenn ich irgendwann weg wäre. Was könnte man dann machen, wenn man es selbst gebaut hat?
+
+Das ist genau der entscheidende Punkt:
+Selbst bauen ist super — aber nur, wenn das Projekt auch ohne dich überlebt.
+Das ist kein technisches Problem, sondern ein Übergabe-/Wartbarkeitsproblem.
+
+Es gibt dafür drei robuste Strategien.
+
+Option A — Selbst bauen + visuelles CMS (empfohlen)
+
+Du baust alles in React/Next, aber Content lebt in einem visuellen CMS.
+
+Dann kann jemand anderes später:
+
+Texte ändern
+Termine ändern
+Bilder austauschen
+Events hinzufügen
+
+ohne Code.
+
+Du bist nur nötig für:
+
+Layout Änderungen
+neue Features
+
+Das ist völlig ok.
+
+Gute "bus factor" Architektur
+Next.js (Layout)
++
+Headless CMS (Content)
++
+README / Doku
+
+Wenn du weg bist:
+
+Website läuft weiter
+Inhalte editierbar
+ggf. anderer Dev übernimmt
+
+Das ist Standard in vielen Organisationen.
+
+Option B — Selbst bauen + Notion als CMS (ultra robust)
+
+Das ist sogar noch "idiotensicher".
+
+Ihr habt einfach:
+
+Notion Seite:
+
+TM München Website Content
+
+Tabellen:
+
+Hero
+Termine
+Testimonials
+FAQ
+
+Website fetcht Notion API.
+
+Dann kann literally jeder:
+
+Notion öffnen
+Text ändern
+fertig
+
+Das überlebt dich zu 100%.
+
+Option C — Hybrid: Selbst bauen, aber Framer fallback
+
+Du kannst sogar:
+
+Landingpage in Framer bauen
+Events Seite selbst bauen
+
+oder:
+
+Framer für Layout
+custom code embed
+
+Aber das wird messy.
+
+Ich würde das nicht machen.
+
+Das echte Risiko bei "selbst bauen"
+
+Nicht:
+
+React
+Layout
+Hosting
+
+Sondern:
+
+niemand versteht Code
+keiner traut sich deploy
+niemand weiß wie env vars gehen
+API bricht
+
+Das löst man mit:
+
+Minimal Doku
+
+README.md:
+
+Deployment:
+push to main
+
+CMS:
+edit here
+
+Hosting:
+vercel
+
+events:
+fetched from...
+
+Fertig.
+
+Claude / AI Layouts sind mittlerweile wirklich gut
+
+Du kannst:
+
+Google Stitch / Figma design
+Claude: "build this in Next + Tailwind"
+iterieren
+fertig
+
+Das funktioniert erstaunlich gut.
+
+Du brauchst Framer nicht unbedingt.
+
+Framer Vorteil ist eher:
+
+schneller
+keine code maintenance
+visuelles editing
+
+Nicht unbedingt besseres Design.
+
+Mein ehrliches Urteil
+
+Ich würde bei euch:
+
+→ selbst bauen
+→ Notion oder Sanity CMS
+→ Vercel deploy
+→ minimal Doku
+
+Dann habt ihr:
+
+volle Kontrolle
+günstig
+überlebensfähig
+skalierbar
+API integration möglich
+
+Das ist die cleanste Lösung.
+
+Wenn du irgendwann weg bist
+
+Dann gibt es 4 Szenarien:
+
+Fall 1 — nur Inhalte ändern
+
+kein Problem (CMS)
+
+Fall 2 — kleine Änderungen
+
+anderer dev → 30 min
+
+Fall 3 — komplett neu
+
+Landingpage neu bauen (auch ok)
+
+Fall 4 — niemand dev
+
+Website bleibt einfach so (auch ok)
+
+Das ist völlig akzeptabel.
+
+Entscheidungsregel
+
+Wenn:
+
+du > 3h investieren willst
+→ selbst bauen
+
+du < 3h investieren willst
+→ Framer
+
+Langfristig gewinnt selbst bauen.
+
+Ich kann dir auch direkt:
+
+Next.js starter für landingpage
+CMS schema
+conversion layout
+folder structure
+
+geben.
+
+Willst du:
+
+Notion CMS Setup
+Sanity CMS Setup
+Next.js Starter Architektur
+Landingpage Wireframe
+"Bus factor" sichere Struktur
+Was wären meine Kosten für selbst bauen ?
+Deployment sind ja keine großen (auf vercel oder so).
+Domain hab ich schon.
+CMS vll?
+
+Kurz gesagt: Selbst bauen kann euch 0 € kosten — realistisch 0–5 € / Monat.
+Ihr seid damit deutlich unter Framer.
+
+Hier ist die echte Kostenübersicht:
+
+Variante 1 — Next.js + Notion CMS (meine Top-Empfehlung für euch)
+
+Kosten:
+
+Hosting (Vercel) → 0 €
+Domain → habt ihr schon
+CMS (Notion) → 0 €
+API fetch meditation.de → 0 €
+
+Total: 0 € / Monat
+
+Das ist extrem attraktiv.
+
+Variante 2 — Next.js + Sanity CMS (professioneller)
+
+Kosten:
+
+Hosting (Vercel) → 0 €
+CMS (Sanity) → 0 € (free tier)
+Domain → habt ihr schon
+
+Total: 0 € / Monat
+
+Sanity free tier reicht locker für euch:
+
+unbegrenzt content
+mehrere editoren
+API
+preview
+Variante 3 — Next.js ohne CMS (nur Code)
+
+Kosten:
+
+Hosting (Vercel) → 0 €
+Domain → habt ihr
+Content in JSON → 0 €
+
+Total: 0 €
+
+Aber schlechter editierbar.
+
+Optionale Zusatzkosten (nur wenn ihr wollt)
+
+Analytics:
+
+Google Analytics → kostenlos
+Plausible Analytics → ~9€/monat
+
+Forms:
+
+Formspree → kostenlos tier
+oder eigenes backend → 0€
+
+Email:
+
+Resend → kostenlos tier
+Mailchimp → kostenlos tier
+
+Aber alles optional.
+
+Realistische Gesamtkosten
+
+Minimal:
+→ 0 € / Monat
+
+Mit Analytics + Email:
+→ 0–5 € / Monat
+
+Mit Premium Tools:
+→ max ~10 €
+
+Vergleich mit Framer
+
+Framer:
+
+10 €/monat
+= 120 €/jahr
+
+Selbst bauen:
+
+0 €
+flexibler
+skalierbarer
+Hidden cost (der einzige echte)
+
+Zeit.
+
+Du brauchst ungefähr:
+
+Setup: 2–3h
+Landingpage: 2–4h
+CMS: 1h
+
+Also:
+→ ein Wochenende
+
+Danach: fertig.
+
+Mein Fazit
+
+Kosten sind kein Argument gegen selbst bauen.
+Es ist sogar die billigste Lösung.
+
+Die echte Entscheidung ist:
+
+Komfort → Framer
+Kontrolle + kostenlos → selbst bauen
+
+Ich würde bei euch wirklich selbst bauen.
+
+Wenn du mir sagst:
+
+Notion oder Sanity?
+oder sogar Google Sheets?
+
+Dann sag ich dir:
+
+welches besser ist
+wie schwer setup ist
+was langfristig besser ist
+Okay, ich würde gerne selbst bauen. Sag mir die besten Schritte, bitte. Meine Idee war, mit Google Stitch eben ein Layout zu bauen, das wäre die eine Sache, und dann das Cloud nachbauen zu lassen. Ich will auf jeden Fall Cloud in meiner Codebase sehr benutzen. ähm dann, ich kenne mich aus mit React, aber auch mit Angular. React ist vielleicht nicht schlecht, denke ich. Was muss ich jetzt machen, wie äh ja, stelle ich nochmal ein neues Projekt und all diese Sachen.
+
+Perfekt — dann machen wir das sauber und zukunftssicher.
+Ich gebe dir eine klare Schritt-für-Schritt Architektur, die zu deinem Workflow passt:
+
+React/Next
+Claude im Code
+Google Stitch Design
+CMS editierbar
+API fetch später
+0€ Kosten
+überlebbar ohne dich
+Die beste Architektur für euch
+
+Tech Stack:
+
+Framework: Next.js (React)
+Styling: Tailwind
+CMS: Notion (einfach) oder Sanity (strukturierter)
+Hosting: Vercel
+Forms: erstmal Email / später API
+AI workflow: Stitch → Claude → Code
+
+Das ist modern, schnell und wartbar.
+
+Schritt 1 — Projekt erstellen
+
+Terminal:
+
+npx create-next-app@latest tm-muenchen
+
+Dann auswählen:
+
+TypeScript: Yes
+ESLint: Yes
+Tailwind: Yes
+App Router: Yes
+src folder: Yes
+
+Dann:
+
+cd tm-muenchen
+npm run dev
+
+Fertig.
+
+Schritt 2 — Struktur vorbereiten
+
+Ich würde sofort diese Struktur machen:
+
+src/
+  app/
+    page.tsx        (landingpage)
+  components/
+    hero.tsx
+    benefits.tsx
+    events.tsx
+    testimonials.tsx
+    faq.tsx
+  lib/
+    cms.ts
+    events.ts
+
+Das macht alles später viel einfacher.
+
+Schritt 3 — Google Stitch Design
+
+Jetzt dein Plan:
+
+Layout in Stitch bauen
+Screenshot exportieren
+Claude:
+
+Prompt:
+
+"Build this landing page in Next.js + Tailwind.
+Componentize sections.
+Mobile first.
+Conversion optimized."
+
+Claude macht das erstaunlich gut.
+
+Dann iterieren.
+
+Schritt 4 — Landingpage Sections (empfohlen)
+
+Diese Struktur konvertiert gut:
+
+Hero
+Trust / wissenschaftlich
+Warum TM einzigartig
+Wie funktioniert es
+Nächste Termine
+Testimonials
+FAQ
+CTA
+
+Wichtig:
+Nur ein CTA: Infovortrag anmelden
+
+Schritt 5 — CMS hinzufügen (Notion)
+
+Das machen wir später, aber Planung:
+
+Notion Tabellen:
+
+Hero
+
+title
+subtitle
+button
+
+Events
+
+date
+type
+link
+
+Testimonials
+
+text
+name
+
+Website fetcht Notion API.
+
+Nicht-Techniker editieren dort.
+
+Schritt 6 — Deployment
+
+Super einfach:
+
+GitHub repo pushen
+
+Dann bei
+Vercel:
+
+"Import project"
+
+Domain verbinden:
+
+tm-muenchen.de
+
+Fertig.
+
+Auto deploy bei jedem push.
+
+Schritt 7 — später: meditation.de Events fetchen
+
+Du kannst dann:
+
+/api/events
+
+Route bauen
+
+fetch:
+
+tnw.meditation.de
+
+render.
+
+Oder fallback auf CMS.
+
+Schritt 8 — MVP Reihenfolge (wichtig)
+
+Nicht over-engineeren.
+
+Mach so:
+
+Phase 1 (heute)
+Next setup
+hero
+CTA
+fake events
+Phase 2
+echtes layout
+testimonials
+faq
+Phase 3
+CMS
+Phase 4
+API fetch
+Wichtigste UX Entscheidung
+
+Landingpage ≠ Website
+
+KEIN:
+
+navbar
+menü
+viele links
+blog
+
+Nur:
+
+"Infovortrag besuchen"
+
+Das erhöht conversion massiv.
+
+Bonus: Conversion Hero Beispiel
+
+Headline:
+
+"Stress tief loslassen. Mühelos meditieren lernen."
+
+Sub:
+
+"Kostenloser Infovortrag in München oder online."
+
+Button:
+
+"Platz sichern"
+
+Das reicht.
+
+Dein konkreter nächster Schritt
+
+Jetzt genau das tun:
+
+create-next-app
+Tailwind aktiv
+leere landingpage
+Stitch design
+Claude generieren lassen
+
+Dann iterieren.
+
+Wenn du willst, kann ich dir als nächstes geben:
+
+Landingpage Wireframe
+Folder Struktur
+Component Beispiel
+CMS Setup
+Claude Prompts
+
+Was brauchst du?
+
+keine antwort nötig
+
+Alles klar.
