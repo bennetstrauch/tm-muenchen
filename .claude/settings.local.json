@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(curl -s -H \"Authorization: Token acd0782f604a0e9aab3fe6f962d97a6384f1fa31\" https://tmw.meditation.de/api/center/108)",
+      "Bash(curl -s -H \"Authorization: Token acd0782f604a0e9aab3fe6f962d97a6384f1fa31\" https://tmw.meditation.de/api/center/108/courses)",
+      "Bash(npx tsc:*)"
     ]
   }
 }
