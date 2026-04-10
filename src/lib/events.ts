@@ -4,6 +4,7 @@ export type TMEvent = {
   type: "Präsenz" | "Online";
   location: string;
   registrationUrl: string;
+  teacherName?: string;
 };
 
 // ── Demo fallback ─────────────────────────────────────────
@@ -61,6 +62,7 @@ export async function getEvents(): Promise<TMEvent[]> {
     const events: TMEvent[] = (data.lectures as {
       date: string;
       webinar_link: string;
+      teacher_name: string;
     }[])
       .map((l) => {
         const { date, time } = parseTMWDate(l.date);
@@ -71,6 +73,7 @@ export async function getEvents(): Promise<TMEvent[]> {
           type: isOnline ? "Online" : "Präsenz",
           location: isOnline ? "Online" : address,
           registrationUrl: l.webinar_link || "#",
+          teacherName: l.teacher_name?.trim() || undefined,
         } as TMEvent;
       })
       .filter((e) => e.date >= today)

@@ -100,7 +100,7 @@ export const content = {
 
   events: {
     heading: "Nächste Infovorträge",
-    subheading: "Kostenlos · unverbindlich · München & online",
+    subheading: "Kostenlos · unverbindlich · München & Online",
     cta: "Platz sichern",
     empty: "Aktuell keine Termine geplant. Schreib uns gerne direkt an.",
   },
