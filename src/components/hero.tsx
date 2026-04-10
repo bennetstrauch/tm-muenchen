@@ -54,7 +54,7 @@ export default function Hero() {
 
       {/* ── Eyebrow — top ────────────────────────────── */}
       <p
-        className="relative z-10 text-center text-[0.65rem] tracking-[0.3em] uppercase text-[#6b5535] opacity-0"
+        className="relative z-10 text-center text-[0.65rem] tracking-[0.3em] uppercase text-[#e8d5b0] opacity-0"
         style={{ animation: "fadeInUp 0.7s ease forwards 0s" }}
       >
         Transzendentale Meditation · München

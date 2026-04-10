@@ -32,6 +32,7 @@ function RegistrationForm({
           name: fd.get("name"),
           email: fd.get("email"),
           phone: fd.get("phone") || undefined,
+          isoDate: event.date,
           eventDate: `${weekday}, ${date}`,
           eventTime: event.time,
           eventType: event.type,

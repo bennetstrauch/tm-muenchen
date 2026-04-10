@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { buildConfirmationHtml, buildTeacherNotificationHtml } from "@/lib/email";
+import { buildConfirmationHtml, buildReminderHtml, buildTeacherNotificationHtml } from "@/lib/email";
 import type { RegistrationEmailParams } from "@/lib/email";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -8,8 +8,9 @@ type RequestBody = {
   name: string;
   email: string;
   phone?: string;
-  eventDate: string;
-  eventTime: string;
+  isoDate: string;      // "2026-04-11"
+  eventDate: string;    // "Sa., 11. April 2026"
+  eventTime: string;    // "19:00"
   eventType: "Online" | "Präsenz";
   meetLink?: string;
   teacherName?: string;
@@ -25,7 +26,7 @@ type TMWTeacher = {
 
 export async function POST(request: Request) {
   const body: RequestBody = await request.json();
-  const { name, email, phone, eventDate, eventTime, eventType, meetLink, teacherName } = body;
+  const { name, email, phone, isoDate, eventDate, eventTime, eventType, meetLink, teacherName } = body;
 
   if (!name?.trim() || !email?.trim()) {
     return Response.json({ error: "Pflichtfelder fehlen." }, { status: 400 });
@@ -55,7 +56,7 @@ export async function POST(request: Request) {
         }
       }
     } catch {
-      // Non-fatal — send emails without teacher details
+      // Non-fatal — proceed without teacher details
     }
   }
 
@@ -66,22 +67,45 @@ export async function POST(request: Request) {
   };
 
   const isOnline = eventType === "Online";
-  const subject = `Bestätigung: TM-${isOnline ? "Online-" : ""}Infovortrag am ${eventDate} um ${eventTime}`;
 
-  // Send both emails concurrently
+  // Calculate reminder time: 9:00 AM Munich time (07:00 UTC) the day before
+  let reminderScheduledAt: string | undefined;
+  if (isoDate) {
+    const eventDay = new Date(`${isoDate}T00:00:00Z`);
+    eventDay.setUTCDate(eventDay.getUTCDate() - 1);
+    const reminderDate = new Date(`${eventDay.toISOString().slice(0, 10)}T07:00:00Z`);
+    if (reminderDate > new Date()) {
+      reminderScheduledAt = reminderDate.toISOString();
+    }
+  }
+
   await Promise.all([
+    // Confirmation to registrant
     resend.emails.send({
       from: "TM München <noreply@tm-muenchen.de>",
       to: email,
-      subject,
+      subject: `Bestätigung: TM-${isOnline ? "Online-" : ""}Infovortrag am ${eventDate} um ${eventTime} Uhr`,
       html: buildConfirmationHtml(params),
     }),
+
+    // Notification to teacher
     teacher?.email
       ? resend.emails.send({
           from: "TM München <noreply@tm-muenchen.de>",
           to: teacher.email,
-          subject: `Neue Anmeldung: ${isOnline ? "Online-" : ""}Infovortrag am ${eventDate} um ${eventTime}`,
+          subject: `Neue Anmeldung: ${isOnline ? "Online-" : ""}Infovortrag am ${eventDate} um ${eventTime} Uhr`,
           html: buildTeacherNotificationHtml(params),
+        })
+      : Promise.resolve(),
+
+    // Scheduled reminder — day before at 9:00 AM Munich time
+    reminderScheduledAt
+      ? resend.emails.send({
+          from: "TM München <noreply@tm-muenchen.de>",
+          to: email,
+          subject: `Erinnerung: Morgen um ${eventTime} Uhr findet Ihr TM-${isOnline ? "Online-" : ""}Infovortrag statt`,
+          html: buildReminderHtml(params),
+          scheduledAt: reminderScheduledAt,
         })
       : Promise.resolve(),
   ]);
