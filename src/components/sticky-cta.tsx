@@ -1,12 +1,25 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { content } from "../content";
 
 export default function StickyCta() {
   const { hero } = content;
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    const section = document.getElementById("anmeldung");
+    if (!section) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setHidden(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999]">
+    <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] transition-all duration-300 ${hidden ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
       <a
         href={hero.ctaHref}
         className="

@@ -12,7 +12,7 @@ export default function Hero() {
   const { hero } = content;
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center px-8 pt-[8vh] pb-[8vh]">
+    <section className="relative min-h-[100dvh] flex flex-col items-center px-8 pt-[8vh] pb-[8vh]">
 
       {/* ── Background image ──────────────────────────── */}
       <div
@@ -80,7 +80,7 @@ export default function Hero() {
       </div>
 
       {/* ── Subline — above sticky button ────────────── */}
-      <div className="relative z-10 mt-auto flex flex-col items-center text-center pb-24">
+      <div className="relative z-10 mt-auto flex flex-col items-center text-center pb-32">
         <p
           className="text-[0.95rem] sm:text-base text-[#2c1f0e] leading-[1.85] opacity-0"
           style={{ animation: "fadeInUp 0.75s ease forwards 0.32s" }}
