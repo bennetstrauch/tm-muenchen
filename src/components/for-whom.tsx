@@ -1,14 +1,21 @@
+import React from "react";
 import Carousel from "./carousel";
 import { content } from "../content";
 
-export default function ForWhom() {
+export default function ForWhom({
+  activeIndex,
+  tabSlot,
+}: {
+  activeIndex?: number;
+  tabSlot?: React.ReactNode;
+}) {
   const { forWhom } = content;
 
   return (
     <section className="bg-[#F6EDE5] px-6 py-20 sm:py-28">
       <div className="max-w-2xl mx-auto">
 
-        <div className="text-center mb-14">
+        <div className="text-center mb-8">
           <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#5C7A97] mb-4">
             Für dich
           </p>
@@ -17,7 +24,9 @@ export default function ForWhom() {
           </h2>
         </div>
 
-        <Carousel arrowOffsetPx={110}>
+        {tabSlot}
+
+        <Carousel arrowOffsetPx={110} activeIndex={activeIndex}>
           {forWhom.items.map((item, i) => (
             <div key={i} className="bg-[#F9F7E9] rounded-2xl px-7 py-6">
               <div className="flex gap-3 items-start mb-2">

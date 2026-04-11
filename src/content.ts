@@ -6,8 +6,25 @@
  *  ändern, speichern — fertig. Kein Code-Wissen nötig.
  */
 
-export const content = {
-  hero: {
+// ─────────────────────────────────────────────────
+//  THEMEN — Jedes Thema hat ein eigenes Hero-Bild,
+//  eine eigene Überschrift und einen eigenen Subtext.
+//  forWhomIndex: welche Karte im "Für wen"-Carousel
+//  standardmäßig geöffnet wird (0-basiert).
+// ─────────────────────────────────────────────────
+export type Theme = {
+  slug: string;
+  label: string;
+  headline: string[];
+  subline: string[];
+  image: string;
+  forWhomIndex: number;
+};
+
+export const themes: Record<string, Theme> = {
+  stress: {
+    slug: "",           // Haupt-URL: /
+    label: "Stress",
     headline: [
       "Endlich wirklich abschalten.",
       "Ohne Anstrengung.",
@@ -15,16 +32,46 @@ export const content = {
     subline: [
       "Transzendentale Meditation",
       "regeneriert tiefer als Schlaf",
-      // "20 Minuten, zweimal täglich, ganz von selbst.",
     ],
+    image: "/hero.jpg",
+    forWhomIndex: 0,
+  },
+  depression: {
+    slug: "depression", // URL: /depression
+    label: "Depression",
+    headline: [
+      "Wieder leicht werden.",
+      "Ganz ohne Willenskraft.",
+    ],
+    subline: [
+      "TM reduziert nachweislich Symptome",
+      "von Erschöpfung und Depression",
+    ],
+    image: "/hero-depression.jpg",
+    forWhomIndex: 3,
+  },
+};
+
+export type ThemeKey = "stress" | "depression";
+
+// ─────────────────────────────────────────────────
+//  FOR-WHOM TABS — Reihenfolge bestimmt den Tab-Index.
+//  themeKey: welches Thema beim Klick aktiviert wird
+//  (undefined = kein Hero-Wechsel, nur Carousel-Index)
+// ─────────────────────────────────────────────────
+export const forWhomTabs: { label: string; themeKey?: ThemeKey }[] = [
+  { label: "Stress",        themeKey: "stress"      },
+  { label: "Gesundheit",    themeKey: undefined     },
+  { label: "Wissenschaft",  themeKey: undefined     },
+  { label: "Depression",    themeKey: "depression"  },
+];
+
+export const content = {
+  hero: {
     learnMore: "Mehr über TM erfahren",
     learnMoreHref: "#warum-tm",
     cta: "Kostenlose Info-Session",
     ctaHref: "#anmeldung",
-    image: {
-      src: "/hero.jpg",
-      alt: "Person meditiert ruhig in München",
-    },
   },
 
   forWhom: {
@@ -44,6 +91,11 @@ export const content = {
         title: "Du willst messbare Ergebnisse",
         description:
           "TM ist die meistuntersuchte Meditationstechnik weltweit — über 400 Studien an führenden Universitäten. Die Wirkung ist dokumentiert, nicht versprochen.",
+      },
+      {
+        title: "Du kämpfst mit Erschöpfung oder Niedergeschlagenheit",
+        description:
+          "TM ist die meistuntersuchte natürliche Methode bei Depressionen und Angststörungen — wirksam, ohne Nebenwirkungen, ganz ohne Konzentration oder Willenskraft.",
       },
     ],
   },
@@ -75,7 +127,7 @@ export const content = {
           "Studien zeigen, dass TM die Koordination verschiedener Gehirnbereiche verbessert. Diese integriertere Funktionsweise ist bei Spitzensportlern, Führungskräften und Kreativen dokumentiert, die TM regelmäßig praktizieren.",
       },
       {
-        title: "Stress abbaut — auch der tiefsitzende",
+        title: "Stress abbauen — auch den Tiefsitzenden",
         short:
           "Nicht nur akuter Stress, sondern auch langfristig angesammelter Druck lässt sich durch TM abbauen. Viele berichten: weniger Angst, besserer Schlaf, mehr Resilienz.",
         expanded:

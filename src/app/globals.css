@@ -44,6 +44,30 @@ html {
   }
 }
 
+/* ── Hero image theme transition ────────────────── */
+@keyframes heroImageIn {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+  }
+}
+
+/* ── Carousel card entry (on page load / theme switch) ── */
+@keyframes cardSlideIn {
+  from {
+    opacity: 0.4;
+    transform: translateX(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 /* ── Entrance animations ─────────────────────────── */
 
 @keyframes fadeInUp {

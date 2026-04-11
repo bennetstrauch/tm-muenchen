@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import React from "react";
 
 function ChevronLeft() {
@@ -27,13 +27,26 @@ function ChevronRight() {
 export default function Carousel({
   children,
   arrowOffsetPx = 110,
+  activeIndex,
 }: {
   children: React.ReactNode;
   arrowOffsetPx?: number;
+  /** When provided, externally controls which slide is shown */
+  activeIndex?: number;
 }) {
   const slides = React.Children.toArray(children);
   const total = slides.length;
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(activeIndex ?? 0);
+
+  // True only during the first render — flips to false after first paint.
+  // Used to give the initially-active slide a CSS entry animation so that
+  // page-navigation theme switches always show a visible swipe-in.
+  const isFirstRender = useRef(true);
+  useEffect(() => { isFirstRender.current = false; }, []);
+
+  useEffect(() => {
+    if (activeIndex !== undefined) setIndex(activeIndex);
+  }, [activeIndex]);
   const touchStartX = useRef<number | null>(null);
 
   const prev = () => setIndex(i => (i - 1 + total) % total);
@@ -87,6 +100,11 @@ export default function Carousel({
                 key={i}
                 className="w-full flex-shrink-0 min-w-0"
                 aria-hidden={i !== index}
+                style={
+                  i === index && isFirstRender.current
+                    ? { animation: "cardSlideIn 0.35s ease forwards" }
+                    : undefined
+                }
               >
                 {slide}
               </div>
