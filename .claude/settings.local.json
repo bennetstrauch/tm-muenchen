@@ -4,7 +4,13 @@
       "Bash(npm run:*)",
       "Bash(curl -s -H \"Authorization: Token acd0782f604a0e9aab3fe6f962d97a6384f1fa31\" https://tmw.meditation.de/api/center/108)",
       "Bash(curl -s -H \"Authorization: Token acd0782f604a0e9aab3fe6f962d97a6384f1fa31\" https://tmw.meditation.de/api/center/108/courses)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npm install:*)",
+      "Bash(curl -s -L \"https://www.tm.org/favicon.ico\" -o \"C:/Users/strau/tm-muenchen/public/tm-favicon.ico\")",
+      "Bash(curl -s -I \"https://www.tm.org/\")",
+      "Bash(curl -s \"https://www.tm.org/\")",
+      "Bash(curl -s -L \"https://www.tm.org/images/favicons/favicon-32x32.png\" -o \"C:/Users/strau/tm-muenchen/src/app/favicon-32.png\")",
+      "WebFetch(domain:www.tm.org)"
     ]
   }
 }

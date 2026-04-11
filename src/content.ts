@@ -9,19 +9,43 @@
 export const content = {
   hero: {
     headline: [
-      "Tiefen Stress loslassen.",
-      "Volles Potential entfalten.",
+      "Endlich wirklich abschalten.",
+      "Ohne Anstrengung.",
     ],
     subline: [
-      "Diese Meditation ist einzigartig:",
-      "Einfach, wirksam, wissenschaftlich untersucht.",
+      "Transzendentale Meditation",
+      "regeneriert tiefer als Schlaf",
+      // "20 Minuten, zweimal täglich, ganz von selbst.",
     ],
+    learnMore: "Mehr über TM erfahren",
+    learnMoreHref: "#warum-tm",
     cta: "Kostenlose Info-Session",
     ctaHref: "#anmeldung",
     image: {
       src: "/hero.jpg",
       alt: "Person meditiert ruhig in München",
     },
+  },
+
+  forWhom: {
+    heading: "Für wen ist TM?",
+    items: [
+      {
+        title: "Du hast immer zu viel im Kopf",
+        description:
+          "Für alle, die selten wirklich zur Ruhe kommen — ob beruflicher Druck, voller Terminkalender oder einfach zu viele Gedanken.",
+      },
+      {
+        title: "Jünger fühlen. Gesünder leben.",
+        description:
+          "TM senkt nachweislich Blutdruck und Cortisolspiegel. Viele berichten: mehr Energie, besserer Schlaf, mehr Vitalität — in jedem Alter.",
+      },
+      {
+        title: "Du willst messbare Ergebnisse",
+        description:
+          "TM ist die meistuntersuchte Meditationstechnik weltweit — über 400 Studien an führenden Universitäten. Die Wirkung ist dokumentiert, nicht versprochen.",
+      },
+    ],
   },
 
   whyTm: {
@@ -32,37 +56,37 @@ export const content = {
       {
         title: "Mühelos — keine Konzentration nötig",
         short:
-          "Die meisten Meditationstechniken erfordern Fokus oder das Kontrollieren des Geistes. TM ist anders: Der Geist darf sich ganz natürlich beruhigen — ohne Anstrengung, ohne Kontrolle. Deshalb finden viele Menschen TM überraschend leicht zu erlernen und beizubehalten.",
+          "Die meisten Meditationstechniken erfordern Fokus oder Willenskraft. TM ist anders: Der Geist darf sich ganz natürlich beruhigen — ohne Anstrengung. Deshalb finden viele Menschen TM überraschend leicht zu erlernen.",
         expanded:
-          "Weil die Technik mühelos ist, bewegt sich der Geist spontan in Richtung ruhigerer Gedankenebenen. Meditation geschieht von selbst — nicht durch Disziplin oder mentale Willenskraft. Das macht TM auch für Menschen zugänglich, die mit anderen Techniken keine Erfahrung gemacht haben.",
+          "Weil die Technik mühelos ist, bewegt sich der Geist spontan in Richtung ruhigerer Gedankenebenen. Meditation geschieht von selbst — nicht durch Disziplin. Das macht TM auch für Menschen zugänglich, die mit anderen Techniken keine Erfahrung gemacht haben.",
       },
       {
-        title: "Ein einzigartiger Zustand: tiefe Körperruhe, wacher Geist",
+        title: "Tiefer als Schlaf — der Körper erholt sich wirklich",
         short:
-          "Während der TM gewinnt der Körper sehr tiefe Ruhe — während der Geist wach und klar bleibt. Forschung zeigt: Dieser Zustand unterscheidet sich messbar von Entspannung, Schlaf oder Konzentration.",
+          "Während der TM erreicht der Körper eine Tiefenruhe, die Studien zufolge tiefer ist als im Schlaf — während der Geist wach und klar bleibt. In dieser Ruhe baut das Nervensystem angesammelten Stress ab.",
         expanded:
-          "Dieser tiefe Ruhezustand ermöglicht dem Nervensystem, angesammelten Stress abzubauen. Gleichzeitig wird die Gehirnaktivität kohärenter und integrierter. Viele erleben dabei: tiefe Stille, Klarheit, frische Energie, weniger mentales Rauschen.",
+          "Dieser Zustand unterscheidet sich messbar von Entspannung, Schlaf oder Konzentration. Viele erleben: tiefe Stille, Klarheit, frische Energie — noch bevor sie die Wirkung im Alltag bewusst bemerken.",
       },
       {
-        title: "Mehr Gehirnkohärenz — auch im Alltag",
+        title: "Klarer denken, ruhiger reagieren",
         short:
-          "Während der TM zeigt das Gehirn erhöhte Kohärenz: Verschiedene Bereiche arbeiten harmonischer zusammen. Mit regelmäßiger Praxis beginnt dieses Muster auch außerhalb der Meditation zu wirken — klareres Denken, bessere Entscheidungen, mehr emotionale Stabilität.",
+          "Mit regelmäßiger Praxis berichten viele: Sie reagieren ruhiger in stressigen Situationen, entscheiden klarer, sind kreativer. Das ist keine Selbstsuggestion — sondern messbar in der Gehirnaktivität.",
         expanded:
-          "Studien zeigen, dass höhere Gehirnkohärenz mit verbesserter Kreativität, Lernfähigkeit und Leistung verbunden ist. Diese integriertere Art zu funktionieren ist auch bei Spitzensportlern, Führungskräften und Künstlern dokumentiert, die TM regelmäßig praktizieren.",
+          "Studien zeigen, dass TM die Koordination verschiedener Gehirnbereiche verbessert. Diese integriertere Funktionsweise ist bei Spitzensportlern, Führungskräften und Kreativen dokumentiert, die TM regelmäßig praktizieren.",
       },
       {
-        title: "Tiefe Ruhe löst tiefen Stress",
+        title: "Stress abbaut — auch der tiefsitzende",
         short:
-          "Die tiefe körperliche Ruhe während der TM ermöglicht dem Nervensystem, angesammelten Stress natürlich abzubauen. Viele berichten: weniger Angst, besserer Schlaf, mehr Resilienz und ein verbessertes allgemeines Wohlbefinden.",
+          "Nicht nur akuter Stress, sondern auch langfristig angesammelter Druck lässt sich durch TM abbauen. Viele berichten: weniger Angst, besserer Schlaf, mehr Resilienz.",
         expanded:
-          "TM wurde in Studien bei stressbedingten Beschwerden und in der Traumaverarbeitung untersucht — darunter auch bei PTBS. Die physiologische Tiefenruhe unterstützt die natürliche Selbstregulation des Körpers auf eine Weise, die Entspannungstechniken allein oft nicht erreichen.",
+          "TM wurde in Studien bei stressbedingten Beschwerden und Traumaverarbeitung untersucht — darunter auch bei PTBS. Die physiologische Tiefenruhe unterstützt die natürliche Selbstregulation des Körpers auf eine Weise, die Entspannungstechniken allein oft nicht erreichen.",
       },
       {
-        title: "Wissenschaftlich führend",
+        title: "Über 400 Studien an führenden Universitäten",
         short:
-          "Transzendentale Meditation wurde in über 400 Studien an Universitäten und medizinischen Instituten weltweit untersucht — mehr als jede andere Meditationstechnik. Forschungsgebiete: Stress, Gehirnfunktion, Herzgesundheit, Leistung und Resilienz.",
+          "Transzendentale Meditation ist die meistuntersuchte Meditationstechnik weltweit. Forschungsgebiete: Stress, Herzgesundheit, Gehirnfunktion, Leistung und Resilienz.",
         expanded:
-          "Weil TM standardisiert und konsistent gelehrt wird, lässt sie sich wissenschaftlich zuverlässiger untersuchen als viele andere Ansätze. Studien erschienen u.a. in Fachzeitschriften wie dem American Journal of Cardiology und dem International Journal of Neuroscience.",
+          "Weil TM standardisiert gelehrt wird, lässt sie sich wissenschaftlich zuverlässiger untersuchen als viele andere Ansätze. Studien erschienen u.a. im American Journal of Cardiology und dem International Journal of Neuroscience.",
       },
     ],
   },
@@ -75,25 +99,25 @@ export const content = {
         number: "01",
         title: "Kostenloser Infovortrag",
         description:
-          "Lerne, was Transzendentale Meditation ist, wie sie sich von anderen Techniken unterscheidet, und stelle alle Fragen. Keinerlei Verpflichtung.",
+          "Du erfährst, was TM ist, wie sie sich von anderen Techniken unterscheidet, und kannst alle Fragen stellen. Keinerlei Verpflichtung.",
       },
       {
         number: "02",
         title: "Persönliche Einweisung",
         description:
-          "Die Technik wird von einem zertifizierten Lehrer persönlich vermittelt — individuell, strukturiert, in deinem eigenen Tempo. Keine bestimmten Überzeugungen oder Vorkenntnisse erforderlich.",
+          "Die Technik wird von einem zertifizierten Lehrer persönlich vermittelt — individuell, in deinem eigenen Tempo. Keine Vorkenntnisse nötig.",
       },
       {
         number: "03",
         title: "Täglich zuhause meditieren",
         description:
-          "20 Minuten, bequem sitzend, zweimal täglich. Keine App, keine geführte Stimme, kein Kontrollieren des Geistes — nur mühelose, eigenständige Praxis.",
+          "20 Minuten, bequem sitzend, zweimal täglich. Keine App, keine Führung, kein Fokussieren — nur mühelose, eigenständige Praxis.",
       },
       {
         number: "04",
-        title: "Wirkung wächst mit der Zeit",
+        title: "Die Wirkung entfaltet sich",
         description:
-          "Mit regelmäßiger Praxis beginnen die Wirkungen in den Alltag überzugehen: mehr Ruhe, Klarheit und Energie — auch in stressigen Momenten.",
+          "Mit regelmäßiger Praxis überträgt sich die Ruhe in den Alltag: mehr Energie, mehr Klarheit — auch in stressigen Momenten.",
       },
     ],
   },

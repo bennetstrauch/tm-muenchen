@@ -16,13 +16,13 @@ export default function Expandable({
   return (
     <div>
       {open && (
-        <p className="mt-3 text-sm text-[#5c4d38] leading-relaxed">
+        <p className="mt-3 text-sm text-[#5C7A97] leading-relaxed">
           {children}
         </p>
       )}
       <button
         onClick={() => setOpen(!open)}
-        className="mt-3 inline-flex items-center gap-1.5 text-[0.7rem] tracking-[0.15em] uppercase text-[#c4962a] hover:text-[#a37e22] transition-colors duration-200 focus-visible:outline-none"
+        className="mt-3 inline-flex items-center gap-1.5 text-[0.7rem] tracking-[0.15em] uppercase text-[#1A3352]/60 hover:text-[#1A3352] transition-colors duration-200 focus-visible:outline-none"
       >
         {open ? closeLabel : openLabel}
         <span

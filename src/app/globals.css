@@ -1,8 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #faf7f2;
-  --foreground: #1a1208;
+  /* ── TM design palette (RGB triplets for opacity support) ── */
+  --tm-navy:        26 51 82;    /* #1A3352 — deep navy */
+  --tm-navy-soft:   92 122 151;  /* #5C7A97 — muted blue */
+  --tm-off-white:   249 247 233; /* #F9F7E9 — warm background */
+  --tm-neutral:     246 237 229; /* #F6EDE5 — alternate section bg */
+  --tm-sky:         165 195 215; /* #A5C3D7 — CTA button */
+  --tm-ocean:       139 170 195; /* #8BAAC3 — CTA hover */
+  --tm-yellow:      240 200 20;  /* #F0C814 — decorative accent */
+
+  /* ── Semantic site variables ───────────────────────────── */
+  --background: #F9F7E9;
+  --foreground: #1A3352;
 }
 
 @theme inline {
@@ -17,6 +27,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 300;
 }
 
 html {
@@ -39,11 +50,11 @@ html {
 @keyframes pulseRing {
   0%,
   100% {
-    opacity: var(--ring-opacity, 0.05);
+    opacity: var(--ring-opacity, 0.04);
     transform: scale(1);
   }
   50% {
-    opacity: calc(var(--ring-opacity, 0.05) * 1.8);
+    opacity: calc(var(--ring-opacity, 0.04) * 1.8);
     transform: scale(1.04);
   }
 }
