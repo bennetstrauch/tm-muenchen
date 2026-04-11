@@ -1,3 +1,4 @@
+import Carousel from "./carousel";
 import Expandable from "./expandable";
 import { content } from "../content";
 
@@ -21,36 +22,29 @@ export default function WhyTm() {
           </p>
         </div>
 
-        {/* Benefits */}
-        <ul className="flex flex-col gap-0">
+        <Carousel arrowOffsetPx={145}>
           {whyTm.benefits.map((benefit, i) => (
-            <li
-              key={i}
-              className="border-t border-[#D8E4EE] pt-8 pb-8 last:border-b"
-            >
-              <div className="flex gap-6">
-                {/* Number accent */}
+            <div key={i} className="border-t border-b border-[#D8E4EE] pt-8 pb-8">
+              <div className="flex gap-3 items-start mb-3">
                 <span
-                  className="font-display font-light text-[2.5rem] leading-none select-none w-8 shrink-0 mt-1"
-                  style={{ color: "rgb(240 200 20 / 0.6)" }}
+                  className="font-display font-light text-[2.5rem] leading-none select-none flex-shrink-0"
+                  style={{ color: "rgb(240 200 20 / 0.7)" }}
                   aria-hidden="true"
                 >
                   {i + 1}
                 </span>
-
-                <div className="flex-1">
-                  <h3 className="font-display font-light text-[1.25rem] sm:text-[1.4rem] text-[#1A3352] leading-snug mb-2">
-                    {benefit.title}
-                  </h3>
-                  <p className="text-base text-[#5C7A97] leading-relaxed">
-                    {benefit.short}
-                  </p>
-                  <Expandable>{benefit.expanded}</Expandable>
-                </div>
+                <h3 className="font-display font-light text-[1.25rem] sm:text-[1.4rem] text-[#1A3352] leading-snug pt-1">
+                  {benefit.title}
+                </h3>
               </div>
-            </li>
+              <p className="text-base text-[#5C7A97] leading-relaxed">
+                {benefit.short}
+              </p>
+              <Expandable>{benefit.expanded}</Expandable>
+            </div>
           ))}
-        </ul>
+        </Carousel>
+
       </div>
     </section>
   );

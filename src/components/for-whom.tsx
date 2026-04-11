@@ -1,3 +1,4 @@
+import Carousel from "./carousel";
 import { content } from "../content";
 
 export default function ForWhom() {
@@ -9,34 +10,34 @@ export default function ForWhom() {
 
         <div className="text-center mb-14">
           <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#5C7A97] mb-4">
-            Für dich?
+            Für dich
           </p>
           <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight">
             {forWhom.heading}
           </h2>
         </div>
 
-        <ul className="flex flex-col gap-4">
+        <Carousel arrowOffsetPx={110}>
           {forWhom.items.map((item, i) => (
-            <li key={i} className="bg-[#F9F7E9] rounded-2xl px-7 py-6 flex gap-5">
-              <span
-                className="font-display font-light text-[2.25rem] leading-none select-none w-8 shrink-0 mt-0.5"
-                style={{ color: "rgb(240 200 20 / 0.9)" }}
-                aria-hidden="true"
-              >
-                {i + 1}
-              </span>
-              <div>
-                <h3 className="font-display font-light text-[1.2rem] text-[#1A3352] leading-snug mb-2">
+            <div key={i} className="bg-[#F9F7E9] rounded-2xl px-7 py-6">
+              <div className="flex gap-3 items-start mb-2">
+                <span
+                  className="font-display font-light text-[2.5rem] leading-none select-none flex-shrink-0"
+                  style={{ color: "rgb(240 200 20 / 0.9)" }}
+                  aria-hidden="true"
+                >
+                  {i + 1}
+                </span>
+                <h3 className="font-display font-light text-[1.2rem] text-[#1A3352] leading-snug pt-1">
                   {item.title}
                 </h3>
-                <p className="text-base text-[#5C7A97] leading-relaxed">
-                  {item.description}
-                </p>
               </div>
-            </li>
+              <p className="text-base text-[#5C7A97] leading-relaxed">
+                {item.description}
+              </p>
+            </div>
           ))}
-        </ul>
+        </Carousel>
 
       </div>
     </section>

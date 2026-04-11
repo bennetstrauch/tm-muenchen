@@ -16,17 +16,20 @@ export default function Hero() {
 
       {/* ── Background image ──────────────────────────── */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 overflow-hidden"
         style={{ background: "linear-gradient(135deg, #d4c5a9 0%, #9e8c72 60%, #7a6a54 100%)" }}
       >
-        <Image
-          src={hero.image.src}
-          alt=""
-          fill
-          className="object-cover"
-          priority
-          sizes="100vw"
-        />
+        {/* On mobile: scale up slightly + shift down so subject's head clears the text */}
+        <div className="absolute inset-0 hero-img-shift">
+          <Image
+            src={hero.image.src}
+            alt=""
+            fill
+            className="object-cover object-right sm:object-center"
+            priority
+            sizes="100vw"
+          />
+        </div>
       </div>
 
       {/* ── Off-white overlay ─────────────────────────── */}
@@ -74,7 +77,7 @@ export default function Hero() {
 
       {/* ── Headline ─────────────────────────────────── */}
       <div
-        className="relative z-10 flex flex-col items-center text-center w-full max-w-xl mt-[calc(7vh+3.5rem)] opacity-0"
+        className="relative z-10 flex flex-col items-center text-center w-full max-w-xl mt-[calc(4vh+2rem)] sm:mt-[calc(7vh+3.5rem)] opacity-0"
         style={{ animation: "fadeInUp 0.75s ease forwards 0.12s" }}
       >
         <h1 className="w-full">

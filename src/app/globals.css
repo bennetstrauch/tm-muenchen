@@ -34,6 +34,16 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ── Hero image — shift subject down on mobile only ─ */
+.hero-img-shift {
+  transform: scale(1.12) translateY(6%);
+}
+@media (min-width: 640px) {
+  .hero-img-shift {
+    transform: none;
+  }
+}
+
 /* ── Entrance animations ─────────────────────────── */
 
 @keyframes fadeInUp {
@@ -58,6 +68,12 @@ html {
     transform: scale(1.04);
   }
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 
 @keyframes slowSpin {
   from {
