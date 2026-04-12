@@ -81,6 +81,7 @@ export default function PageClient({ initialTheme }: { initialTheme: ThemeKey })
       {/* ForWhom section — tab switcher sits between heading and carousel */}
       <ForWhom
         activeIndex={activeTab}
+        onActiveIndexChange={handleTabChange}
         tabSlot={<ThemeSwitcher activeTab={activeTab} onTabChange={handleTabChange} />}
       />
     </>

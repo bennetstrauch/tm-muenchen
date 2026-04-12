@@ -23,26 +23,17 @@ export type Theme = {
 
 export const themes: Record<string, Theme> = {
   stress: {
-    slug: "",           // Haupt-URL: /
+    slug: "", // Haupt-URL: /
     label: "Stress",
-    headline: [
-      "Endlich wirklich abschalten.",
-      "Ohne Anstrengung.",
-    ],
-    subline: [
-      "Transzendentale Meditation",
-      "regeneriert tiefer als Schlaf",
-    ],
+    headline: ["Endlich wirklich abschalten.", "Ohne Anstrengung."],
+    subline: ["Transzendentale Meditation", "regeneriert tiefer als Schlaf"],
     image: "/hero.jpg",
     forWhomIndex: 0,
   },
   depression: {
     slug: "depression", // URL: /depression
     label: "Depression",
-    headline: [
-      "Wieder leicht werden.",
-      "Ganz ohne Willenskraft.",
-    ],
+    headline: ["Wieder leicht werden.", "Ganz ohne Willenskraft."],
     subline: [
       "TM reduziert nachweislich Symptome",
       "von Erschöpfung und Depression",
@@ -60,10 +51,10 @@ export type ThemeKey = "stress" | "depression";
 //  (undefined = kein Hero-Wechsel, nur Carousel-Index)
 // ─────────────────────────────────────────────────
 export const forWhomTabs: { label: string; themeKey?: ThemeKey }[] = [
-  { label: "Stress",        themeKey: "stress"      },
-  { label: "Gesundheit",    themeKey: undefined     },
-  { label: "Wissenschaft",  themeKey: undefined     },
-  { label: "Depression",    themeKey: "depression"  },
+  { label: "Stress", themeKey: "stress" },
+  { label: "Gesundheit", themeKey: undefined },
+  { label: "Wissenschaft", themeKey: undefined },
+  { label: "Depression", themeKey: "depression" },
 ];
 
 export const content = {
@@ -102,7 +93,8 @@ export const content = {
 
   whyTm: {
     heading: "Was TM einzigartig macht",
-    subheading: "Transzendentale Meditation unterscheidet sich grundlegend von anderen Techniken.",
+    subheading:
+      "Transzendentale Meditation unterscheidet sich grundlegend von anderen Techniken.",
 
     benefits: [
       {
@@ -120,9 +112,17 @@ export const content = {
           "Dieser Zustand unterscheidet sich messbar von Entspannung, Schlaf oder Konzentration. Viele erleben: tiefe Stille, Klarheit, frische Energie — noch bevor sie die Wirkung im Alltag bewusst bemerken.",
       },
       {
+        title: "Von innen heraus glücklich",
+        // short: "TM fördert die Produktion von Serotonin, dem sogenannten Glückshormon. Viele berichten: mehr innere Zufriedenheit, weniger Reizbarkeit, mehr Freude — auch in stressigen Momenten.",
+        short:
+          "Jeder Mensch trägt ein Reservoir an vollkomener Zufriedenheut in sich - Ein Meer der Freude, das durch TM zugänglich wird — mehr und mehr innere Zufriedenheit und weniger Reizbarkeit im Alltag.",
+        expanded:
+          "Was von allerlei Philosophen, Mystikern und Weisen seit Jahrtausenden beschrieben wird, wird durch TM konkret und beständig integriert. Nicht nur das, es ist auch wissenschaftlich messbar.",
+      },
+      {
         title: "Klarer denken, ruhiger reagieren",
         short:
-          "Mit regelmäßiger Praxis berichten viele: Sie reagieren ruhiger in stressigen Situationen, entscheiden klarer, sind kreativer. Das ist keine Selbstsuggestion — sondern messbar in der Gehirnaktivität.",
+          "Diverse Studien zeigen: Regelmäßig Praktizierende reagieren ruhiger in stressigen Situationen, entscheiden klarer, sind kreativer. Das ist keine Selbstsuggestion — sondern messbar in der Gehirnaktivität.",
         expanded:
           "Studien zeigen, dass TM die Koordination verschiedener Gehirnbereiche verbessert. Diese integriertere Funktionsweise ist bei Spitzensportlern, Führungskräften und Kreativen dokumentiert, die TM regelmäßig praktizieren.",
       },
@@ -131,7 +131,7 @@ export const content = {
         short:
           "Nicht nur akuter Stress, sondern auch langfristig angesammelter Druck lässt sich durch TM abbauen. Viele berichten: weniger Angst, besserer Schlaf, mehr Resilienz.",
         expanded:
-          "TM wurde in Studien bei stressbedingten Beschwerden und Traumaverarbeitung untersucht — darunter auch bei PTBS. Die physiologische Tiefenruhe unterstützt die natürliche Selbstregulation des Körpers auf eine Weise, die Entspannungstechniken allein oft nicht erreichen.",
+          "TM wurde in Studien bei stressbedingten Beschwerden und Traumaverarbeitung untersucht — darunter auch bei PTBS. Die physiologische Tiefenruhe unterstützt die natürliche Selbstregulation des Körpers auf eine Weise, die andere Entspannungstechniken schlicht nicht erreichen.",
       },
       {
         title: "Über 400 Studien an führenden Universitäten",
@@ -145,7 +145,8 @@ export const content = {
 
   howItWorks: {
     heading: "So funktioniert es",
-    subheading: "Von Neugier bis zur täglichen Praxis — in vier einfachen Schritten.",
+    subheading:
+      "Von Neugier bis zur täglichen Praxis — in vier einfachen Schritten.",
     steps: [
       {
         number: "01",

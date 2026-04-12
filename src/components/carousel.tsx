@@ -19,43 +19,90 @@ function ChevronRight() {
   );
 }
 
+type Direction = "left" | "right";
+type TransitionState = {
+  from: number;
+  to: number;
+  direction: Direction;
+  phase: "setup" | "running";
+};
+
 /**
  * arrowOffsetPx — distance from the top of the slide container to the arrow center.
- * Set this to half the non-expanded slide height so arrows sit in the visual middle
- * and never move when content expands.
  */
 export default function Carousel({
   children,
   arrowOffsetPx = 110,
   activeIndex,
+  onIndexChange,
 }: {
   children: React.ReactNode;
   arrowOffsetPx?: number;
-  /** When provided, externally controls which slide is shown */
   activeIndex?: number;
+  onIndexChange?: (index: number) => void;
 }) {
   const slides = React.Children.toArray(children);
   const total = slides.length;
-  const [index, setIndex] = useState(activeIndex ?? 0);
 
-  // True only during the first render — flips to false after first paint.
-  // Used to give the initially-active slide a CSS entry animation so that
-  // page-navigation theme switches always show a visible swipe-in.
+  const [current, setCurrent] = useState(activeIndex ?? 0);
+  const [transition, setTransition] = useState<TransitionState | null>(null);
+
+  // isFirstRender: true only during the very first render cycle.
+  // Used to play a slide-in animation on page load / theme navigation.
   const isFirstRender = useRef(true);
   useEffect(() => { isFirstRender.current = false; }, []);
 
-  useEffect(() => {
-    if (activeIndex !== undefined) setIndex(activeIndex);
-  }, [activeIndex]);
+  // Guard against re-triggering from our own onIndexChange calls.
+  const lastReportedRef = useRef(activeIndex ?? 0);
+
   const touchStartX = useRef<number | null>(null);
 
-  const prev = () => setIndex(i => (i - 1 + total) % total);
-  const next = () => setIndex(i => (i + 1) % total);
+  // ── Sync external activeIndex → animate if it differs from current ──
+  useEffect(() => {
+    if (activeIndex === undefined) return;
+    if (activeIndex === lastReportedRef.current) return; // we caused this update
+    if (transition !== null) return;                     // already animating
+    lastReportedRef.current = activeIndex;
+    startTransition(current, activeIndex, activeIndex > current ? "left" : "right");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeIndex]);
+
+  // ── After "setup" phase, kick off the CSS transition ──
+  useEffect(() => {
+    if (transition?.phase !== "setup") return;
+    const id = requestAnimationFrame(() =>
+      requestAnimationFrame(() =>
+        setTransition(t => t ? { ...t, phase: "running" } : null)
+      )
+    );
+    return () => cancelAnimationFrame(id);
+  }, [transition?.phase]);
+
+  function startTransition(from: number, to: number, direction: Direction) {
+    if (from === to) return;
+    setTransition({ from, to, direction, phase: "setup" });
+  }
+
+  function handleTransitionEnd() {
+    if (!transition) return;
+    setCurrent(transition.to);
+    setTransition(null);
+  }
+
+  function goTo(i: number, direction: Direction) {
+    if (transition) return; // block during animation
+    if (i === current) return;
+    lastReportedRef.current = i;
+    startTransition(current, i, direction);
+    onIndexChange?.(i);
+  }
+
+  function prev() { goTo((current - 1 + total) % total, "right"); }
+  function next() { goTo((current + 1) % total, "left"); }
 
   function onTouchStart(e: React.TouchEvent) {
     touchStartX.current = e.touches[0].clientX;
   }
-
   function onTouchEnd(e: React.TouchEvent) {
     if (touchStartX.current === null) return;
     const dx = e.changedTouches[0].clientX - touchStartX.current;
@@ -64,14 +111,53 @@ export default function Carousel({
     touchStartX.current = null;
   }
 
+  // Active index to show in dots (show destination during transition)
+  const displayIndex = transition ? transition.to : current;
+
+  // ── Render the slide area ──────────────────────────────────────────
+  function renderSlides() {
+    // Idle state — single slide, entry animation on first render
+    if (!transition) {
+      return (
+        <div
+          style={isFirstRender.current
+            ? { animation: "cardSlideIn 0.35s ease forwards" }
+            : undefined}
+        >
+          {slides[current]}
+        </div>
+      );
+    }
+
+    // Transition state — two slides side by side, translateX pushes them
+    const { from, to, direction, phase } = transition;
+
+    // "left"  → new slide enters from right:  [from | to],  0% → -100%
+    // "right" → new slide enters from left:   [to | from], -100% → 0%
+    const isLeft = direction === "left";
+    const leftSlide  = isLeft ? from : to;
+    const rightSlide = isLeft ? to   : from;
+    const startX     = isLeft ? 0    : -100;
+    const endX       = isLeft ? -100 : 0;
+    const currentX   = phase === "running" ? endX : startX;
+
+    return (
+      <div
+        className="flex will-change-transform"
+        style={{
+          transform: `translateX(${currentX}%)`,
+          transition: phase === "running" ? "transform 300ms ease-out" : "none",
+        }}
+        onTransitionEnd={handleTransitionEnd}
+      >
+        <div className="w-full flex-shrink-0 min-w-0">{slides[leftSlide]}</div>
+        <div className="w-full flex-shrink-0 min-w-0">{slides[rightSlide]}</div>
+      </div>
+    );
+  }
+
   return (
     <div>
-      {/*
-        Grid: [arrow 1.75rem] [content 1fr] [arrow 1.75rem]
-        items-start so the grid row height is driven by the content column only.
-        Arrows use a fixed marginTop = arrowOffsetPx, so their position
-        is always the same regardless of how tall the content grows.
-      */}
       <div className="grid grid-cols-[1.75rem_1fr_1.75rem] items-start">
 
         <button
@@ -84,32 +170,13 @@ export default function Carousel({
           <ChevronLeft />
         </button>
 
-        {/* Overflow window — all slides side-by-side, translateX reveals one */}
         <div
           className="overflow-hidden"
           onTouchStart={onTouchStart}
           onTouchEnd={onTouchEnd}
           style={{ touchAction: "pan-y" }}
         >
-          <div
-            className="flex transition-transform duration-300 ease-out will-change-transform"
-            style={{ transform: `translateX(-${index * 100}%)` }}
-          >
-            {slides.map((slide, i) => (
-              <div
-                key={i}
-                className="w-full flex-shrink-0 min-w-0"
-                aria-hidden={i !== index}
-                style={
-                  i === index && isFirstRender.current
-                    ? { animation: "cardSlideIn 0.35s ease forwards" }
-                    : undefined
-                }
-              >
-                {slide}
-              </div>
-            ))}
-          </div>
+          {renderSlides()}
         </div>
 
         <button
@@ -129,10 +196,10 @@ export default function Carousel({
         {slides.map((_, i) => (
           <button
             key={i}
-            onClick={() => setIndex(i)}
+            onClick={() => goTo(i, i > displayIndex ? "left" : "right")}
             aria-label={`Slide ${i + 1} von ${total}`}
             className={`rounded-full transition-all duration-300 focus-visible:outline-none ${
-              i === index
+              i === displayIndex
                 ? "w-5 h-[5px] bg-[#1A3352]"
                 : "w-[5px] h-[5px] bg-[#1A3352]/25 hover:bg-[#1A3352]/50"
             }`}

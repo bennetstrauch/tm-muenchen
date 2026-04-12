@@ -4,9 +4,11 @@ import { content } from "../content";
 
 export default function ForWhom({
   activeIndex,
+  onActiveIndexChange,
   tabSlot,
 }: {
   activeIndex?: number;
+  onActiveIndexChange?: (index: number) => void;
   tabSlot?: React.ReactNode;
 }) {
   const { forWhom } = content;
@@ -26,7 +28,7 @@ export default function ForWhom({
 
         {tabSlot}
 
-        <Carousel arrowOffsetPx={110} activeIndex={activeIndex}>
+        <Carousel arrowOffsetPx={110} activeIndex={activeIndex} onIndexChange={onActiveIndexChange}>
           {forWhom.items.map((item, i) => (
             <div key={i} className="bg-[#F9F7E9] rounded-2xl px-7 py-6">
               <div className="flex gap-3 items-start mb-2">
