@@ -4,15 +4,49 @@ import { useState } from "react";
 import { type TMEvent, formatEventDate } from "../lib/events";
 import { content } from "../content";
 
+// ── Shared styles ─────────────────────────────────────────
+
+const INPUT_CLS = `
+  w-full border border-[#C8D8E8] rounded-md px-4 py-2.5
+  text-sm text-[#1A3352] placeholder-[#7A9BB5]
+  focus:outline-none focus:border-[#A5C3D7]
+  bg-[#F9F7E9]
+`;
+
+// ── IndividualAppointment ─────────────────────────────────
+
+function IndividualAppointment() {
+  const { contact } = content;
+  return (
+    <a
+      href={contact.emailHref}
+      className="
+        group flex items-center justify-between gap-4
+        px-5 py-4 mt-4
+        border border-dashed border-[#A5C3D7]/60 rounded-2xl
+        text-[#5C7A97] hover:text-[#1A3352] hover:border-[#A5C3D7] hover:bg-[#A5C3D7]/5
+        transition-all duration-200
+      "
+    >
+      <div className="flex items-center gap-3">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"
+          className="flex-shrink-0 opacity-60 group-hover:opacity-100 transition-opacity">
+          <rect x="1" y="2.5" width="14" height="12.5" rx="1.5" stroke="currentColor" strokeWidth="1" />
+          <path d="M1 6.5h14" stroke="currentColor" strokeWidth="1" />
+          <path d="M5 1v3M11 1v3" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+        </svg>
+        <span className="text-sm font-medium tracking-wide">Individuellen Termin anfragen</span>
+      </div>
+      <span className="text-[#A5C3D7] group-hover:translate-x-0.5 transition-transform" aria-hidden="true">→</span>
+    </a>
+  );
+}
+
+// ── RegistrationForm ──────────────────────────────────────
+
 type FormState = "idle" | "submitting" | "success" | "error";
 
-function RegistrationForm({
-  event,
-  onClose,
-}: {
-  event: TMEvent;
-  onClose: () => void;
-}) {
+function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => void }) {
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const { weekday, date } = formatEventDate(event.date);
@@ -56,9 +90,7 @@ function RegistrationForm({
   if (formState === "success") {
     return (
       <div className="py-6 px-1">
-        <p className="text-[#287E1A] font-medium text-sm mb-1">
-          Anmeldung erfolgreich!
-        </p>
+        <p className="text-[#287E1A] font-medium text-sm mb-1">Anmeldung erfolgreich!</p>
         <p className="text-[#5C7A97] text-sm">
           Wir haben Ihnen eine Bestätigung an Ihre E-Mail-Adresse geschickt.
         </p>
@@ -68,44 +100,12 @@ function RegistrationForm({
 
   return (
     <form onSubmit={handleSubmit} className="py-5 px-1">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-        <input
-          name="name"
-          type="text"
-          placeholder="Name *"
-          required
-          className="
-            w-full border border-[#C8D8E8] rounded-md px-4 py-2.5
-            text-sm text-[#1A3352] placeholder-[#7A9BB5]
-            focus:outline-none focus:border-[#A5C3D7]
-            bg-[#F9F7E9]
-          "
-        />
+      <div className="mb-3">
+        <input name="name" type="text" placeholder="Name *" required className={INPUT_CLS} />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-        <input
-          name="email"
-          type="email"
-          placeholder="E-Mail *"
-          required
-          className="
-            w-full border border-[#C8D8E8] rounded-md px-4 py-2.5
-            text-sm text-[#1A3352] placeholder-[#7A9BB5]
-            focus:outline-none focus:border-[#A5C3D7]
-            bg-[#F9F7E9]
-          "
-        />
-        <input
-          name="phone"
-          type="tel"
-          placeholder="Telefon (optional)"
-          className="
-            w-full border border-[#C8D8E8] rounded-md px-4 py-2.5
-            text-sm text-[#1A3352] placeholder-[#7A9BB5]
-            focus:outline-none focus:border-[#A5C3D7]
-            bg-[#F9F7E9]
-          "
-        />
+        <input name="email" type="email" placeholder="E-Mail *" required className={INPUT_CLS} />
+        <input name="phone" type="tel" placeholder="Telefon (optional)" className={INPUT_CLS} />
       </div>
 
       {formState === "error" && (
@@ -117,11 +117,9 @@ function RegistrationForm({
           type="submit"
           disabled={formState === "submitting"}
           className="
-            inline-flex items-center gap-2
-            px-6 py-3
+            inline-flex items-center gap-2 px-6 py-3
             bg-[#A5C3D7] text-[#1A3352]
-            text-[0.68rem] tracking-[0.18em] uppercase font-medium
-            rounded-full
+            text-[0.68rem] tracking-[0.18em] uppercase font-medium rounded-full
             transition-all duration-300
             hover:bg-[#8BAAC3] hover:shadow-[0_4px_16px_rgba(165,195,215,0.4)]
             disabled:opacity-60 disabled:cursor-not-allowed
@@ -142,6 +140,77 @@ function RegistrationForm({
   );
 }
 
+// ── EventRow ──────────────────────────────────────────────
+
+function EventRow({
+  event,
+  isOpen,
+  onToggle,
+}: {
+  event: TMEvent;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  const { weekday, date } = formatEventDate(event.date);
+  const { events: copy } = content;
+  const isPresenz = event.type === "Präsenz";
+
+  return (
+    <li className="py-7">
+      <div className="flex flex-col gap-2">
+
+        {/* Top row: date+meta left, button right */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col gap-1 min-w-0">
+            <div className="flex items-baseline gap-2 flex-wrap">
+              <span className="text-[0.7rem] tracking-[0.15em] uppercase text-[#5C7A97] whitespace-nowrap">{weekday}</span>
+              <span className="font-display font-light text-[1.35rem] text-[#1A3352] leading-none whitespace-nowrap">{date}</span>
+            </div>
+            <div className="flex items-center gap-3 text-sm text-[#5C7A97]">
+              <span className="whitespace-nowrap">{event.time} Uhr</span>
+              <span className="text-[#D8E4EE]">·</span>
+              <span className={`
+                text-[0.65rem] tracking-[0.12em] uppercase font-medium px-2 py-0.5 rounded-full whitespace-nowrap
+                ${isPresenz ? "bg-[#F0C814]/20 text-[#1A3352]" : "bg-[#D2E6EB] text-[#1A3352]"}
+              `}>
+                {event.type}
+              </span>
+            </div>
+            {event.teacherName && (
+              <span className="text-[0.75rem] text-[#5C7A97] italic">{event.teacherName}</span>
+            )}
+          </div>
+
+          <button
+            onClick={onToggle}
+            className="
+              inline-flex items-center gap-2 flex-shrink-0
+              px-6 py-3
+              border border-[#A5C3D7] text-[#1A3352]
+              text-[0.68rem] tracking-[0.18em] uppercase font-medium rounded-full
+              transition-all duration-300
+              hover:bg-[#A5C3D7] hover:shadow-[0_4px_16px_rgba(165,195,215,0.35)]
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A5C3D7] focus-visible:ring-offset-2
+            "
+          >
+            {isOpen ? "Schließen ×" : copy.cta}
+          </button>
+        </div>
+
+        {/* Location below — full width, no squeezing */}
+        {isPresenz && (
+          <span className="text-[0.75rem] text-[#5C7A97]">{event.location}</span>
+        )}
+
+      </div>
+
+      {isOpen && <RegistrationForm event={event} onClose={onToggle} />}
+    </li>
+  );
+}
+
+// ── Events (page section) ─────────────────────────────────
+
 export default function Events({ events }: { events: TMEvent[] }) {
   const { events: copy } = content;
   const [openIdx, setOpenIdx] = useState<number | null>(null);
@@ -150,7 +219,6 @@ export default function Events({ events }: { events: TMEvent[] }) {
     <section id="anmeldung" className="bg-[#F9F7E9] px-6 py-20 sm:py-28">
       <div className="max-w-2xl mx-auto">
 
-        {/* Heading */}
         <div className="text-center mb-14">
           <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#5C7A97] mb-4">
             Transzendentale Meditation · München
@@ -158,89 +226,29 @@ export default function Events({ events }: { events: TMEvent[] }) {
           <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight mb-3">
             {copy.heading}
           </h2>
-          <p className="text-sm text-[#5C7A97] tracking-wide">
-            {copy.subheading}
-          </p>
+          <p className="text-sm text-[#5C7A97] tracking-wide">{copy.subheading}</p>
         </div>
 
-        {/* Event list */}
         {events.length === 0 ? (
-          <p className="text-center text-[#5C7A97] text-sm py-8">
-            {copy.empty}
-          </p>
+          <IndividualAppointment />
         ) : (
-          <ul className="divide-y divide-[#D8E4EE] px-4">
-            {events.map((event, i) => {
-              const { weekday, date } = formatEventDate(event.date);
-              const isOpen = openIdx === i;
-              return (
-                <li key={i} className="py-7">
-                  <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
-                    {/* Date + meta */}
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-[0.7rem] tracking-[0.15em] uppercase text-[#5C7A97]">
-                          {weekday}
-                        </span>
-                        <span className="font-display font-light text-[1.35rem] text-[#1A3352] leading-none">
-                          {date}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3 text-sm text-[#5C7A97]">
-                        <span>{event.time} Uhr</span>
-                        <span className="text-[#D8E4EE]">·</span>
-                        <span
-                          className={`
-                            text-[0.65rem] tracking-[0.12em] uppercase font-medium px-2 py-0.5 rounded-full
-                            ${event.type === "Online"
-                              ? "bg-[#D2E6EB] text-[#1A3352]"
-                              : "bg-[#F0C814]/20 text-[#1A3352]"
-                            }
-                          `}
-                        >
-                          {event.type}
-                        </span>
-                        {event.type === "Präsenz" && (
-                          <span className="text-[#5C7A97]">{event.location}</span>
-                        )}
-                      </div>
-                      {event.teacherName && (
-                        <span className="text-[0.75rem] text-[#5C7A97] italic">
-                          {event.teacherName}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* CTA */}
-                    <button
-                      onClick={() => setOpenIdx(isOpen ? null : i)}
-                      className="
-                        inline-flex items-center gap-2 self-start sm:self-auto
-                        px-6 py-3
-                        border border-[#A5C3D7] text-[#1A3352]
-                        text-[0.68rem] tracking-[0.18em] uppercase font-medium
-                        rounded-full
-                        transition-all duration-300
-                        hover:bg-[#A5C3D7] hover:shadow-[0_4px_16px_rgba(165,195,215,0.35)]
-                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A5C3D7] focus-visible:ring-offset-2
-                      "
-                    >
-                      {isOpen ? "Schließen ×" : copy.cta}
-                    </button>
-                  </div>
-
-                  {/* Inline registration form */}
-                  {isOpen && (
-                    <RegistrationForm
-                      event={event}
-                      onClose={() => setOpenIdx(null)}
-                    />
-                  )}
-                </li>
-              );
-            })}
-          </ul>
+          <>
+            <ul className="divide-y divide-[#D8E4EE] px-4">
+              {events.map((event, i) => (
+                <EventRow
+                  key={i}
+                  event={event}
+                  isOpen={openIdx === i}
+                  onToggle={() => setOpenIdx(openIdx === i ? null : i)}
+                />
+              ))}
+            </ul>
+            <div className="px-4">
+              <IndividualAppointment />
+            </div>
+          </>
         )}
+
       </div>
     </section>
   );

@@ -43,45 +43,71 @@ function parseTMWDate(dateStr: string): { date: string; time: string } {
   };
 }
 
+// ── Fetch + map a single center ───────────────────────────
+async function fetchCenter(
+  id: number,
+  token: string
+): Promise<TMEvent[]> {
+  const res = await fetch(`https://tmw.meditation.de/api/center/${id}`, {
+    headers: { Authorization: `Token ${token}` },
+    next: { revalidate: 3600 },
+  });
+  if (!res.ok) throw new Error(`TMW API error ${id}: ${res.status}`);
+
+  const data = await res.json();
+  const address = `${data.address1}, ${data.zip_code} ${data.city}`;
+
+  return (data.lectures as { date: string; webinar_link: string; teacher_name: string }[])
+    .map((l) => {
+      const { date, time } = parseTMWDate(l.date);
+      const isOnline = !!l.webinar_link;
+      return {
+        date,
+        time,
+        type: isOnline ? "Online" : "Präsenz",
+        location: isOnline ? "Online" : address,
+        registrationUrl: l.webinar_link || "#",
+        teacherName: l.teacher_name?.trim() || undefined,
+      } as TMEvent;
+    });
+}
+
 // ── Main export ───────────────────────────────────────────
 export async function getEvents(): Promise<TMEvent[]> {
   const token = process.env.TMW_API_KEY;
   if (!token) return DEMO_EVENTS;
 
+  const today = new Date().toISOString().slice(0, 10);
+
   try {
-    const res = await fetch("https://tmw.meditation.de/api/center/108", {
-      headers: { Authorization: `Token ${token}` },
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) throw new Error(`TMW API error: ${res.status}`);
+    // Fetch both centers in parallel; if one fails, fall back gracefully
+    const [center108, center109] = await Promise.allSettled([
+      fetchCenter(108, token),
+      fetchCenter(109, token),
+    ]);
 
-    const data = await res.json();
-    const address = `${data.address1}, ${data.zip_code} ${data.city}`;
-    const today = new Date().toISOString().slice(0, 10);
+    const from108 = center108.status === "fulfilled" ? center108.value : [];
+    const from109 = center109.status === "fulfilled" ? center109.value : [];
 
-    const events: TMEvent[] = (data.lectures as {
-      date: string;
-      webinar_link: string;
-      teacher_name: string;
-    }[])
-      .map((l) => {
-        const { date, time } = parseTMWDate(l.date);
-        const isOnline = !!l.webinar_link;
-        return {
-          date,
-          time,
-          type: isOnline ? "Online" : "Präsenz",
-          location: isOnline ? "Online" : address,
-          registrationUrl: l.webinar_link || "#",
-          teacherName: l.teacher_name?.trim() || undefined,
-        } as TMEvent;
-      })
+    // Build a set of online datetime keys already covered by center 108
+    const onlineKeysCoveredBy108 = new Set(
+      from108
+        .filter((e) => e.type === "Online")
+        .map((e) => `${e.date}|${e.time}`)
+    );
+
+    // From center 109: keep all in-person, drop online if 108 has one at same time
+    const filtered109 = from109.filter(
+      (e) => e.type !== "Online" || !onlineKeysCoveredBy108.has(`${e.date}|${e.time}`)
+    );
+
+    const merged = [...from108, ...filtered109]
       .filter((e) => e.date >= today)
-      .sort((a, b) => a.date.localeCompare(b.date));
+      .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
 
-    return events.length > 0 ? events : DEMO_EVENTS;
+    return merged;
   } catch (err) {
-    console.error("[events] TMW API fetch failed, using demo data:", err);
+    console.error("[events] fetch failed, using demo data:", err);
     return DEMO_EVENTS;
   }
 }
