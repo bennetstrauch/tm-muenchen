@@ -16,7 +16,7 @@ export type Theme = {
   slug: string;
   label: string;
   headline: string[];
-  subline: string[];
+  subtitle: string;
   image: string;
   forWhomIndex: number;
 };
@@ -26,7 +26,7 @@ export const themes: Record<string, Theme> = {
     slug: "", // Haupt-URL: /
     label: "Stress",
     headline: ["Endlich wirklich abschalten.", "Ohne Anstrengung."],
-    subline: ["Transzendentale Meditation", "regeneriert tiefer als Schlaf"],
+    subtitle: "Erfahre besonders tiefe Ruhe",
     image: "/hero.jpg",
     forWhomIndex: 0,
   },
@@ -34,10 +34,7 @@ export const themes: Record<string, Theme> = {
     slug: "depression", // URL: /depression
     label: "Depression",
     headline: ["Wieder leicht werden.", "Ganz ohne Willenskraft."],
-    subline: [
-      "TM reduziert nachweislich Symptome",
-      "von Erschöpfung und Depression",
-    ],
+    subtitle: "Tiefe Ruhe für emotionale Entlastung",
     image: "/hero-depression.jpg",
     forWhomIndex: 3,
   },
@@ -58,9 +55,16 @@ export const forWhomTabs: { label: string; themeKey?: ThemeKey }[] = [
 ];
 
 export const content = {
+  contact: {
+    phone: "+49 163 7354 836",
+    phoneHref: "tel:+491637354836",
+    email: "bennet.strauch@meditation.de",
+    emailHref: "mailto:bennet.strauch@meditation.de",
+  },
+
   hero: {
     learnMore: "Mehr über TM erfahren",
-    learnMoreHref: "#warum-tm",
+    learnMoreHref: "#fuer-wen",
     cta: "Kostenlose Info-Session",
     ctaHref: "#anmeldung",
   },

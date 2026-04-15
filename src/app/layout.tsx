@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Lora, Plus_Jakarta_Sans } from "next/font/google";
 import { Cormorant_Garamond } from "next/font/google";
 import StickyCta from "@/components/sticky-cta";
-import HamburgerMenu from "@/components/hamburger-menu";
+import TopBar from "@/components/top-bar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -47,7 +47,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${cormorant.variable} ${lora.variable} ${plusJakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <HamburgerMenu />
+        <TopBar />
         {children}
         <StickyCta />
       </body>

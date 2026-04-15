@@ -9,55 +9,44 @@ const NAV_LINKS = [
   { label: "Nächste Infovorträge", href: "#anmeldung" },
 ];
 
-export default function HamburgerMenu() {
+export default function NavMenu() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
-    function handler(e: MouseEvent) {
+    function onClickOutside(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
-    function onKey(e: KeyboardEvent) {
+    function onEscape(e: KeyboardEvent) {
       if (e.key === "Escape") setOpen(false);
     }
-    document.addEventListener("mousedown", handler);
-    document.addEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onClickOutside);
+    document.addEventListener("keydown", onEscape);
     return () => {
-      document.removeEventListener("mousedown", handler);
-      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onClickOutside);
+      document.removeEventListener("keydown", onEscape);
     };
   }, [open]);
 
   return (
-    <div ref={ref} className="fixed top-5 left-5 z-[9998]">
-      {/* Hamburger button */}
+    <div ref={ref} className="relative flex-shrink-0">
       <button
         onClick={() => setOpen(o => !o)}
         aria-label={open ? "Menü schließen" : "Menü öffnen"}
         aria-expanded={open}
-        className="
-          flex flex-col justify-center items-center gap-[5px]
-          w-10 h-10 rounded-full
-          bg-white/10 backdrop-blur-md
-          border border-white/20
-          shadow-[0_2px_12px_rgba(26,51,82,0.08)]
-          hover:shadow-[0_4px_16px_rgba(26,51,82,0.12)]
-          transition-all duration-200
-          focus-visible:outline-none
-        "
+        className="flex flex-col justify-center items-center gap-[5px] w-9 h-9 rounded-full hover:bg-[#1A3352]/8 transition-all duration-200 focus-visible:outline-none"
       >
         <span className={`block w-4 h-[1.5px] bg-[#1A3352] transition-all duration-300 origin-center ${open ? "translate-y-[6.5px] rotate-45" : ""}`} />
         <span className={`block w-4 h-[1.5px] bg-[#1A3352] transition-all duration-200 ${open ? "opacity-0 scale-x-0" : ""}`} />
         <span className={`block w-4 h-[1.5px] bg-[#1A3352] transition-all duration-300 origin-center ${open ? "-translate-y-[6.5px] -rotate-45" : ""}`} />
       </button>
 
-      {/* Dropdown */}
       <div
         className={`
-          absolute top-12 left-0
-          bg-white/10 backdrop-blur-md
-          border border-white/20
+          absolute top-11 left-0
+          bg-white/20 backdrop-blur-md
+          border border-white/25
           rounded-2xl shadow-[0_8px_40px_rgba(26,51,82,0.12)]
           py-3 min-w-[220px]
           flex flex-col
@@ -70,13 +59,7 @@ export default function HamburgerMenu() {
             key={link.href}
             href={link.href}
             onClick={() => setOpen(false)}
-            className="
-              px-5 py-3
-              text-[0.9rem] font-medium text-[#1A3352]
-              hover:bg-[#1A3352]/5
-              transition-colors duration-150
-              focus-visible:outline-none
-            "
+            className="px-5 py-3 text-[0.9rem] font-medium text-[#1A3352] hover:bg-[#1A3352]/5 transition-colors duration-150 focus-visible:outline-none"
           >
             {link.label}
           </a>

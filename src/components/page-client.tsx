@@ -67,7 +67,7 @@ export default function PageClient({ initialTheme }: { initialTheme: ThemeKey })
       <div className="relative">
         <Hero
           headline={heroTheme.headline}
-          subline={heroTheme.subline}
+          subtitle={heroTheme.subtitle}
           imageSrc={heroTheme.image}
         />
         {heroThemeIndex > 0 && (

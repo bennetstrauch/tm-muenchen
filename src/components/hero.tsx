@@ -19,16 +19,16 @@ let heroHasAnimated = false;
 
 export default function Hero({
   headline,
-  subline,
+  subtitle,
   imageSrc,
 }: {
   headline?: string[];
-  subline?: string[];
+  subtitle?: string;
   imageSrc?: string;
 } = {}) {
   const { hero } = content;
   const headlineLines = headline ?? ["Endlich wirklich abschalten.", "Ohne Anstrengung."];
-  const sublineLines  = subline  ?? ["Transzendentale Meditation", "regeneriert tiefer als Schlaf"];
+  const subtitleText  = subtitle  ?? "regeneriert tiefer als Schlaf";
   const imageSource   = imageSrc ?? "/hero.jpg";
 
   // Capture first-load state synchronously before useEffect fires
@@ -40,7 +40,7 @@ export default function Hero({
   const staticAnim = (anim: string) => isFirstLoad.current ? { animation: anim } : undefined;
 
   return (
-    <section className="relative min-h-[100dvh] flex flex-col items-center px-8 pt-4">
+    <section id="hero" className="relative min-h-[100dvh] flex flex-col items-center px-8 pt-14">
 
       {/* ── Background image ──────────────────────────── */}
       <div
@@ -87,24 +87,20 @@ export default function Hero({
         </div>
       </div>
 
-      {/* ── Eyebrow — static, animates only on first load ── */}
-      <p
-        className={`relative z-10 text-center text-[0.65rem] tracking-[0.15em] uppercase text-[#5C7A97] whitespace-nowrap ${staticCls}`}
-        style={staticAnim("fadeInUp 0.7s ease forwards 0s")}
-      >
-        Transzendentale Meditation · München
-      </p>
 
       {/* ── Badge — static, animates only on first load ──── */}
       <div
-        className={`relative z-10 mt-3 ${staticCls}`}
+        className={`relative z-[9999] -mt-2.5 ${staticCls}`}
         style={staticAnim("fadeInUp 0.7s ease forwards 0.06s")}
       >
-        <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#cc6b1a]/20 border border-[#cc6b1a]/50">
+        <a
+          href="#warum-tm"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#cc6b1a]/20 border border-[#cc6b1a]/50 hover:bg-[#cc6b1a]/30 transition-colors duration-200"
+        >
           <span className="text-[0.6rem] tracking-[0.18em] uppercase text-[#1A3352] font-medium">
             Die einzige Technik ihrer Art
           </span>
-        </span>
+        </a>
       </div>
 
       {/* ── Headline — always animates (content changes per theme) ── */}
@@ -113,10 +109,10 @@ export default function Hero({
         style={{ animation: "fadeInUp 0.75s ease forwards 0.12s" }}
       >
         <h1 className="w-full">
-          <span className="block font-display font-light text-[2rem] leading-[1.2] sm:text-[4.25rem] text-[#1A3352]">
+          <span className="block font-display font-light text-[2.5rem] leading-[1.2] sm:text-[5.25rem] text-[#1A3352]">
             {headlineLines[0]}
           </span>
-          <span className="block font-display font-light italic text-[2rem] leading-[1.2] sm:text-[4.25rem] text-[#1A3352]">
+          <span className="block font-display font-light italic text-[2.5rem] leading-[1.2] sm:text-[5.25rem] text-[#1A3352]">
             {headlineLines[1]}
           </span>
         </h1>
@@ -125,16 +121,19 @@ export default function Hero({
         </div>
       </div>
 
-      {/* ── Subline — always animates (content changes per theme) ── */}
+      {/* ── Brand + subtitle — always animates (content changes per theme) ── */}
       <div className="relative z-10 mt-auto flex flex-col items-center text-center gap-7 pb-24">
-        <p
-          className="text-base sm:text-lg text-[#1A3352] leading-[1.85] opacity-0"
+        <div
+          className="flex flex-col items-center gap-1.5 opacity-0 -translate-y-4"
           style={{ animation: "fadeInUp 0.75s ease forwards 0.32s" }}
         >
-          {sublineLines.map((line, i) => (
-            <span key={i} className="block">{line}</span>
-          ))}
-        </p>
+          <span className="font-display font-medium text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight tracking-wide">
+            Transzendentale Meditation
+          </span>
+          <span className="text-base sm:text-lg text-[#1A3352]/65 font-light tracking-[0.06em]">
+            {subtitleText}
+          </span>
+        </div>
 
         {/* Button — static, animates only on first load */}
         <a
