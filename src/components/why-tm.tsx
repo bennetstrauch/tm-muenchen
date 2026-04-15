@@ -27,13 +27,13 @@ export default function WhyTm() {
             <div key={i} className="border-t border-b border-[#D8E4EE] pt-8 pb-8">
               <div className="flex gap-3 items-start mb-3">
                 <span
-                  className="font-display font-light text-[2.5rem] leading-none select-none flex-shrink-0"
+                  className="font-display font-light text-[2.5rem] leading-none select-none flex-shrink-0 -mt-1.5"
                   style={{ color: "rgb(240 200 20 / 0.7)" }}
                   aria-hidden="true"
                 >
                   {i + 1}
                 </span>
-                <h3 className="font-display font-light text-[1.25rem] sm:text-[1.4rem] text-[#1A3352] leading-snug pt-1">
+                <h3 className="font-[family-name:var(--font-jakarta)] font-medium text-[1.2rem] text-[#1A3352] leading-snug pt-1">
                   {benefit.title}
                 </h3>
               </div>

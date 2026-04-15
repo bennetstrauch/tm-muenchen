@@ -121,6 +121,7 @@ export const content = {
       },
       {
         title: "Klarer denken, ruhiger reagieren",
+        // ## new section devoted to brain function itself
         short:
           "Diverse Studien zeigen: Regelmäßig Praktizierende reagieren ruhiger in stressigen Situationen, entscheiden klarer, sind kreativer. Das ist keine Selbstsuggestion — sondern messbar in der Gehirnaktivität.",
         expanded:

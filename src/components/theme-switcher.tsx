@@ -51,8 +51,8 @@ export default function ThemeSwitcher({
             <button
               onClick={() => onTabChange(slotIndex)}
               className={`
-                px-1.5 sm:px-2 py-1 rounded
-                text-[0.65rem] tracking-[0.15em] uppercase
+                px-2 sm:px-3 py-1.5 rounded
+                text-[0.95rem] tracking-[0.15em] uppercase
                 transition-all duration-200 focus-visible:outline-none whitespace-nowrap
                 ${isActive
                   ? "text-[#1A3352] font-medium"

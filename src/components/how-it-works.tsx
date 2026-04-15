@@ -4,7 +4,7 @@ export default function HowItWorks() {
   const { howItWorks } = content;
 
   return (
-    <section className="bg-[#F6EDE5] px-6 py-20 sm:py-28">
+    <section id="wie-es-funktioniert" className="bg-[#F6EDE5] px-6 py-20 sm:py-28">
       <div className="max-w-2xl mx-auto">
 
         {/* Heading */}

@@ -14,7 +14,7 @@ export default function ForWhom({
   const { forWhom } = content;
 
   return (
-    <section className="bg-[#F6EDE5] px-6 py-20 sm:py-28">
+    <section id="fuer-wen" className="bg-[#F6EDE5] px-6 py-20 sm:py-28">
       <div className="max-w-2xl mx-auto">
 
         <div className="text-center mb-8">
@@ -31,15 +31,8 @@ export default function ForWhom({
         <Carousel arrowOffsetPx={110} activeIndex={activeIndex} onIndexChange={onActiveIndexChange}>
           {forWhom.items.map((item, i) => (
             <div key={i} className="bg-[#F9F7E9] rounded-2xl px-7 py-6">
-              <div className="flex gap-3 items-start mb-2">
-                <span
-                  className="font-display font-light text-[2.5rem] leading-none select-none flex-shrink-0"
-                  style={{ color: "rgb(240 200 20 / 0.9)" }}
-                  aria-hidden="true"
-                >
-                  {i + 1}
-                </span>
-                <h3 className="font-display font-light text-[1.2rem] text-[#1A3352] leading-snug pt-1">
+              <div className="mb-3 text-center">
+                <h3 className="font-[family-name:var(--font-jakarta)] font-semibold text-[1.2rem] text-[#1A3352] leading-snug">
                   {item.title}
                 </h3>
               </div>
