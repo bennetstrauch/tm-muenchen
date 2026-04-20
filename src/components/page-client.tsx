@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import Hero from "./hero";
 import ForWhom from "./for-whom";
@@ -35,7 +36,7 @@ function HeroArrow({ direction, onClick }: { direction: "left" | "right"; onClic
   );
 }
 
-export default function PageClient({ initialTheme }: { initialTheme: ThemeKey }) {
+export default function PageClient({ initialTheme, testimonialSlot }: { initialTheme: ThemeKey; testimonialSlot?: React.ReactNode }) {
   const router = useRouter();
   const initialTab: number = themes[initialTheme].forWhomIndex;
   const [activeTab, setActiveTab] = useState<number>(initialTab);
@@ -77,6 +78,8 @@ export default function PageClient({ initialTheme }: { initialTheme: ThemeKey })
           <HeroArrow direction="right" onClick={() => navigateToTheme(HERO_THEMES[heroThemeIndex + 1])} />
         )}
       </div>
+
+      {testimonialSlot}
 
       {/* ForWhom section — tab switcher sits between heading and carousel */}
       <ForWhom

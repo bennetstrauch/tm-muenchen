@@ -4,13 +4,6 @@ import { useRef, useEffect } from "react";
 import Image from "next/image";
 import { content } from "../content";
 
-const RINGS = [
-  { size: "72vmax", opacity: 0.04,  duration: 9,  delay: 0   },
-  { size: "52vmax", opacity: 0.05,  duration: 11, delay: 1.2 },
-  { size: "34vmax", opacity: 0.06,  duration: 8,  delay: 0.6 },
-  { size: "18vmax", opacity: 0.065, duration: 13, delay: 1.8 },
-];
-
 /**
  * Module-level flag — survives client-side navigations (JS module stays in memory).
  * Resets only on full browser refresh.
@@ -66,27 +59,6 @@ export default function Hero({
 
       {/* ── Off-white overlay ─────────────────────────── */}
       <div className="absolute inset-0 bg-[#F9F7E9]/65" />
-
-      {/* ── Decorative rings ──────────────────────────── */}
-      <div aria-hidden="true" className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 flex items-center justify-center">
-          {RINGS.map((ring, i) => (
-            <div
-              key={i}
-              className="absolute rounded-full border border-[#1A3352]"
-              style={{
-                width: ring.size,
-                height: ring.size,
-                ["--ring-opacity" as string]: ring.opacity,
-                opacity: ring.opacity,
-                animation: `pulseRing ${ring.duration}s ease-in-out infinite`,
-                animationDelay: `${ring.delay}s`,
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
 
       {/* ── Badge — static, animates only on first load ──── */}
       <div

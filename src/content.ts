@@ -43,6 +43,43 @@ export const themes: Record<string, Theme> = {
 export type ThemeKey = "stress" | "depression";
 
 // ─────────────────────────────────────────────────
+//  ERFAHRUNGSBERICHTE — Zitate von Meditierenden.
+//  Jedes Thema kann eigene Testimonials haben.
+//  Fehlt ein Eintrag, werden die Standard-Testimonials gezeigt.
+// ─────────────────────────────────────────────────
+export type Testimonial = {
+  quote: string;
+  name: string;
+  detail?: string; // z.B. "Lehrerin, 42" oder "München"
+  image?: string;  // Pfad im /public Ordner
+};
+
+export const defaultTestimonials: Testimonial[] = [
+  {
+    quote: "Transzendentale Meditation ermöglicht es mir, nach innen zu gehen und eine Tiefe von Ruhe und Frieden zu finden, die ich sonst nirgendwo erlebe.",
+    name: "Jerry Seinfeld",
+    detail: "Comedian",
+    image: "/testamonials/ocean_sun_testimonial_jerry_seinfeld.jpg",
+  },
+];
+
+const themeTestimonials: Partial<Record<string, Testimonial[]>> = {
+  // "depression2" — not mapped to the depression theme yet, preserved for later
+  depression2: [
+    {
+      quote: "Man findet das Gold von innen herein und verabschiedet sich vom Müll.",
+      name: "David Lynch",
+      detail: "Filmregisseur",
+      image: "/testamonials/david_lynch_grayscale.jpg",
+    },
+  ],
+};
+
+export function getTestimonials(themeKey: ThemeKey): Testimonial[] {
+  return themeTestimonials[themeKey] ?? defaultTestimonials;
+}
+
+// ─────────────────────────────────────────────────
 //  FOR-WHOM TABS — Reihenfolge bestimmt den Tab-Index.
 //  themeKey: welches Thema beim Klick aktiviert wird
 //  (undefined = kein Hero-Wechsel, nur Carousel-Index)

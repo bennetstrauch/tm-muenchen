@@ -2,9 +2,11 @@ import PageClient from "@/components/page-client";
 import WhyTm from "@/components/why-tm";
 import HowItWorks from "@/components/how-it-works";
 import Trustpilot from "@/components/trustpilot";
+import Testimonials from "@/components/testimonials";
 import Events from "@/components/events";
 import { getEvents } from "@/lib/events";
 import { getTrustpilotStats } from "@/lib/trustpilot";
+import { getTestimonials } from "@/content";
 
 export const metadata = {
   title: "TM München – Transzendentale Meditation bei Depression",
@@ -17,7 +19,7 @@ export default async function DepressionPage() {
 
   return (
     <main>
-      <PageClient initialTheme="depression" />
+      <PageClient initialTheme="depression" testimonialSlot={<Testimonials testimonials={getTestimonials("depression")} />} />
       <WhyTm />
       <HowItWorks />
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />
