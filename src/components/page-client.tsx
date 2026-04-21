@@ -69,7 +69,7 @@ export default function PageClient({ initialTheme, testimonialSlot }: { initialT
         <Hero
           headline={heroTheme.headline}
           subtitle={heroTheme.subtitle}
-          imageSrc={heroTheme.image}
+          images={heroTheme.images}
         />
         {heroThemeIndex > 0 && (
           <HeroArrow direction="left" onClick={() => navigateToTheme(HERO_THEMES[heroThemeIndex - 1])} />

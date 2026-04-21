@@ -1,66 +1,43 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-import Image from "next/image";
-import { content } from "../content";
+import { content, type HeroImage } from "../content";
+import HeroBackground from "./hero-background";
 
-/**
- * Module-level flag — survives client-side navigations (JS module stays in memory).
- * Resets only on full browser refresh.
- */
 let heroHasAnimated = false;
+
+const STRESS_FALLBACK: HeroImage[] = Array.from({ length: 18 }, (_, i) => ({ src: `/hero/stress/${i + 1}.jpg` }));
 
 export default function Hero({
   headline,
   subtitle,
-  imageSrc,
+  images,
 }: {
   headline?: string[];
   subtitle?: string;
-  imageSrc?: string;
+  images?: HeroImage[];
 } = {}) {
   const { hero } = content;
   const headlineLines = headline ?? ["Endlich wirklich abschalten.", "Ohne Anstrengung."];
   const subtitleText  = subtitle  ?? "regeneriert tiefer als Schlaf";
-  const imageSource   = imageSrc ?? "/hero.jpg";
+  const imagePool     = images?.length ? images : STRESS_FALLBACK;
 
-  // Capture first-load state synchronously before useEffect fires
   const isFirstLoad = useRef(!heroHasAnimated);
   useEffect(() => { heroHasAnimated = true; }, []);
 
-  // Static elements (eyebrow, badge, button): animate only on first page load
   const staticCls  = isFirstLoad.current ? "opacity-0" : "";
   const staticAnim = (anim: string) => isFirstLoad.current ? { animation: anim } : undefined;
 
   return (
     <section id="hero" className="relative min-h-[100dvh] flex flex-col items-center px-8 pt-14">
 
-      {/* ── Background image ──────────────────────────── */}
-      <div
-        className="absolute inset-0 overflow-hidden"
-        style={{ background: "linear-gradient(135deg, #d4c5a9 0%, #9e8c72 60%, #7a6a54 100%)" }}
-      >
-        {/* key causes remount on theme change → blur-in animation replays */}
-        <div
-          key={imageSource}
-          className="absolute inset-0 hero-img-shift"
-          style={{ animation: "heroImageIn 0.45s ease forwards" }}
-        >
-          <Image
-            src={imageSource}
-            alt=""
-            fill
-            className="object-cover object-right sm:object-center"
-            priority
-            sizes="100vw"
-          />
-        </div>
-      </div>
+      {/* ── Background ────────────────────────────────── */}
+      <HeroBackground images={imagePool} />
 
       {/* ── Off-white overlay ─────────────────────────── */}
       <div className="absolute inset-0 bg-[#F9F7E9]/65" />
 
-      {/* ── Badge — static, animates only on first load ──── */}
+      {/* ── Badge ─────────────────────────────────────── */}
       <div
         className={`relative z-[9999] -mt-2.5 ${staticCls}`}
         style={staticAnim("fadeInUp 0.7s ease forwards 0.06s")}
@@ -75,7 +52,7 @@ export default function Hero({
         </a>
       </div>
 
-      {/* ── Headline — always animates (content changes per theme) ── */}
+      {/* ── Headline ──────────────────────────────────── */}
       <div
         className="relative z-10 flex flex-col items-center text-center w-full max-w-xl mt-[calc(4vh+2rem)] sm:mt-[calc(7vh+3.5rem)] opacity-0"
         style={{ animation: "fadeInUp 0.75s ease forwards 0.12s" }}
@@ -93,7 +70,7 @@ export default function Hero({
         </div>
       </div>
 
-      {/* ── Brand + subtitle — always animates (content changes per theme) ── */}
+      {/* ── Brand + subtitle ──────────────────────────── */}
       <div className="relative z-10 mt-auto flex flex-col items-center text-center gap-7 pb-24">
         <div
           className="flex flex-col items-center gap-1.5 opacity-0 -translate-y-4"
@@ -107,7 +84,6 @@ export default function Hero({
           </span>
         </div>
 
-        {/* Button — static, animates only on first load */}
         <a
           href={hero.learnMoreHref}
           className={`
