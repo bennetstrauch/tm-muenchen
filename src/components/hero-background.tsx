@@ -42,13 +42,13 @@ export default function HeroBackground({ images }: { images: HeroImage[] }) {
       className="absolute inset-0 overflow-hidden"
       style={{ background: "linear-gradient(135deg, #d4c5a9 0%, #9e8c72 60%, #7a6a54 100%)" }}
     >
-      <AnimatePresence>
+      <AnimatePresence mode="sync" initial={false}>
         <motion.div
           key={current.src}
           className="absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0, filter: "blur(24px)" }}
+          initial={{ opacity: 0, scale: 1.05 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 1.02 }}
           transition={{ duration: TRANSITION_MS / 1000, ease: "easeInOut" }}
         >
           <Image
