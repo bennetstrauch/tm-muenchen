@@ -8,33 +8,34 @@ import { type HeroImage } from "../content";
 const TRANSITION_MS = 1000;
 const SLIDESHOW_MS  = 6000;
 
-function pickRandom(pool: HeroImage[], exclude?: HeroImage): HeroImage {
-  const candidates = pool.length > 1 && exclude ? pool.filter(x => x !== exclude) : pool;
-  return candidates[Math.floor(Math.random() * candidates.length)];
-}
-
 export default function HeroBackground({ images }: { images: HeroImage[] }) {
-  const [current, setCurrent] = useState<HeroImage>(images[0]);
-  const currentRef = useRef(current);
-  const poolRef    = useRef(images);
-  poolRef.current  = images;
+  const [index, setIndex] = useState(0);
+  const indexRef = useRef(0);
 
+  // After hydration: jump to a random index, then proceed in order from there
   useEffect(() => {
     if (images.length <= 1) return;
-    const start = pickRandom(images);
-    currentRef.current = start;
-    setCurrent(start);
-  }, [images]);
+    let intervalId: ReturnType<typeof setInterval>;
 
-  useEffect(() => {
-    if (images.length <= 1) return;
-    const id = setInterval(() => {
-      const next = pickRandom(poolRef.current, currentRef.current);
-      currentRef.current = next;
-      setCurrent(next);
+    const timeoutId = setTimeout(() => {
+      const start = Math.floor(Math.random() * images.length);
+      indexRef.current = start;
+      setIndex(start);
+
+      intervalId = setInterval(() => {
+        const next = (indexRef.current + 1) % images.length;
+        indexRef.current = next;
+        setIndex(next);
+      }, SLIDESHOW_MS);
     }, SLIDESHOW_MS);
-    return () => clearInterval(id);
+
+    return () => {
+      clearTimeout(timeoutId);
+      clearInterval(intervalId);
+    };
   }, [images]);
+
+  const current = images[index] ?? images[0];
 
   return (
     <div
