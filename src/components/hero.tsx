@@ -35,7 +35,7 @@ export default function Hero({
       <HeroBackground images={imagePool} />
 
       {/* ── Off-white overlay ─────────────────────────── */}
-      <div className="absolute inset-0 bg-[#F9F7E9]/65" />
+      <div className="absolute inset-0 bg-white/60" />
 
       {/* ── Badge ─────────────────────────────────────── */}
       <div

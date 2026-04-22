@@ -24,7 +24,7 @@ export default function Trustpilot({
   }, []);
 
   return (
-    <section className="bg-[#F6EDE5] px-6 py-16 sm:py-20">
+    <section className="bg-[#EFF6FF] px-6 py-16 sm:py-20">
       <Script
         src="https://widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js"
         strategy="lazyOnload"
@@ -40,7 +40,7 @@ export default function Trustpilot({
           <div className="inline-flex flex-col items-center gap-4">
 
             {/* Exzellent + Trustpilot badge */}
-            <div className="flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#D8E4EE] bg-[#F9F7E9]">
+            <div className="flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#DBEAFE] bg-white">
               <span className="text-[0.8rem] text-[#1A3352] font-medium">
                 Exzellent
               </span>
@@ -108,7 +108,7 @@ export default function Trustpilot({
           {/* Fade out the widget footer text */}
           <div
             className="absolute bottom-0 left-0 right-0 h-22 pointer-events-none"
-            style={{ background: "linear-gradient(to top, #F6EDE5 60%, transparent)" }}
+            style={{ background: "linear-gradient(to top, #EFF6FF 60%, transparent)" }}
           />
         </div>
       </div>

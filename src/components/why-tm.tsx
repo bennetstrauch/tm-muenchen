@@ -6,29 +6,29 @@ export default function WhyTm() {
   const { whyTm } = content;
 
   return (
-    <section id="warum-tm" className="bg-[#F9F7E9] px-6 py-20 sm:py-28">
+    <section id="warum-tm" className="bg-white px-6 py-20 sm:py-28">
       <div className="max-w-2xl mx-auto">
 
         {/* Heading */}
         <div className="text-center mb-16">
-          <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#5C7A97] mb-4">
+          <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#4A72B0] mb-4">
             Warum TM?
           </p>
           <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight mb-4">
             {whyTm.heading}
           </h2>
-          <p className="text-base text-[#5C7A97] leading-relaxed max-w-md mx-auto">
+          <p className="text-base text-[#4A72B0] leading-relaxed max-w-md mx-auto">
             {whyTm.subheading}
           </p>
         </div>
 
         <Carousel arrowOffsetPx={145}>
           {whyTm.benefits.map((benefit, i) => (
-            <div key={i} className="border-t border-b border-[#D8E4EE] pt-8 pb-8">
+            <div key={i} className="border-t border-b border-[#DBEAFE] pt-8 pb-8">
               <div className="flex gap-3 items-start mb-3">
                 <span
                   className="font-display font-light text-[2.5rem] leading-none select-none flex-shrink-0 -mt-1.5"
-                  style={{ color: "rgb(240 200 20 / 0.7)" }}
+                  style={{ color: "rgb(245 158 11 / 0.75)" }}
                   aria-hidden="true"
                 >
                   {i + 1}
@@ -37,7 +37,7 @@ export default function WhyTm() {
                   {benefit.title}
                 </h3>
               </div>
-              <p className="text-base text-[#5C7A97] leading-relaxed">
+              <p className="text-base text-[#4A72B0] leading-relaxed">
                 {benefit.short}
               </p>
               <Expandable>{benefit.expanded}</Expandable>

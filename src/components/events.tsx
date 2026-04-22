@@ -7,10 +7,10 @@ import { content } from "../content";
 // ── Shared styles ─────────────────────────────────────────
 
 const INPUT_CLS = `
-  w-full border border-[#C8D8E8] rounded-md px-4 py-2.5
+  w-full border border-[#DBEAFE] rounded-md px-4 py-2.5
   text-sm text-[#1A3352] placeholder-[#7A9BB5]
   focus:outline-none focus:border-[#A5C3D7]
-  bg-[#F9F7E9]
+  bg-white
 `;
 
 // ── IndividualAppointment ─────────────────────────────────
@@ -24,7 +24,7 @@ function IndividualAppointment() {
         group flex items-center justify-between gap-4
         px-5 py-4 mt-4
         border border-dashed border-[#A5C3D7]/60 rounded-2xl
-        text-[#5C7A97] hover:text-[#1A3352] hover:border-[#A5C3D7] hover:bg-[#A5C3D7]/5
+        text-[#4A72B0] hover:text-[#1A3352] hover:border-[#A5C3D7] hover:bg-[#A5C3D7]/5
         transition-all duration-200
       "
     >
@@ -91,7 +91,7 @@ function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => v
     return (
       <div className="py-6 px-1">
         <p className="text-[#287E1A] font-medium text-sm mb-1">Anmeldung erfolgreich!</p>
-        <p className="text-[#5C7A97] text-sm">
+        <p className="text-[#4A72B0] text-sm">
           Wir haben Ihnen eine Bestätigung an Ihre E-Mail-Adresse geschickt.
         </p>
       </div>
@@ -131,7 +131,7 @@ function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => v
         <button
           type="button"
           onClick={onClose}
-          className="text-[0.68rem] tracking-[0.12em] uppercase text-[#5C7A97] hover:text-[#1A3352] transition-colors"
+          className="text-[0.68rem] tracking-[0.12em] uppercase text-[#4A72B0] hover:text-[#1A3352] transition-colors"
         >
           Abbrechen
         </button>
@@ -163,21 +163,21 @@ function EventRow({
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col gap-1 min-w-0">
             <div className="flex items-baseline gap-2 flex-wrap">
-              <span className="text-[0.7rem] tracking-[0.15em] uppercase text-[#5C7A97] whitespace-nowrap">{weekday}</span>
-              <span className="font-display font-light text-[1.35rem] text-[#1A3352] leading-none whitespace-nowrap">{date}</span>
+              <span className="text-[1rem] tracking-[0.15em] uppercase text-[#1A3352]/60 whitespace-nowrap">{weekday}</span>
+              <span className="font-[family-name:var(--font-jakarta)] font-semibold text-[1.05rem] text-[#1A3352] leading-snug whitespace-nowrap">{date}</span>
             </div>
-            <div className="flex items-center gap-3 text-sm text-[#5C7A97]">
+            <div className="flex items-center gap-3 text-start text-[#1A3352]/60">
               <span className="whitespace-nowrap">{event.time} Uhr</span>
-              <span className="text-[#D8E4EE]">·</span>
+              <span className="text-[#DBEAFE]">·</span>
               <span className={`
                 text-[0.65rem] tracking-[0.12em] uppercase font-medium px-2 py-0.5 rounded-full whitespace-nowrap
-                ${isPresenz ? "bg-[#F0C814]/20 text-[#1A3352]" : "bg-[#D2E6EB] text-[#1A3352]"}
+                ${isPresenz ? "bg-[#F59E0B]/20 text-[#1A3352]" : "bg-[#DBEAFE] text-[#1A3352]"}
               `}>
                 {event.type}
               </span>
             </div>
             {event.teacherName && (
-              <span className="text-[0.75rem] text-[#5C7A97] italic">{event.teacherName}</span>
+              <span className="text-[0.75rem] text-[#4A72B0] italic">{event.teacherName}</span>
             )}
           </div>
 
@@ -186,11 +186,11 @@ function EventRow({
             className="
               inline-flex items-center gap-2 flex-shrink-0
               px-6 py-3
-              border border-[#A5C3D7] text-[#1A3352]
+              bg-[#FEF3C7] border border-[#F59E0B]/50 text-[#1A3352]
               text-[0.68rem] tracking-[0.18em] uppercase font-medium rounded-full
               transition-all duration-300
-              hover:bg-[#A5C3D7] hover:shadow-[0_4px_16px_rgba(165,195,215,0.35)]
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A5C3D7] focus-visible:ring-offset-2
+              hover:bg-[#FDE68A] hover:border-[#F59E0B]/80 hover:shadow-[0_4px_16px_rgba(245,158,11,0.25)]
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B] focus-visible:ring-offset-2
             "
           >
             {isOpen ? "Schließen ×" : copy.cta}
@@ -199,7 +199,7 @@ function EventRow({
 
         {/* Location below — full width, no squeezing */}
         {isPresenz && (
-          <span className="text-[0.75rem] text-[#5C7A97]">{event.location}</span>
+          <span className="text-[0.75rem] text-[#4A72B0]">{event.location}</span>
         )}
 
       </div>
@@ -216,24 +216,25 @@ export default function Events({ events }: { events: TMEvent[] }) {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
 
   return (
-    <section id="anmeldung" className="bg-[#F9F7E9] px-6 py-20 sm:py-28">
+    <section id="anmeldung" className="bg-white px-6 py-20 sm:py-28">
       <div className="max-w-2xl mx-auto">
 
         <div className="text-center mb-14">
-          <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#5C7A97] mb-4">
+          <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#4A72B0] mb-4">
             Transzendentale Meditation · München
+
           </p>
           <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight mb-3">
             {copy.heading}
           </h2>
-          <p className="text-sm text-[#5C7A97] tracking-wide">{copy.subheading}</p>
+          <p className="text-sm text-[#4A72B0] tracking-wide">{copy.subheading}</p>
         </div>
 
         {events.length === 0 ? (
           <IndividualAppointment />
         ) : (
           <>
-            <ul className="divide-y divide-[#D8E4EE] px-4">
+            <ul className="divide-y divide-[#DBEAFE] px-4">
               {events.map((event, i) => (
                 <EventRow
                   key={i}
