@@ -18,7 +18,7 @@ export default function ForWhom({
       <div className="max-w-2xl mx-auto">
 
         <div className="text-center mb-8">
-          <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#4A72B0] mb-4">
+          <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#3D5573] mb-4">
             Für dich
           </p>
           <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight">
@@ -36,7 +36,7 @@ export default function ForWhom({
                   {item.title}
                 </h3>
               </div>
-              <p className="text-base text-[#4A72B0] leading-relaxed">
+              <p className="text-base text-[#3D5573] leading-relaxed">
                 {item.description}
               </p>
             </div>

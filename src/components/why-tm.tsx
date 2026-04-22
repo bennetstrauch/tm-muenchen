@@ -11,13 +11,13 @@ export default function WhyTm() {
 
         {/* Heading */}
         <div className="text-center mb-16">
-          <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#4A72B0] mb-4">
+          <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#3D5573] mb-4">
             Warum TM?
           </p>
           <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight mb-4">
             {whyTm.heading}
           </h2>
-          <p className="text-base text-[#4A72B0] leading-relaxed max-w-md mx-auto">
+          <p className="text-base text-[#3D5573] leading-relaxed max-w-md mx-auto">
             {whyTm.subheading}
           </p>
         </div>
@@ -37,7 +37,7 @@ export default function WhyTm() {
                   {benefit.title}
                 </h3>
               </div>
-              <p className="text-base text-[#4A72B0] leading-relaxed">
+              <p className="text-base text-[#3D5573] leading-relaxed">
                 {benefit.short}
               </p>
               <Expandable>{benefit.expanded}</Expandable>

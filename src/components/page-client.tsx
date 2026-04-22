@@ -36,7 +36,7 @@ function HeroArrow({ direction, onClick }: { direction: "left" | "right"; onClic
   );
 }
 
-export default function PageClient({ initialTheme, testimonialSlot }: { initialTheme: ThemeKey; testimonialSlot?: React.ReactNode }) {
+export default function PageClient({ initialTheme }: { initialTheme: ThemeKey }) {
   const router = useRouter();
   const initialTab: number = themes[initialTheme].forWhomIndex;
   const [activeTab, setActiveTab] = useState<number>(initialTab);
@@ -78,8 +78,6 @@ export default function PageClient({ initialTheme, testimonialSlot }: { initialT
           <HeroArrow direction="right" onClick={() => navigateToTheme(HERO_THEMES[heroThemeIndex + 1])} />
         )}
       </div>
-
-      {testimonialSlot}
 
       {/* ForWhom section — tab switcher sits between heading and carousel */}
       <ForWhom

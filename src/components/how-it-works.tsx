@@ -32,7 +32,7 @@ export default function HowItWorks() {
 
               {/* Number circle */}
               <div className="shrink-0 w-11 h-11 rounded-full border border-[#F59E0B]/60 flex items-center justify-center z-10 bg-[#1A3352]">
-                <span className="font-display font-light text-[0.8rem] text-white">
+                <span className="font-display font-light text-[1.25rem] text-white -mt-1">
                   {step.number}
                 </span>
               </div>

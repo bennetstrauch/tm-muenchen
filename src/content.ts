@@ -218,25 +218,25 @@ export const content = {
       "Von Neugier bis zur täglichen Praxis — in vier einfachen Schritten.",
     steps: [
       {
-        number: "01",
+        number: "1",
         title: "Kostenloser Infovortrag",
         description:
           "Du erfährst, was TM ist, wie sie sich von anderen Techniken unterscheidet, und kannst alle Fragen stellen. Keinerlei Verpflichtung.",
       },
       {
-        number: "02",
+        number: "2",
         title: "Persönliche Einweisung",
         description:
           "Die Technik wird von einem zertifizierten Lehrer persönlich vermittelt — individuell, in deinem eigenen Tempo. Keine Vorkenntnisse nötig.",
       },
       {
-        number: "03",
+        number: "3",
         title: "Täglich zuhause meditieren",
         description:
           "20 Minuten, bequem sitzend, zweimal täglich. Keine App, keine Führung, kein Fokussieren — nur mühelose, eigenständige Praxis.",
       },
       {
-        number: "04",
+        number: "4",
         title: "Die Wirkung entfaltet sich",
         description:
           "Mit regelmäßiger Praxis überträgt sich die Ruhe in den Alltag: mehr Energie, mehr Klarheit — auch in stressigen Momenten.",
