@@ -59,23 +59,41 @@ export default function Trustpilot({
 
             {/* Score row */}
             <div className="flex items-center gap-4">
-              <span className="font-display font-light text-[3.5rem] leading-none text-[#1A3352]">
+              <span className="font-display font-semibold text-[3.5rem] leading-none text-[#009962]">
                 {rating}
               </span>
-              <div className="flex flex-col items-start gap-1.5">
+              <div className="flex flex-col gap-1.5">
                 {/* 5 green stars */}
-                <div className="flex gap-0.5" aria-label="4,8 von 5 Sternen">
-                  {[0,1,2,3,4].map(i => (
-                    <svg key={i} width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
-                      <rect width="24" height="24" rx="2" fill="#00B67A"/>
-                      <path
-                        d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-                        fill="white"
-                      />
-                    </svg>
-                  ))}
-                </div>
-                <span className="text-[0.82rem] text-[#1A3352]/70">
+                {(() => {
+                  const val = parseFloat(rating.replace(",", "."));
+                  const full = Math.floor(val);
+                  const pct = Math.round((val - full) * 100);
+                  return (
+                    <div className="flex justify-between" aria-label={`${rating} von 5 Sternen`}>
+                      {[0,1,2,3,4].map(i => {
+                        const gradId = `tp-star-${i}`;
+                        const isPartial = i === full;
+                        return (
+                          <svg key={i} width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
+                            {isPartial && (
+                              <defs>
+                                <linearGradient id={gradId} x1="0" x2="1" y1="0" y2="0">
+                                  <stop offset={`${pct}%`} stopColor="#00B67A" />
+                                  <stop offset={`${pct}%`} stopColor="#D1D5DB" />
+                                </linearGradient>
+                              </defs>
+                            )}
+                            <path
+                              d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+                              fill={isPartial ? `url(#${gradId})` : i < full ? "#00B67A" : "#D1D5DB"}
+                            />
+                          </svg>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
+                <span className="text-[1rem] font-medium text-[#007A4D]">
                   {reviewCount} verifizierte Bewertungen
                 </span>
               </div>
