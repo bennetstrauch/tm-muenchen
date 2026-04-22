@@ -24,13 +24,13 @@ export default function Trustpilot({
   }, []);
 
   return (
-    <section className="bg-[#EFF6FF] px-6 py-16 sm:py-20">
+    <section className="section bg-[#EFF6FF]">
       <Script
         src="https://widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js"
         strategy="lazyOnload"
       />
 
-      <div className="max-w-2xl mx-auto">
+      <div className="section-inner">
         <div className="text-center mb-10">
           <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight mb-8">
             Was andere sagen
@@ -41,18 +41,18 @@ export default function Trustpilot({
 
             {/* Exzellent + Trustpilot badge */}
             <div className="flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#DBEAFE] bg-white">
-              <span className="text-[0.8rem] text-[#1A3352] font-medium">
+              <span className="text-[1rem] text-[#1A3352] font-medium">
                 Exzellent
               </span>
-              <span className="text-[#C8D8E8] text-xs">|</span>
-              <Image
+              <span className="text-[#C8D8E8] text-[1rem]">|</span>
+              {/* <Image
                 src="/trustpilot-star.png"
                 alt=""
                 width={26}
                 height={26}
                 aria-hidden="true"
-              />
-              <span className="text-[0.8rem] font-semibold tracking-tight text-[#1A1A1A]">
+              /> */}
+              <span className="text-[1.2rem] font-semibold tracking-tight text-[#1A1A1A]">
                 Trustpilot
               </span>
             </div>

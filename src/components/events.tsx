@@ -216,8 +216,8 @@ export default function Events({ events }: { events: TMEvent[] }) {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
 
   return (
-    <section id="anmeldung" className="bg-white px-6 py-20 sm:py-28">
-      <div className="max-w-2xl mx-auto">
+    <section id="anmeldung" className="section bg-white">
+      <div className="section-inner">
 
         <div className="text-center mb-14">
           <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#3D5573] mb-4">

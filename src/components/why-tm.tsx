@@ -6,8 +6,8 @@ export default function WhyTm() {
   const { whyTm } = content;
 
   return (
-    <section id="warum-tm" className="bg-white px-6 py-20 sm:py-28">
-      <div className="max-w-2xl mx-auto">
+    <section id="warum-tm" className="section bg-white">
+      <div className="section-inner">
 
         {/* Heading */}
         <div className="text-center mb-16">

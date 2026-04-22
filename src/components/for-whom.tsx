@@ -14,8 +14,8 @@ export default function ForWhom({
   const { forWhom } = content;
 
   return (
-    <section id="fuer-wen" className="bg-[#EFF6FF] px-6 py-20 sm:py-28">
-      <div className="max-w-2xl mx-auto">
+    <section id="fuer-wen" className="section bg-[#EFF6FF]">
+      <div className="section-inner">
 
         <div className="text-center mb-8">
           <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#3D5573] mb-4">
