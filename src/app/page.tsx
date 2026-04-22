@@ -13,7 +13,8 @@ export default async function Home() {
 
   return (
     <main>
-      <PageClient initialTheme="stress" testimonialSlot={<Testimonials testimonials={getTestimonials("stress")} />} />
+      <PageClient initialTheme="stress" />
+      <Testimonials testimonials={getTestimonials("stress")} />
       <WhyTm />
       <HowItWorks />
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />

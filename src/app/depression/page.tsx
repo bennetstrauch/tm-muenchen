@@ -19,7 +19,8 @@ export default async function DepressionPage() {
 
   return (
     <main>
-      <PageClient initialTheme="depression" testimonialSlot={<Testimonials testimonials={getTestimonials("depression")} />} />
+      <PageClient initialTheme="depression" />
+      <Testimonials testimonials={getTestimonials("depression")} />
       <WhyTm />
       <HowItWorks />
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />
