@@ -33,15 +33,15 @@ export const themes: Record<string, Theme> = {
     headline: ["Endlich wirklich abschalten.", "Ohne Anstrengung."],
     subtitle: "Erfahre besonders tiefe Ruhe",
     images: [
-      { src: "/hero/stress/1.jpg",  focus: "45% 30%" },
-      { src: "/hero/stress/2.jpg",  focus: "62% 25%" },
-      { src: "/hero/stress/3.jpg",  focus: "65% 50%" },
-      { src: "/hero/stress/4.jpg",  focus: "50% 50%" },
-      { src: "/hero/stress/5.jpg",  focus: "45% 50%" },
-      { src: "/hero/stress/6.jpg",  focus: "50% 45%" },
-      { src: "/hero/stress/7.jpg",  focus: "45% 35%" },
-      { src: "/hero/stress/8.jpg",  focus: "62% 35%" },
-      { src: "/hero/stress/9.jpg",  focus: "45% 40%" },
+      { src: "/hero/stress/1.jpg", focus: "45% 30%" },
+      { src: "/hero/stress/2.jpg", focus: "62% 25%" },
+      { src: "/hero/stress/3.jpg", focus: "65% 50%" },
+      { src: "/hero/stress/4.jpg", focus: "50% 50%" },
+      { src: "/hero/stress/5.jpg", focus: "45% 50%" },
+      { src: "/hero/stress/6.jpg", focus: "50% 45%" },
+      { src: "/hero/stress/7.jpg", focus: "45% 35%" },
+      { src: "/hero/stress/8.jpg", focus: "62% 35%" },
+      { src: "/hero/stress/9.jpg", focus: "45% 40%" },
       { src: "/hero/stress/10.jpg", focus: "45% 30%" },
       { src: "/hero/stress/11.jpg", focus: "70% 130%" },
       { src: "/hero/stress/12.jpg", focus: "35% 35%" },
@@ -60,8 +60,8 @@ export const themes: Record<string, Theme> = {
     subtitle: "Tiefe Ruhe für emotionale Entlastung",
     images: [
       { src: "/hero/depression/1.jpg", focus: "50% 25%" },
-      { src: "/hero/stress/3.jpg",     focus: "65% 50%" },
-      { src: "/hero/stress/11.jpg",    focus: "70% 130%" },
+      { src: "/hero/stress/3.jpg", focus: "65% 50%" },
+      { src: "/hero/stress/11.jpg", focus: "70% 130%" },
     ],
     forWhomIndex: 3,
   },
@@ -78,12 +78,13 @@ export type Testimonial = {
   quote: string;
   name: string;
   detail?: string; // z.B. "Lehrerin, 42" oder "München"
-  image?: string;  // Pfad im /public Ordner
+  image?: string; // Pfad im /public Ordner
 };
 
 export const defaultTestimonials: Testimonial[] = [
   {
-    quote: "Transzendentale Meditation ermöglicht es mir, nach innen zu gehen und eine Tiefe von Ruhe und Frieden zu finden, die ich sonst nirgendwo erlebe.",
+    quote:
+      "Transzendentale Meditation ermöglicht es mir, nach innen zu gehen und eine Tiefe von Ruhe und Frieden zu finden, die ich sonst nirgendwo erlebe.",
     name: "Jerry Seinfeld",
     detail: "Comedian",
     image: "/testamonials/ocean_sun_testimonial_jerry_seinfeld.jpg",
@@ -94,7 +95,8 @@ const themeTestimonials: Partial<Record<string, Testimonial[]>> = {
   // "depression2" — not mapped to the depression theme yet, preserved for later
   depression2: [
     {
-      quote: "Man findet das Gold von innen herein und verabschiedet sich vom Müll.",
+      quote:
+        "Man findet das Gold von innen herein und verabschiedet sich vom Müll.",
       name: "David Lynch",
       detail: "Filmregisseur",
       image: "/testamonials/david_lynch_grayscale.jpg",
@@ -118,12 +120,13 @@ export const forWhomTabs: { label: string; themeKey?: ThemeKey }[] = [
   { label: "Depression", themeKey: "depression" },
 ];
 
+const email = "info@tm-munechen.de";
 export const content = {
   contact: {
     phone: "+49 163 7354 836",
     phoneHref: "tel:+491637354836",
-    email: "bennet.strauch@meditation.de",
-    emailHref: "mailto:bennet.strauch@meditation.de",
+    email: email,
+    emailHref: `mailto:${email}`,
   },
 
   hero: {

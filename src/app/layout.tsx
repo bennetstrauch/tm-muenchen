@@ -3,6 +3,9 @@ import { Geist, Lora, Plus_Jakarta_Sans } from "next/font/google";
 import { Cormorant_Garamond } from "next/font/google";
 import StickyCta from "@/components/sticky-cta";
 import TopBar from "@/components/top-bar";
+import NavPanel from "@/components/top-bar/nav-panel";
+import MainOffset from "@/components/main-offset";
+import { NavProvider } from "@/contexts/nav-context";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -47,9 +50,14 @@ export default function RootLayout({
       className={`${geistSans.variable} ${cormorant.variable} ${lora.variable} ${plusJakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <TopBar />
-        {children}
-        <StickyCta />
+        <NavProvider>
+          <TopBar />
+          <NavPanel />
+          <MainOffset>
+            {children}
+          </MainOffset>
+          <StickyCta />
+        </NavProvider>
       </body>
     </html>
   );
