@@ -54,14 +54,14 @@ export default function Hero({
 
       {/* ── Headline ──────────────────────────────────── */}
       <div
-        className="relative z-10 flex flex-col items-center text-center w-full max-w-xl mt-[calc(4vh+2rem)] sm:mt-[calc(7vh+3.5rem)] opacity-0"
+        className="relative z-10 flex flex-col items-center text-center w-full max-w-xl mt-[calc(4vh+2rem)] sm:mt-[calc(5vh+1.5rem)] opacity-0"
         style={{ animation: "fadeInUp 0.75s ease forwards 0.12s" }}
       >
         <h1 className="w-full">
-          <span className="block font-display font-light text-[2.5rem] leading-[1.2] sm:text-[5.25rem] text-[#1A3352]">
+          <span className="block font-display font-medium text-[2.5rem] leading-[1.2] sm:text-[clamp(3rem,8vh,5.25rem)] text-[#1A3352]">
             {headlineLines[0]}
           </span>
-          <span className="block font-display font-light italic text-[2.5rem] leading-[1.2] sm:text-[5.25rem] text-[#1A3352]">
+          <span className="block font-display font-medium italic text-[2.5rem] leading-[1.2] sm:text-[clamp(3rem,8vh,5.25rem)] text-[#1A3352]">
             {headlineLines[1]}
           </span>
         </h1>
@@ -71,15 +71,15 @@ export default function Hero({
       </div>
 
       {/* ── Brand + subtitle ──────────────────────────── */}
-      <div className="relative z-10 mt-auto flex flex-col items-center text-center gap-7 pb-24">
+      <div className="relative z-10 mt-auto flex flex-col items-center text-center gap-7 pb-[max(3.5rem,6vh)]">
         <div
           className="flex flex-col items-center gap-1.5 opacity-0 -translate-y-4"
           style={{ animation: "fadeInUp 0.75s ease forwards 0.32s" }}
         >
-          <span className="font-display font-medium text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight tracking-wide">
+          <span className="font-display font-semibold text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight tracking-wide">
             Transzendentale Meditation
           </span>
-          <span className="text-base sm:text-lg text-[#1A3352]/65 font-light tracking-[0.06em]">
+          <span className="text-base sm:text-lg text-[#1A3352]/65 font-normal tracking-[0.06em]">
             {subtitleText}
           </span>
         </div>
