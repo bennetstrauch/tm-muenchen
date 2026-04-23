@@ -18,7 +18,7 @@ export default function Expandable({
   return (
     <>
       {open && (
-        <p className="mt-3 text-base text-[#5C7A97] leading-relaxed">
+        <p className="mt-3 text-base text-[#3D5573] leading-relaxed">
           {children}
         </p>
       )}
