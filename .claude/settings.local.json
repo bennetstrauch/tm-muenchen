@@ -10,7 +10,12 @@
       "Bash(curl -s -I \"https://www.tm.org/\")",
       "Bash(curl -s \"https://www.tm.org/\")",
       "Bash(curl -s -L \"https://www.tm.org/images/favicons/favicon-32x32.png\" -o \"C:/Users/strau/tm-muenchen/src/app/favicon-32.png\")",
-      "WebFetch(domain:www.tm.org)"
+      "WebFetch(domain:www.tm.org)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" https://tm-muenchen.de)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "WebFetch(domain:de.trustpilot.com)"
     ]
   }
 }

@@ -1,13 +1,102 @@
 "use client";
 
-import { useEffect } from "react";
-import Image from "next/image";
-import Script from "next/script";
+import { useState } from "react";
+import Carousel from "./carousel";
+import { trustpilotReviews, type TrustpilotReview } from "../content";
 
-// Trustpilot listing: "Transcendental Meditation" — 4.8★ · 8 072 reviews
-const BUSINESS_UNIT_ID = "5c364931aa52ea000124d70e";
-const TEMPLATE_SLIDER  = "54ad5defc6454f065c28af8b"; // Reviews carousel
+// ── Trustpilot green stars ────────────────────────────────
+function TpStars() {
+  return (
+    <div className="flex gap-0.5" aria-label="5 von 5 Sternen">
+      {[0, 1, 2, 3, 4].map(i => (
+        <svg key={i} width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <rect width="24" height="24" fill="#00B67A" />
+          <path
+            d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+            fill="#ffffff"
+          />
+        </svg>
+      ))}
+    </div>
+  );
+}
 
+// ── "Verifiziert" badge — matches widget style ────────────
+function VerifiedBadge() {
+  return (
+    <span className="inline-flex items-center gap-1.5 text-[0.75rem] text-[#555] underline underline-offset-2">
+      <span className="inline-flex items-center justify-center w-[1.1rem] h-[1.1rem] rounded-full bg-[#555] flex-shrink-0">
+        <svg width="8" height="7" viewBox="0 0 8 7" fill="none" aria-hidden="true">
+          <path d="M1 3.5L3 5.5L7 1.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </span>
+      Verifiziert
+    </span>
+  );
+}
+
+// ── Single review card ────────────────────────────────────
+const CLAMP_THRESHOLD = 160;
+
+function ReviewCard({ review }: { review: TrustpilotReview }) {
+  const [expanded, setExpanded] = useState(false);
+  const needsClamp = review.quoteDE.length > CLAMP_THRESHOLD;
+
+  return (
+    <div className="bg-white rounded-2xl px-7 py-6">
+
+      {/* Stars + verified */}
+      <div className="flex items-center justify-between mb-3">
+        <TpStars />
+        <a href={review.url} target="_blank" rel="noopener noreferrer">
+          <VerifiedBadge />
+        </a>
+      </div>
+
+      {/* Title */}
+      <a
+        href={review.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block font-semibold text-[#1A3352] text-base leading-snug mb-3 hover:underline"
+      >
+        {review.titleDE}
+      </a>
+
+      {/* Quote */}
+      <p className={`text-base text-[#3D5573] leading-relaxed ${!expanded && needsClamp ? "line-clamp-6" : ""}`}>
+        {review.quoteDE}
+      </p>
+
+      {/* Expand / collapse */}
+      {needsClamp && (
+        <button
+          onClick={() => setExpanded(e => !e)}
+          className="mt-2 inline-flex items-center gap-1 text-[0.7rem] tracking-[0.12em] uppercase text-[#1A3352]/50 hover:text-[#1A3352] transition-colors duration-200 focus-visible:outline-none"
+        >
+          {expanded ? <>Weniger <span>↑</span></> : <>Mehr lesen <span>↓</span></>}
+        </button>
+      )}
+
+      {/* Name → links to Trustpilot review */}
+      <a
+        href={review.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-4 flex items-center gap-2 text-[0.9rem] font-semibold text-[#6B7A8D] hover:text-[#1A3352] transition-colors duration-200 group"
+      >
+        {review.name}
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"
+          className="opacity-40 group-hover:opacity-80 transition-opacity">
+          <path d="M2 10L10 2M10 2H5M10 2V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </a>
+
+    </div>
+  );
+}
+
+// ── Section ───────────────────────────────────────────────
 export default function Trustpilot({
   rating = "4,8",
   reviewCount = "8.072",
@@ -15,62 +104,36 @@ export default function Trustpilot({
   rating?: string;
   reviewCount?: string;
 }) {
-  useEffect(() => {
-    // Re-init if the bootstrap script was already loaded on a previous render
-    const tp = (window as { Trustpilot?: { loadFromElement: (el: Element | null) => void } }).Trustpilot;
-    if (tp) {
-      tp.loadFromElement(document.querySelector(".trustpilot-widget"));
-    }
-  }, []);
-
   return (
     <section className="section bg-[#EFF6FF]">
-      <Script
-        src="https://widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js"
-        strategy="lazyOnload"
-      />
-
       <div className="section-inner">
+
+        {/* Heading */}
         <div className="text-center mb-10">
           <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight mb-8">
             Was andere sagen
           </h2>
 
-          {/* Rating + Trustpilot branding */}
+          {/* Rating summary */}
           <div className="inline-flex flex-col items-center gap-4">
-
-            {/* Exzellent + Trustpilot badge */}
             <div className="flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#DBEAFE] bg-white">
-              <span className="text-[1rem] text-[#1A3352] font-medium">
-                Exzellent
-              </span>
+              <span className="text-[1rem] text-[#1A3352] font-medium">Exzellent</span>
               <span className="text-[#C8D8E8] text-[1rem]">|</span>
-              {/* <Image
-                src="/trustpilot-star.png"
-                alt=""
-                width={26}
-                height={26}
-                aria-hidden="true"
-              /> */}
-              <span className="text-[1.2rem] font-semibold tracking-tight text-[#1A1A1A]">
-                Trustpilot
-              </span>
+              <span className="text-[1.2rem] font-semibold tracking-tight text-[#1A1A1A]">Trustpilot</span>
             </div>
 
-            {/* Score row */}
             <div className="flex items-center gap-4">
               <span className="font-display font-semibold text-[3.5rem] leading-none text-[#009962]">
                 {rating}
               </span>
               <div className="flex flex-col gap-1.5">
-                {/* 5 green stars */}
                 {(() => {
                   const val = parseFloat(rating.replace(",", "."));
                   const full = Math.floor(val);
                   const pct = Math.round((val - full) * 100);
                   return (
-                    <div className="flex justify-between" aria-label={`${rating} von 5 Sternen`}>
-                      {[0,1,2,3,4].map(i => {
+                    <div className="flex gap-0.5" aria-label={`${rating} von 5 Sternen`}>
+                      {[0, 1, 2, 3, 4].map(i => {
                         const gradId = `tp-star-${i}`;
                         const isPartial = i === full;
                         return (
@@ -98,37 +161,16 @@ export default function Trustpilot({
                 </span>
               </div>
             </div>
-
           </div>
         </div>
 
-        {/* Wrapper clips the Trustpilot footer text via a fade overlay */}
-        <div className="relative">
-          <div
-            className="trustpilot-widget"
-            data-locale="de-DE"
-            data-template-id={TEMPLATE_SLIDER}
-            data-businessunit-id={BUSINESS_UNIT_ID}
-            data-style-height="240px"
-            data-style-width="100%"
-            data-theme="light"
-            data-stars="4,5"
-          >
-            <a
-              href="https://www.trustpilot.com/review/www.tm.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="sr-only"
-            >
-              Trustpilot
-            </a>
-          </div>
-          {/* Fade out the widget footer text */}
-          <div
-            className="absolute bottom-0 left-0 right-0 h-22 pointer-events-none"
-            style={{ background: "linear-gradient(to top, #EFF6FF 60%, transparent)" }}
-          />
-        </div>
+        {/* Review carousel */}
+        <Carousel arrowOffsetPx={80}>
+          {trustpilotReviews.map((review, i) => (
+            <ReviewCard key={i} review={review} />
+          ))}
+        </Carousel>
+
       </div>
     </section>
   );

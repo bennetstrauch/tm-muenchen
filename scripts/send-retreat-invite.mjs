@@ -18,8 +18,12 @@ const CONFIG = {
   // ── Empfänger ─────────────────────────────────────────────
   // Für weibliche Namen: "Hallo liebe …,"  /  männlich: "Hallo lieber …,"
   recipients: [
-    { email: "miriam.clemenz@gmail.com",     salutation: "Hallo liebe Miriam," },
-    { email: "klaus.plecher@googlemail.com", salutation: "Hallo lieber Klaus," },
+    { email: "miriam.clemenz@gmail.com", salutation: "Hallo liebe Miriam," },
+    {
+      email: "klaus.plecher@googlemail.com",
+      salutation: "Hallo lieber Klaus,",
+    },
+    { email: "maike.braun@meditation.de", salutation: "Hallo liebe Maike," },
   ],
 
   // ── E-Mail-Betreff ────────────────────────────────────────
@@ -27,26 +31,30 @@ const CONFIG = {
 
   // ── Einleitungstext (2–3 Absätze) ────────────────────────
   intro: [
-    "Echt schön, dass ihr am letzten Freitag beim Centerabend mit dabei wart!",
-    "Wir freuen uns, dass ihr an dem Tagesretreat in München interessiert seid. Es wird ein toller Tag werden, an dem man richtig runterkommen und in seinen eigenen Bliss eintauchen kann.",
+    "Echt schön, dass du am letzten Freitag beim Centerabend mit dabei warst!",
+    "Wir freuen uns, dass du an dem Tagesretreat in München interessiert bist. Es wird ein toller Tag werden, an dem man richtig runterkommen und in seinen eigenen Bliss eintauchen kann.",
   ],
 
   // ── Info-Box ──────────────────────────────────────────────
   event: {
-    label:    "Kommende Veranstaltung",           // kleines Label über dem Titel
-    title:    "Einfach mal die Seele baumeln lassen",
-    type:     "1-Tages-Retreat",
+    label: "Kommende Veranstaltung", // kleines Label über dem Titel
+    title: "Einfach mal die Seele baumeln lassen",
+    type: "1-Tages-Retreat",
     subtitle: "mit Yoga-Asanas, Pranayama und Transzendentaler Meditation",
-    date:     "16. Mai 2026",
-    price:    "65 €/P. · 50 €/P. Ehepaare · 40 €/P. Studierende",
+    date: "16. Mai 2026",
+    price: "65 €/P. · 50 €/P. Ehepaare · 40 €/P. Studierende",
     teachers: "Bennet und Malena",
-    note:     "Weitere Infos folgen",             // leer lassen ("") um wegzulassen
+    note: "Weitere Infos folgen", // leer lassen ("") um wegzulassen
   },
 
   // ── CTA-Button ────────────────────────────────────────────
-  ctaText: "Für mehr Infos und zur offiziellen Anmeldung (Verteiler) einfach auf den Button klicken:",
+  ctaText:
+    "Für mehr Infos und zur offiziellen Anmeldung einfach auf den Button klicken:",
   ctaLabel: "Jetzt anmelden →",
-  ctaUrl:   "https://tally.so/r/xXP7Dk",
+  ctaUrl: "https://tally.so/r/xXP7Dk",
+
+  // ── Absender (muss in Resend als Domain verifiziert sein) ─
+  from: "TM München <bennet@tm-muenchen.de>",
 
   // ── Bild (muss in /public liegen und deployed sein) ───────
   imageUrl: "https://www.tm-muenchen.de/retreat-gruss.jpg",
@@ -64,10 +72,14 @@ if (!apiKey) throw new Error("RESEND_API_KEY nicht gefunden in .env.local");
 const resend = new Resend(apiKey);
 
 function buildHtml({ salutation }) {
-  const { event, intro, ctaText, ctaLabel, ctaUrl, imageUrl, imageAlt } = CONFIG;
+  const { event, intro, ctaText, ctaLabel, ctaUrl, imageUrl, imageAlt } =
+    CONFIG;
 
   const introParagraphs = intro
-    .map(p => `<p style="margin:0 0 16px 0;font-size:17px;line-height:1.65;color:#1A3352;">${p}</p>`)
+    .map(
+      (p) =>
+        `<p style="margin:0 0 16px 0;font-size:17px;line-height:1.65;color:#1A3352;">${p}</p>`,
+    )
     .join("\n              ");
 
   const noteRow = event.note
@@ -79,6 +91,9 @@ function buildHtml({ salutation }) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&display=swap');
+  </style>
 </head>
 <body style="margin:0;padding:0;background:#F2EDE4;font-family:Georgia,'Times New Roman',serif;color:#1A3352;">
 
@@ -91,19 +106,26 @@ function buildHtml({ salutation }) {
 
           <!-- Header -->
           <tr>
-            <td style="background:#1A3352;padding:28px 32px 24px;">
-              <p style="margin:0;font-size:11px;letter-spacing:4px;text-transform:uppercase;
-                         color:#E07B2A;font-family:Georgia,serif;">
-                Transzendentale Meditation · München
+            <td style="background:#1A3352;padding:32px 32px 28px;text-align:center;">
+              <p style="margin:0 0 6px 0;font-size:18px;letter-spacing:5px;text-transform:uppercase;
+                         color:#C9A84C;font-family:'Cormorant Garamond',Cormorant,Georgia,'Times New Roman',serif;
+                         font-weight:400;line-height:1.3;">
+                Transzendentale Meditation
+              </p>
+              <p style="margin:0;font-size:12px;letter-spacing:6px;text-transform:uppercase;
+                         color:#C9A84C;font-family:'Cormorant Garamond',Cormorant,Georgia,'Times New Roman',serif;
+                         font-weight:300;">
+                · München ·
               </p>
             </td>
           </tr>
 
-          <!-- Foto -->
+          <!-- Foto (obere 2/3) -->
           <tr>
             <td style="padding:0;line-height:0;">
               <img src="${imageUrl}" alt="${imageAlt}"
-                   width="600" style="display:block;width:100%;max-width:600px;height:auto;" />
+                   width="600" style="display:block;width:100%;max-width:600px;
+                                      height:300px;object-fit:cover;object-position:top;" />
             </td>
           </tr>
 
@@ -167,9 +189,9 @@ function buildHtml({ salutation }) {
 
           <!-- Footer -->
           <tr>
-            <td style="background:#1A3352;padding:20px 32px;">
-              <p style="margin:0;font-size:12px;color:#7A9BB5;line-height:1.6;">
-                Transzendentale Meditation München · Bei Fragen antworte einfach auf diese E-Mail.
+            <td style="background:#1A3352;padding:22px 32px;">
+              <p style="margin:0;font-size:15px;color:#F0EAE0;line-height:1.6;">
+                TM München · Bei Fragen antworte einfach auf diese E-Mail.
               </p>
             </td>
           </tr>
@@ -185,7 +207,7 @@ function buildHtml({ salutation }) {
 
 for (const r of CONFIG.recipients) {
   const { data, error } = await resend.emails.send({
-    from: "TM München <noreply@tm-muenchen.de>",
+    from: CONFIG.from,
     to: r.email,
     subject: CONFIG.subject,
     html: buildHtml({ salutation: r.salutation }),
