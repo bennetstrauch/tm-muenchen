@@ -29,7 +29,7 @@ export default function Hero({
   const staticAnim = (anim: string) => isFirstLoad.current ? { animation: anim } : undefined;
 
   return (
-    <section id="hero" className="relative min-h-[100dvh] flex flex-col items-center px-8 pt-14">
+    <section id="hero" className="relative overflow-hidden min-h-[100dvh] flex flex-col items-center px-8 pt-14">
 
       {/* ── Background ────────────────────────────────── */}
       <HeroBackground images={imagePool} />

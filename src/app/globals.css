@@ -29,11 +29,14 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), Arial, sans-serif;
   font-weight: 300;
+  overflow-x: clip;
 }
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
+
 
 @layer components {
   .section       { @apply px-6 py-10; }
