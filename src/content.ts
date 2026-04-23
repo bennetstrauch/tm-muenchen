@@ -120,7 +120,7 @@ export const forWhomTabs: { label: string; themeKey?: ThemeKey }[] = [
   { label: "Depression", themeKey: "depression" },
 ];
 
-const email = "info@tm-munechen.de";
+const email = "info@tm-muenchen.de";
 export const content = {
   contact: {
     phone: "+49 163 7354 836",
@@ -186,7 +186,7 @@ export const content = {
         title: "Von innen heraus glücklich",
         // short: "TM fördert die Produktion von Serotonin, dem sogenannten Glückshormon. Viele berichten: mehr innere Zufriedenheit, weniger Reizbarkeit, mehr Freude — auch in stressigen Momenten.",
         short:
-          "Jeder Mensch trägt ein Reservoir an vollkomener Zufriedenheut in sich - Ein Meer der Freude, das durch TM zugänglich wird — mehr und mehr innere Zufriedenheit und weniger Reizbarkeit im Alltag.",
+          "Jeder Mensch trägt ein Reservoir an vollkommener Zufriedenheit in sich - Ein Meer der Freude, das durch TM zugänglich wird — mehr und mehr innere Zufriedenheit und weniger Reizbarkeit im Alltag.",
         expanded:
           "Was von allerlei Philosophen, Mystikern und Weisen seit Jahrtausenden beschrieben wird, wird durch TM konkret und beständig integriert. Nicht nur das, es ist auch wissenschaftlich messbar.",
       },
@@ -228,7 +228,7 @@ export const content = {
       },
       {
         number: "2",
-        title: "Persönliche Einweisung",
+        title: "Persönliche Unterweisung",
         description:
           "Die Technik wird von einem zertifizierten Lehrer persönlich vermittelt — individuell, in deinem eigenen Tempo. Keine Vorkenntnisse nötig.",
       },

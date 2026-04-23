@@ -22,7 +22,7 @@
   --font-mono: var(--font-geist-mono);
   --font-display: var(--font-cormorant);
   --font-lora: var(--font-lora);
-  --text-base: 1.0625rem; /* body copy size — one place to tune */
+  --text-base: 1.0925rem; /* body copy size — one place to tune */
 }
 
 body {
