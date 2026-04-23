@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Carousel from "./carousel";
 import { trustpilotReviews, type TrustpilotReview } from "../content";
 
@@ -36,11 +36,23 @@ function VerifiedBadge() {
 }
 
 // ── Single review card ────────────────────────────────────
-const CLAMP_THRESHOLD = 160;
-
 function ReviewCard({ review }: { review: TrustpilotReview }) {
   const [expanded, setExpanded] = useState(false);
-  const needsClamp = review.quoteDE.length > CLAMP_THRESHOLD;
+  const [clamped, setClamped] = useState(false);
+  const textRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    const el = textRef.current;
+    if (!el) return;
+    const check = () => {
+      // Only measure when collapsed — scrollHeight > clientHeight means text is cut off
+      if (!expanded) setClamped(el.scrollHeight > el.clientHeight + 1);
+    };
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [expanded]);
 
   return (
     <div className="bg-white rounded-2xl px-7 py-6">
@@ -64,12 +76,15 @@ function ReviewCard({ review }: { review: TrustpilotReview }) {
       </a>
 
       {/* Quote */}
-      <p className={`text-base text-[#3D5573] leading-relaxed ${!expanded && needsClamp ? "line-clamp-6" : ""}`}>
+      <p
+        ref={textRef}
+        className={`text-base text-[#3D5573] leading-relaxed ${!expanded ? "line-clamp-6" : ""}`}
+      >
         {review.quoteDE}
       </p>
 
-      {/* Expand / collapse */}
-      {needsClamp && (
+      {/* Expand / collapse — only shown when text is actually clamped */}
+      {(clamped || expanded) && (
         <button
           onClick={() => setExpanded(e => !e)}
           className="mt-2 inline-flex items-center gap-1 text-[0.7rem] tracking-[0.12em] uppercase text-[#1A3352]/50 hover:text-[#1A3352] transition-colors duration-200 focus-visible:outline-none"
@@ -164,12 +179,27 @@ export default function Trustpilot({
           </div>
         </div>
 
-        {/* Review carousel */}
-        <Carousel arrowOffsetPx={80}>
-          {trustpilotReviews.map((review, i) => (
-            <ReviewCard key={i} review={review} />
-          ))}
-        </Carousel>
+        {/* Mobile: 1 card per slide */}
+        <div className="md:hidden">
+          <Carousel arrowOffsetPx={80}>
+            {trustpilotReviews.map((review, i) => (
+              <ReviewCard key={i} review={review} />
+            ))}
+          </Carousel>
+        </div>
+
+        {/* Desktop: 2 cards per slide */}
+        <div className="hidden md:block">
+          <Carousel arrowOffsetPx={80}>
+            {Array.from({ length: Math.ceil(trustpilotReviews.length / 2) }, (_, i) => (
+              <div key={i} className="grid grid-cols-2 gap-4">
+                {trustpilotReviews.slice(i * 2, i * 2 + 2).map((review, j) => (
+                  <ReviewCard key={j} review={review} />
+                ))}
+              </div>
+            ))}
+          </Carousel>
+        </div>
 
       </div>
     </section>
