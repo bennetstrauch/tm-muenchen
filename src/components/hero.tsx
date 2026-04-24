@@ -71,7 +71,7 @@ export default function Hero({
       </div>
 
       {/* ── Brand + subtitle ──────────────────────────── */}
-      <div className="relative z-10 mt-auto flex flex-col items-center text-center gap-7 pb-[max(3.5rem,6vh)]">
+      <div className="relative z-10 mt-auto flex flex-col items-center text-center gap-7 pb-[max(5.5rem,7vh)]">
         <div
           className="flex flex-col items-center gap-1.5 opacity-0 -translate-y-4"
           style={{ animation: "fadeInUp 0.75s ease forwards 0.32s" }}
