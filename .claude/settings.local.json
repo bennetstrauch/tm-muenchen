@@ -15,7 +15,8 @@
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
-      "WebFetch(domain:de.trustpilot.com)"
+      "WebFetch(domain:de.trustpilot.com)",
+      "Bash(python -m json.tool)"
     ]
   }
 }
