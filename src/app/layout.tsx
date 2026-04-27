@@ -1,33 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Lora, Plus_Jakarta_Sans } from "next/font/google";
-import { Cormorant_Garamond } from "next/font/google";
+import { Geist, Lora, Plus_Jakarta_Sans, Cormorant_Garamond } from "next/font/google";
 import { headers } from "next/headers";
 import { Analytics } from "@vercel/analytics/next";
-import StickyCta from "@/components/sticky-cta";
-import TopBar from "@/components/top-bar";
-import NavPanel from "@/components/top-bar/nav-panel";
-import MainOffset from "@/components/main-offset";
-import { NavProvider } from "@/contexts/nav-context";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
 });
-
 const lora = Lora({
   variable: "--font-lora",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   style: ["normal", "italic"],
 });
-
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
   subsets: ["latin"],
@@ -41,11 +29,7 @@ export const metadata: Metadata = {
     "Die einzige Meditationstechnik, die ohne Konzentration funktioniert — wissenschaftlich belegt, in 4 Tagen erlernbar.",
 };
 
-export default async function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const isAdmin = (await headers()).get('x-is-admin') === '1';
   return (
     <html
@@ -53,14 +37,7 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${cormorant.variable} ${lora.variable} ${plusJakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <NavProvider>
-          <TopBar />
-          <NavPanel />
-          <MainOffset>
-            {children}
-          </MainOffset>
-          <StickyCta />
-        </NavProvider>
+        {children}
         {!isAdmin && <Analytics />}
       </body>
     </html>

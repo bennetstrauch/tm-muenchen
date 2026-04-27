@@ -26,13 +26,16 @@ export default async function AdminPage() {
 
         <div className="mb-8 flex items-start justify-between">
           <div>
+            <a href="/" className="text-xs text-gray-400 hover:text-gray-600 mb-3 inline-block">
+              ← Zur Website
+            </a>
             <p className="text-xs tracking-widest uppercase text-[#BCA075] mb-1">
               Transzendentale Meditation · München
             </p>
             <h1 className="text-2xl font-semibold text-gray-800">Admin</h1>
           </div>
           <a
-            href="https://vercel.com/analytics"
+            href="https://vercel.com/bennetstrauch-2281s-projects/tm-muenchen/analytics?environment=all"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-[#BCA075] hover:underline"
