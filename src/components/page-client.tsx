@@ -8,8 +8,7 @@ import ForWhom from "./for-whom";
 import ThemeSwitcher from "./theme-switcher";
 import { themes, forWhomTabs, type ThemeKey } from "../content";
 
-// Ordered list of themes that have their own hero
-const HERO_THEMES: ThemeKey[] = ["stress", "depression"];
+const HERO_THEMES = Object.keys(themes) as ThemeKey[];
 
 function HeroArrow({ direction, onClick }: { direction: "left" | "right"; onClick: () => void }) {
   return (

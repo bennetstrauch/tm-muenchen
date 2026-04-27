@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { buildConfirmationHtml, buildReminderHtml, buildTeacherNotificationHtml } from "@/lib/email";
 import type { RegistrationEmailParams } from "@/lib/email";
+import { appendRegistration } from "@/lib/sheets";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -109,6 +110,10 @@ export async function POST(request: Request) {
         })
       : Promise.resolve(),
   ]);
+
+  // Log to Google Sheets — non-fatal
+  appendRegistration({ name, email, phone: phone ?? '', eventDate, eventTime, eventType })
+    .catch(err => console.error('Sheets logging failed:', err));
 
   return Response.json({ success: true });
 }

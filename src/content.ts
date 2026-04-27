@@ -65,9 +65,21 @@ export const themes: Record<string, Theme> = {
     ],
     forWhomIndex: 3,
   },
+  "innere-freude": {
+    slug: "innere-freude",
+    label: "Innere Freude",
+    headline: [
+      "Jeder hat einen Ozean unbegrenzter Freude in sich.",
+      "TM gibt dir den Zugang.",
+    ],
+    subtitle: "Einfach und verlässlich in dein Glück eintauchen",
+    images: [{ src: "/hero/stress/3.jpg", focus: "65% 50%" }],
+    forWhomIndex: 1,
+    // ##edit
+  },
 };
 
-export type ThemeKey = "stress" | "depression";
+export type ThemeKey = "stress" | "depression" | "innere-freude";
 
 // ─────────────────────────────────────────────────
 //  ERFAHRUNGSBERICHTE — Zitate von Meditierenden.
@@ -127,56 +139,70 @@ export const trustpilotReviews: TrustpilotReview[] = [
     name: "Kris",
     title: "I absolutely love TM",
     titleDE: "Ich liebe TM",
-    quote: "I absolutely love TM! I feel so relaxed and grounded in a way I never thought possible. It's surprising that I can experience such a depth of relaxation beyond sleep. TM is so simple yet so profound that everyone can do it. It is my go to anchor daily.",
-    quoteDE: "Ich liebe TM! Ich fühle mich so entspannt und geerdet, wie ich es nie für möglich gehalten hätte. Erstaunlich, welch eine Tiefe der Entspannung möglich ist — tiefer als Schlaf. TM ist so einfach und doch so tiefgründig, dass jeder es tun kann. Es ist mein täglicher Anker.",
+    quote:
+      "I absolutely love TM! I feel so relaxed and grounded in a way I never thought possible. It's surprising that I can experience such a depth of relaxation beyond sleep. TM is so simple yet so profound that everyone can do it. It is my go to anchor daily.",
+    quoteDE:
+      "Ich liebe TM! Ich fühle mich so entspannt und geerdet, wie ich es nie für möglich gehalten hätte. Erstaunlich, welch eine Tiefe der Entspannung möglich ist — tiefer als Schlaf. TM ist so einfach und doch so tiefgründig, dass jeder es tun kann. Es ist mein täglicher Anker.",
     url: "https://de.trustpilot.com/reviews/69cbc00aa823019958117ffc",
   },
   {
     name: "Mark",
     title: "Wonderful 😊",
     titleDE: "Wunderbar 😊",
-    quote: "My only regret is that I didn't do it sooner. Totally life changing. I feel so peaceful and happy.",
-    quoteDE: "Mein einziges Bedauern ist, dass ich nicht früher damit angefangen habe. Absolut lebensverändernd. Ich fühle mich so friedvoll und glücklich.",
+    quote:
+      "My only regret is that I didn't do it sooner. Totally life changing. I feel so peaceful and happy.",
+    quoteDE:
+      "Mein einziges Bedauern ist, dass ich nicht früher damit angefangen habe. Absolut lebensverändernd. Ich fühle mich so friedvoll und glücklich.",
     url: "https://de.trustpilot.com/reviews/69bb316f05dc66d0dbc0bc09",
   },
   {
     name: "Olga Villa",
     title: "My daughter and I are very happy meditating daily",
     titleDE: "Meine Tochter und ich sind sehr glücklich",
-    quote: "My daughter and I are very happy meditating daily. It has giving us lots of insight and peace. We always look forward for our 2 daily meditations. The instructors are very dedicated and easy to understand.",
-    quoteDE: "Meine Tochter und ich meditieren täglich und sind sehr glücklich damit. Es hat uns viel Klarheit und inneren Frieden gebracht. Wir freuen uns immer auf unsere 2 täglichen Meditationen. Die Lehrer sind sehr engagiert und leicht zu verstehen.",
+    quote:
+      "My daughter and I are very happy meditating daily. It has giving us lots of insight and peace. We always look forward for our 2 daily meditations. The instructors are very dedicated and easy to understand.",
+    quoteDE:
+      "Meine Tochter und ich meditieren täglich und sind sehr glücklich damit. Es hat uns viel Klarheit und inneren Frieden gebracht. Wir freuen uns immer auf unsere 2 täglichen Meditationen. Die Lehrer sind sehr engagiert und leicht zu verstehen.",
     url: "https://de.trustpilot.com/reviews/69e8c913475b979018f0b860",
   },
   {
     name: "Jay",
     title: "Very professional, from emails to notifications",
     titleDE: "Sehr professionell, von Anfang bis Ende",
-    quote: "Very professional, from emails to notifications to application. Very friendly, patient and experienced teachers. A lot of good information backed by science and research.",
-    quoteDE: "Sehr professionell — von E-Mails über Benachrichtigungen bis zur Einführung. Sehr freundliche, geduldige und erfahrene Lehrer. Viele gute, wissenschaftlich fundierte Informationen.",
+    quote:
+      "Very professional, from emails to notifications to application. Very friendly, patient and experienced teachers. A lot of good information backed by science and research.",
+    quoteDE:
+      "Sehr professionell — von E-Mails über Benachrichtigungen bis zur Einführung. Sehr freundliche, geduldige und erfahrene Lehrer. Viele gute, wissenschaftlich fundierte Informationen.",
     url: "https://de.trustpilot.com/reviews/69d4f73f29953d97224d45cb",
   },
   {
     name: "Iceiz'sene Rivera",
     title: "One of the best decisions in many years",
     titleDE: "Eine der besten Entscheidungen seit Jahren",
-    quote: "This has been one of the Best decisions I've made in many years. If you are in need of a foundational start to your day, this is for you.",
-    quoteDE: "Dies ist eine der besten Entscheidungen, die ich seit vielen Jahren getroffen habe. Wer einen starken Einstieg in den Tag braucht — für den ist das genau das Richtige.",
+    quote:
+      "This has been one of the Best decisions I've made in many years. If you are in need of a foundational start to your day, this is for you.",
+    quoteDE:
+      "Dies ist eine der besten Entscheidungen, die ich seit vielen Jahren getroffen habe. Wer einen starken Einstieg in den Tag braucht — für den ist das genau das Richtige.",
     url: "https://de.trustpilot.com/reviews/69d24ca775490351d1f47849",
   },
   {
     name: "Ted",
     title: "It's real",
     titleDE: "Es ist real",
-    quote: "It's real. It's a way to live peacefully in time that belongs to you.",
-    quoteDE: "Es ist real. Es ist ein Weg, in einer Zeit, die ganz dir gehört, in Frieden zu leben.",
+    quote:
+      "It's real. It's a way to live peacefully in time that belongs to you.",
+    quoteDE:
+      "Es ist real. Es ist ein Weg, in einer Zeit, die ganz dir gehört, in Frieden zu leben.",
     url: "https://de.trustpilot.com/reviews/69d3b9cc65f2076825f472c0",
   },
   {
     name: "Patrick",
     title: "A definite change after just 3 weeks",
     titleDE: "Eine deutliche Veränderung schon nach 3 Wochen",
-    quote: "I have noticed a definite change in my anxiety levels only 3 weeks into starting TM.",
-    quoteDE: "Schon nach nur 3 Wochen TM habe ich eine deutliche Veränderung bei meinem Angstniveau festgestellt.",
+    quote:
+      "I have noticed a definite change in my anxiety levels only 3 weeks into starting TM.",
+    quoteDE:
+      "Schon nach nur 3 Wochen TM habe ich eine deutliche Veränderung bei meinem Angstniveau festgestellt.",
     url: "https://de.trustpilot.com/reviews/69cd2109c0475f6e8506a669",
   },
   {
@@ -199,6 +225,7 @@ export const forWhomTabs: { label: string; themeKey?: ThemeKey }[] = [
   { label: "Gesundheit", themeKey: undefined },
   { label: "Wissenschaft", themeKey: undefined },
   { label: "Depression", themeKey: "depression" },
+  { label: "Innere Freude", themeKey: "innere-freude" },
 ];
 
 const email = "info@tm-muenchen.de";
@@ -234,6 +261,15 @@ export const content = {
         title: "Du willst messbare Ergebnisse",
         description:
           "TM ist die meistuntersuchte Meditationstechnik weltweit — über 400 Studien an führenden Universitäten. Die Wirkung ist dokumentiert, nicht versprochen.",
+      },
+      // {
+      //   title: "Du willst deine Lebensquialität von Grund auf verbessern",
+      //   description: ""
+      // },
+      {
+        title: "Du willst einen praktischen Weg zur Erleuchtung",
+        description:
+          "Die erste Stufe der Erleuchtung: Volkommene innere Zufriedenheit und Klarheit und das schlummert bereits in jedem von uns. Wir müssen nur wissen wie wir dorthin gelangen. TM gibt dir den Zugang auf direkte, einfache Weise. Wir erfahren unsere innerste Natur - reine Glückseligkeit. Diese Erfahrung während TM erfolgt in tiefer Stille, körperlich und geistig. Dadurch kann sich der Körper tief regenerieren und von Stressen befreien: Die Folge: Wir werden mehr un dm ehr dazu fähig die immense Freude in uns auch während des Alltags zu leben und kontinuirlich zu entfalten.  ",
       },
       {
         title: "Du kämpfst mit Erschöpfung oder Niedergeschlagenheit",

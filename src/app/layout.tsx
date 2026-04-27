@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Lora, Plus_Jakarta_Sans } from "next/font/google";
 import { Cormorant_Garamond } from "next/font/google";
+import { headers } from "next/headers";
+import { Analytics } from "@vercel/analytics/next";
 import StickyCta from "@/components/sticky-cta";
 import TopBar from "@/components/top-bar";
 import NavPanel from "@/components/top-bar/nav-panel";
@@ -39,11 +41,12 @@ export const metadata: Metadata = {
     "Die einzige Meditationstechnik, die ohne Konzentration funktioniert — wissenschaftlich belegt, in 4 Tagen erlernbar.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const isAdmin = (await headers()).get('x-is-admin') === '1';
   return (
     <html
       lang="de"
@@ -58,6 +61,7 @@ export default function RootLayout({
           </MainOffset>
           <StickyCta />
         </NavProvider>
+        {!isAdmin && <Analytics />}
       </body>
     </html>
   );
