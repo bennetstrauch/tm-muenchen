@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Hero from "./hero";
 import ForWhom from "./for-whom";
 import ThemeSwitcher from "./theme-switcher";
-import { themes, forWhomTabs, type ThemeKey } from "../content";
+import { themes, type ThemeKey } from "../content";
 
 const HERO_THEMES = Object.keys(themes) as ThemeKey[];
 
@@ -40,8 +40,7 @@ export default function PageClient({ initialTheme }: { initialTheme: ThemeKey })
   const initialTab: number = themes[initialTheme].forWhomIndex;
   const [activeTab, setActiveTab] = useState<number>(initialTab);
 
-  const heroThemeKey: ThemeKey = forWhomTabs[activeTab]?.themeKey ?? "stress";
-  const heroTheme = themes[heroThemeKey];
+  const heroTheme = themes[initialTheme];
 
   const heroThemeIndex = HERO_THEMES.indexOf(initialTheme);
 
@@ -51,14 +50,7 @@ export default function PageClient({ initialTheme }: { initialTheme: ThemeKey })
   }
 
   function handleTabChange(index: number) {
-    const tabTheme = forWhomTabs[index]?.themeKey;
-    if (tabTheme && tabTheme !== initialTheme) {
-      // Tab has a theme that differs from current URL → navigate
-      navigateToTheme(tabTheme);
-    } else {
-      // No theme change (local tab or same theme) → just move the carousel
-      setActiveTab(index);
-    }
+    setActiveTab(index);
   }
 
   return (

@@ -74,7 +74,7 @@ export const themes: Record<string, Theme> = {
     ],
     subtitle: "Einfach und verlässlich in dein Glück eintauchen",
     images: [{ src: "/hero/stress/3.jpg", focus: "65% 50%" }],
-    forWhomIndex: 1,
+    forWhomIndex: 4,
     // ##edit
   },
 };
@@ -267,14 +267,14 @@ export const content = {
       //   description: ""
       // },
       {
-        title: "Du willst einen praktischen Weg zur Erleuchtung",
-        description:
-          "Die erste Stufe der Erleuchtung: Volkommene innere Zufriedenheit und Klarheit und das schlummert bereits in jedem von uns. Wir müssen nur wissen wie wir dorthin gelangen. TM gibt dir den Zugang auf direkte, einfache Weise. Wir erfahren unsere innerste Natur - reine Glückseligkeit. Diese Erfahrung während TM erfolgt in tiefer Stille, körperlich und geistig. Dadurch kann sich der Körper tief regenerieren und von Stressen befreien: Die Folge: Wir werden mehr un dm ehr dazu fähig die immense Freude in uns auch während des Alltags zu leben und kontinuirlich zu entfalten.  ",
-      },
-      {
         title: "Du kämpfst mit Erschöpfung oder Niedergeschlagenheit",
         description:
           "TM ist die meistuntersuchte natürliche Methode bei Depressionen und Angststörungen — wirksam, ohne Nebenwirkungen, ganz ohne Konzentration oder Willenskraft.",
+      },
+      {
+        title: "Du willst einen praktischen Weg zur Erleuchtung",
+        description:
+          "Die erste Stufe der Erleuchtung: Volkommene innere Zufriedenheit und Klarheit und das schlummert bereits in jedem von uns. Wir müssen nur wissen wie wir dorthin gelangen. TM gibt dir den Zugang auf direkte, einfache Weise. Wir erfahren unsere innerste Natur - reine Glückseligkeit. Diese Erfahrung während TM erfolgt in tiefer Stille, körperlich und geistig. Dadurch kann sich der Körper tief regenerieren und von Stressen befreien: Die Folge: Wir werden mehr un dm ehr dazu fähig die immense Freude in uns auch während des Alltags zu leben und kontinuirlich zu entfalten.  ",
       },
     ],
   },
