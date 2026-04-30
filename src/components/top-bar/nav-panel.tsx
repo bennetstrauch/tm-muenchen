@@ -3,12 +3,43 @@
 import { useEffect, useRef } from "react";
 import { useNavContext } from "@/contexts/nav-context";
 
-const NAV_LINKS = [
-  { label: "Für wen ist TM?", href: "#fuer-wen" },
-  { label: "Was TM einzigartig macht", href: "#warum-tm" },
-  { label: "So funktioniert es", href: "#wie-es-funktioniert" },
-  { label: "Nächste Infovorträge", href: "#anmeldung" },
+type NavLink = { label: string; href: string; type: "anchor" | "page" };
+
+const NAV_LINKS: NavLink[] = [
+  { label: "Für wen ist TM?", href: "#fuer-wen", type: "anchor" },
+  { label: "Was TM einzigartig macht", href: "#warum-tm", type: "anchor" },
+  { label: "So funktioniert es", href: "#wie-es-funktioniert", type: "anchor" },
+  { label: "Nächste Infovorträge", href: "#anmeldung", type: "anchor" },
+  { label: "Für bereits Meditierende", href: "/events", type: "page" },
 ];
+
+const ITEM_BASE_CLS = `
+  w-full flex items-center justify-between
+  px-5 py-4
+  text-left text-[0.9rem] font-medium text-[#1A3352]
+  hover:bg-[#1A3352]/5 active:bg-[#1A3352]/8
+  transition-colors duration-150
+  focus-visible:outline-none
+`;
+
+const chevron = (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 14 14"
+    fill="none"
+    aria-hidden="true"
+    className="opacity-25 flex-shrink-0 ml-3"
+  >
+    <path
+      d="M5 3L9 7L5 11"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
 export default function NavPanel() {
   const { isOpen, setIsOpen, setPanelHeight } = useNavContext();
@@ -53,39 +84,32 @@ export default function NavPanel() {
       >
         <div ref={innerRef} className="min-h-0">
           <div className="bg-white/95 backdrop-blur-md border-b border-[#1A3352]/10 shadow-[0_8px_24px_rgba(26,51,82,0.07)]">
-            {NAV_LINKS.map((link, i) => (
-              <button
-                key={link.href}
-                onClick={() => handleNavClick(link.href)}
-                className={`
-                  w-full flex items-center justify-between
-                  px-5 py-4
-                  text-left text-[0.9rem] font-medium text-[#1A3352]
-                  hover:bg-[#1A3352]/5 active:bg-[#1A3352]/8
-                  transition-colors duration-150
-                  focus-visible:outline-none
-                  ${i > 0 ? "border-t border-[#1A3352]/8" : ""}
-                `}
-              >
-                {link.label}
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 14 14"
-                  fill="none"
-                  aria-hidden="true"
-                  className="opacity-25 flex-shrink-0 ml-3"
+            {NAV_LINKS.map((link, i) => {
+              const cls = `${ITEM_BASE_CLS}${i > 0 ? " border-t border-[#1A3352]/8" : ""}`;
+              if (link.type === "page") {
+                return (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setIsOpen(false)}
+                    className={cls}
+                  >
+                    {link.label}
+                    {chevron}
+                  </a>
+                );
+              }
+              return (
+                <button
+                  key={link.href}
+                  onClick={() => handleNavClick(link.href)}
+                  className={cls}
                 >
-                  <path
-                    d="M5 3L9 7L5 11"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-            ))}
+                  {link.label}
+                  {chevron}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

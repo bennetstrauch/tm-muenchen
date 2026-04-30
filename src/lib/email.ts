@@ -17,7 +17,7 @@ export type RegistrationEmailParams = {
 
 // ── Shared pieces ─────────────────────────────────────────
 
-function emailWrapper(title: string, body: string): string {
+export function emailWrapper(title: string, body: string): string {
   return `<!DOCTYPE html>
 <html>
 <head>

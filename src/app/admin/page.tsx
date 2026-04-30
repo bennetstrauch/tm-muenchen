@@ -34,14 +34,22 @@ export default async function AdminPage() {
             </p>
             <h1 className="text-2xl font-semibold text-gray-800">Admin</h1>
           </div>
-          <a
-            href="https://vercel.com/bennetstrauch-2281s-projects/tm-muenchen/analytics?environment=all"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-[#BCA075] hover:underline"
-          >
-            Vercel Analytics →
-          </a>
+          <div className="flex flex-col items-end gap-2">
+            <a
+              href="/admin/veranstaltungen"
+              className="text-sm text-[#BCA075] hover:underline"
+            >
+              Veranstaltungen →
+            </a>
+            <a
+              href="https://vercel.com/bennetstrauch-2281s-projects/tm-muenchen/analytics?environment=all"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-gray-400 hover:underline"
+            >
+              Vercel Analytics →
+            </a>
+          </div>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
