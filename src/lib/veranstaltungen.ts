@@ -157,7 +157,7 @@ export async function updateVeranstaltung(v: Veranstaltung): Promise<void> {
   if (idx === -1) throw new Error(`Veranstaltung ${v.id} not found`);
   await sheets.spreadsheets.values.update({
     spreadsheetId: SPREADSHEET_ID,
-    range: `${EVENTS_TAB}!A${idx + 1}:R${idx + 1}`,
+    range: `${EVENTS_TAB}!A${idx + 1}:S${idx + 1}`,
     valueInputOption: 'USER_ENTERED',
     requestBody: { values: [veranstaltungToRow(v)] },
   });
