@@ -26,6 +26,7 @@ const EMPTY_FORM: Omit<Veranstaltung, 'id'> = {
   reminder2Hours: 0,
   registrationOpen: true,
   visible: true,
+  isPriority: false,
 };
 
 function Field({
@@ -127,6 +128,10 @@ function EventForm({
           <input type="checkbox" className={CHECK_CLS} checked={form.visible} onChange={e => set('visible', e.target.checked)} />
           Sichtbar auf Website
         </label>
+        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+          <input type="checkbox" className={CHECK_CLS} checked={form.isPriority} onChange={e => set('isPriority', e.target.checked)} />
+          Priorität (oben anzeigen)
+        </label>
       </div>
 
       <div className="flex gap-3">
@@ -221,7 +226,10 @@ export default function EventsClient({
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   const sortedEvents = useMemo(
-    () => [...events].sort((a, b) => a.date.localeCompare(b.date)),
+    () => [...events].sort((a, b) => {
+      if (a.isPriority !== b.isPriority) return a.isPriority ? -1 : 1;
+      return a.date.localeCompare(b.date);
+    }),
     [events]
   );
 

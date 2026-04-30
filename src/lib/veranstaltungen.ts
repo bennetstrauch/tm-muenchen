@@ -6,7 +6,7 @@ export { formatVeranstaltungDate, calcReminderTime };
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID!;
 const EVENTS_TAB = 'Veranstaltungen';
 const REGS_TAB = 'Veranstaltungen Anmeldungen';
-const EVENTS_RANGE = `${EVENTS_TAB}!A:R`;
+const EVENTS_RANGE = `${EVENTS_TAB}!A:S`;
 const REGS_RANGE = `${REGS_TAB}!A:G`;
 
 export type Veranstaltung = {
@@ -28,6 +28,7 @@ export type Veranstaltung = {
   reminder2Hours: number;  // 0 = disabled
   registrationOpen: boolean;
   visible: boolean;
+  isPriority: boolean;
 };
 
 export type EventRegistration = {
@@ -73,6 +74,7 @@ function rowToVeranstaltung(row: string[]): Veranstaltung {
     reminder2Hours: parseInt(row[15] ?? '') || 0,
     registrationOpen: parseBool(row[16] ?? 'TRUE'),
     visible: parseBool(row[17] ?? 'TRUE'),
+    isPriority: parseBool(row[18] ?? ''),
   };
 }
 
@@ -96,6 +98,7 @@ function veranstaltungToRow(v: Veranstaltung): string[] {
     v.reminder2Hours ? String(v.reminder2Hours) : '',
     v.registrationOpen ? 'TRUE' : 'FALSE',
     v.visible ? 'TRUE' : 'FALSE',
+    v.isPriority ? 'TRUE' : 'FALSE',
   ];
 }
 
@@ -121,7 +124,10 @@ export async function getVeranstaltungen(): Promise<Veranstaltung[]> {
   const today = new Date().toISOString().slice(0, 10);
   return all
     .filter(v => v.visible && v.date >= today)
-    .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+    .sort((a, b) => {
+      if (a.isPriority !== b.isPriority) return a.isPriority ? -1 : 1;
+      return a.date.localeCompare(b.date) || a.time.localeCompare(b.time);
+    });
 }
 
 function generateId(): string {

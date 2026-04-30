@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getVeranstaltungen } from '@/lib/veranstaltungen';
 import MeditierendenEvents from '@/components/meditierenden-events';
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Events für Meditierende – TM München',
