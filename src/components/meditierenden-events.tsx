@@ -173,8 +173,12 @@ function EventCard({
         {/* Meta row */}
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[#1A3352]/70">
           <span>{fullDate}</span>
-          <span className="text-[#DBEAFE]">·</span>
-          <span>{event.time} Uhr</span>
+          {event.time && (
+            <>
+              <span className="text-[#DBEAFE]">·</span>
+              <span>{event.time} Uhr</span>
+            </>
+          )}
           <span className="text-[#DBEAFE]">·</span>
           <span className={`
             text-[0.65rem] tracking-[0.12em] uppercase font-medium px-2 py-0.5 rounded-full

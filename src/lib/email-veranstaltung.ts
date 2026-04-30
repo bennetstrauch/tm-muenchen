@@ -41,7 +41,7 @@ function eventBox(p: EventEmailParams): string {
     </p>
     <p style="margin:0 0 8px 0;font-size:14px;color:#888;">${p.eventSubtitle}</p>
     <p style="margin:0 0 4px 0;font-size:16px;">
-      <strong>${p.eventDate}</strong> &nbsp;·&nbsp; ${p.eventTime} Uhr
+      <strong>${p.eventDate}</strong>${p.eventTime ? ` &nbsp;·&nbsp; ${p.eventTime} Uhr` : ''}
     </p>
     <p style="margin:0 0 4px 0;font-size:15px;color:#666;">${locationLine}</p>
     ${p.hosts ? `<p style="margin:4px 0 0;font-size:14px;color:#888;">mit ${p.hosts}</p>` : ''}

@@ -132,7 +132,7 @@ function EventForm({
       <div className="flex gap-3">
         <button
           onClick={() => onSave(form)}
-          disabled={isSaving || !form.title || !form.date || !form.time}
+          disabled={isSaving || !form.title || !form.date}
           className="px-5 py-2 bg-[#BCA075] text-white rounded text-sm font-medium hover:bg-[#a88d65] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSaving ? 'Speichern…' : 'Speichern'}

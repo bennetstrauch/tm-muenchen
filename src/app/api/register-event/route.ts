@@ -44,8 +44,9 @@ export async function POST(request: Request) {
     isOnline, onlineLink, hosts, price,
   };
 
-  const r1 = reminder1Hours > 0 ? calcReminderTime(isoDate, eventTime, reminder1Hours) : null;
-  const r2 = reminder2Hours > 0 ? calcReminderTime(isoDate, eventTime, reminder2Hours) : null;
+  const reminderTime = eventTime || '19:00';
+  const r1 = reminder1Hours > 0 ? calcReminderTime(isoDate, reminderTime, reminder1Hours) : null;
+  const r2 = reminder2Hours > 0 ? calcReminderTime(isoDate, reminderTime, reminder2Hours) : null;
 
   await Promise.all([
     resend.emails.send({
