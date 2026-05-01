@@ -81,7 +81,17 @@ function EventForm({
           <input type="time" className={INPUT_CLS} value={form.time} onChange={e => set('time', e.target.value)} />
         </Field>
         <Field label="Ort">
-          <input className={INPUT_CLS} value={form.location} onChange={e => set('location', e.target.value)} placeholder="Guldeinstraße 47" />
+          <input
+            className={INPUT_CLS}
+            value={form.location}
+            onChange={e => set('location', e.target.value)}
+            placeholder="Guldeinstraße 47"
+            list="location-suggestions"
+          />
+          <datalist id="location-suggestions">
+            <option value="Guldeinstr. 47, 80339 München" />
+            <option value="Schwabing, Bonner Platz 1, 80803 München" />
+          </datalist>
         </Field>
         <Field label="Leiter">
           <input className={INPUT_CLS} value={form.hosts} onChange={e => set('hosts', e.target.value)} placeholder="Bennet, Malena" />
