@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 import { useNavContext } from "@/contexts/nav-context";
 
 type NavLink = { label: string; href: string; type: "anchor" | "page" };
@@ -88,7 +89,7 @@ export default function NavPanel() {
               const cls = `${ITEM_BASE_CLS}${i > 0 ? " border-t border-[#1A3352]/8" : ""}`;
               if (link.type === "page") {
                 return (
-                  <a
+                  <Link
                     key={link.href}
                     href={link.href}
                     onClick={() => setIsOpen(false)}
@@ -96,7 +97,7 @@ export default function NavPanel() {
                   >
                     {link.label}
                     {chevron}
-                  </a>
+                  </Link>
                 );
               }
               return (
