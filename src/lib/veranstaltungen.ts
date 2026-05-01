@@ -7,7 +7,7 @@ const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID!;
 const EVENTS_TAB = 'Veranstaltungen';
 const REGS_TAB = 'Veranstaltungen Anmeldungen';
 const EVENTS_RANGE = `${EVENTS_TAB}!A:S`;
-const REGS_RANGE = `${REGS_TAB}!A:G`;
+const REGS_RANGE = `${REGS_TAB}!A:I`;
 
 export type Veranstaltung = {
   id: string;
@@ -38,6 +38,8 @@ export type EventRegistration = {
   name: string;
   email: string;
   phone: string;
+  tmLehrer: string;
+  datumErlernen: string;
 };
 
 export type EventRegistrationRecord = {
@@ -48,6 +50,8 @@ export type EventRegistrationRecord = {
   name: string;
   email: string;
   phone: string;
+  tmLehrer: string;
+  datumErlernen: string;
 };
 
 function parseBool(val: string): boolean {
@@ -220,6 +224,8 @@ export async function appendEventRegistration(r: EventRegistration): Promise<voi
         r.name,
         r.email,
         r.phone ?? '',
+        r.tmLehrer ?? '',
+        r.datumErlernen ?? '',
       ]],
     },
   });
@@ -242,6 +248,8 @@ export async function getEventRegistrations(): Promise<EventRegistrationRecord[]
       name: row[4] ?? '',
       email: row[5] ?? '',
       phone: row[6] ?? '',
+      tmLehrer: row[7] ?? '',
+      datumErlernen: row[8] ?? '',
     }))
     .reverse();
 }

@@ -186,6 +186,8 @@ function RegistrationsTable({ registrations }: { registrations: EventRegistratio
                 <th className="px-6 py-3">Name</th>
                 <th className="px-6 py-3">E-Mail</th>
                 <th className="px-6 py-3">Telefon</th>
+                <th className="px-6 py-3">TM-Lehrer</th>
+                <th className="px-6 py-3">Erlernt am</th>
                 <th className="px-6 py-3">Veranstaltung</th>
                 <th className="px-6 py-3">Datum</th>
               </tr>
@@ -199,6 +201,8 @@ function RegistrationsTable({ registrations }: { registrations: EventRegistratio
                     <a href={`mailto:${r.email}`} className="hover:text-[#BCA075]">{r.email}</a>
                   </td>
                   <td className="px-6 py-4 text-gray-600 whitespace-nowrap">{r.phone || '—'}</td>
+                  <td className="px-6 py-4 text-gray-600 whitespace-nowrap">{r.tmLehrer || '—'}</td>
+                  <td className="px-6 py-4 text-gray-600 whitespace-nowrap">{r.datumErlernen || '—'}</td>
                   <td className="px-6 py-4 text-gray-600 whitespace-nowrap">{r.eventTitle}</td>
                   <td className="px-6 py-4 text-gray-600 whitespace-nowrap">{r.eventDate}</td>
                 </tr>

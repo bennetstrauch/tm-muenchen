@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Veranstaltung } from "@/lib/veranstaltungen";
 import { formatVeranstaltungDate } from "@/lib/format";
 
@@ -10,6 +10,36 @@ const INPUT_CLS = `
   focus:outline-none focus:border-[#A5C3D7]
   bg-white
 `;
+
+// ── Saved profile (localStorage) ───────────────────────────
+
+const PROFILE_KEY = "tm-saved-profile";
+
+type SavedProfile = {
+  name: string;
+  email: string;
+  phone: string;
+  tmLehrer: string;
+  datumErlernen: string;
+  saveProfile: boolean;
+};
+
+function loadProfile(): SavedProfile | null {
+  try {
+    const raw = localStorage.getItem(PROFILE_KEY);
+    return raw ? (JSON.parse(raw) as SavedProfile) : null;
+  } catch {
+    return null;
+  }
+}
+
+function persistProfile(p: SavedProfile) {
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
+}
+
+function clearProfile() {
+  localStorage.removeItem(PROFILE_KEY);
+}
 
 // ── Registration form ──────────────────────────────────────
 
@@ -25,21 +55,46 @@ function RegistrationForm({
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [tmLehrer, setTmLehrer] = useState("");
+  const [datumErlernen, setDatumErlernen] = useState("");
+  const [saveProfile, setSaveProfile] = useState(false);
+
+  useEffect(() => {
+    const saved = loadProfile();
+    if (!saved) return;
+    setName(saved.name ?? "");
+    setEmail(saved.email ?? "");
+    setPhone(saved.phone ?? "");
+    setTmLehrer(saved.tmLehrer ?? "");
+    setDatumErlernen(saved.datumErlernen ?? "");
+    setSaveProfile(saved.saveProfile ?? false);
+  }, []);
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setFormState("submitting");
     setErrorMsg("");
 
-    const fd = new FormData(e.currentTarget);
+    const profile: SavedProfile = { name, email, phone, tmLehrer, datumErlernen, saveProfile };
+    if (saveProfile) {
+      persistProfile(profile);
+    } else {
+      clearProfile();
+    }
 
     try {
       const res = await fetch("/api/register-event", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: fd.get("name"),
-          email: fd.get("email"),
-          phone: fd.get("phone") || undefined,
+          name,
+          email,
+          phone: phone || undefined,
+          tmLehrer,
+          datumErlernen,
           eventId: event.id,
           eventTitle: event.title,
           eventSubtitle: event.subtitle,
@@ -82,12 +137,67 @@ function RegistrationForm({
   return (
     <form onSubmit={handleSubmit} className="py-5 px-1">
       <div className="mb-3">
-        <input name="name" type="text" placeholder="Name *" required className={INPUT_CLS} />
+        <input
+          type="text"
+          placeholder="Name *"
+          required
+          value={name}
+          onChange={e => setName(e.target.value)}
+          className={INPUT_CLS}
+        />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+        <input
+          type="email"
+          placeholder="E-Mail *"
+          required
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          className={INPUT_CLS}
+        />
+        <input
+          type="tel"
+          placeholder="Telefon (optional)"
+          value={phone}
+          onChange={e => setPhone(e.target.value)}
+          className={INPUT_CLS}
+        />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-        <input name="email" type="email" placeholder="E-Mail *" required className={INPUT_CLS} />
-        <input name="phone" type="tel" placeholder="Telefon (optional)" className={INPUT_CLS} />
+        <input
+          type="text"
+          placeholder="TM-Lehrer *"
+          required
+          value={tmLehrer}
+          onChange={e => setTmLehrer(e.target.value)}
+          className={INPUT_CLS}
+        />
+        <div>
+          <label className="block text-[0.7rem] text-[#7A9BB5] mb-1 ml-1">
+            Datum des Erlernens *
+          </label>
+          <input
+            type="date"
+            required
+            value={datumErlernen}
+            onChange={e => setDatumErlernen(e.target.value)}
+            max={new Date().toISOString().slice(0, 10)}
+            className={INPUT_CLS}
+          />
+        </div>
       </div>
+
+      <label className="flex items-center gap-2.5 mb-4 cursor-pointer select-none">
+        <input
+          type="checkbox"
+          checked={saveProfile}
+          onChange={e => setSaveProfile(e.target.checked)}
+          className="h-4 w-4 rounded border-[#DBEAFE] accent-[#A5C3D7] cursor-pointer"
+        />
+        <span className="text-[0.75rem] text-[#3D5573]">
+          Daten für zukünftige Anmeldungen speichern
+        </span>
+      </label>
 
       {formState === "error" && (
         <p className="text-red-600 text-xs mb-3">{errorMsg}</p>
@@ -134,7 +244,7 @@ function EventCard({
 }) {
   const fullDate = formatVeranstaltungDate(event.date);
   const [expanded, setExpanded] = useState(false);
-  const hasDetails = !!(event.description || event.hosts || event.price || event.notes);
+  const hasDetails = !!(event.description || event.longDescription || event.hosts || event.price || event.notes);
 
   return (
     <li className="py-8 first:pt-0">
@@ -212,9 +322,14 @@ function EventCard({
 
         {/* Expandable details */}
         {expanded && (
-          <div className="flex flex-col gap-2 pt-1">
+          <div className="flex flex-col gap-2.5 pt-1">
             {event.description && (
               <p className="text-sm text-[#3D5573] leading-relaxed">{event.description}</p>
+            )}
+            {event.longDescription && (
+              <p className="text-sm text-[#3D5573] leading-relaxed whitespace-pre-line">
+                {event.longDescription}
+              </p>
             )}
             {(event.hosts || event.price) && (
               <div className="flex flex-wrap gap-x-4 gap-y-1 text-[0.78rem] text-[#3D5573]">

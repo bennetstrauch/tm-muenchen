@@ -9,6 +9,8 @@ type RequestBody = {
   name: string;
   email: string;
   phone?: string;
+  tmLehrer: string;
+  datumErlernen: string;
   eventId: string;
   eventTitle: string;
   eventSubtitle: string;
@@ -27,14 +29,14 @@ type RequestBody = {
 export async function POST(request: Request) {
   const body: RequestBody = await request.json();
   const {
-    name, email, phone,
+    name, email, phone, tmLehrer, datumErlernen,
     eventId, eventTitle, eventSubtitle,
     isoDate, eventDate, eventTime, eventLocation,
     isOnline, onlineLink, hosts, price,
     reminder1Hours, reminder2Hours,
   } = body;
 
-  if (!name?.trim() || !email?.trim()) {
+  if (!name?.trim() || !email?.trim() || !tmLehrer?.trim() || !datumErlernen?.trim()) {
     return Response.json({ error: 'Pflichtfelder fehlen.' }, { status: 400 });
   }
 
@@ -84,6 +86,8 @@ export async function POST(request: Request) {
     name,
     email,
     phone: phone ?? '',
+    tmLehrer,
+    datumErlernen,
   }).catch(err => console.error('Sheets logging failed:', err));
 
   return Response.json({ success: true });
