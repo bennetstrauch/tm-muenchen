@@ -35,7 +35,7 @@ function HeroArrow({ direction, onClick }: { direction: "left" | "right"; onClic
   );
 }
 
-export default function PageClient({ initialTheme }: { initialTheme: ThemeKey }) {
+export default function PageClient({ initialTheme, nextDates }: { initialTheme: ThemeKey; nextDates?: string[] }) {
   const router = useRouter();
   const initialTab: number = themes[initialTheme].forWhomIndex;
   const [activeTab, setActiveTab] = useState<number>(initialTab);
@@ -61,6 +61,7 @@ export default function PageClient({ initialTheme }: { initialTheme: ThemeKey })
           headline={heroTheme.headline}
           subtitle={heroTheme.subtitle}
           images={heroTheme.images}
+          nextDates={nextDates}
         />
         {heroThemeIndex > 0 && (
           <HeroArrow direction="left" onClick={() => navigateToTheme(HERO_THEMES[heroThemeIndex - 1])} />

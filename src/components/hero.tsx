@@ -12,10 +12,12 @@ export default function Hero({
   headline,
   subtitle,
   images,
+  nextDates,
 }: {
   headline?: string[];
   subtitle?: string;
   images?: HeroImage[];
+  nextDates?: string[];
 } = {}) {
   const { hero } = content;
   const headlineLines = headline ?? ["Endlich wirklich abschalten.", "Ohne Anstrengung."];
@@ -70,8 +72,37 @@ export default function Hero({
         </div>
       </div>
 
+      {/* ── Primary CTA (middle) ──────────────────────── */}
+      <div
+        className="relative z-10 flex flex-col items-center text-center mt-[5vh] gap-3 opacity-0"
+        style={{ animation: "fadeInUp 0.75s ease forwards 0.28s" }}
+      >
+        <a
+          href={hero.ctaHref}
+          className="
+            inline-flex items-center gap-2.5
+            px-8 py-4 rounded-full
+            bg-[#1A3352] text-white
+            text-[0.72rem] tracking-[0.18em] uppercase font-medium
+            whitespace-nowrap shadow-[0_4px_24px_rgba(26,51,82,0.28)]
+            transition-all duration-300
+            hover:bg-[#243f63] hover:shadow-[0_6px_28px_rgba(26,51,82,0.38)]
+          "
+        >
+          {hero.cta}
+        </a>
+
+        {nextDates && nextDates.length > 0 && (
+          <p className="text-sm text-[#1A3352]/55 tracking-wide">
+            <span className="mr-1">🗓</span>
+            Nächste Termine:{" "}
+            <span className="text-[#1A3352]/75 font-medium">{nextDates.join(" · ")}</span>
+          </p>
+        )}
+      </div>
+
       {/* ── Brand + subtitle ──────────────────────────── */}
-      <div className="relative z-10 mt-auto flex flex-col items-center text-center gap-7 pb-[max(5.5rem,7vh)]">
+      <div className="relative z-10 mt-auto flex flex-col items-center text-center gap-5 pb-6">
         <div
           className="flex flex-col items-center gap-1.5 opacity-0 -translate-y-4"
           style={{ animation: "fadeInUp 0.75s ease forwards 0.32s" }}

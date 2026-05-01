@@ -8,13 +8,13 @@ export default function StickyCta() {
   const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
-    const section = document.getElementById("anmeldung");
-    if (!section) return;
+    const hero = document.getElementById("hero");
+    if (!hero) return;
     const observer = new IntersectionObserver(
       ([entry]) => setHidden(entry.isIntersecting),
-      { threshold: 0.1 }
+      { threshold: 0.6 }
     );
-    observer.observe(section);
+    observer.observe(hero);
     return () => observer.disconnect();
   }, []);
 

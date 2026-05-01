@@ -18,9 +18,15 @@ export default async function Home() {
     getTeachers(),
   ]);
 
+  const nextDates = events.slice(0, 3).map(e => {
+    const d = new Date(`${e.date}T12:00:00`);
+    const weekday = d.toLocaleDateString('de-DE', { weekday: 'short' }).replace('.', '');
+    return `${weekday}, ${e.time}`;
+  });
+
   return (
     <main>
-      <PageClient initialTheme="stress" />
+      <PageClient initialTheme="stress" nextDates={nextDates} />
       <Testimonials testimonials={getTestimonials("stress")} />
       <WhyTm />
       <HowItWorks />
