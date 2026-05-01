@@ -82,11 +82,11 @@ export default function Hero({
           className="
             inline-flex items-center gap-2.5
             px-8 py-4 rounded-full
-            bg-[#1A3352] text-white
+            bg-[#F59E0B] text-[#1A3352]
             text-[0.72rem] tracking-[0.18em] uppercase font-medium
-            whitespace-nowrap shadow-[0_4px_24px_rgba(26,51,82,0.28)]
+            whitespace-nowrap shadow-[0_4px_24px_rgba(245,158,11,0.45)]
             transition-all duration-300
-            hover:bg-[#243f63] hover:shadow-[0_6px_28px_rgba(26,51,82,0.38)]
+            hover:bg-[#E08C00] hover:shadow-[0_6px_28px_rgba(245,158,11,0.55)]
           "
         >
           {hero.cta}
@@ -96,13 +96,20 @@ export default function Hero({
           <p className="text-sm text-[#1A3352]/55 tracking-wide">
             <span className="mr-1">🗓</span>
             Nächste Termine:{" "}
-            <span className="text-[#1A3352]/75 font-medium">{nextDates.join(" · ")}</span>
+            {nextDates.map((d, i) => (
+              <span key={d} className={i >= 2 ? "hidden sm:inline" : undefined}>
+                <span className="text-[#1A3352]/75 font-medium">{d}</span>
+                {i < nextDates.length - 1 && <span className={i === 1 ? "hidden sm:inline" : undefined}> · </span>}
+              </span>
+            ))}
           </p>
         )}
       </div>
 
+      <div className="flex-1 min-h-10" />
+
       {/* ── Brand + subtitle ──────────────────────────── */}
-      <div className="relative z-10 mt-auto flex flex-col items-center text-center gap-5 pb-6">
+      <div className="relative z-10 flex flex-col items-center text-center gap-5 pb-6">
         <div
           className="flex flex-col items-center gap-1.5 opacity-0 -translate-y-4"
           style={{ animation: "fadeInUp 0.75s ease forwards 0.32s" }}
