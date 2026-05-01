@@ -30,8 +30,10 @@ export const themes: Record<string, Theme> = {
   stress: {
     slug: "", // Haupt-URL: /
     label: "Stress",
-    headline: ["Endlich wirklich abschalten.", "Ohne Anstrengung."],
-    subtitle: "Erfahre besonders tiefe Ruhe",
+    // headline: ["Endlich wirklich abschalten.", "Ohne Anstrengung."],
+    headline: ["Dein Kopf wird einfach nicht still?", "Lerne, wie er wirklich zur Ruhe kommt."],
+    // subtitle: "Erfahre besonders tiefe Ruhe",
+    subtitle: "Ohne Konzentration. Ohne Gedanken stoppen.",
     images: [
       { src: "/hero/stress/1.jpg", focus: "45% 30%" },
       { src: "/hero/stress/2.jpg", focus: "62% 25%" },
@@ -238,10 +240,10 @@ export const content = {
   },
 
   hero: {
+    cta: "Kostenlosen Info-Termin wählen",
+    ctaHref: "#anmeldung",
     learnMore: "Mehr über TM erfahren",
     learnMoreHref: "#fuer-wen",
-    cta: "Kostenlose Info-Session",
-    ctaHref: "#anmeldung",
   },
 
   forWhom: {
