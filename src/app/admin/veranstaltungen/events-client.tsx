@@ -48,22 +48,51 @@ const INPUT_CLS = 'w-full border border-gray-200 rounded px-3 py-2 text-sm text-
 const TEXTAREA_CLS = `${INPUT_CLS} resize-y min-h-[70px]`;
 const CHECK_CLS = 'h-4 w-4 accent-[#BCA075]';
 
+function timeToMinutes(t: string): number {
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + (m || 0);
+}
+
+function findConflicts(
+  date: string,
+  time: string,
+  allEvents: Veranstaltung[],
+  editingId?: string,
+): Veranstaltung[] {
+  if (!date) return [];
+  return allEvents.filter(e => {
+    if (e.id === editingId) return false;
+    if (e.date !== date) return false;
+    if (time && e.time) return Math.abs(timeToMinutes(time) - timeToMinutes(e.time)) < 180;
+    return true;
+  });
+}
+
 function EventForm({
   initial,
   onSave,
   onCancel,
   isSaving,
+  allEvents,
+  editingId,
 }: {
   initial: Omit<Veranstaltung, 'id'>;
   onSave: (v: Omit<Veranstaltung, 'id'>) => void;
   onCancel: () => void;
   isSaving: boolean;
+  allEvents: Veranstaltung[];
+  editingId?: string;
 }) {
   const [form, setForm] = useState<Omit<Veranstaltung, 'id'>>(initial);
 
   function set<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm(prev => ({ ...prev, [key]: value }));
   }
+
+  const conflicts = useMemo(
+    () => findConflicts(form.date, form.time, allEvents, editingId),
+    [form.date, form.time, allEvents, editingId],
+  );
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -80,6 +109,28 @@ function EventForm({
         <Field label="Uhrzeit * (HH:MM)">
           <input type="time" className={INPUT_CLS} value={form.time} onChange={e => set('time', e.target.value)} />
         </Field>
+      </div>
+
+      {conflicts.length > 0 && (
+        <div className="mb-4 flex gap-2.5 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <span className="mt-0.5 flex-shrink-0">⚠️</span>
+          <div>
+            <p className="font-medium mb-1">
+              {conflicts.length === 1 ? 'Ein anderer Termin' : `${conflicts.length} andere Termine`} in diesem Zeitraum:
+            </p>
+            <ul className="list-disc list-inside space-y-0.5 text-amber-700">
+              {conflicts.map(c => (
+                <li key={c.id}>
+                  {c.title}{c.time ? ` · ${c.time} Uhr` : ''}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-1.5 text-amber-600 text-xs">Du kannst trotzdem speichern.</p>
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <Field label="Ort">
           <input
             className={INPUT_CLS}
@@ -424,6 +475,7 @@ export default function EventsClient({
                 onSave={handleCreate}
                 onCancel={() => setMode({ view: 'list' })}
                 isSaving={saving}
+                allEvents={events}
               />
             </>
           )}
@@ -436,6 +488,8 @@ export default function EventsClient({
                 onSave={handleUpdate}
                 onCancel={() => setMode({ view: 'list' })}
                 isSaving={saving}
+                allEvents={events}
+                editingId={mode.event.id}
               />
             </>
           )}
