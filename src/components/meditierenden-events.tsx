@@ -359,7 +359,7 @@ function EventCard({
         {/* Directional gradient overlay: opaque top-left → transparent bottom-right */}
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.76) 45%, rgba(255,255,255,0.28) 100%)' }}
+          style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 40%, rgba(255,255,255,0.50) 100%)' }}
         />
         <div className="relative z-10 px-5 py-7">
           {eventContent}
