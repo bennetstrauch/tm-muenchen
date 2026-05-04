@@ -371,9 +371,9 @@ function EventCard({
       <div className="hidden md:grid md:grid-cols-3 md:gap-8 md:items-stretch md:py-10 first:md:pt-0">
         {imageFirst ? (
           <>
-            <div className="overflow-hidden rounded-xl min-h-[200px]">
+            <div className="relative overflow-hidden rounded-xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={imageUrl} alt="" className="w-full h-full object-cover" />
+              <img src={imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
             </div>
             <div className="md:col-span-2 flex flex-col justify-center">
               {eventContent}
@@ -384,9 +384,9 @@ function EventCard({
             <div className="md:col-span-2 flex flex-col justify-center">
               {eventContent}
             </div>
-            <div className="overflow-hidden rounded-xl min-h-[200px]">
+            <div className="relative overflow-hidden rounded-xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={imageUrl} alt="" className="w-full h-full object-cover" />
+              <img src={imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
             </div>
           </>
         )}
