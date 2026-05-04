@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getAllVeranstaltungen, getEventRegistrations } from '@/lib/veranstaltungen';
+import { getAllVorlagen } from '@/lib/vorlagen';
 import EventsClient from './events-client';
 
 export const metadata: Metadata = {
@@ -9,9 +10,10 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminVeranstaltungenPage() {
-  const [events, registrations] = await Promise.all([
+  const [events, registrations, vorlagen] = await Promise.all([
     getAllVeranstaltungen().catch(() => []),
     getEventRegistrations().catch(() => []),
+    getAllVorlagen().catch(() => []),
   ]);
 
   return (
@@ -28,7 +30,7 @@ export default async function AdminVeranstaltungenPage() {
           <h1 className="text-2xl font-semibold text-gray-800">Veranstaltungen</h1>
         </div>
 
-        <EventsClient initialEvents={events} registrations={registrations} />
+        <EventsClient initialEvents={events} registrations={registrations} initialVorlagen={vorlagen} />
 
       </div>
     </div>

@@ -1,8 +1,8 @@
 import { google } from 'googleapis';
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID!;
-// First tab of the spreadsheet — rename it to "Infoanmeldungen" in Google Sheets
-const RANGE = 'A:G';
+const TAB = 'Info Anmeldungen';
+const RANGE = `${TAB}!A:G`;
 
 export function getSheets() {
   const creds = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON!);

@@ -2,11 +2,22 @@
 
 import { useState, useMemo } from 'react';
 import type { Veranstaltung, EventRegistrationRecord } from '@/lib/veranstaltungen';
+import type { Vorlage } from '@/lib/vorlagen';
+
+type Tab = 'events' | 'registrations' | 'vorlagen';
 
 type Mode =
   | { view: 'list' }
   | { view: 'new' }
   | { view: 'edit'; event: Veranstaltung };
+
+// Tracks the template button state machine inside EventForm.
+type VorlagePhase =
+  | { kind: 'none' }
+  | { kind: 'just-saved-new'; id: string }   // just saved → green "Vorlage gespeichert ✓"
+  | { kind: 'just-updated'; id: string }     // just updated → green "Vorlage aktualisiert ✓"
+  | { kind: 'linked-clean'; id: string }     // linked, no unsaved changes → both buttons disabled
+  | { kind: 'linked-dirty'; id: string }     // linked + changes made → both buttons enabled
 
 const EMPTY_FORM: Omit<Veranstaltung, 'id'> = {
   title: '',
@@ -29,13 +40,7 @@ const EMPTY_FORM: Omit<Veranstaltung, 'id'> = {
   isPriority: false,
 };
 
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
       <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
@@ -68,6 +73,8 @@ function findConflicts(
   });
 }
 
+// ─── EventForm ───────────────────────────────────────────────────────────────
+
 function EventForm({
   initial,
   onSave,
@@ -75,6 +82,9 @@ function EventForm({
   isSaving,
   allEvents,
   editingId,
+  vorlagen,
+  onSaveAsVorlage,
+  onUpdateVorlage,
 }: {
   initial: Omit<Veranstaltung, 'id'>;
   onSave: (v: Omit<Veranstaltung, 'id'>) => void;
@@ -82,11 +92,23 @@ function EventForm({
   isSaving: boolean;
   allEvents: Veranstaltung[];
   editingId?: string;
+  vorlagen: Vorlage[];
+  onSaveAsVorlage: (v: Omit<Vorlage, 'id'>) => Promise<Vorlage>;
+  onUpdateVorlage: (id: string, data: Omit<Veranstaltung, 'id'>) => Promise<void>;
 }) {
-  const [form, setForm] = useState<Omit<Veranstaltung, 'id'>>(initial);
+  const [form, setFormState] = useState<Omit<Veranstaltung, 'id'>>(initial);
+  const [vorlagePhase, setVorlagePhase] = useState<VorlagePhase>({ kind: 'none' });
+  const [savingVorlage, setSavingVorlage] = useState(false);
+  const [showVorlagenPanel, setShowVorlagenPanel] = useState(false);
+  const [expandedVorlageId, setExpandedVorlageId] = useState<string | null>(null);
 
   function set<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
-    setForm(prev => ({ ...prev, [key]: value }));
+    setFormState(prev => ({ ...prev, [key]: value }));
+    setVorlagePhase(prev => {
+      if (prev.kind === 'none') return prev;
+      if (prev.kind === 'linked-dirty') return prev;
+      return { kind: 'linked-dirty', id: prev.id };
+    });
   }
 
   const conflicts = useMemo(
@@ -94,125 +116,472 @@ function EventForm({
     [form.date, form.time, allEvents, editingId],
   );
 
-  return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-        <Field label="Titel *">
-          <input className={INPUT_CLS} value={form.title} onChange={e => set('title', e.target.value)} />
-        </Field>
-        <Field label="Untertitel">
-          <input className={INPUT_CLS} value={form.subtitle} onChange={e => set('subtitle', e.target.value)} />
-        </Field>
-        <Field label="Datum * (YYYY-MM-DD)">
-          <input type="date" className={INPUT_CLS} value={form.date} onChange={e => set('date', e.target.value)} />
-        </Field>
-        <Field label="Uhrzeit * (HH:MM)">
-          <input type="time" className={INPUT_CLS} value={form.time} onChange={e => set('time', e.target.value)} />
-        </Field>
-      </div>
+  async function handleSaveAsNewVorlage() {
+    setSavingVorlage(true);
+    try {
+      const saved = await onSaveAsVorlage({ ...form, name: form.title || 'Vorlage' });
+      setVorlagePhase({ kind: 'just-saved-new', id: saved.id });
+    } finally {
+      setSavingVorlage(false);
+    }
+  }
 
-      {conflicts.length > 0 && (
-        <div className="mb-4 flex gap-2.5 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          <span className="mt-0.5 flex-shrink-0">⚠️</span>
-          <div>
-            <p className="font-medium mb-1">
-              {conflicts.length === 1 ? 'Ein anderer Termin' : `${conflicts.length} andere Termine`} in diesem Zeitraum:
-            </p>
-            <ul className="list-disc list-inside space-y-0.5 text-amber-700">
-              {conflicts.map(c => (
-                <li key={c.id}>
-                  {c.title}{c.time ? ` · ${c.time} Uhr` : ''}
-                </li>
+  async function handleUpdateVorlage() {
+    if (vorlagePhase.kind !== 'linked-dirty') return;
+    const id = vorlagePhase.id;
+    setSavingVorlage(true);
+    try {
+      await onUpdateVorlage(id, form);
+      setVorlagePhase({ kind: 'just-updated', id });
+    } finally {
+      setSavingVorlage(false);
+    }
+  }
+
+  function handleLoadVorlage(v: Vorlage) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, name, ...data } = v;
+    setFormState({ ...data, date: '' });
+    setVorlagePhase({ kind: 'linked-clean', id });
+    setShowVorlagenPanel(false);
+    setExpandedVorlageId(null);
+  }
+
+  // Template button rendering
+  const btnBase = 'px-4 py-2 rounded text-sm font-medium transition-colors disabled:cursor-not-allowed';
+  const btnGold = `${btnBase} bg-[#BCA075] text-white hover:bg-[#a88d65] disabled:opacity-40`;
+  const btnGreen = `${btnBase} bg-green-600 text-white opacity-90`;
+  const btnDisabled = `${btnBase} border border-gray-200 text-gray-400 opacity-60`;
+
+  function renderVorlageButtons() {
+    const phase = vorlagePhase;
+
+    if (phase.kind === 'none') {
+      return (
+        <button
+          className={btnGold}
+          onClick={handleSaveAsNewVorlage}
+          disabled={savingVorlage || !form.title}
+        >
+          {savingVorlage ? 'Speichern…' : 'Als Vorlage speichern'}
+        </button>
+      );
+    }
+
+    if (phase.kind === 'just-saved-new') {
+      return (
+        <button className={btnGreen} disabled>Vorlage gespeichert ✓</button>
+      );
+    }
+
+    if (phase.kind === 'just-updated') {
+      return (
+        <>
+          <button className={btnDisabled} disabled>Als neue Vorlage speichern</button>
+          <button className={btnGreen} disabled>Vorlage aktualisiert ✓</button>
+        </>
+      );
+    }
+
+    if (phase.kind === 'linked-clean') {
+      return (
+        <>
+          <button className={btnDisabled} disabled>Als neue Vorlage speichern</button>
+          <button className={btnDisabled} disabled>Vorlage aktualisieren</button>
+        </>
+      );
+    }
+
+    // linked-dirty
+    return (
+      <>
+        <button
+          className={btnGold}
+          onClick={handleSaveAsNewVorlage}
+          disabled={savingVorlage || !form.title}
+        >
+          {savingVorlage ? 'Speichern…' : 'Als neue Vorlage speichern'}
+        </button>
+        <button
+          className={btnGold}
+          onClick={handleUpdateVorlage}
+          disabled={savingVorlage}
+        >
+          {savingVorlage ? 'Aktualisieren…' : 'Vorlage aktualisieren'}
+        </button>
+      </>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Vorlage verwenden — only for new events */}
+      {!editingId && vorlagen.length > 0 && (
+        <div>
+          <button
+            onClick={() => setShowVorlagenPanel(p => !p)}
+            className="text-sm text-[#BCA075] hover:underline flex items-center gap-1"
+          >
+            Vorlage verwenden {showVorlagenPanel ? '▲' : '▼'}
+          </button>
+          {showVorlagenPanel && (
+            <div className="mt-2 border border-gray-200 rounded-lg overflow-hidden bg-white divide-y divide-gray-100">
+              {vorlagen.map(v => (
+                <div key={v.id} className="px-4 py-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-sm font-medium text-gray-800">{v.name}</span>
+                    <button
+                      onClick={() => handleLoadVorlage(v)}
+                      className="shrink-0 px-3 py-1 bg-[#BCA075] text-white text-xs rounded hover:bg-[#a88d65]"
+                    >
+                      Verwenden
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => setExpandedVorlageId(expandedVorlageId === v.id ? null : v.id)}
+                    className="text-xs text-gray-400 hover:text-gray-600 mt-1"
+                  >
+                    {expandedVorlageId === v.id ? 'Details schließen ▲' : 'Mehr Details ▼'}
+                  </button>
+                  {expandedVorlageId === v.id && (
+                    <div className="mt-2 text-xs text-gray-600 space-y-1">
+                      {v.hosts && <p><span className="text-gray-400 w-20 inline-block">Leiter:</span>{v.hosts}</p>}
+                      {v.location && <p><span className="text-gray-400 w-20 inline-block">Ort:</span>{v.location}</p>}
+                      {v.time && <p><span className="text-gray-400 w-20 inline-block">Uhrzeit:</span>{v.time} Uhr</p>}
+                      {v.description && <p><span className="text-gray-400 w-20 inline-block">Beschreibung:</span>{v.description}</p>}
+                      {v.price && <p><span className="text-gray-400 w-20 inline-block">Preis:</span>{v.price}</p>}
+                    </div>
+                  )}
+                </div>
               ))}
-            </ul>
-            <p className="mt-1.5 text-amber-600 text-xs">Du kannst trotzdem speichern.</p>
-          </div>
+            </div>
+          )}
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-        <Field label="Ort">
-          <input
-            className={INPUT_CLS}
-            value={form.location}
-            onChange={e => set('location', e.target.value)}
-            placeholder="Guldeinstraße 47"
-            list="location-suggestions"
-          />
-          <datalist id="location-suggestions">
-            <option value="Guldeinstr. 47, 80339 München" />
-            <option value="Schwabing, Bonner Platz 1, 80803 München" />
-          </datalist>
-        </Field>
-        <Field label="Leiter">
-          <input className={INPUT_CLS} value={form.hosts} onChange={e => set('hosts', e.target.value)} placeholder="Bennet, Malena" />
-        </Field>
-        <Field label="Preis (optional)">
-          <input className={INPUT_CLS} value={form.price} onChange={e => set('price', e.target.value)} placeholder="65 €/P.; 50 € Ehepaare" />
-        </Field>
-        <Field label="Zielgruppe (optional)">
-          <input className={INPUT_CLS} value={form.targetAudience} onChange={e => set('targetAudience', e.target.value)} placeholder="15–45 Jahre" />
-        </Field>
-        <Field label="Erinnerung 1 (Stunden vorher)">
-          <input type="number" min="0" className={INPUT_CLS} value={form.reminder1Hours} onChange={e => set('reminder1Hours', parseInt(e.target.value) || 24)} />
-        </Field>
-        <Field label="Erinnerung 2 (Stunden vorher, 0 = keine)">
-          <input type="number" min="0" className={INPUT_CLS} value={form.reminder2Hours} onChange={e => set('reminder2Hours', parseInt(e.target.value) || 0)} />
-        </Field>
-        <Field label="Online-Link (optional)">
-          <input className={INPUT_CLS} value={form.onlineLink} onChange={e => set('onlineLink', e.target.value)} placeholder="https://zoom.us/..." />
-        </Field>
-      </div>
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <Field label="Titel *">
+            <input className={INPUT_CLS} value={form.title} onChange={e => set('title', e.target.value)} />
+          </Field>
+          <Field label="Untertitel">
+            <input className={INPUT_CLS} value={form.subtitle} onChange={e => set('subtitle', e.target.value)} />
+          </Field>
+          <Field label="Datum * (YYYY-MM-DD)">
+            <input type="date" className={INPUT_CLS} value={form.date} onChange={e => set('date', e.target.value)} />
+          </Field>
+          <Field label="Uhrzeit * (HH:MM)">
+            <input type="time" className={INPUT_CLS} value={form.time} onChange={e => set('time', e.target.value)} />
+          </Field>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-        <Field label="Kurzbeschreibung">
-          <textarea className={TEXTAREA_CLS} value={form.description} onChange={e => set('description', e.target.value)} placeholder="mit Gruppenmeditation, Maharishi-Tape…" />
-        </Field>
-        <Field label="Hinweise (optional)">
-          <textarea className={TEXTAREA_CLS} value={form.notes} onChange={e => set('notes', e.target.value)} placeholder="Weitere Infos folgen" />
-        </Field>
-        <Field label="Ausführliche Beschreibung (optional)">
-          <textarea className={TEXTAREA_CLS} value={form.longDescription} onChange={e => set('longDescription', e.target.value)} />
-        </Field>
-      </div>
+        {conflicts.length > 0 && (
+          <div className="mb-4 flex gap-2.5 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            <span className="mt-0.5 shrink-0">⚠️</span>
+            <div>
+              <p className="font-medium mb-1">
+                {conflicts.length === 1 ? 'Ein anderer Termin' : `${conflicts.length} andere Termine`} in diesem Zeitraum:
+              </p>
+              <ul className="list-disc list-inside space-y-0.5 text-amber-700">
+                {conflicts.map(c => (
+                  <li key={c.id}>{c.title}{c.time ? ` · ${c.time} Uhr` : ''}</li>
+                ))}
+              </ul>
+              <p className="mt-1.5 text-amber-600 text-xs">Du kannst trotzdem speichern.</p>
+            </div>
+          </div>
+        )}
 
-      <div className="flex flex-wrap gap-6 mb-6">
-        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-          <input type="checkbox" className={CHECK_CLS} checked={form.isOnline} onChange={e => set('isOnline', e.target.checked)} />
-          Online
-        </label>
-        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-          <input type="checkbox" className={CHECK_CLS} checked={form.registrationOpen} onChange={e => set('registrationOpen', e.target.checked)} />
-          Anmeldung offen
-        </label>
-        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-          <input type="checkbox" className={CHECK_CLS} checked={form.visible} onChange={e => set('visible', e.target.checked)} />
-          Sichtbar auf Website
-        </label>
-        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-          <input type="checkbox" className={CHECK_CLS} checked={form.isPriority} onChange={e => set('isPriority', e.target.checked)} />
-          Priorität (oben anzeigen)
-        </label>
-      </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <Field label="Ort">
+            <input
+              className={INPUT_CLS}
+              value={form.location}
+              onChange={e => set('location', e.target.value)}
+              placeholder="Guldeinstraße 47"
+              list="location-suggestions"
+            />
+            <datalist id="location-suggestions">
+              <option value="Guldeinstr. 47, 80339 München" />
+              <option value="Schwabing, Bonner Platz 1, 80803 München" />
+            </datalist>
+          </Field>
+          <Field label="Leiter">
+            <input className={INPUT_CLS} value={form.hosts} onChange={e => set('hosts', e.target.value)} placeholder="Bennet, Malena" />
+          </Field>
+          <Field label="Preis (optional)">
+            <input className={INPUT_CLS} value={form.price} onChange={e => set('price', e.target.value)} placeholder="65 €/P.; 50 € Ehepaare" />
+          </Field>
+          <Field label="Zielgruppe (optional)">
+            <input className={INPUT_CLS} value={form.targetAudience} onChange={e => set('targetAudience', e.target.value)} placeholder="15–45 Jahre" />
+          </Field>
+          <Field label="Erinnerung 1 (Stunden vorher)">
+            <input type="number" min="0" className={INPUT_CLS} value={form.reminder1Hours} onChange={e => set('reminder1Hours', parseInt(e.target.value) || 24)} />
+          </Field>
+          <Field label="Erinnerung 2 (Stunden vorher, 0 = keine)">
+            <input type="number" min="0" className={INPUT_CLS} value={form.reminder2Hours} onChange={e => set('reminder2Hours', parseInt(e.target.value) || 0)} />
+          </Field>
+          <Field label="Online-Link (optional)">
+            <input className={INPUT_CLS} value={form.onlineLink} onChange={e => set('onlineLink', e.target.value)} placeholder="https://zoom.us/..." />
+          </Field>
+        </div>
 
-      <div className="flex gap-3">
-        <button
-          onClick={() => onSave(form)}
-          disabled={isSaving || !form.title || !form.date}
-          className="px-5 py-2 bg-[#BCA075] text-white rounded text-sm font-medium hover:bg-[#a88d65] disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isSaving ? 'Speichern…' : 'Speichern'}
-        </button>
-        <button
-          onClick={onCancel}
-          className="px-5 py-2 border border-gray-200 rounded text-sm text-gray-600 hover:bg-gray-50"
-        >
-          Abbrechen
-        </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <Field label="Kurzbeschreibung">
+            <textarea className={TEXTAREA_CLS} value={form.description} onChange={e => set('description', e.target.value)} placeholder="mit Gruppenmeditation, Maharishi-Tape…" />
+          </Field>
+          <Field label="Hinweise (optional)">
+            <textarea className={TEXTAREA_CLS} value={form.notes} onChange={e => set('notes', e.target.value)} placeholder="Weitere Infos folgen" />
+          </Field>
+          <Field label="Ausführliche Beschreibung (optional)">
+            <textarea className={TEXTAREA_CLS} value={form.longDescription} onChange={e => set('longDescription', e.target.value)} />
+          </Field>
+        </div>
+
+        <div className="flex flex-wrap gap-6 mb-6">
+          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <input type="checkbox" className={CHECK_CLS} checked={form.isOnline} onChange={e => set('isOnline', e.target.checked)} />
+            Online
+          </label>
+          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <input type="checkbox" className={CHECK_CLS} checked={form.registrationOpen} onChange={e => set('registrationOpen', e.target.checked)} />
+            Anmeldung offen
+          </label>
+          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <input type="checkbox" className={CHECK_CLS} checked={form.visible} onChange={e => set('visible', e.target.checked)} />
+            Sichtbar auf Website
+          </label>
+          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <input type="checkbox" className={CHECK_CLS} checked={form.isPriority} onChange={e => set('isPriority', e.target.checked)} />
+            Priorität (oben anzeigen)
+          </label>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={() => onSave(form)}
+            disabled={isSaving || !form.title || !form.date}
+            className="px-5 py-2 bg-[#BCA075] text-white rounded text-sm font-medium hover:bg-[#a88d65] disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSaving ? 'Speichern…' : editingId ? 'Speichern' : 'Event hinzufügen'}
+          </button>
+          <button
+            onClick={onCancel}
+            className="px-5 py-2 border border-gray-200 rounded text-sm text-gray-600 hover:bg-gray-50"
+          >
+            Abbrechen
+          </button>
+          <span className="text-gray-200 select-none hidden sm:inline">|</span>
+          <div className="flex flex-wrap gap-2">
+            {renderVorlageButtons()}
+          </div>
+        </div>
       </div>
     </div>
   );
 }
+
+// ─── VorlagenTab ──────────────────────────────────────────────────────────────
+
+function VorlagenTab({
+  vorlagen,
+  onUpdate,
+  onDelete,
+}: {
+  vorlagen: Vorlage[];
+  onUpdate: (v: Vorlage) => Promise<void>;
+  onDelete: (id: string) => Promise<void>;
+}) {
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<Vorlage | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  function startEdit(v: Vorlage) {
+    setEditingId(v.id);
+    setEditForm({ ...v });
+    setConfirmDelete(null);
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    setEditForm(null);
+  }
+
+  function setField<K extends keyof Vorlage>(key: K, value: Vorlage[K]) {
+    setEditForm(prev => prev ? { ...prev, [key]: value } : null);
+  }
+
+  async function handleSave() {
+    if (!editForm) return;
+    setSaving(true);
+    setError('');
+    try {
+      await onUpdate(editForm);
+      setEditingId(null);
+      setEditForm(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Fehler');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleDelete(id: string) {
+    setError('');
+    try {
+      await onDelete(id);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Fehler beim Löschen');
+    } finally {
+      setConfirmDelete(null);
+    }
+  }
+
+  if (vorlagen.length === 0) {
+    return (
+      <p className="text-gray-400 text-sm py-8 text-center">
+        Noch keine Vorlagen. Erstelle eine beim Anlegen einer neuen Veranstaltung.
+      </p>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {error && (
+        <p className="text-sm text-red-500 bg-red-50 px-4 py-2 rounded">{error}</p>
+      )}
+      {vorlagen.map(v => (
+        <div key={v.id} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          {editingId === v.id && editForm ? (
+            <div className="p-6 space-y-4">
+              <Field label="Vorlagenname">
+                <input
+                  className={INPUT_CLS}
+                  value={editForm.name}
+                  onChange={e => setField('name', e.target.value)}
+                  placeholder="z.B. Gruppenmeditation Montag"
+                />
+              </Field>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field label="Titel">
+                  <input className={INPUT_CLS} value={editForm.title} onChange={e => setField('title', e.target.value)} />
+                </Field>
+                <Field label="Untertitel">
+                  <input className={INPUT_CLS} value={editForm.subtitle} onChange={e => setField('subtitle', e.target.value)} />
+                </Field>
+                <Field label="Uhrzeit">
+                  <input type="time" className={INPUT_CLS} value={editForm.time} onChange={e => setField('time', e.target.value)} />
+                </Field>
+                <Field label="Ort">
+                  <input className={INPUT_CLS} value={editForm.location} onChange={e => setField('location', e.target.value)} list="location-suggestions-vorlage" />
+                  <datalist id="location-suggestions-vorlage">
+                    <option value="Guldeinstr. 47, 80339 München" />
+                    <option value="Schwabing, Bonner Platz 1, 80803 München" />
+                  </datalist>
+                </Field>
+                <Field label="Leiter">
+                  <input className={INPUT_CLS} value={editForm.hosts} onChange={e => setField('hosts', e.target.value)} placeholder="Bennet, Malena" />
+                </Field>
+                <Field label="Preis (optional)">
+                  <input className={INPUT_CLS} value={editForm.price} onChange={e => setField('price', e.target.value)} />
+                </Field>
+                <Field label="Zielgruppe (optional)">
+                  <input className={INPUT_CLS} value={editForm.targetAudience} onChange={e => setField('targetAudience', e.target.value)} />
+                </Field>
+                <Field label="Online-Link (optional)">
+                  <input className={INPUT_CLS} value={editForm.onlineLink} onChange={e => setField('onlineLink', e.target.value)} />
+                </Field>
+                <Field label="Erinnerung 1 (Stunden vorher)">
+                  <input type="number" min="0" className={INPUT_CLS} value={editForm.reminder1Hours} onChange={e => setField('reminder1Hours', parseInt(e.target.value) || 24)} />
+                </Field>
+                <Field label="Erinnerung 2 (Stunden vorher, 0 = keine)">
+                  <input type="number" min="0" className={INPUT_CLS} value={editForm.reminder2Hours} onChange={e => setField('reminder2Hours', parseInt(e.target.value) || 0)} />
+                </Field>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field label="Kurzbeschreibung">
+                  <textarea className={TEXTAREA_CLS} value={editForm.description} onChange={e => setField('description', e.target.value)} />
+                </Field>
+                <Field label="Hinweise (optional)">
+                  <textarea className={TEXTAREA_CLS} value={editForm.notes} onChange={e => setField('notes', e.target.value)} />
+                </Field>
+                <Field label="Ausführliche Beschreibung (optional)">
+                  <textarea className={TEXTAREA_CLS} value={editForm.longDescription} onChange={e => setField('longDescription', e.target.value)} />
+                </Field>
+              </div>
+              <div className="flex flex-wrap gap-6 mb-2">
+                <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                  <input type="checkbox" className={CHECK_CLS} checked={editForm.isOnline} onChange={e => setField('isOnline', e.target.checked)} />
+                  Online
+                </label>
+                <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                  <input type="checkbox" className={CHECK_CLS} checked={editForm.registrationOpen} onChange={e => setField('registrationOpen', e.target.checked)} />
+                  Anmeldung offen
+                </label>
+                <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                  <input type="checkbox" className={CHECK_CLS} checked={editForm.visible} onChange={e => setField('visible', e.target.checked)} />
+                  Sichtbar auf Website
+                </label>
+                <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                  <input type="checkbox" className={CHECK_CLS} checked={editForm.isPriority} onChange={e => setField('isPriority', e.target.checked)} />
+                  Priorität
+                </label>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleSave}
+                  disabled={saving || !editForm.name}
+                  className="px-5 py-2 bg-[#BCA075] text-white rounded text-sm font-medium hover:bg-[#a88d65] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {saving ? 'Speichern…' : 'Vorlage speichern'}
+                </button>
+                <button
+                  onClick={cancelEdit}
+                  className="px-5 py-2 border border-gray-200 rounded text-sm text-gray-600 hover:bg-gray-50"
+                >
+                  Abbrechen
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="px-6 py-4 flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <p className="font-medium text-gray-800 truncate">{v.name}</p>
+                {v.name !== v.title && (
+                  <p className="text-xs text-gray-400 mt-0.5 truncate">{v.title}</p>
+                )}
+                <p className="text-xs text-gray-500 mt-1">
+                  {[v.hosts, v.location, v.time ? `${v.time} Uhr` : ''].filter(Boolean).join(' · ')}
+                </p>
+              </div>
+              <div className="shrink-0 flex items-center gap-3 text-xs whitespace-nowrap">
+                <button
+                  onClick={() => startEdit(v)}
+                  className="text-[#BCA075] hover:underline"
+                >
+                  Bearbeiten
+                </button>
+                {confirmDelete === v.id ? (
+                  <>
+                    <span className="text-gray-500">Sicher?</span>
+                    <button onClick={() => handleDelete(v.id)} className="text-red-500 hover:underline">Ja, löschen</button>
+                    <button onClick={() => setConfirmDelete(null)} className="text-gray-400 hover:underline">Abbrechen</button>
+                  </>
+                ) : (
+                  <button onClick={() => setConfirmDelete(v.id)} className="text-gray-400 hover:text-red-500">Löschen</button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── RegistrationsTable ───────────────────────────────────────────────────────
 
 function RegistrationsTable({ registrations }: { registrations: EventRegistrationRecord[] }) {
   const eventTitles = Array.from(new Set(registrations.map(r => r.eventTitle).filter(Boolean))).sort();
@@ -276,15 +645,20 @@ function RegistrationsTable({ registrations }: { registrations: EventRegistratio
   );
 }
 
+// ─── EventsClient ─────────────────────────────────────────────────────────────
+
 export default function EventsClient({
   initialEvents,
   registrations,
+  initialVorlagen,
 }: {
   initialEvents: Veranstaltung[];
   registrations: EventRegistrationRecord[];
+  initialVorlagen: Vorlage[];
 }) {
-  const [tab, setTab] = useState<'events' | 'registrations'>('events');
+  const [tab, setTab] = useState<Tab>('events');
   const [events, setEvents] = useState<Veranstaltung[]>(initialEvents);
+  const [vorlagen, setVorlagen] = useState<Vorlage[]>(initialVorlagen);
   const [mode, setMode] = useState<Mode>({ view: 'list' });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -352,6 +726,47 @@ export default function EventsClient({
     }
   }
 
+  async function handleSaveAsVorlage(v: Omit<Vorlage, 'id'>): Promise<Vorlage> {
+    const res = await fetch('/api/admin/vorlagen', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(v),
+    });
+    if (!res.ok) throw new Error((await res.json()).error);
+    const saved: Vorlage = await res.json();
+    setVorlagen(prev => [...prev, saved]);
+    return saved;
+  }
+
+  async function handleUpdateVorlageData(id: string, data: Omit<Veranstaltung, 'id'>): Promise<void> {
+    const existing = vorlagen.find(v => v.id === id);
+    if (!existing) return;
+    const updated: Vorlage = { ...data, id, name: existing.name };
+    const res = await fetch(`/api/admin/vorlagen/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated),
+    });
+    if (!res.ok) throw new Error((await res.json()).error);
+    setVorlagen(prev => prev.map(v => v.id === id ? updated : v));
+  }
+
+  async function handleUpdateVorlageFull(v: Vorlage): Promise<void> {
+    const res = await fetch(`/api/admin/vorlagen/${v.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(v),
+    });
+    if (!res.ok) throw new Error((await res.json()).error);
+    setVorlagen(prev => prev.map(vv => vv.id === v.id ? v : vv));
+  }
+
+  async function handleDeleteVorlage(id: string): Promise<void> {
+    const res = await fetch(`/api/admin/vorlagen/${id}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error((await res.json()).error);
+    setVorlagen(prev => prev.filter(v => v.id !== id));
+  }
+
   const TAB_CLS = (active: boolean) =>
     `px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
       active
@@ -367,6 +782,9 @@ export default function EventsClient({
         </button>
         <button className={TAB_CLS(tab === 'registrations')} onClick={() => setTab('registrations')}>
           Anmeldungen ({registrations.length})
+        </button>
+        <button className={TAB_CLS(tab === 'vorlagen')} onClick={() => setTab('vorlagen')}>
+          Vorlagen ({vorlagen.length})
         </button>
       </div>
 
@@ -476,6 +894,9 @@ export default function EventsClient({
                 onCancel={() => setMode({ view: 'list' })}
                 isSaving={saving}
                 allEvents={events}
+                vorlagen={vorlagen}
+                onSaveAsVorlage={handleSaveAsVorlage}
+                onUpdateVorlage={handleUpdateVorlageData}
               />
             </>
           )}
@@ -490,6 +911,9 @@ export default function EventsClient({
                 isSaving={saving}
                 allEvents={events}
                 editingId={mode.event.id}
+                vorlagen={vorlagen}
+                onSaveAsVorlage={handleSaveAsVorlage}
+                onUpdateVorlage={handleUpdateVorlageData}
               />
             </>
           )}
@@ -503,6 +927,16 @@ export default function EventsClient({
           </div>
           <RegistrationsTable registrations={registrations} />
         </div>
+      )}
+
+      {tab === 'vorlagen' && (
+        <>
+          <VorlagenTab
+            vorlagen={vorlagen}
+            onUpdate={handleUpdateVorlageFull}
+            onDelete={handleDeleteVorlage}
+          />
+        </>
       )}
     </>
   );

@@ -1,5 +1,6 @@
 import { updateVeranstaltung, deleteVeranstaltung } from '@/lib/veranstaltungen';
 import type { Veranstaltung } from '@/lib/veranstaltungen';
+import { updateCalendarEvent, isGuldeinEvent } from '@/lib/calendar';
 
 export async function PUT(
   request: Request,
@@ -8,7 +9,17 @@ export async function PUT(
   try {
     const { id } = await context.params;
     const body: Veranstaltung = await request.json();
-    await updateVeranstaltung({ ...body, id });
+    const event = { ...body, id };
+    await updateVeranstaltung(event);
+
+    if (isGuldeinEvent(event)) {
+      try {
+        await updateCalendarEvent(event);
+      } catch (calErr) {
+        console.error('Google Calendar update failed:', calErr);
+      }
+    }
+
     return Response.json({ success: true });
   } catch (err) {
     console.error('Admin events PUT failed:', err);

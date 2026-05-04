@@ -16,7 +16,8 @@
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
       "WebFetch(domain:de.trustpilot.com)",
-      "Bash(python -m json.tool)"
+      "Bash(python -m json.tool)",
+      "Bash(Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue)"
     ]
   }
 }
