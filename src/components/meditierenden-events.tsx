@@ -285,15 +285,15 @@ function EventCard({
       </div>
 
       {/* Meta row */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[#1A3352]/70">
-        <span>{fullDate}</span>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[#1A3352]">
+        <span className="font-medium">{fullDate}</span>
         {event.time && (
           <>
-            <span className="text-[#DBEAFE]">·</span>
-            <span>{event.time} Uhr</span>
+            <span className="text-[#A5C3D7]">·</span>
+            <span className="font-medium">{event.time} Uhr</span>
           </>
         )}
-        <span className="text-[#DBEAFE]">·</span>
+        <span className="text-[#A5C3D7]">·</span>
         <span className={`
           text-[0.65rem] tracking-[0.12em] uppercase font-medium px-2 py-0.5 rounded-full
           ${event.isOnline ? "bg-[#DBEAFE] text-[#1A3352]" : "bg-[#F59E0B]/20 text-[#1A3352]"}
@@ -302,8 +302,8 @@ function EventCard({
         </span>
         {!event.isOnline && event.location && (
           <>
-            <span className="text-[#DBEAFE]">·</span>
-            <span className="text-[0.75rem]">{event.location}</span>
+            <span className="text-[#A5C3D7]">·</span>
+            <span className="text-[0.75rem] text-[#3D5573]">{event.location}</span>
           </>
         )}
       </div>
@@ -312,7 +312,7 @@ function EventCard({
       {hasDetails && (
         <button
           onClick={() => setExpanded(e => !e)}
-          className="flex items-center gap-1.5 self-start text-[0.72rem] text-[#7A9BB5] hover:text-[#1A3352] transition-colors"
+          className="flex items-center gap-1.5 self-start text-[0.72rem] text-[#3D5573] hover:text-[#1A3352] transition-colors"
         >
           <svg
             width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"
@@ -326,7 +326,7 @@ function EventCard({
 
       {/* Expandable details */}
       {expanded && (
-        <div className="flex flex-col gap-2.5 pt-1">
+        <div className="bg-white/90 rounded-xl px-4 py-3 flex flex-col gap-2.5">
           {event.description && (
             <p className="text-sm text-[#3D5573] leading-relaxed">{event.description}</p>
           )}
@@ -338,11 +338,11 @@ function EventCard({
           {(event.hosts || event.price) && (
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-[0.78rem] text-[#3D5573]">
               {event.hosts && <span className="italic">mit {event.hosts}</span>}
-              {event.price && <span className="font-medium text-[#1A3352]/70">{event.price}</span>}
+              {event.price && <span className="font-medium text-[#1A3352]">{event.price}</span>}
             </div>
           )}
           {event.notes && (
-            <p className="text-[0.75rem] text-[#3D5573]/70 italic">{event.notes}</p>
+            <p className="text-[0.75rem] text-[#3D5573] italic">{event.notes}</p>
           )}
         </div>
       )}
