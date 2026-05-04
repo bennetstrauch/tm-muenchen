@@ -14,7 +14,7 @@ export default async function EventsPage() {
 
   return (
     <main className="min-h-screen bg-white pt-16 pb-20">
-      <div className="max-w-2xl mx-auto px-5">
+      <div className="max-w-2xl md:max-w-4xl mx-auto px-5">
 
         <div className="pt-1 pb-10 text-center">
           {/* <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#3D5573] mb-4">

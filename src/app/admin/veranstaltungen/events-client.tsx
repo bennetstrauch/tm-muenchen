@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import type { Veranstaltung, EventRegistrationRecord } from '@/lib/veranstaltungen';
 import type { Vorlage } from '@/lib/vorlagen';
 
@@ -38,6 +38,7 @@ const EMPTY_FORM: Omit<Veranstaltung, 'id'> = {
   registrationOpen: true,
   visible: true,
   isPriority: false,
+  imageUrl: '',
 };
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -45,6 +46,119 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     <div>
       <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
       {children}
+    </div>
+  );
+}
+
+// ─── ImagePicker ──────────────────────────────────────────────────────────────
+
+function ImagePicker({ value, onChange }: { value: string; onChange: (url: string) => void }) {
+  const [showPanel, setShowPanel] = useState(false);
+  const [library, setLibrary] = useState<string[]>([]);
+  const [loadingLibrary, setLoadingLibrary] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function openPanel() {
+    setShowPanel(true);
+    setLoadingLibrary(true);
+    try {
+      const res = await fetch('/api/admin/images');
+      const data = await res.json();
+      setLibrary(data.urls ?? []);
+    } finally {
+      setLoadingLibrary(false);
+    }
+  }
+
+  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadError('');
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/admin/images/upload', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      onChange(data.url);
+      setLibrary(prev => [data.url, ...prev]);
+      setShowPanel(false);
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : 'Upload fehlgeschlagen.');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  }
+
+  return (
+    <div>
+      {value ? (
+        <div className="flex items-start gap-3">
+          <div className="relative w-28 h-18 overflow-hidden rounded border border-gray-200 flex-shrink-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={value} alt="" className="w-full h-full object-cover" />
+          </div>
+          <div className="flex flex-col gap-1.5 pt-1">
+            <button type="button" onClick={openPanel}
+              className="text-xs text-[#BCA075] hover:underline text-left">
+              Bild ändern
+            </button>
+            <button type="button" onClick={() => onChange('')}
+              className="text-xs text-gray-400 hover:text-red-500 text-left">
+              Entfernen
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button type="button" onClick={openPanel}
+          className="text-sm text-[#BCA075] hover:underline flex items-center gap-1">
+          + Bild auswählen
+        </button>
+      )}
+
+      {showPanel && (
+        <div className="mt-2 border border-gray-200 rounded-lg p-3 bg-white shadow-sm">
+          <p className="text-xs font-medium text-gray-500 mb-2">Hochladen</p>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleUpload}
+            disabled={uploading}
+            className="text-xs text-gray-600 file:mr-2 file:text-xs file:border-0 file:bg-gray-100 file:px-2 file:py-1 file:rounded file:cursor-pointer"
+          />
+          {uploading && <p className="text-xs text-gray-400 mt-1">Wird hochgeladen…</p>}
+          {uploadError && <p className="text-xs text-red-500 mt-1">{uploadError}</p>}
+
+          {loadingLibrary ? (
+            <p className="text-xs text-gray-400 mt-3">Bibliothek wird geladen…</p>
+          ) : library.length > 0 ? (
+            <>
+              <p className="text-xs font-medium text-gray-500 mt-3 mb-2">Bibliothek</p>
+              <div className="grid grid-cols-5 gap-1.5 max-h-44 overflow-y-auto">
+                {library.map(url => (
+                  <button key={url} type="button"
+                    onClick={() => { onChange(url); setShowPanel(false); }}
+                    className={`relative overflow-hidden rounded border-2 aspect-square transition-colors ${value === url ? 'border-[#BCA075]' : 'border-transparent hover:border-gray-300'}`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={url} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : null}
+
+          <button type="button" onClick={() => setShowPanel(false)}
+            className="mt-3 text-xs text-gray-400 hover:text-gray-600">
+            Abbrechen
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -338,6 +452,12 @@ function EventForm({
           </Field>
         </div>
 
+        <div className="mb-4">
+          <Field label="Bild">
+            <ImagePicker value={form.imageUrl ?? ''} onChange={url => set('imageUrl', url)} />
+          </Field>
+        </div>
+
         <div className="flex flex-wrap gap-6 mb-6">
           <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
             <input type="checkbox" className={CHECK_CLS} checked={form.isOnline} onChange={e => set('isOnline', e.target.checked)} />
@@ -511,6 +631,12 @@ function VorlagenTab({
                   <textarea className={TEXTAREA_CLS} value={editForm.longDescription} onChange={e => setField('longDescription', e.target.value)} />
                 </Field>
               </div>
+              <div className="mb-4">
+                <Field label="Bild">
+                  <ImagePicker value={editForm.imageUrl ?? ''} onChange={url => setField('imageUrl', url)} />
+                </Field>
+              </div>
+
               <div className="flex flex-wrap gap-6 mb-2">
                 <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
                   <input type="checkbox" className={CHECK_CLS} checked={editForm.isOnline} onChange={e => setField('isOnline', e.target.checked)} />

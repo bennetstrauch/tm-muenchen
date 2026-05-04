@@ -11,6 +11,8 @@ const INPUT_CLS = `
   bg-white
 `;
 
+const DEFAULT_IMAGE = '/retreat-gruss.jpg';
+
 // ── Saved profile (localStorage) ───────────────────────────
 
 const PROFILE_KEY = "tm-saved-profile";
@@ -237,115 +239,159 @@ function EventCard({
   event,
   isOpen,
   onToggle,
+  index,
 }: {
   event: Veranstaltung;
   isOpen: boolean;
   onToggle: () => void;
+  index: number;
 }) {
   const fullDate = formatVeranstaltungDate(event.date);
   const [expanded, setExpanded] = useState(false);
   const hasDetails = !!(event.description || event.longDescription || event.hosts || event.price || event.notes);
+  const imageFirst = index % 2 === 0;
+  const imageUrl = event.imageUrl || DEFAULT_IMAGE;
 
-  return (
-    <li className="py-8 first:pt-0">
-      <div className="flex flex-col gap-3">
-
-        {/* Header row */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex flex-col gap-1 min-w-0">
-            <h2 className="font-[family-name:var(--font-jakarta)] font-semibold text-[1.1rem] text-[#1A3352] leading-snug">
-              {event.title}
-            </h2>
-            {event.subtitle && (
-              <p className="text-sm font-semibold italic text-[#C2541A]">{event.subtitle}</p>
-            )}
-          </div>
-
-          {event.registrationOpen && (
-            <button
-              onClick={onToggle}
-              className="
-                inline-flex items-center gap-2 flex-shrink-0
-                px-5 py-2.5
-                bg-[#FEF3C7] border border-[#F59E0B]/50 text-[#1A3352]
-                text-[0.68rem] tracking-[0.18em] uppercase font-medium rounded-full
-                transition-all duration-300
-                hover:bg-[#FDE68A] hover:border-[#F59E0B]/80
-                hover:shadow-[0_4px_16px_rgba(245,158,11,0.25)]
-                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B] focus-visible:ring-offset-2
-              "
-            >
-              {isOpen ? "Schließen ×" : "Anmelden"}
-            </button>
+  const eventContent = (
+    <div className="flex flex-col gap-3">
+      {/* Header row */}
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-1 min-w-0">
+          <h2 className="font-[family-name:var(--font-jakarta)] font-semibold text-[1.1rem] text-[#1A3352] leading-snug">
+            {event.title}
+          </h2>
+          {event.subtitle && (
+            <p className="text-sm font-semibold italic text-[#C2541A]">{event.subtitle}</p>
           )}
         </div>
 
-        {/* Meta row */}
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[#1A3352]/70">
-          <span>{fullDate}</span>
-          {event.time && (
-            <>
-              <span className="text-[#DBEAFE]">·</span>
-              <span>{event.time} Uhr</span>
-            </>
-          )}
-          <span className="text-[#DBEAFE]">·</span>
-          <span className={`
-            text-[0.65rem] tracking-[0.12em] uppercase font-medium px-2 py-0.5 rounded-full
-            ${event.isOnline ? "bg-[#DBEAFE] text-[#1A3352]" : "bg-[#F59E0B]/20 text-[#1A3352]"}
-          `}>
-            {event.isOnline ? "Online" : "Präsenz"}
-          </span>
-          {!event.isOnline && event.location && (
-            <>
-              <span className="text-[#DBEAFE]">·</span>
-              <span className="text-[0.75rem]">{event.location}</span>
-            </>
-          )}
-        </div>
-
-        {/* Expand toggle */}
-        {hasDetails && (
+        {event.registrationOpen && (
           <button
-            onClick={() => setExpanded(e => !e)}
-            className="flex items-center gap-1.5 self-start text-[0.72rem] text-[#7A9BB5] hover:text-[#1A3352] transition-colors"
+            onClick={onToggle}
+            className="
+              inline-flex items-center gap-2 flex-shrink-0
+              px-5 py-2.5
+              bg-[#FEF3C7] border border-[#F59E0B]/50 text-[#1A3352]
+              text-[0.68rem] tracking-[0.18em] uppercase font-medium rounded-full
+              transition-all duration-300
+              hover:bg-[#FDE68A] hover:border-[#F59E0B]/80
+              hover:shadow-[0_4px_16px_rgba(245,158,11,0.25)]
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B] focus-visible:ring-offset-2
+            "
           >
-            <svg
-              width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"
-              className={`transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
-            >
-              <path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            {expanded ? "Weniger" : "Details"}
+            {isOpen ? "Schließen ×" : "Anmelden"}
           </button>
         )}
-
-        {/* Expandable details */}
-        {expanded && (
-          <div className="flex flex-col gap-2.5 pt-1">
-            {event.description && (
-              <p className="text-sm text-[#3D5573] leading-relaxed">{event.description}</p>
-            )}
-            {event.longDescription && (
-              <p className="text-sm text-[#3D5573] leading-relaxed whitespace-pre-line">
-                {event.longDescription}
-              </p>
-            )}
-            {(event.hosts || event.price) && (
-              <div className="flex flex-wrap gap-x-4 gap-y-1 text-[0.78rem] text-[#3D5573]">
-                {event.hosts && <span className="italic">mit {event.hosts}</span>}
-                {event.price && <span className="font-medium text-[#1A3352]/70">{event.price}</span>}
-              </div>
-            )}
-            {event.notes && (
-              <p className="text-[0.75rem] text-[#3D5573]/70 italic">{event.notes}</p>
-            )}
-          </div>
-        )}
-
       </div>
 
-      {isOpen && <RegistrationForm event={event} onClose={onToggle} />}
+      {/* Meta row */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[#1A3352]/70">
+        <span>{fullDate}</span>
+        {event.time && (
+          <>
+            <span className="text-[#DBEAFE]">·</span>
+            <span>{event.time} Uhr</span>
+          </>
+        )}
+        <span className="text-[#DBEAFE]">·</span>
+        <span className={`
+          text-[0.65rem] tracking-[0.12em] uppercase font-medium px-2 py-0.5 rounded-full
+          ${event.isOnline ? "bg-[#DBEAFE] text-[#1A3352]" : "bg-[#F59E0B]/20 text-[#1A3352]"}
+        `}>
+          {event.isOnline ? "Online" : "Präsenz"}
+        </span>
+        {!event.isOnline && event.location && (
+          <>
+            <span className="text-[#DBEAFE]">·</span>
+            <span className="text-[0.75rem]">{event.location}</span>
+          </>
+        )}
+      </div>
+
+      {/* Expand toggle */}
+      {hasDetails && (
+        <button
+          onClick={() => setExpanded(e => !e)}
+          className="flex items-center gap-1.5 self-start text-[0.72rem] text-[#7A9BB5] hover:text-[#1A3352] transition-colors"
+        >
+          <svg
+            width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"
+            className={`transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+          >
+            <path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          {expanded ? "Weniger" : "Details"}
+        </button>
+      )}
+
+      {/* Expandable details */}
+      {expanded && (
+        <div className="flex flex-col gap-2.5 pt-1">
+          {event.description && (
+            <p className="text-sm text-[#3D5573] leading-relaxed">{event.description}</p>
+          )}
+          {event.longDescription && (
+            <p className="text-sm text-[#3D5573] leading-relaxed whitespace-pre-line">
+              {event.longDescription}
+            </p>
+          )}
+          {(event.hosts || event.price) && (
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-[0.78rem] text-[#3D5573]">
+              {event.hosts && <span className="italic">mit {event.hosts}</span>}
+              {event.price && <span className="font-medium text-[#1A3352]/70">{event.price}</span>}
+            </div>
+          )}
+          {event.notes && (
+            <p className="text-[0.75rem] text-[#3D5573]/70 italic">{event.notes}</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <li>
+      {/* ── Mobile: background-image card ─────────────────── */}
+      <div
+        className="md:hidden relative rounded-2xl overflow-hidden"
+        style={{ backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+      >
+        {/* Directional gradient overlay: opaque top-left → transparent bottom-right */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.76) 45%, rgba(255,255,255,0.28) 100%)' }}
+        />
+        <div className="relative z-10 px-5 py-7">
+          {eventContent}
+          {isOpen && <RegistrationForm event={event} onClose={onToggle} />}
+        </div>
+      </div>
+
+      {/* ── Desktop: alternating 1/3 image + 2/3 text grid ── */}
+      <div className="hidden md:grid md:grid-cols-3 md:gap-8 md:items-stretch md:py-10 first:md:pt-0">
+        {imageFirst ? (
+          <>
+            <div className="overflow-hidden rounded-xl min-h-[200px]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={imageUrl} alt="" className="w-full h-full object-cover" />
+            </div>
+            <div className="md:col-span-2 flex flex-col justify-center">
+              {eventContent}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="md:col-span-2 flex flex-col justify-center">
+              {eventContent}
+            </div>
+            <div className="overflow-hidden rounded-xl min-h-[200px]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={imageUrl} alt="" className="w-full h-full object-cover" />
+            </div>
+          </>
+        )}
+      </div>
+      {isOpen && <div className="hidden md:block"><RegistrationForm event={event} onClose={onToggle} /></div>}
     </li>
   );
 }
@@ -372,11 +418,12 @@ export default function MeditierendenEvents({ events }: { events: Veranstaltung[
   }
 
   return (
-    <ul className="divide-y divide-[#DBEAFE]">
+    <ul className="space-y-4 md:space-y-0 md:divide-y md:divide-[#DBEAFE]">
       {events.map((event, i) => (
         <EventCard
           key={event.id}
           event={event}
+          index={i}
           isOpen={openIdx === i}
           onToggle={() => setOpenIdx(openIdx === i ? null : i)}
         />
