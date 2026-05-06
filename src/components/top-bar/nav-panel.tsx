@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useNavContext } from "@/contexts/nav-context";
 
 type NavLink = { label: string; href: string; type: "anchor" | "page" };
@@ -44,6 +45,7 @@ const chevron = (
 
 export default function NavPanel() {
   const { isOpen, setIsOpen, setPanelHeight } = useNavContext();
+  const router = useRouter();
   const innerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -61,9 +63,12 @@ export default function NavPanel() {
 
   function handleNavClick(href: string) {
     setIsOpen(false);
-    setTimeout(() => {
-      document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
-    }, 50);
+    const el = document.querySelector(href);
+    if (el) {
+      setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 50);
+    } else {
+      router.push("/" + href);
+    }
   }
 
   return (
