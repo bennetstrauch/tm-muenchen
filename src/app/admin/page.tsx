@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { getRegistrations } from '@/lib/sheets';
-import type { Registration } from '@/lib/sheets';
-import RegistrationsTable from './registrations-table';
+import { getAllVeranstaltungen, getEventRegistrations } from '@/lib/veranstaltungen';
+import { getAllVorlagen } from '@/lib/vorlagen';
+import AdminClient from './admin-client';
 
 export const metadata: Metadata = {
   title: 'Admin – TM München',
@@ -10,15 +12,12 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPage() {
-  let registrations: Registration[] = [];
-  let error: string | null = null;
-
-  try {
-    registrations = await getRegistrations();
-  } catch (e) {
-    console.error('Sheets read failed:', e);
-    error = 'Anmeldungen konnten nicht geladen werden.';
-  }
+  const [infoRegistrations, events, eventRegistrations, vorlagen] = await Promise.all([
+    getRegistrations().catch(() => []),
+    getAllVeranstaltungen().catch(() => []),
+    getEventRegistrations().catch(() => []),
+    getAllVorlagen().catch(() => []),
+  ]);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -34,37 +33,25 @@ export default async function AdminPage() {
             </p>
             <h1 className="text-2xl font-semibold text-gray-800">Admin</h1>
           </div>
-          <div className="flex flex-col items-end gap-2">
-            <a
-              href="/admin/veranstaltungen"
-              className="text-sm text-[#BCA075] hover:underline"
-            >
-              Veranstaltungen →
-            </a>
-            <a
-              href="https://vercel.com/bennetstrauch-2281s-projects/tm-muenchen/analytics?environment=all"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-gray-400 hover:underline"
-            >
-              Vercel Analytics →
-            </a>
-          </div>
+          <a
+            href="https://vercel.com/bennetstrauch-2281s-projects/tm-muenchen/analytics?environment=all"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-gray-400 hover:underline"
+          >
+            Vercel Analytics →
+          </a>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="font-medium text-gray-700">Infovortrag-Anmeldungen</h2>
-          </div>
+        <Suspense>
+          <AdminClient
+            infoRegistrations={infoRegistrations}
+            initialEvents={events}
+            eventRegistrations={eventRegistrations}
+            initialVorlagen={vorlagen}
+          />
+        </Suspense>
 
-          {error ? (
-            <p className="p-6 text-red-500 text-sm">{error}</p>
-          ) : registrations.length === 0 ? (
-            <p className="p-6 text-gray-400 text-sm">Noch keine Anmeldungen.</p>
-          ) : (
-            <RegistrationsTable registrations={registrations} />
-          )}
-        </div>
       </div>
     </div>
   );

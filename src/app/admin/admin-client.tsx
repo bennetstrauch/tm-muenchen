@@ -1,23 +1,25 @@
 'use client';
 
 import { useState, useMemo, useRef } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import type { Registration } from '@/lib/sheets';
 import type { Veranstaltung, EventRegistrationRecord } from '@/lib/veranstaltungen';
 import type { Vorlage } from '@/lib/vorlagen';
+import InfoRegistrationsTable from './registrations-table';
 
-type Tab = 'events' | 'registrations' | 'vorlagen';
+type Tab = 'info-anmeldungen' | 'veranstaltungen' | 'anmeldungen' | 'vorlagen';
 
 type Mode =
   | { view: 'list' }
   | { view: 'new' }
   | { view: 'edit'; event: Veranstaltung };
 
-// Tracks the template button state machine inside EventForm.
 type VorlagePhase =
   | { kind: 'none' }
-  | { kind: 'just-saved-new'; id: string }   // just saved → green "Vorlage gespeichert ✓"
-  | { kind: 'just-updated'; id: string }     // just updated → green "Vorlage aktualisiert ✓"
-  | { kind: 'linked-clean'; id: string }     // linked, no unsaved changes → both buttons disabled
-  | { kind: 'linked-dirty'; id: string }     // linked + changes made → both buttons enabled
+  | { kind: 'just-saved-new'; id: string }
+  | { kind: 'just-updated'; id: string }
+  | { kind: 'linked-clean'; id: string }
+  | { kind: 'linked-dirty'; id: string }
 
 const EMPTY_FORM: Omit<Veranstaltung, 'id'> = {
   title: '',
@@ -40,6 +42,8 @@ const EMPTY_FORM: Omit<Veranstaltung, 'id'> = {
   isPriority: false,
   imageUrl: '',
 };
+
+const VALID_TABS: Tab[] = ['info-anmeldungen', 'veranstaltungen', 'anmeldungen', 'vorlagen'];
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -261,7 +265,6 @@ function EventForm({
     setExpandedVorlageId(null);
   }
 
-  // Template button rendering
   const btnBase = 'px-4 py-2 rounded text-sm font-medium transition-colors disabled:cursor-not-allowed';
   const btnGold = `${btnBase} bg-[#BCA075] text-white hover:bg-[#a88d65] disabled:opacity-40`;
   const btnGreen = `${btnBase} bg-green-600 text-white opacity-90`;
@@ -283,9 +286,7 @@ function EventForm({
     }
 
     if (phase.kind === 'just-saved-new') {
-      return (
-        <button className={btnGreen} disabled>Vorlage gespeichert ✓</button>
-      );
+      return <button className={btnGreen} disabled>Vorlage gespeichert ✓</button>;
     }
 
     if (phase.kind === 'just-updated') {
@@ -306,7 +307,6 @@ function EventForm({
       );
     }
 
-    // linked-dirty
     return (
       <>
         <button
@@ -329,7 +329,6 @@ function EventForm({
 
   return (
     <div className="space-y-4">
-      {/* Vorlage verwenden — only for new events */}
       {!editingId && vorlagen.length > 0 && (
         <div>
           <button
@@ -636,7 +635,6 @@ function VorlagenTab({
                   <ImagePicker value={editForm.imageUrl ?? ''} onChange={url => setField('imageUrl', url)} />
                 </Field>
               </div>
-
               <div className="flex flex-wrap gap-6 mb-2">
                 <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
                   <input type="checkbox" className={CHECK_CLS} checked={editForm.isOnline} onChange={e => setField('isOnline', e.target.checked)} />
@@ -683,10 +681,7 @@ function VorlagenTab({
                 </p>
               </div>
               <div className="shrink-0 flex items-center gap-3 text-xs whitespace-nowrap">
-                <button
-                  onClick={() => startEdit(v)}
-                  className="text-[#BCA075] hover:underline"
-                >
+                <button onClick={() => startEdit(v)} className="text-[#BCA075] hover:underline">
                   Bearbeiten
                 </button>
                 {confirmDelete === v.id ? (
@@ -707,9 +702,9 @@ function VorlagenTab({
   );
 }
 
-// ─── RegistrationsTable ───────────────────────────────────────────────────────
+// ─── EventRegistrationsTable ──────────────────────────────────────────────────
 
-function RegistrationsTable({ registrations }: { registrations: EventRegistrationRecord[] }) {
+function EventRegistrationsTable({ registrations }: { registrations: EventRegistrationRecord[] }) {
   const eventTitles = Array.from(new Set(registrations.map(r => r.eventTitle).filter(Boolean))).sort();
   const [filter, setFilter] = useState('');
   const filtered = filter ? registrations.filter(r => r.eventTitle === filter) : registrations;
@@ -771,18 +766,29 @@ function RegistrationsTable({ registrations }: { registrations: EventRegistratio
   );
 }
 
-// ─── EventsClient ─────────────────────────────────────────────────────────────
+// ─── AdminClient ──────────────────────────────────────────────────────────────
 
-export default function EventsClient({
+export default function AdminClient({
+  infoRegistrations,
   initialEvents,
-  registrations,
+  eventRegistrations,
   initialVorlagen,
 }: {
+  infoRegistrations: Registration[];
   initialEvents: Veranstaltung[];
-  registrations: EventRegistrationRecord[];
+  eventRegistrations: EventRegistrationRecord[];
   initialVorlagen: Vorlage[];
 }) {
-  const [tab, setTab] = useState<Tab>('events');
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const rawTab = searchParams.get('tab');
+  const tab: Tab = VALID_TABS.includes(rawTab as Tab) ? (rawTab as Tab) : 'info-anmeldungen';
+
+  function setTab(t: Tab) {
+    router.replace(`?tab=${t}`, { scroll: false });
+  }
+
   const [events, setEvents] = useState<Veranstaltung[]>(initialEvents);
   const [vorlagen, setVorlagen] = useState<Vorlage[]>(initialVorlagen);
   const [mode, setMode] = useState<Mode>({ view: 'list' });
@@ -903,11 +909,14 @@ export default function EventsClient({
   return (
     <>
       <div className="flex gap-0 border-b border-gray-200 mb-6">
-        <button className={TAB_CLS(tab === 'events')} onClick={() => setTab('events')}>
+        <button className={TAB_CLS(tab === 'info-anmeldungen')} onClick={() => setTab('info-anmeldungen')}>
+          Info-Anmeldungen ({infoRegistrations.length})
+        </button>
+        <button className={TAB_CLS(tab === 'veranstaltungen')} onClick={() => setTab('veranstaltungen')}>
           Veranstaltungen ({events.length})
         </button>
-        <button className={TAB_CLS(tab === 'registrations')} onClick={() => setTab('registrations')}>
-          Anmeldungen ({registrations.length})
+        <button className={TAB_CLS(tab === 'anmeldungen')} onClick={() => setTab('anmeldungen')}>
+          Anmeldungen ({eventRegistrations.length})
         </button>
         <button className={TAB_CLS(tab === 'vorlagen')} onClick={() => setTab('vorlagen')}>
           Vorlagen ({vorlagen.length})
@@ -918,7 +927,20 @@ export default function EventsClient({
         <p className="mb-4 text-sm text-red-500 bg-red-50 px-4 py-2 rounded">{error}</p>
       )}
 
-      {tab === 'events' && (
+      {tab === 'info-anmeldungen' && (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-100">
+            <h2 className="font-medium text-gray-700">Infovortrag-Anmeldungen</h2>
+          </div>
+          {infoRegistrations.length === 0 ? (
+            <p className="p-6 text-gray-400 text-sm">Noch keine Anmeldungen.</p>
+          ) : (
+            <InfoRegistrationsTable registrations={infoRegistrations} />
+          )}
+        </div>
+      )}
+
+      {tab === 'veranstaltungen' && (
         <>
           {mode.view === 'list' && (
             <>
@@ -1046,23 +1068,21 @@ export default function EventsClient({
         </>
       )}
 
-      {tab === 'registrations' && (
+      {tab === 'anmeldungen' && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-100">
             <h2 className="font-medium text-gray-700">Anmeldungen für Veranstaltungen</h2>
           </div>
-          <RegistrationsTable registrations={registrations} />
+          <EventRegistrationsTable registrations={eventRegistrations} />
         </div>
       )}
 
       {tab === 'vorlagen' && (
-        <>
-          <VorlagenTab
-            vorlagen={vorlagen}
-            onUpdate={handleUpdateVorlageFull}
-            onDelete={handleDeleteVorlage}
-          />
-        </>
+        <VorlagenTab
+          vorlagen={vorlagen}
+          onUpdate={handleUpdateVorlageFull}
+          onDelete={handleDeleteVorlage}
+        />
       )}
     </>
   );
