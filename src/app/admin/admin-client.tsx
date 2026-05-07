@@ -57,12 +57,22 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 // ─── ImagePicker ──────────────────────────────────────────────────────────────
 
-function ImagePicker({ value, onChange }: { value: string; onChange: (url: string) => void }) {
+function ImagePicker({
+  value,
+  onChange,
+  events,
+}: {
+  value: string;
+  onChange: (url: string) => void;
+  events: Veranstaltung[];
+}) {
   const [showPanel, setShowPanel] = useState(false);
   const [library, setLibrary] = useState<string[]>([]);
   const [loadingLibrary, setLoadingLibrary] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
+  const [deletingUrl, setDeletingUrl] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function openPanel() {
@@ -96,6 +106,20 @@ function ImagePicker({ value, onChange }: { value: string; onChange: (url: strin
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  }
+
+  async function handleConfirmDelete() {
+    if (!deletingUrl) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/admin/images?url=${encodeURIComponent(deletingUrl)}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error();
+      setLibrary(prev => prev.filter(u => u !== deletingUrl));
+      if (value === deletingUrl) onChange('');
+      setDeletingUrl(null);
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -146,15 +170,46 @@ function ImagePicker({ value, onChange }: { value: string; onChange: (url: strin
               <p className="text-xs font-medium text-gray-500 mt-3 mb-2">Bibliothek</p>
               <div className="grid grid-cols-5 gap-1.5 max-h-44 overflow-y-auto">
                 {library.map(url => (
-                  <button key={url} type="button"
-                    onClick={() => { onChange(url); setShowPanel(false); }}
-                    className={`relative overflow-hidden rounded border-2 aspect-square transition-colors ${value === url ? 'border-[#BCA075]' : 'border-transparent hover:border-gray-300'}`}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={url} alt="" className="w-full h-full object-cover" />
-                  </button>
+                  <div key={url} className="relative group">
+                    <button type="button"
+                      onClick={() => { onChange(url); setShowPanel(false); }}
+                      className={`w-full relative overflow-hidden rounded border-2 aspect-square transition-colors ${value === url ? 'border-[#BCA075]' : 'border-transparent hover:border-gray-300'}`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={url} alt="" className="w-full h-full object-cover" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDeletingUrl(url)}
+                      className="absolute top-0.5 right-0.5 w-5 h-5 flex items-center justify-center rounded-full bg-white/80 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity text-xs leading-none"
+                      title="Aus Bibliothek löschen"
+                    >
+                      ×
+                    </button>
+                  </div>
                 ))}
               </div>
+              {deletingUrl && (() => {
+                const affected = events.filter(e => e.imageUrl === deletingUrl).map(e => e.title);
+                return (
+                  <div className="mt-2 text-xs border border-red-100 bg-red-50 rounded p-2">
+                    <p className="font-medium text-gray-800">Aus Bibliothek löschen?</p>
+                    {affected.length > 0 && (
+                      <p className="mt-0.5 text-amber-700">Verwendet in: {affected.join(', ')}</p>
+                    )}
+                    <div className="flex gap-3 mt-1.5">
+                      <button type="button" onClick={handleConfirmDelete} disabled={deleting}
+                        className="text-red-500 hover:underline disabled:opacity-50">
+                        {deleting ? 'Wird gelöscht…' : 'Ja, löschen'}
+                      </button>
+                      <button type="button" onClick={() => setDeletingUrl(null)}
+                        className="text-gray-400 hover:text-gray-600">
+                        Abbrechen
+                      </button>
+                    </div>
+                  </div>
+                );
+              })()}
             </>
           ) : null}
 
@@ -197,9 +252,11 @@ function findConflicts(
 function EventFormFields({
   form,
   onChange,
+  events,
 }: {
   form: Omit<Veranstaltung, 'id'>;
   onChange: <K extends keyof Omit<Veranstaltung, 'id'>>(key: K, value: Omit<Veranstaltung, 'id'>[K]) => void;
+  events: Veranstaltung[];
 }) {
   return (
     <>
@@ -254,7 +311,7 @@ function EventFormFields({
 
       <div className="mb-4">
         <Field label="Bild">
-          <ImagePicker value={form.imageUrl ?? ''} onChange={url => onChange('imageUrl', url)} />
+          <ImagePicker value={form.imageUrl ?? ''} onChange={url => onChange('imageUrl', url)} events={events} />
         </Field>
       </div>
 
@@ -495,7 +552,7 @@ function EventForm({
           </div>
         )}
 
-        <EventFormFields form={form} onChange={set} />
+        <EventFormFields form={form} onChange={set} events={allEvents} />
 
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <button
@@ -527,10 +584,12 @@ function VorlagenTab({
   vorlagen,
   onUpdate,
   onDelete,
+  events,
 }: {
   vorlagen: Vorlage[];
   onUpdate: (v: Vorlage) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
+  events: Veranstaltung[];
 }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Vorlage | null>(null);
@@ -615,6 +674,7 @@ function VorlagenTab({
               <EventFormFields
                 form={editForm}
                 onChange={(key, value) => setField(key, value as Vorlage[typeof key])}
+                events={events}
               />
               <div className="flex gap-3">
                 <button
@@ -1045,6 +1105,7 @@ export default function AdminClient({
           vorlagen={vorlagen}
           onUpdate={handleUpdateVorlageFull}
           onDelete={handleDeleteVorlage}
+          events={events}
         />
       )}
     </>

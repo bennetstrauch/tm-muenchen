@@ -1,6 +1,10 @@
 import { put } from '@vercel/blob';
+import sharp from 'sharp';
 
 export const dynamic = 'force-dynamic';
+
+const MAX_DIMENSION = 1200;
+const WEBP_QUALITY = 82;
 
 export async function POST(request: Request) {
   try {
@@ -13,7 +17,18 @@ export async function POST(request: Request) {
       return Response.json({ error: 'Nur Bilder erlaubt.' }, { status: 400 });
     }
 
-    const blob = await put(`events/${Date.now()}-${file.name}`, file, { access: 'public' });
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const resized = await sharp(buffer)
+      .resize(MAX_DIMENSION, MAX_DIMENSION, { fit: 'inside', withoutEnlargement: true })
+      .webp({ quality: WEBP_QUALITY })
+      .toBuffer();
+
+    const baseName = file.name.replace(/\.[^.]+$/, '');
+    const blob = await put(`events/${Date.now()}-${baseName}.webp`, resized, {
+      access: 'public',
+      contentType: 'image/webp',
+    });
+
     return Response.json({ url: blob.url });
   } catch (err) {
     console.error('Image upload failed:', err);
