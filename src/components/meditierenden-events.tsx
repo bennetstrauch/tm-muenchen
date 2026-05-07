@@ -378,7 +378,7 @@ function EventCard({
         />
         <div className="relative z-10 px-5 py-7">
           {eventContent}
-          {isOpen && <RegistrationForm event={event} onClose={onToggle} />}
+          {isOpen && <div data-reg-form={event.id}><RegistrationForm event={event} onClose={onToggle} /></div>}
         </div>
       </div>
 
@@ -406,7 +406,7 @@ function EventCard({
           </>
         )}
       </div>
-      {isOpen && <div className="hidden md:block"><RegistrationForm event={event} onClose={onToggle} /></div>}
+      {isOpen && <div className="hidden md:block" data-reg-form={event.id}><RegistrationForm event={event} onClose={onToggle} /></div>}
     </li>
   );
 }
@@ -435,6 +435,10 @@ export default function MeditierendenEvents({ events }: { events: Veranstaltung[
       url.searchParams.delete('open');
     } else {
       url.searchParams.set('open', eventSlug(events[i]));
+      setTimeout(() => {
+        document.querySelector(`[data-reg-form="${events[i].id}"]`)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 50);
     }
     window.history.replaceState(null, '', url.toString());
   }

@@ -256,13 +256,58 @@ function EventFormFields({
   form,
   onChange,
   events,
+  showDate,
+  titleRequired,
+  conflicts,
 }: {
   form: Omit<Veranstaltung, 'id'>;
   onChange: <K extends keyof Omit<Veranstaltung, 'id'>>(key: K, value: Omit<Veranstaltung, 'id'>[K]) => void;
   events: Veranstaltung[];
+  showDate?: boolean;
+  titleRequired?: boolean;
+  conflicts?: Veranstaltung[];
 }) {
   return (
     <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <Field label={titleRequired ? 'Titel *' : 'Titel'}>
+          <input className={INPUT_CLS} value={form.title} onChange={e => onChange('title', e.target.value)} />
+        </Field>
+        <Field label="Untertitel">
+          <input className={INPUT_CLS} value={form.subtitle} onChange={e => onChange('subtitle', e.target.value)} />
+        </Field>
+        {showDate && (
+          <Field label="Datum * (YYYY-MM-DD)">
+            <input type="date" className={INPUT_CLS} value={form.date} onChange={e => onChange('date', e.target.value)} />
+          </Field>
+        )}
+        <Field label="Newsletter-Link-Schlüsselwort (optional)">
+          <input
+            className={INPUT_CLS}
+            value={form.slug ?? ''}
+            onChange={e => onChange('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
+            placeholder="z.B. vollmond"
+          />
+        </Field>
+      </div>
+
+      {conflicts && conflicts.length > 0 && (
+        <div className="mb-4 flex gap-2.5 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <span className="mt-0.5 shrink-0">⚠️</span>
+          <div>
+            <p className="font-medium mb-1">
+              {conflicts.length === 1 ? 'Ein anderer Termin' : `${conflicts.length} andere Termine`} in diesem Zeitraum:
+            </p>
+            <ul className="list-disc list-inside space-y-0.5 text-amber-700">
+              {conflicts.map(c => (
+                <li key={c.id}>{c.title}{c.time ? ` · ${c.time} Uhr` : ''}</li>
+              ))}
+            </ul>
+            <p className="mt-1.5 text-amber-600 text-xs">Du kannst trotzdem speichern.</p>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <Field label="Uhrzeit * (HH:MM)">
           <input type="time" className={INPUT_CLS} value={form.time} onChange={e => onChange('time', e.target.value)} />
@@ -318,21 +363,6 @@ function EventFormFields({
         </Field>
       </div>
 
-      <div className="mb-4">
-        <Field label="Newsletter-Link-Schlüsselwort (optional)">
-          <input
-            className={INPUT_CLS}
-            value={form.slug ?? ''}
-            onChange={e => onChange('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
-            placeholder="z.B. vollmond oder gruppenmed-mai"
-          />
-          <p className="text-[0.7rem] text-gray-400 mt-1">
-            Ermöglicht Links wie <span className="font-mono">tm-muenchen.de/events?open=schlüsselwort</span> direkt zur Anmeldung.
-            Leer lassen = automatisch aus Titel generiert.
-          </p>
-        </Field>
-      </div>
-
       <div className="flex flex-wrap gap-6">
         <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
           <input type="checkbox" className={CHECK_CLS} checked={form.isOnline} onChange={e => onChange('isOnline', e.target.checked)} />
@@ -371,6 +401,7 @@ function EventForm({
   vorlagen,
   onSaveAsVorlage,
   onUpdateVorlage,
+  onSaveAndUpdateVorlage,
 }: {
   initial: Omit<Veranstaltung, 'id'>;
   onSave: (v: Omit<Veranstaltung, 'id'>) => void;
@@ -381,6 +412,7 @@ function EventForm({
   vorlagen: Vorlage[];
   onSaveAsVorlage: (v: Omit<Vorlage, 'id'>) => Promise<Vorlage>;
   onUpdateVorlage: (id: string, data: Omit<Veranstaltung, 'id'>) => Promise<void>;
+  onSaveAndUpdateVorlage?: (form: Omit<Veranstaltung, 'id'>, vorlageId: string) => void;
 }) {
   const [form, setFormState] = useState<Omit<Veranstaltung, 'id'>>(initial);
   const [vorlagePhase, setVorlagePhase] = useState<VorlagePhase>({ kind: 'none' });
@@ -541,36 +573,14 @@ function EventForm({
       )}
 
       <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-          <Field label="Titel *">
-            <input className={INPUT_CLS} value={form.title} onChange={e => set('title', e.target.value)} />
-          </Field>
-          <Field label="Untertitel">
-            <input className={INPUT_CLS} value={form.subtitle} onChange={e => set('subtitle', e.target.value)} />
-          </Field>
-          <Field label="Datum * (YYYY-MM-DD)">
-            <input type="date" className={INPUT_CLS} value={form.date} onChange={e => set('date', e.target.value)} />
-          </Field>
-        </div>
-
-        {conflicts.length > 0 && (
-          <div className="mb-4 flex gap-2.5 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            <span className="mt-0.5 shrink-0">⚠️</span>
-            <div>
-              <p className="font-medium mb-1">
-                {conflicts.length === 1 ? 'Ein anderer Termin' : `${conflicts.length} andere Termine`} in diesem Zeitraum:
-              </p>
-              <ul className="list-disc list-inside space-y-0.5 text-amber-700">
-                {conflicts.map(c => (
-                  <li key={c.id}>{c.title}{c.time ? ` · ${c.time} Uhr` : ''}</li>
-                ))}
-              </ul>
-              <p className="mt-1.5 text-amber-600 text-xs">Du kannst trotzdem speichern.</p>
-            </div>
-          </div>
-        )}
-
-        <EventFormFields form={form} onChange={set} events={allEvents} />
+        <EventFormFields
+          form={form}
+          onChange={set}
+          events={allEvents}
+          showDate
+          titleRequired
+          conflicts={conflicts}
+        />
 
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <button
@@ -580,6 +590,19 @@ function EventForm({
           >
             {isSaving ? 'Speichern…' : editingId ? 'Speichern' : 'Event hinzufügen'}
           </button>
+          {editingId && onSaveAndUpdateVorlage && (() => {
+            const linkedId = (vorlagePhase.kind === 'linked-clean' || vorlagePhase.kind === 'linked-dirty')
+              ? vorlagePhase.id : null;
+            return linkedId ? (
+              <button
+                onClick={() => onSaveAndUpdateVorlage(form, linkedId)}
+                disabled={isSaving || !form.title || !form.date}
+                className="px-5 py-2 bg-[#3D5573] text-white rounded text-sm font-medium hover:bg-[#1A3352] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSaving ? 'Speichern…' : 'Speichern + Vorlage aktualisieren'}
+              </button>
+            ) : null;
+          })()}
           <button
             onClick={onCancel}
             className="px-5 py-2 border border-gray-200 rounded text-sm text-gray-600 hover:bg-gray-50"
@@ -681,14 +704,6 @@ function VorlagenTab({
                   placeholder="z.B. Gruppenmeditation Montag"
                 />
               </Field>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                <Field label="Titel">
-                  <input className={INPUT_CLS} value={editForm.title} onChange={e => setField('title', e.target.value)} />
-                </Field>
-                <Field label="Untertitel">
-                  <input className={INPUT_CLS} value={editForm.subtitle} onChange={e => setField('subtitle', e.target.value)} />
-                </Field>
-              </div>
               <EventFormFields
                 form={editForm}
                 onChange={(key, value) => setField(key, value as Vorlage[typeof key])}
@@ -935,6 +950,29 @@ export default function AdminClient({
     setVorlagen(prev => prev.map(vv => vv.id === v.id ? v : vv));
   }
 
+  async function handleSaveAndUpdateVorlage(form: Omit<Veranstaltung, 'id'>, vorlageId: string) {
+    if (mode.view !== 'edit') return;
+    const id = mode.event.id;
+    setSaving(true);
+    setError('');
+    try {
+      const updated = { ...form, id };
+      const res = await fetch(`/api/admin/events/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated),
+      });
+      if (!res.ok) throw new Error((await res.json()).error);
+      setEvents(prev => prev.map(e => (e.id === id ? updated : e)));
+      await handleUpdateVorlageData(vorlageId, form);
+      setMode({ view: 'list' });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Fehler');
+    } finally {
+      setSaving(false);
+    }
+  }
+
   async function handleDeleteVorlage(id: string): Promise<void> {
     const res = await fetch(`/api/admin/vorlagen/${id}`, { method: 'DELETE' });
     if (!res.ok) throw new Error((await res.json()).error);
@@ -1116,6 +1154,7 @@ export default function AdminClient({
                 vorlagen={vorlagen}
                 onSaveAsVorlage={handleSaveAsVorlage}
                 onUpdateVorlage={handleUpdateVorlageData}
+                onSaveAndUpdateVorlage={handleSaveAndUpdateVorlage}
               />
             </>
           )}
