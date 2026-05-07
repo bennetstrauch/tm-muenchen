@@ -17,7 +17,10 @@
       "Bash(git push *)",
       "WebFetch(domain:de.trustpilot.com)",
       "Bash(python -m json.tool)",
-      "Bash(Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue)"
+      "Bash(Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue)",
+      "Bash(grep -E \"\\\\.\\(tsx?|jsx?\\)$\")",
+      "Bash(git -C \"C:\\\\Users\\\\strau\\\\tm-muenchen\" diff)",
+      "Bash(git -C \"C:\\\\Users\\\\strau\\\\tm-muenchen\" status)"
     ]
   }
 }
