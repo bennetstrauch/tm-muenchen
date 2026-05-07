@@ -4,7 +4,7 @@ import HowItWorks from "@/components/how-it-works";
 import Trustpilot from "@/components/trustpilot";
 import Testimonials from "@/components/testimonials";
 import Events from "@/components/events";
-import { getEvents } from "@/lib/events";
+import { getEvents, formatNextDates } from "@/lib/events";
 import { getTrustpilotStats } from "@/lib/trustpilot";
 import { getTestimonials } from "@/content";
 
@@ -17,9 +17,11 @@ export const metadata = {
 export default async function DepressionPage() {
   const [events, trustpilot] = await Promise.all([getEvents(), getTrustpilotStats()]);
 
+  const nextDates = formatNextDates(events);
+
   return (
     <main>
-      <PageClient initialTheme="depression" />
+      <PageClient initialTheme="depression" nextDates={nextDates} />
       <Testimonials testimonials={getTestimonials("depression")} />
       <WhyTm />
       <HowItWorks />

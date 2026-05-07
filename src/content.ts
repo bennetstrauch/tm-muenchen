@@ -30,9 +30,33 @@ export const themes: Record<string, Theme> = {
   stress: {
     slug: "", // Haupt-URL: /
     label: "Stress",
-    // headline: ["Endlich wirklich abschalten.", "Ohne Anstrengung."],
+    headline: ["Endlich wirklich abschalten.", "Ohne Anstrengung."],
+    subtitle: "regeneriert tiefer als Schlaf",
+    images: [
+      { src: "/hero/stress/1.jpg", focus: "45% 30%" },
+      { src: "/hero/stress/2.jpg", focus: "62% 25%" },
+      { src: "/hero/stress/3.jpg", focus: "65% 50%" },
+      { src: "/hero/stress/4.jpg", focus: "50% 50%" },
+      { src: "/hero/stress/5.jpg", focus: "45% 50%" },
+      { src: "/hero/stress/6.jpg", focus: "50% 45%" },
+      { src: "/hero/stress/7.jpg", focus: "45% 35%" },
+      { src: "/hero/stress/8.jpg", focus: "62% 35%" },
+      { src: "/hero/stress/9.jpg", focus: "45% 40%" },
+      { src: "/hero/stress/10.jpg", focus: "45% 30%" },
+      { src: "/hero/stress/11.jpg", focus: "70% 130%" },
+      { src: "/hero/stress/12.jpg", focus: "35% 35%" },
+      { src: "/hero/stress/13.jpg", focus: "50% 40%" },
+      { src: "/hero/stress/14.jpg", focus: "70% 30%" },
+      { src: "/hero/stress/15.jpg", focus: "55% 30%" },
+      { src: "/hero/stress/17.jpg", focus: "55% 30%" },
+      { src: "/hero/stress/18.jpg", focus: "50% 50%" },
+    ],
+    forWhomIndex: 0,
+  },
+  "innere-stille": {
+    slug: "innere-stille", // URL: /innere-stille
+    label: "Innere Stille",
     headline: ["Dein Kopf wird einfach nicht still?", "Lerne, wie er wirklich zur Ruhe kommt."],
-    // subtitle: "Erfahre besonders tiefe Ruhe",
     subtitle: "Ohne Konzentration. Ohne Gedanken stoppen.",
     images: [
       { src: "/hero/stress/1.jpg", focus: "45% 30%" },
@@ -77,11 +101,10 @@ export const themes: Record<string, Theme> = {
     subtitle: "Einfach und verlässlich in dein Glück eintauchen",
     images: [{ src: "/hero/stress/3.jpg", focus: "65% 50%" }],
     forWhomIndex: 4,
-    // ##edit
   },
 };
 
-export type ThemeKey = "stress" | "depression" | "innere-freude";
+export type ThemeKey = "stress" | "innere-stille" | "depression" | "innere-freude";
 
 // ─────────────────────────────────────────────────
 //  ERFAHRUNGSBERICHTE — Zitate von Meditierenden.
@@ -219,15 +242,14 @@ export const trustpilotReviews: TrustpilotReview[] = [
 
 // ─────────────────────────────────────────────────
 //  FOR-WHOM TABS — Reihenfolge bestimmt den Tab-Index.
-//  themeKey: welches Thema beim Klick aktiviert wird
-//  (undefined = kein Hero-Wechsel, nur Carousel-Index)
+//  Tabs wechseln nur das Carousel, nicht den Hero.
 // ─────────────────────────────────────────────────
-export const forWhomTabs: { label: string; themeKey?: ThemeKey }[] = [
-  { label: "Stress", themeKey: "stress" },
-  { label: "Gesundheit", themeKey: undefined },
-  { label: "Wissenschaft", themeKey: undefined },
-  { label: "Depression", themeKey: "depression" },
-  { label: "Innere Freude", themeKey: "innere-freude" },
+export const forWhomTabs: { label: string }[] = [
+  { label: "Stress" },
+  { label: "Gesundheit" },
+  { label: "Wissenschaft" },
+  { label: "Depression" },
+  { label: "Innere Freude" },
 ];
 
 const email = "info@tm-muenchen.de";

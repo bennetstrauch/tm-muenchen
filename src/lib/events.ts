@@ -120,3 +120,11 @@ export function formatEventDate(isoDate: string): { weekday: string; date: strin
     date: d.toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" }),
   };
 }
+
+export function formatNextDates(events: TMEvent[], count = 3): string[] {
+  return events.slice(0, count).map(e => {
+    const d = new Date(`${e.date}T12:00:00`);
+    const weekday = d.toLocaleDateString("de-DE", { weekday: "short" }).replace(".", "");
+    return `${weekday}, ${e.time}`;
+  });
+}

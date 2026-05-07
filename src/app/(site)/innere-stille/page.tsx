@@ -1,35 +1,31 @@
 import PageClient from "@/components/page-client";
-import Testimonials from "@/components/testimonials";
 import WhyTm from "@/components/why-tm";
 import HowItWorks from "@/components/how-it-works";
 import Trustpilot from "@/components/trustpilot";
-import CenterBanner from "@/components/center-banner";
+import Testimonials from "@/components/testimonials";
 import Events from "@/components/events";
-import Teachers from "@/components/teachers";
 import { getEvents, formatNextDates } from "@/lib/events";
 import { getTrustpilotStats } from "@/lib/trustpilot";
-import { getTeachers } from "@/lib/teachers";
 import { getTestimonials } from "@/content";
 
-export default async function Home() {
-  const [events, trustpilot, teachers] = await Promise.all([
-    getEvents(),
-    getTrustpilotStats(),
-    getTeachers(),
-  ]);
+export const metadata = {
+  title: "TM München – Innere Stille durch Transzendentale Meditation",
+  description:
+    "Dein Kopf wird einfach nicht still? TM gibt dir mühelose, tiefe Ruhe — ohne Konzentration, ohne Gedanken stoppen. Kostenloser Infovortrag in München.",
+};
 
+export default async function InnereSillePage() {
+  const [events, trustpilot] = await Promise.all([getEvents(), getTrustpilotStats()]);
   const nextDates = formatNextDates(events);
 
   return (
     <main>
-      <PageClient initialTheme="stress" nextDates={nextDates} />
-      <Testimonials testimonials={getTestimonials("stress")} />
+      <PageClient initialTheme="innere-stille" nextDates={nextDates} />
+      <Testimonials testimonials={getTestimonials("innere-stille")} />
       <WhyTm />
       <HowItWorks />
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />
-      <CenterBanner />
       <Events events={events} />
-      <Teachers teachers={teachers} />
     </main>
   );
 }
