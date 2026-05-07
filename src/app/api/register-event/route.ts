@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { appendEventRegistration } from '@/lib/veranstaltungen';
+import { appendEventRegistration, getVeranstaltungById } from '@/lib/veranstaltungen';
 import { calcReminderTime } from '@/lib/format';
 import { buildEventConfirmationHtml, buildEventReminderHtml, type EventEmailParams } from '@/lib/email-veranstaltung';
 
@@ -36,7 +36,14 @@ export async function POST(request: Request) {
     reminder1Hours, reminder2Hours,
   } = body;
 
-  if (!name?.trim() || !email?.trim() || !tmLehrer?.trim() || !datumErlernen?.trim()) {
+  if (!name?.trim() || !email?.trim()) {
+    return Response.json({ error: 'Pflichtfelder fehlen.' }, { status: 400 });
+  }
+
+  const event = await getVeranstaltungById(eventId);
+  const requiresTmFields = !event?.auchFuerNichtMeditierende;
+
+  if (requiresTmFields && (!tmLehrer?.trim() || !datumErlernen?.trim())) {
     return Response.json({ error: 'Pflichtfelder fehlen.' }, { status: 400 });
   }
 

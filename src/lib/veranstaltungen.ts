@@ -6,7 +6,7 @@ export { formatVeranstaltungDate, calcReminderTime };
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID!;
 const EVENTS_TAB = 'Veranstaltungen';
 const REGS_TAB = 'Veranstaltungen Anmeldungen';
-const EVENTS_RANGE = `${EVENTS_TAB}!A:T`;
+const EVENTS_RANGE = `${EVENTS_TAB}!A:U`;
 const REGS_RANGE = `${REGS_TAB}!A:I`;
 
 export type Veranstaltung = {
@@ -30,6 +30,7 @@ export type Veranstaltung = {
   visible: boolean;
   isPriority: boolean;
   imageUrl?: string;
+  auchFuerNichtMeditierende: boolean;
 };
 
 export type EventRegistration = {
@@ -81,6 +82,7 @@ function rowToVeranstaltung(row: string[]): Veranstaltung {
     visible: parseBool(row[17] ?? 'TRUE'),
     isPriority: parseBool(row[18] ?? ''),
     imageUrl: row[19] || undefined,
+    auchFuerNichtMeditierende: parseBool(row[20] ?? ''),
   };
 }
 
@@ -106,6 +108,7 @@ function veranstaltungToRow(v: Veranstaltung): string[] {
     v.visible ? 'TRUE' : 'FALSE',
     v.isPriority ? 'TRUE' : 'FALSE',
     v.imageUrl ?? '',
+    v.auchFuerNichtMeditierende ? 'TRUE' : 'FALSE',
   ];
 }
 
@@ -117,6 +120,12 @@ async function readAllEventRows(): Promise<{ rows: string[][] }> {
   });
   const all = (res.data.values ?? []) as string[][];
   return { rows: all.length > 1 ? all.slice(1) : [] };
+}
+
+export async function getVeranstaltungById(id: string): Promise<Veranstaltung | null> {
+  const { rows } = await readAllEventRows();
+  const row = rows.find(r => r[0] === id);
+  return row ? rowToVeranstaltung(row) : null;
 }
 
 export async function getAllVeranstaltungen(): Promise<Veranstaltung[]> {
@@ -164,7 +173,7 @@ export async function updateVeranstaltung(v: Veranstaltung): Promise<void> {
   if (idx === -1) throw new Error(`Veranstaltung ${v.id} not found`);
   await sheets.spreadsheets.values.update({
     spreadsheetId: SPREADSHEET_ID,
-    range: `${EVENTS_TAB}!A${idx + 1}:T${idx + 1}`,
+    range: `${EVENTS_TAB}!A${idx + 1}:U${idx + 1}`,
     valueInputOption: 'USER_ENTERED',
     requestBody: { values: [veranstaltungToRow(v)] },
   });

@@ -41,6 +41,7 @@ const EMPTY_FORM: Omit<Veranstaltung, 'id'> = {
   visible: true,
   isPriority: false,
   imageUrl: '',
+  auchFuerNichtMeditierende: false,
 };
 
 const VALID_TABS: Tab[] = ['info-anmeldungen', 'veranstaltungen', 'anmeldungen', 'vorlagen'];
@@ -189,6 +190,98 @@ function findConflicts(
     if (time && e.time) return Math.abs(timeToMinutes(time) - timeToMinutes(e.time)) < 180;
     return true;
   });
+}
+
+// ─── EventFormFields (shared between EventForm and VorlagenTab) ───────────────
+
+function EventFormFields({
+  form,
+  onChange,
+}: {
+  form: Omit<Veranstaltung, 'id'>;
+  onChange: <K extends keyof Omit<Veranstaltung, 'id'>>(key: K, value: Omit<Veranstaltung, 'id'>[K]) => void;
+}) {
+  return (
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <Field label="Uhrzeit * (HH:MM)">
+          <input type="time" className={INPUT_CLS} value={form.time} onChange={e => onChange('time', e.target.value)} />
+        </Field>
+        <Field label="Ort">
+          <input
+            className={INPUT_CLS}
+            value={form.location}
+            onChange={e => onChange('location', e.target.value)}
+            placeholder="Guldeinstraße 47"
+            list="location-suggestions"
+          />
+          <datalist id="location-suggestions">
+            <option value="Guldeinstr. 47, 80339 München" />
+            <option value="Schwabing, Bonner Platz 1, 80803 München" />
+          </datalist>
+        </Field>
+        <Field label="Leiter">
+          <input className={INPUT_CLS} value={form.hosts} onChange={e => onChange('hosts', e.target.value)} placeholder="Bennet, Malena" />
+        </Field>
+        <Field label="Preis (optional)">
+          <input className={INPUT_CLS} value={form.price} onChange={e => onChange('price', e.target.value)} placeholder="65 €/P.; 50 € Ehepaare" />
+        </Field>
+        <Field label="Zielgruppe (optional)">
+          <input className={INPUT_CLS} value={form.targetAudience} onChange={e => onChange('targetAudience', e.target.value)} placeholder="15–45 Jahre" />
+        </Field>
+        <Field label="Erinnerung 1 (Stunden vorher)">
+          <input type="number" min="0" className={INPUT_CLS} value={form.reminder1Hours} onChange={e => onChange('reminder1Hours', parseInt(e.target.value) || 24)} />
+        </Field>
+        <Field label="Erinnerung 2 (Stunden vorher, 0 = keine)">
+          <input type="number" min="0" className={INPUT_CLS} value={form.reminder2Hours} onChange={e => onChange('reminder2Hours', parseInt(e.target.value) || 0)} />
+        </Field>
+        <Field label="Online-Link (optional)">
+          <input className={INPUT_CLS} value={form.onlineLink} onChange={e => onChange('onlineLink', e.target.value)} placeholder="https://zoom.us/..." />
+        </Field>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <Field label="Kurzbeschreibung">
+          <textarea className={TEXTAREA_CLS} value={form.description} onChange={e => onChange('description', e.target.value)} placeholder="mit Gruppenmeditation, Maharishi-Tape…" />
+        </Field>
+        <Field label="Hinweise (optional)">
+          <textarea className={TEXTAREA_CLS} value={form.notes} onChange={e => onChange('notes', e.target.value)} placeholder="Weitere Infos folgen" />
+        </Field>
+        <Field label="Ausführliche Beschreibung (optional)">
+          <textarea className={TEXTAREA_CLS} value={form.longDescription} onChange={e => onChange('longDescription', e.target.value)} />
+        </Field>
+      </div>
+
+      <div className="mb-4">
+        <Field label="Bild">
+          <ImagePicker value={form.imageUrl ?? ''} onChange={url => onChange('imageUrl', url)} />
+        </Field>
+      </div>
+
+      <div className="flex flex-wrap gap-6">
+        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+          <input type="checkbox" className={CHECK_CLS} checked={form.isOnline} onChange={e => onChange('isOnline', e.target.checked)} />
+          Online
+        </label>
+        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+          <input type="checkbox" className={CHECK_CLS} checked={form.registrationOpen} onChange={e => onChange('registrationOpen', e.target.checked)} />
+          Anmeldung offen
+        </label>
+        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+          <input type="checkbox" className={CHECK_CLS} checked={form.visible} onChange={e => onChange('visible', e.target.checked)} />
+          Sichtbar auf Website
+        </label>
+        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+          <input type="checkbox" className={CHECK_CLS} checked={form.isPriority} onChange={e => onChange('isPriority', e.target.checked)} />
+          Priorität (oben anzeigen)
+        </label>
+        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+          <input type="checkbox" className={CHECK_CLS} checked={form.auchFuerNichtMeditierende} onChange={e => onChange('auchFuerNichtMeditierende', e.target.checked)} />
+          Auch für Nicht-Meditierende
+        </label>
+      </div>
+    </>
+  );
 }
 
 // ─── EventForm ───────────────────────────────────────────────────────────────
@@ -383,9 +476,6 @@ function EventForm({
           <Field label="Datum * (YYYY-MM-DD)">
             <input type="date" className={INPUT_CLS} value={form.date} onChange={e => set('date', e.target.value)} />
           </Field>
-          <Field label="Uhrzeit * (HH:MM)">
-            <input type="time" className={INPUT_CLS} value={form.time} onChange={e => set('time', e.target.value)} />
-          </Field>
         </div>
 
         {conflicts.length > 0 && (
@@ -405,78 +495,9 @@ function EventForm({
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-          <Field label="Ort">
-            <input
-              className={INPUT_CLS}
-              value={form.location}
-              onChange={e => set('location', e.target.value)}
-              placeholder="Guldeinstraße 47"
-              list="location-suggestions"
-            />
-            <datalist id="location-suggestions">
-              <option value="Guldeinstr. 47, 80339 München" />
-              <option value="Schwabing, Bonner Platz 1, 80803 München" />
-            </datalist>
-          </Field>
-          <Field label="Leiter">
-            <input className={INPUT_CLS} value={form.hosts} onChange={e => set('hosts', e.target.value)} placeholder="Bennet, Malena" />
-          </Field>
-          <Field label="Preis (optional)">
-            <input className={INPUT_CLS} value={form.price} onChange={e => set('price', e.target.value)} placeholder="65 €/P.; 50 € Ehepaare" />
-          </Field>
-          <Field label="Zielgruppe (optional)">
-            <input className={INPUT_CLS} value={form.targetAudience} onChange={e => set('targetAudience', e.target.value)} placeholder="15–45 Jahre" />
-          </Field>
-          <Field label="Erinnerung 1 (Stunden vorher)">
-            <input type="number" min="0" className={INPUT_CLS} value={form.reminder1Hours} onChange={e => set('reminder1Hours', parseInt(e.target.value) || 24)} />
-          </Field>
-          <Field label="Erinnerung 2 (Stunden vorher, 0 = keine)">
-            <input type="number" min="0" className={INPUT_CLS} value={form.reminder2Hours} onChange={e => set('reminder2Hours', parseInt(e.target.value) || 0)} />
-          </Field>
-          <Field label="Online-Link (optional)">
-            <input className={INPUT_CLS} value={form.onlineLink} onChange={e => set('onlineLink', e.target.value)} placeholder="https://zoom.us/..." />
-          </Field>
-        </div>
+        <EventFormFields form={form} onChange={set} />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-          <Field label="Kurzbeschreibung">
-            <textarea className={TEXTAREA_CLS} value={form.description} onChange={e => set('description', e.target.value)} placeholder="mit Gruppenmeditation, Maharishi-Tape…" />
-          </Field>
-          <Field label="Hinweise (optional)">
-            <textarea className={TEXTAREA_CLS} value={form.notes} onChange={e => set('notes', e.target.value)} placeholder="Weitere Infos folgen" />
-          </Field>
-          <Field label="Ausführliche Beschreibung (optional)">
-            <textarea className={TEXTAREA_CLS} value={form.longDescription} onChange={e => set('longDescription', e.target.value)} />
-          </Field>
-        </div>
-
-        <div className="mb-4">
-          <Field label="Bild">
-            <ImagePicker value={form.imageUrl ?? ''} onChange={url => set('imageUrl', url)} />
-          </Field>
-        </div>
-
-        <div className="flex flex-wrap gap-6 mb-6">
-          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-            <input type="checkbox" className={CHECK_CLS} checked={form.isOnline} onChange={e => set('isOnline', e.target.checked)} />
-            Online
-          </label>
-          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-            <input type="checkbox" className={CHECK_CLS} checked={form.registrationOpen} onChange={e => set('registrationOpen', e.target.checked)} />
-            Anmeldung offen
-          </label>
-          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-            <input type="checkbox" className={CHECK_CLS} checked={form.visible} onChange={e => set('visible', e.target.checked)} />
-            Sichtbar auf Website
-          </label>
-          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-            <input type="checkbox" className={CHECK_CLS} checked={form.isPriority} onChange={e => set('isPriority', e.target.checked)} />
-            Priorität (oben anzeigen)
-          </label>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="mt-6 flex flex-wrap items-center gap-3">
           <button
             onClick={() => onSave(form)}
             disabled={isSaving || !form.title || !form.date}
@@ -583,76 +604,18 @@ function VorlagenTab({
                   placeholder="z.B. Gruppenmeditation Montag"
                 />
               </Field>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <Field label="Titel">
                   <input className={INPUT_CLS} value={editForm.title} onChange={e => setField('title', e.target.value)} />
                 </Field>
                 <Field label="Untertitel">
                   <input className={INPUT_CLS} value={editForm.subtitle} onChange={e => setField('subtitle', e.target.value)} />
                 </Field>
-                <Field label="Uhrzeit">
-                  <input type="time" className={INPUT_CLS} value={editForm.time} onChange={e => setField('time', e.target.value)} />
-                </Field>
-                <Field label="Ort">
-                  <input className={INPUT_CLS} value={editForm.location} onChange={e => setField('location', e.target.value)} list="location-suggestions-vorlage" />
-                  <datalist id="location-suggestions-vorlage">
-                    <option value="Guldeinstr. 47, 80339 München" />
-                    <option value="Schwabing, Bonner Platz 1, 80803 München" />
-                  </datalist>
-                </Field>
-                <Field label="Leiter">
-                  <input className={INPUT_CLS} value={editForm.hosts} onChange={e => setField('hosts', e.target.value)} placeholder="Bennet, Malena" />
-                </Field>
-                <Field label="Preis (optional)">
-                  <input className={INPUT_CLS} value={editForm.price} onChange={e => setField('price', e.target.value)} />
-                </Field>
-                <Field label="Zielgruppe (optional)">
-                  <input className={INPUT_CLS} value={editForm.targetAudience} onChange={e => setField('targetAudience', e.target.value)} />
-                </Field>
-                <Field label="Online-Link (optional)">
-                  <input className={INPUT_CLS} value={editForm.onlineLink} onChange={e => setField('onlineLink', e.target.value)} />
-                </Field>
-                <Field label="Erinnerung 1 (Stunden vorher)">
-                  <input type="number" min="0" className={INPUT_CLS} value={editForm.reminder1Hours} onChange={e => setField('reminder1Hours', parseInt(e.target.value) || 24)} />
-                </Field>
-                <Field label="Erinnerung 2 (Stunden vorher, 0 = keine)">
-                  <input type="number" min="0" className={INPUT_CLS} value={editForm.reminder2Hours} onChange={e => setField('reminder2Hours', parseInt(e.target.value) || 0)} />
-                </Field>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Field label="Kurzbeschreibung">
-                  <textarea className={TEXTAREA_CLS} value={editForm.description} onChange={e => setField('description', e.target.value)} />
-                </Field>
-                <Field label="Hinweise (optional)">
-                  <textarea className={TEXTAREA_CLS} value={editForm.notes} onChange={e => setField('notes', e.target.value)} />
-                </Field>
-                <Field label="Ausführliche Beschreibung (optional)">
-                  <textarea className={TEXTAREA_CLS} value={editForm.longDescription} onChange={e => setField('longDescription', e.target.value)} />
-                </Field>
-              </div>
-              <div className="mb-4">
-                <Field label="Bild">
-                  <ImagePicker value={editForm.imageUrl ?? ''} onChange={url => setField('imageUrl', url)} />
-                </Field>
-              </div>
-              <div className="flex flex-wrap gap-6 mb-2">
-                <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                  <input type="checkbox" className={CHECK_CLS} checked={editForm.isOnline} onChange={e => setField('isOnline', e.target.checked)} />
-                  Online
-                </label>
-                <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                  <input type="checkbox" className={CHECK_CLS} checked={editForm.registrationOpen} onChange={e => setField('registrationOpen', e.target.checked)} />
-                  Anmeldung offen
-                </label>
-                <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                  <input type="checkbox" className={CHECK_CLS} checked={editForm.visible} onChange={e => setField('visible', e.target.checked)} />
-                  Sichtbar auf Website
-                </label>
-                <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                  <input type="checkbox" className={CHECK_CLS} checked={editForm.isPriority} onChange={e => setField('isPriority', e.target.checked)} />
-                  Priorität
-                </label>
-              </div>
+              <EventFormFields
+                form={editForm}
+                onChange={(key, value) => setField(key, value as Vorlage[typeof key])}
+              />
               <div className="flex gap-3">
                 <button
                   onClick={handleSave}

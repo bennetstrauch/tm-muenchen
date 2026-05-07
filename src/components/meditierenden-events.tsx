@@ -80,7 +80,12 @@ function RegistrationForm({
     setFormState("submitting");
     setErrorMsg("");
 
-    const profile: SavedProfile = { name, email, phone, tmLehrer, datumErlernen, saveProfile };
+    const existing = loadProfile();
+    const profile: SavedProfile = {
+      name, email, phone, saveProfile,
+      tmLehrer: event.auchFuerNichtMeditierende ? (existing?.tmLehrer ?? '') : tmLehrer,
+      datumErlernen: event.auchFuerNichtMeditierende ? (existing?.datumErlernen ?? '') : datumErlernen,
+    };
     if (saveProfile) {
       persistProfile(profile);
     } else {
@@ -165,29 +170,31 @@ function RegistrationForm({
           className={INPUT_CLS}
         />
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-        <input
-          type="text"
-          placeholder="TM-Lehrer *"
-          required
-          value={tmLehrer}
-          onChange={e => setTmLehrer(e.target.value)}
-          className={INPUT_CLS}
-        />
-        <div>
-          <label className="block text-[0.7rem] text-[#7A9BB5] mb-1 ml-1">
-            Datum des Erlernens *
-          </label>
+      {!event.auchFuerNichtMeditierende && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
           <input
-            type="date"
+            type="text"
+            placeholder="TM-Lehrer *"
             required
-            value={datumErlernen}
-            onChange={e => setDatumErlernen(e.target.value)}
-            max={new Date().toISOString().slice(0, 10)}
+            value={tmLehrer}
+            onChange={e => setTmLehrer(e.target.value)}
             className={INPUT_CLS}
           />
+          <div>
+            <label className="block text-[0.7rem] text-[#7A9BB5] mb-1 ml-1">
+              Datum des Erlernens *
+            </label>
+            <input
+              type="date"
+              required
+              value={datumErlernen}
+              onChange={e => setDatumErlernen(e.target.value)}
+              max={new Date().toISOString().slice(0, 10)}
+              className={INPUT_CLS}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       <label className="flex items-center gap-2.5 mb-4 cursor-pointer select-none">
         <input
@@ -300,6 +307,11 @@ function EventCard({
         `}>
           {event.isOnline ? "Online" : "Präsenz"}
         </span>
+        {event.auchFuerNichtMeditierende && (
+          <span className="text-[0.65rem] tracking-[0.12em] uppercase font-medium px-2 py-0.5 rounded-full bg-[#F0FDF4] text-[#166534]">
+            Auch für Nicht-Meditierende
+          </span>
+        )}
         {!event.isOnline && event.location && (
           <>
             <span className="text-[#A5C3D7]">·</span>

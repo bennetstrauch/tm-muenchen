@@ -3,7 +3,7 @@ import type { Veranstaltung } from './veranstaltungen';
 
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID!;
 const TAB = 'Vorlagen';
-const RANGE = `${TAB}!A:U`;
+const RANGE = `${TAB}!A:V`;
 
 // A Vorlage is a Veranstaltung with an extra alias field `name`.
 // Sheet columns: id | name | ...all Veranstaltung fields (same order as Veranstaltungen tab)
@@ -13,7 +13,7 @@ const HEADERS = [
   'id', 'name', 'title', 'subtitle', 'description', 'longDescription',
   'date', 'time', 'location', 'isOnline', 'onlineLink', 'hosts',
   'price', 'targetAudience', 'notes', 'reminder1Hours', 'reminder2Hours',
-  'registrationOpen', 'visible', 'isPriority', 'imageUrl',
+  'registrationOpen', 'visible', 'isPriority', 'imageUrl', 'auchFuerNichtMeditierende',
 ];
 
 function parseBool(val: string): boolean {
@@ -43,6 +43,7 @@ function rowToVorlage(row: string[]): Vorlage {
     visible: parseBool(row[18] ?? 'TRUE'),
     isPriority: parseBool(row[19] ?? ''),
     imageUrl: row[20] || undefined,
+    auchFuerNichtMeditierende: parseBool(row[21] ?? ''),
   };
 }
 
@@ -69,6 +70,7 @@ function vorlageToRow(v: Vorlage): string[] {
     v.visible ? 'TRUE' : 'FALSE',
     v.isPriority ? 'TRUE' : 'FALSE',
     v.imageUrl ?? '',
+    v.auchFuerNichtMeditierende ? 'TRUE' : 'FALSE',
   ];
 }
 
@@ -132,7 +134,7 @@ export async function updateVorlage(v: Vorlage): Promise<void> {
   if (idx === -1) throw new Error(`Vorlage ${v.id} not found`);
   await sheets.spreadsheets.values.update({
     spreadsheetId: SPREADSHEET_ID,
-    range: `${TAB}!A${idx + 1}:U${idx + 1}`,
+    range: `${TAB}!A${idx + 1}:V${idx + 1}`,
     valueInputOption: 'USER_ENTERED',
     requestBody: { values: [vorlageToRow(v)] },
   });
