@@ -6,7 +6,7 @@ export { formatVeranstaltungDate, calcReminderTime };
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID!;
 const EVENTS_TAB = 'Veranstaltungen';
 const REGS_TAB = 'Veranstaltungen Anmeldungen';
-const EVENTS_RANGE = `${EVENTS_TAB}!A:V`;
+const EVENTS_RANGE = `${EVENTS_TAB}!A:W`;
 const REGS_RANGE = `${REGS_TAB}!A:I`;
 
 export type Veranstaltung = {
@@ -32,6 +32,7 @@ export type Veranstaltung = {
   imageUrl?: string;
   auchFuerNichtMeditierende: boolean;
   slug?: string;
+  vorlageId?: string;
 };
 
 export type EventRegistration = {
@@ -85,6 +86,7 @@ function rowToVeranstaltung(row: string[]): Veranstaltung {
     imageUrl: row[19] || undefined,
     auchFuerNichtMeditierende: parseBool(row[20] ?? ''),
     slug: row[21] || undefined,
+    vorlageId: row[22] || undefined,
   };
 }
 
@@ -112,6 +114,7 @@ function veranstaltungToRow(v: Veranstaltung): string[] {
     v.imageUrl ?? '',
     v.auchFuerNichtMeditierende ? 'TRUE' : 'FALSE',
     v.slug ?? '',
+    v.vorlageId ?? '',
   ];
 }
 
@@ -176,7 +179,7 @@ export async function updateVeranstaltung(v: Veranstaltung): Promise<void> {
   if (idx === -1) throw new Error(`Veranstaltung ${v.id} not found`);
   await sheets.spreadsheets.values.update({
     spreadsheetId: SPREADSHEET_ID,
-    range: `${EVENTS_TAB}!A${idx + 1}:V${idx + 1}`,
+    range: `${EVENTS_TAB}!A${idx + 1}:W${idx + 1}`,
     valueInputOption: 'USER_ENTERED',
     requestBody: { values: [veranstaltungToRow(v)] },
   });

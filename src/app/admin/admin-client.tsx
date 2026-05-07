@@ -415,7 +415,11 @@ function EventForm({
   onSaveAndUpdateVorlage?: (form: Omit<Veranstaltung, 'id'>, vorlageId: string) => void;
 }) {
   const [form, setFormState] = useState<Omit<Veranstaltung, 'id'>>(initial);
-  const [vorlagePhase, setVorlagePhase] = useState<VorlagePhase>({ kind: 'none' });
+  const [vorlagePhase, setVorlagePhase] = useState<VorlagePhase>(() => {
+    if (!initial.vorlageId) return { kind: 'none' };
+    const linked = vorlagen.find(v => v.id === initial.vorlageId);
+    return linked ? { kind: 'linked-clean', id: initial.vorlageId } : { kind: 'none' };
+  });
   const [savingVorlage, setSavingVorlage] = useState(false);
   const [showVorlagenPanel, setShowVorlagenPanel] = useState(false);
   const [expandedVorlageId, setExpandedVorlageId] = useState<string | null>(null);
@@ -439,6 +443,7 @@ function EventForm({
     try {
       const saved = await onSaveAsVorlage({ ...form, name: form.title || 'Vorlage' });
       setVorlagePhase({ kind: 'just-saved-new', id: saved.id });
+      setFormState(prev => ({ ...prev, vorlageId: saved.id }));
     } finally {
       setSavingVorlage(false);
     }
@@ -459,7 +464,7 @@ function EventForm({
   function handleLoadVorlage(v: Vorlage) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, name, ...data } = v;
-    setFormState({ ...data, date: '' });
+    setFormState({ ...data, date: '', vorlageId: id });
     setVorlagePhase({ kind: 'linked-clean', id });
     setShowVorlagenPanel(false);
     setExpandedVorlageId(null);
@@ -924,6 +929,15 @@ export default function AdminClient({
     if (!res.ok) throw new Error((await res.json()).error);
     const saved: Vorlage = await res.json();
     setVorlagen(prev => [...prev, saved]);
+    if (mode.view === 'edit') {
+      const updated = { ...mode.event, vorlageId: saved.id };
+      await fetch(`/api/admin/events/${mode.event.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated),
+      });
+      setEvents(prev => prev.map(e => e.id === mode.event.id ? updated : e));
+    }
     return saved;
   }
 

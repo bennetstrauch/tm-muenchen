@@ -144,6 +144,12 @@ function RegistrationForm({
 
   return (
     <form onSubmit={handleSubmit} className="py-5 px-1">
+      {event.price && (
+        <div className="mb-4 flex items-center gap-2 rounded-lg border border-[#E8D9C4] bg-[#FBF6EF] px-4 py-2.5 text-sm text-[#3D5573]">
+          <span>Kostenpflichtig:</span>
+          <span className="font-semibold text-[#1A3352]">{event.price}</span>
+        </div>
+      )}
       <div className="mb-3">
         <input
           type="text"
