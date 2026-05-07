@@ -20,7 +20,11 @@
       "Bash(Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue)",
       "Bash(grep -E \"\\\\.\\(tsx?|jsx?\\)$\")",
       "Bash(git -C \"C:\\\\Users\\\\strau\\\\tm-muenchen\" diff)",
-      "Bash(git -C \"C:\\\\Users\\\\strau\\\\tm-muenchen\" status)"
+      "Bash(git -C \"C:\\\\Users\\\\strau\\\\tm-muenchen\" status)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\strau\\\\tm-muenchen\" -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(node -e \"require\\('sharp'\\); console.log\\('sharp ok'\\)\")",
+      "Bash(echo \"EXIT:$?\")"
     ]
   }
 }
