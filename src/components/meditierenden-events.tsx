@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { Veranstaltung } from "@/lib/veranstaltungen";
-import { formatVeranstaltungDate } from "@/lib/format";
+import { formatVeranstaltungDate, eventSlug } from "@/lib/format";
 
 const INPUT_CLS = `
   w-full border border-[#DBEAFE] rounded-md px-4 py-2.5
@@ -13,14 +13,6 @@ const INPUT_CLS = `
 
 const DEFAULT_IMAGE = '/retreat-gruss.jpg';
 
-function eventSlug(event: Veranstaltung): string {
-  if (event.slug) return event.slug;
-  return event.title
-    .toLowerCase()
-    .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-}
 
 // ── Saved profile (localStorage) ───────────────────────────
 

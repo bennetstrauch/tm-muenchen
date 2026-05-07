@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import type { Registration } from '@/lib/sheets';
 import type { Veranstaltung, EventRegistrationRecord } from '@/lib/veranstaltungen';
 import type { Vorlage } from '@/lib/vorlagen';
+import { eventSlug } from '@/lib/format';
 import InfoRegistrationsTable from './registrations-table';
 
 type Tab = 'info-anmeldungen' | 'veranstaltungen' | 'anmeldungen' | 'vorlagen';
@@ -835,6 +836,7 @@ export default function AdminClient({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const sortedEvents = useMemo(
     () => [...events].sort((a, b) => {
@@ -1033,6 +1035,18 @@ export default function AdminClient({
                             </div>
                           </td>
                           <td className="px-6 py-4 text-right whitespace-nowrap">
+                            <button
+                              onClick={() => {
+                                const url = `${window.location.origin}/events?open=${eventSlug(event)}`;
+                                navigator.clipboard.writeText(url);
+                                setCopiedId(event.id);
+                                setTimeout(() => setCopiedId(null), 2000);
+                              }}
+                              className="text-xs text-gray-400 hover:text-[#BCA075] mr-4 transition-colors"
+                              title="Newsletter-Link kopieren"
+                            >
+                              {copiedId === event.id ? '✓ Kopiert' : 'Link kopieren'}
+                            </button>
                             <button
                               onClick={() => setMode({ view: 'edit', event })}
                               className="text-xs text-[#BCA075] hover:underline mr-4"

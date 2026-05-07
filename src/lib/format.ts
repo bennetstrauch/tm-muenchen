@@ -1,3 +1,12 @@
+export function eventSlug(event: { title: string; slug?: string }): string {
+  if (event.slug) return event.slug;
+  return event.title
+    .toLowerCase()
+    .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 export function formatVeranstaltungDate(isoDate: string): string {
   const d = new Date(`${isoDate}T12:00:00`);
   return d.toLocaleDateString('de-DE', {
