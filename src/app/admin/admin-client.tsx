@@ -42,6 +42,7 @@ const EMPTY_FORM: Omit<Veranstaltung, 'id'> = {
   isPriority: false,
   imageUrl: '',
   auchFuerNichtMeditierende: false,
+  slug: '',
 };
 
 const VALID_TABS: Tab[] = ['info-anmeldungen', 'veranstaltungen', 'anmeldungen', 'vorlagen'];
@@ -313,6 +314,21 @@ function EventFormFields({
       <div className="mb-4">
         <Field label="Bild">
           <ImagePicker value={form.imageUrl ?? ''} onChange={url => onChange('imageUrl', url)} events={events} />
+        </Field>
+      </div>
+
+      <div className="mb-4">
+        <Field label="Newsletter-Link-Schlüsselwort (optional)">
+          <input
+            className={INPUT_CLS}
+            value={form.slug ?? ''}
+            onChange={e => onChange('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
+            placeholder="z.B. vollmond oder gruppenmed-mai"
+          />
+          <p className="text-[0.7rem] text-gray-400 mt-1">
+            Ermöglicht Links wie <span className="font-mono">tm-muenchen.de/events?open=schlüsselwort</span> direkt zur Anmeldung.
+            Leer lassen = automatisch aus Titel generiert.
+          </p>
         </Field>
       </div>
 

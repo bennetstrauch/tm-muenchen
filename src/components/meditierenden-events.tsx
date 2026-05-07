@@ -13,6 +13,15 @@ const INPUT_CLS = `
 
 const DEFAULT_IMAGE = '/retreat-gruss.jpg';
 
+function eventSlug(event: Veranstaltung): string {
+  if (event.slug) return event.slug;
+  return event.title
+    .toLowerCase()
+    .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 // ── Saved profile (localStorage) ───────────────────────────
 
 const PROFILE_KEY = "tm-saved-profile";
@@ -247,11 +256,13 @@ function EventCard({
   isOpen,
   onToggle,
   index,
+  id,
 }: {
   event: Veranstaltung;
   isOpen: boolean;
   onToggle: () => void;
   index: number;
+  id?: string;
 }) {
   const fullDate = formatVeranstaltungDate(event.date);
   const [expanded, setExpanded] = useState(false);
@@ -362,7 +373,7 @@ function EventCard({
   );
 
   return (
-    <li>
+    <li id={id}>
       {/* ── Mobile: background-image card ─────────────────── */}
       <div
         className="md:hidden relative rounded-2xl overflow-hidden"
@@ -413,6 +424,29 @@ function EventCard({
 export default function MeditierendenEvents({ events }: { events: Veranstaltung[] }) {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
 
+  useEffect(() => {
+    const slug = new URLSearchParams(window.location.search).get('open');
+    if (!slug) return;
+    const idx = events.findIndex(e => eventSlug(e) === slug);
+    if (idx === -1) return;
+    setOpenIdx(idx);
+    setTimeout(() => {
+      document.getElementById(`event-${eventSlug(events[idx])}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function handleToggle(i: number) {
+    const next = openIdx === i ? null : i;
+    setOpenIdx(next);
+    const url = new URL(window.location.href);
+    if (next === null) {
+      url.searchParams.delete('open');
+    } else {
+      url.searchParams.set('open', eventSlug(events[i]));
+    }
+    window.history.replaceState(null, '', url.toString());
+  }
+
   if (events.length === 0) {
     return (
       <div className="py-12 text-center">
@@ -434,10 +468,11 @@ export default function MeditierendenEvents({ events }: { events: Veranstaltung[
       {events.map((event, i) => (
         <EventCard
           key={event.id}
+          id={`event-${eventSlug(event)}`}
           event={event}
           index={i}
           isOpen={openIdx === i}
-          onToggle={() => setOpenIdx(openIdx === i ? null : i)}
+          onToggle={() => handleToggle(i)}
         />
       ))}
     </ul>
