@@ -56,7 +56,7 @@ export type EventRegistrationRecord = {
   datumErlernen: string;
 };
 
-function parseBool(val: string): boolean {
+export function parseBool(val: string): boolean {
   return ['true', 'ja', '1', 'yes', 'x'].includes((val ?? '').toLowerCase().trim());
 }
 

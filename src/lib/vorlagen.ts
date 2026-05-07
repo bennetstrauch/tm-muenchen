@@ -1,5 +1,5 @@
 import { getSheets } from './sheets';
-import type { Veranstaltung } from './veranstaltungen';
+import { parseBool, type Veranstaltung } from './veranstaltungen';
 
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID!;
 const TAB = 'Vorlagen';
@@ -15,10 +15,6 @@ const HEADERS = [
   'price', 'targetAudience', 'notes', 'reminder1Hours', 'reminder2Hours',
   'registrationOpen', 'visible', 'isPriority', 'imageUrl', 'auchFuerNichtMeditierende',
 ];
-
-function parseBool(val: string): boolean {
-  return ['true', 'ja', '1', 'yes', 'x'].includes((val ?? '').toLowerCase().trim());
-}
 
 function rowToVorlage(row: string[]): Vorlage {
   return {

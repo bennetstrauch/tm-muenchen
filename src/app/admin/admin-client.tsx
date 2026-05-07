@@ -123,6 +123,10 @@ function ImagePicker({
     }
   }
 
+  const affectedByDelete = deletingUrl
+    ? events.filter(e => e.imageUrl === deletingUrl).map(e => e.title)
+    : null;
+
   return (
     <div>
       {value ? (
@@ -189,27 +193,24 @@ function ImagePicker({
                   </div>
                 ))}
               </div>
-              {deletingUrl && (() => {
-                const affected = events.filter(e => e.imageUrl === deletingUrl).map(e => e.title);
-                return (
-                  <div className="mt-2 text-xs border border-red-100 bg-red-50 rounded p-2">
-                    <p className="font-medium text-gray-800">Aus Bibliothek löschen?</p>
-                    {affected.length > 0 && (
-                      <p className="mt-0.5 text-amber-700">Verwendet in: {affected.join(', ')}</p>
-                    )}
-                    <div className="flex gap-3 mt-1.5">
-                      <button type="button" onClick={handleConfirmDelete} disabled={deleting}
-                        className="text-red-500 hover:underline disabled:opacity-50">
-                        {deleting ? 'Wird gelöscht…' : 'Ja, löschen'}
-                      </button>
-                      <button type="button" onClick={() => setDeletingUrl(null)}
-                        className="text-gray-400 hover:text-gray-600">
-                        Abbrechen
-                      </button>
-                    </div>
+              {deletingUrl && (
+                <div className="mt-2 text-xs border border-red-100 bg-red-50 rounded p-2">
+                  <p className="font-medium text-gray-800">Aus Bibliothek löschen?</p>
+                  {affectedByDelete && affectedByDelete.length > 0 && (
+                    <p className="mt-0.5 text-amber-700">Verwendet in: {affectedByDelete.join(', ')}</p>
+                  )}
+                  <div className="flex gap-3 mt-1.5">
+                    <button type="button" onClick={handleConfirmDelete} disabled={deleting}
+                      className="text-red-500 hover:underline disabled:opacity-50">
+                      {deleting ? 'Wird gelöscht…' : 'Ja, löschen'}
+                    </button>
+                    <button type="button" onClick={() => setDeletingUrl(null)}
+                      className="text-gray-400 hover:text-gray-600">
+                      Abbrechen
+                    </button>
                   </div>
-                );
-              })()}
+                </div>
+              )}
             </>
           ) : null}
 
