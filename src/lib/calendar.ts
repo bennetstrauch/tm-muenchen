@@ -4,6 +4,30 @@ import type { Veranstaltung } from './veranstaltungen';
 const GULDEIN_PATTERN = /guldeinstr/i;
 const DEFAULT_DURATION_MIN = 120;
 
+function addMinutesToTime(time: string, minutes: number): string {
+  const [h, m] = time.split(':').map(Number);
+  const total = h * 60 + m + minutes;
+  return `${String(Math.floor(total / 60) % 24).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+}
+
+function buildEventFields(v: Veranstaltung) {
+  const startTime = v.time;
+  const endTime = v.endTime || addMinutesToTime(startTime, DEFAULT_DURATION_MIN);
+  const summary = v.subtitle ? `${v.title} – ${v.subtitle}` : v.title;
+  const timeNote = v.endTime
+    ? `${startTime} – ca. ${endTime} Uhr`
+    : `${startTime} – ca. ${endTime} Uhr (2h)`;
+  const descParts = [
+    timeNote,
+    v.description,
+    v.longDescription,
+    v.hosts && `mit ${v.hosts}`,
+    v.price,
+    v.notes,
+  ].filter(Boolean);
+  return { startTime, endTime, summary, description: descParts.join('\n\n') };
+}
+
 function getCalendar() {
   const auth = new google.auth.OAuth2(
     process.env.GOOGLE_OAUTH_CLIENT_ID!,
@@ -23,20 +47,13 @@ export async function createCalendarEvent(v: Veranstaltung): Promise<void> {
   const calendarId = process.env.GOOGLE_CALENDAR_ID;
   if (!calendarId) throw new Error('GOOGLE_CALENDAR_ID not configured');
 
-  const startTime = v.time;
-  const startMs = new Date(`${v.date}T${startTime}:00+02:00`).getTime();
-  const endMs = startMs + DEFAULT_DURATION_MIN * 60_000;
-  const endDate = new Date(endMs);
-  const endTime = `${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2, '0')}`;
-
-  const summary = v.subtitle ? `${v.title} – ${v.subtitle}` : v.title;
-  const descParts = [v.description, v.longDescription, v.hosts && `mit ${v.hosts}`, v.price, v.notes].filter(Boolean);
+  const { startTime, endTime, summary, description } = buildEventFields(v);
 
   await getCalendar().events.insert({
     calendarId,
     requestBody: {
       summary,
-      description: descParts.join('\n\n') || undefined,
+      description,
       location: v.location,
       start: { dateTime: `${v.date}T${startTime}:00`, timeZone: 'Europe/Berlin' },
       end:   { dateTime: `${v.date}T${endTime}:00`,   timeZone: 'Europe/Berlin' },
@@ -81,21 +98,14 @@ export async function updateCalendarEvent(v: Veranstaltung): Promise<void> {
     return;
   }
 
-  const startTime = v.time;
-  const startMs = new Date(`${v.date}T${startTime}:00+02:00`).getTime();
-  const endMs = startMs + DEFAULT_DURATION_MIN * 60_000;
-  const endDate = new Date(endMs);
-  const endTime = `${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2, '0')}`;
-
-  const summary = v.subtitle ? `${v.title} – ${v.subtitle}` : v.title;
-  const descParts = [v.description, v.longDescription, v.hosts && `mit ${v.hosts}`, v.price, v.notes].filter(Boolean);
+  const { startTime, endTime, summary, description } = buildEventFields(v);
 
   await cal.events.patch({
     calendarId,
     eventId: existing.id,
     requestBody: {
       summary,
-      description: descParts.join('\n\n') || undefined,
+      description,
       location: v.location,
       start: { dateTime: `${v.date}T${startTime}:00`, timeZone: 'Europe/Berlin' },
       end:   { dateTime: `${v.date}T${endTime}:00`,   timeZone: 'Europe/Berlin' },

@@ -6,7 +6,7 @@ export { formatVeranstaltungDate, calcReminderTime };
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID!;
 const EVENTS_TAB = 'Veranstaltungen';
 const REGS_TAB = 'Veranstaltungen Anmeldungen';
-const EVENTS_RANGE = `${EVENTS_TAB}!A:W`;
+const EVENTS_RANGE = `${EVENTS_TAB}!A:X`;
 const REGS_RANGE = `${REGS_TAB}!A:I`;
 
 export type Veranstaltung = {
@@ -33,6 +33,7 @@ export type Veranstaltung = {
   auchFuerNichtMeditierende: boolean;
   slug?: string;
   vorlageId?: string;
+  endTime?: string;          // "21:00" — optional end time for calendar
 };
 
 export type EventRegistration = {
@@ -87,6 +88,7 @@ function rowToVeranstaltung(row: string[]): Veranstaltung {
     auchFuerNichtMeditierende: parseBool(row[20] ?? ''),
     slug: row[21] || undefined,
     vorlageId: row[22] || undefined,
+    endTime: row[23] || undefined,
   };
 }
 
@@ -115,6 +117,7 @@ function veranstaltungToRow(v: Veranstaltung): string[] {
     v.auchFuerNichtMeditierende ? 'TRUE' : 'FALSE',
     v.slug ?? '',
     v.vorlageId ?? '',
+    v.endTime ?? '',
   ];
 }
 

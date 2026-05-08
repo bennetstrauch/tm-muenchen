@@ -36,6 +36,7 @@ const EMPTY_FORM: Omit<Veranstaltung, 'id'> = {
   price: '',
   targetAudience: '',
   notes: '',
+  endTime: '',
   reminder1Hours: 24,
   reminder2Hours: 0,
   registrationOpen: true,
@@ -311,6 +312,9 @@ function EventFormFields({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <Field label="Uhrzeit * (HH:MM)">
           <input type="time" className={INPUT_CLS} value={form.time} onChange={e => onChange('time', e.target.value)} />
+        </Field>
+        <Field label="Ende ca. (optional)">
+          <input type="time" className={INPUT_CLS} value={form.endTime ?? ''} onChange={e => onChange('endTime', e.target.value)} />
         </Field>
         <Field label="Ort">
           <input

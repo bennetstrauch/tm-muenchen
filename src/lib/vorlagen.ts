@@ -3,7 +3,7 @@ import { parseBool, type Veranstaltung } from './veranstaltungen';
 
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID!;
 const TAB = 'Vorlagen';
-const RANGE = `${TAB}!A:W`;
+const RANGE = `${TAB}!A:X`;
 
 // A Vorlage is a Veranstaltung with an extra alias field `name`.
 // Sheet columns: id | name | ...all Veranstaltung fields (same order as Veranstaltungen tab)
@@ -13,7 +13,7 @@ const HEADERS = [
   'id', 'name', 'title', 'subtitle', 'description', 'longDescription',
   'date', 'time', 'location', 'isOnline', 'onlineLink', 'hosts',
   'price', 'targetAudience', 'notes', 'reminder1Hours', 'reminder2Hours',
-  'registrationOpen', 'visible', 'isPriority', 'imageUrl', 'auchFuerNichtMeditierende', 'slug',
+  'registrationOpen', 'visible', 'isPriority', 'imageUrl', 'auchFuerNichtMeditierende', 'slug', 'endTime',
 ];
 
 function rowToVorlage(row: string[]): Vorlage {
@@ -41,6 +41,7 @@ function rowToVorlage(row: string[]): Vorlage {
     imageUrl: row[20] || undefined,
     auchFuerNichtMeditierende: parseBool(row[21] ?? ''),
     slug: row[22] || undefined,
+    endTime: row[23] || undefined,
   };
 }
 
@@ -69,6 +70,7 @@ function vorlageToRow(v: Vorlage): string[] {
     v.imageUrl ?? '',
     v.auchFuerNichtMeditierende ? 'TRUE' : 'FALSE',
     v.slug ?? '',
+    v.endTime ?? '',
   ];
 }
 
