@@ -1,6 +1,6 @@
-import { updateVeranstaltung, deleteVeranstaltung } from '@/lib/veranstaltungen';
+import { updateVeranstaltung, deleteVeranstaltung, getVeranstaltungById } from '@/lib/veranstaltungen';
 import type { Veranstaltung } from '@/lib/veranstaltungen';
-import { updateCalendarEvent, isGuldeinEvent } from '@/lib/calendar';
+import { updateCalendarEvent, deleteCalendarEvent, isGuldeinEvent } from '@/lib/calendar';
 
 export async function PUT(
   request: Request,
@@ -33,7 +33,15 @@ export async function DELETE(
 ) {
   try {
     const { id } = await context.params;
+    const event = await getVeranstaltungById(id);
     await deleteVeranstaltung(id);
+    if (event && isGuldeinEvent(event)) {
+      try {
+        await deleteCalendarEvent(id);
+      } catch (calErr) {
+        console.error('Google Calendar delete failed:', calErr);
+      }
+    }
     return Response.json({ success: true });
   } catch (err) {
     console.error('Admin events DELETE failed:', err);

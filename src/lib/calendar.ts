@@ -45,6 +45,23 @@ export async function createCalendarEvent(v: Veranstaltung): Promise<void> {
   });
 }
 
+export async function deleteCalendarEvent(id: string): Promise<void> {
+  const calendarId = process.env.GOOGLE_CALENDAR_ID;
+  if (!calendarId) throw new Error('GOOGLE_CALENDAR_ID not configured');
+
+  const cal = getCalendar();
+  const listRes = await cal.events.list({
+    calendarId,
+    privateExtendedProperty: [`veranstaltungId=${id}`],
+    maxResults: 1,
+  });
+
+  const existing = listRes.data.items?.[0];
+  if (existing?.id) {
+    await cal.events.delete({ calendarId, eventId: existing.id });
+  }
+}
+
 export async function updateCalendarEvent(v: Veranstaltung): Promise<void> {
   if (!v.time) return;
 
