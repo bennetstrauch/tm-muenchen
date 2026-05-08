@@ -35,7 +35,7 @@ export default function CenterBanner() {
       <div className="relative aspect-[3/2] sm:aspect-[16/7] w-full">
         <Image
           // src="/retreat-gruss.jpg"
-          src="centerbildSebastianErklaert.jpeg"
+          src="/centerbildSebastianErklaert.jpeg"
           alt="Das Team des TM Center München"
           fill
           className="object-cover object-top"
