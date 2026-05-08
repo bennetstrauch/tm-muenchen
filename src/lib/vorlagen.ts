@@ -3,7 +3,21 @@ import { parseBool, type Veranstaltung } from './veranstaltungen';
 
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID!;
 const TAB = 'Vorlagen';
-const RANGE = `${TAB}!A:X`;
+const RANGE = `${TAB}!A:AZ`;
+
+function colLetter(n: number): string {
+  let result = '';
+  while (n > 0) {
+    const rem = (n - 1) % 26;
+    result = String.fromCharCode(65 + rem) + result;
+    n = Math.floor((n - 1) / 26);
+  }
+  return result;
+}
+
+function rowRange(tab: string, row: string[], rowIndex: number): string {
+  return `${tab}!A${rowIndex}:${colLetter(row.length)}${rowIndex}`;
+}
 
 // A Vorlage is a Veranstaltung with an extra alias field `name`.
 // Sheet columns: id | name | ...all Veranstaltung fields (same order as Veranstaltungen tab)
@@ -132,11 +146,12 @@ export async function updateVorlage(v: Vorlage): Promise<void> {
   const col = (res.data.values ?? []) as string[][];
   const idx = col.findIndex((row, i) => i > 0 && row[0] === v.id);
   if (idx === -1) throw new Error(`Vorlage ${v.id} not found`);
+  const row = vorlageToRow(v);
   await sheets.spreadsheets.values.update({
     spreadsheetId: SPREADSHEET_ID,
-    range: `${TAB}!A${idx + 1}:X${idx + 1}`,
+    range: rowRange(TAB, row, idx + 1),
     valueInputOption: 'USER_ENTERED',
-    requestBody: { values: [vorlageToRow(v)] },
+    requestBody: { values: [row] },
   });
 }
 

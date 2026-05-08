@@ -6,8 +6,24 @@ export { formatVeranstaltungDate, calcReminderTime };
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID!;
 const EVENTS_TAB = 'Veranstaltungen';
 const REGS_TAB = 'Veranstaltungen Anmeldungen';
-const EVENTS_RANGE = `${EVENTS_TAB}!A:X`;
 const REGS_RANGE = `${REGS_TAB}!A:I`;
+
+function colLetter(n: number): string {
+  let result = '';
+  while (n > 0) {
+    const rem = (n - 1) % 26;
+    result = String.fromCharCode(65 + rem) + result;
+    n = Math.floor((n - 1) / 26);
+  }
+  return result;
+}
+
+function rowRange(tab: string, row: string[], rowIndex: number): string {
+  return `${tab}!A${rowIndex}:${colLetter(row.length)}${rowIndex}`;
+}
+
+// Wide enough to cover all current + future columns without manual updates.
+const EVENTS_RANGE = `${EVENTS_TAB}!A:AZ`;
 
 export type Veranstaltung = {
   id: string;
@@ -180,11 +196,12 @@ export async function updateVeranstaltung(v: Veranstaltung): Promise<void> {
   const col = (res.data.values ?? []) as string[][];
   const idx = col.findIndex((row, i) => i > 0 && row[0] === v.id);
   if (idx === -1) throw new Error(`Veranstaltung ${v.id} not found`);
+  const row = veranstaltungToRow(v);
   await sheets.spreadsheets.values.update({
     spreadsheetId: SPREADSHEET_ID,
-    range: `${EVENTS_TAB}!A${idx + 1}:X${idx + 1}`,
+    range: rowRange(EVENTS_TAB, row, idx + 1),
     valueInputOption: 'USER_ENTERED',
-    requestBody: { values: [veranstaltungToRow(v)] },
+    requestBody: { values: [row] },
   });
 }
 
