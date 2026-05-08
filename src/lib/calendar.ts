@@ -5,11 +5,11 @@ const GULDEIN_PATTERN = /guldeinstr/i;
 const DEFAULT_DURATION_MIN = 120;
 
 function getCalendar() {
-  const creds = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON!);
-  const auth = new google.auth.GoogleAuth({
-    credentials: creds,
-    scopes: ['https://www.googleapis.com/auth/calendar.events'],
-  });
+  const auth = new google.auth.OAuth2(
+    process.env.GOOGLE_OAUTH_CLIENT_ID!,
+    process.env.GOOGLE_OAUTH_CLIENT_SECRET!,
+  );
+  auth.setCredentials({ refresh_token: process.env.GOOGLE_OAUTH_REFRESH_TOKEN! });
   return google.calendar({ version: 'v3', auth });
 }
 
@@ -59,7 +59,10 @@ export async function updateCalendarEvent(v: Veranstaltung): Promise<void> {
   });
 
   const existing = listRes.data.items?.[0];
-  if (!existing?.id) return;
+  if (!existing?.id) {
+    await createCalendarEvent(v);
+    return;
+  }
 
   const startTime = v.time;
   const startMs = new Date(`${v.date}T${startTime}:00+02:00`).getTime();

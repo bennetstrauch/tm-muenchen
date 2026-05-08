@@ -11,8 +11,7 @@ const INPUT_CLS = `
   bg-white
 `;
 
-const DEFAULT_IMAGE = '/retreat-gruss.jpg';
-
+const DEFAULT_IMAGE = "/retreat-gruss.jpg";
 
 // ── Saved profile (localStorage) ───────────────────────────
 
@@ -51,9 +50,11 @@ type FormState = "idle" | "submitting" | "success" | "error";
 function RegistrationForm({
   event,
   onClose,
+  detailsExpanded = false,
 }: {
   event: Veranstaltung;
   onClose: () => void;
+  detailsExpanded?: boolean;
 }) {
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMsg, setErrorMsg] = useState("");
@@ -83,9 +84,16 @@ function RegistrationForm({
 
     const existing = loadProfile();
     const profile: SavedProfile = {
-      name, email, phone, saveProfile,
-      tmLehrer: event.auchFuerNichtMeditierende ? (existing?.tmLehrer ?? '') : tmLehrer,
-      datumErlernen: event.auchFuerNichtMeditierende ? (existing?.datumErlernen ?? '') : datumErlernen,
+      name,
+      email,
+      phone,
+      saveProfile,
+      tmLehrer: event.auchFuerNichtMeditierende
+        ? (existing?.tmLehrer ?? "")
+        : tmLehrer,
+      datumErlernen: event.auchFuerNichtMeditierende
+        ? (existing?.datumErlernen ?? "")
+        : datumErlernen,
     };
     if (saveProfile) {
       persistProfile(profile);
@@ -126,7 +134,9 @@ function RegistrationForm({
 
       setFormState("success");
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : "Anmeldung fehlgeschlagen.");
+      setErrorMsg(
+        err instanceof Error ? err.message : "Anmeldung fehlgeschlagen.",
+      );
       setFormState("error");
     }
   }
@@ -134,7 +144,9 @@ function RegistrationForm({
   if (formState === "success") {
     return (
       <div className="py-6 px-1">
-        <p className="text-[#287E1A] font-medium text-sm mb-1">Anmeldung erfolgreich!</p>
+        <p className="text-[#287E1A] font-medium text-sm mb-1">
+          Anmeldung erfolgreich!
+        </p>
         <p className="text-[#3D5573] text-sm">
           Wir haben dir eine Bestätigung per E-Mail geschickt.
         </p>
@@ -144,7 +156,7 @@ function RegistrationForm({
 
   return (
     <form onSubmit={handleSubmit} className="py-5 px-1">
-      {event.price && (
+      {event.price && !detailsExpanded && (
         <div className="mb-4 flex items-center gap-2 rounded-lg border border-[#E8D9C4] bg-[#FBF6EF] px-4 py-2.5 text-sm text-[#3D5573]">
           <span>Kosten:</span>
           <span className="font-semibold text-[#1A3352]">{event.price}</span>
@@ -156,7 +168,7 @@ function RegistrationForm({
           placeholder="Name *"
           required
           value={name}
-          onChange={e => setName(e.target.value)}
+          onChange={(e) => setName(e.target.value)}
           className={INPUT_CLS}
         />
       </div>
@@ -166,14 +178,14 @@ function RegistrationForm({
           placeholder="E-Mail *"
           required
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           className={INPUT_CLS}
         />
         <input
           type="tel"
           placeholder="Telefon (optional)"
           value={phone}
-          onChange={e => setPhone(e.target.value)}
+          onChange={(e) => setPhone(e.target.value)}
           className={INPUT_CLS}
         />
       </div>
@@ -184,7 +196,7 @@ function RegistrationForm({
             placeholder="TM-Lehrer *"
             required
             value={tmLehrer}
-            onChange={e => setTmLehrer(e.target.value)}
+            onChange={(e) => setTmLehrer(e.target.value)}
             className={INPUT_CLS}
           />
           <div>
@@ -195,7 +207,7 @@ function RegistrationForm({
               type="date"
               required
               value={datumErlernen}
-              onChange={e => setDatumErlernen(e.target.value)}
+              onChange={(e) => setDatumErlernen(e.target.value)}
               max={new Date().toISOString().slice(0, 10)}
               className={INPUT_CLS}
             />
@@ -207,7 +219,7 @@ function RegistrationForm({
         <input
           type="checkbox"
           checked={saveProfile}
-          onChange={e => setSaveProfile(e.target.checked)}
+          onChange={(e) => setSaveProfile(e.target.checked)}
           className="h-4 w-4 rounded border-[#DBEAFE] accent-[#A5C3D7] cursor-pointer"
         />
         <span className="text-[0.75rem] text-[#3D5573]">
@@ -264,7 +276,13 @@ function EventCard({
 }) {
   const fullDate = formatVeranstaltungDate(event.date);
   const [expanded, setExpanded] = useState(false);
-  const hasDetails = !!(event.description || event.longDescription || event.hosts || event.price || event.notes);
+  const hasDetails = !!(
+    event.description ||
+    event.longDescription ||
+    event.hosts ||
+    event.price ||
+    event.notes
+  );
   const imageFirst = index % 2 === 0;
   const imageUrl = event.imageUrl || DEFAULT_IMAGE;
 
@@ -277,7 +295,9 @@ function EventCard({
             {event.title}
           </h2>
           {event.subtitle && (
-            <p className="text-sm font-semibold italic text-[#C2541A]">{event.subtitle}</p>
+            <p className="text-sm font-semibold italic text-[#C2541A]">
+              {event.subtitle}
+            </p>
           )}
         </div>
 
@@ -310,10 +330,12 @@ function EventCard({
           </>
         )}
         <span className="text-[#A5C3D7]">·</span>
-        <span className={`
+        <span
+          className={`
           text-[0.65rem] tracking-[0.12em] uppercase font-medium px-2 py-0.5 rounded-full
           ${event.isOnline ? "bg-[#DBEAFE] text-[#1A3352]" : "bg-[#F59E0B]/20 text-[#1A3352]"}
-        `}>
+        `}
+        >
           {event.isOnline ? "Online" : "Präsenz"}
         </span>
         {event.auchFuerNichtMeditierende && (
@@ -324,7 +346,9 @@ function EventCard({
         {!event.isOnline && event.location && (
           <>
             <span className="text-[#A5C3D7]">·</span>
-            <span className="text-[0.75rem] text-[#3D5573]">{event.location}</span>
+            <span className="text-[0.75rem] text-[#3D5573]">
+              {event.location}
+            </span>
           </>
         )}
       </div>
@@ -332,14 +356,24 @@ function EventCard({
       {/* Expand toggle */}
       {hasDetails && (
         <button
-          onClick={() => setExpanded(e => !e)}
+          onClick={() => setExpanded((e) => !e)}
           className="flex items-center gap-1.5 self-start text-[0.72rem] text-[#3D5573] hover:text-[#1A3352] transition-colors"
         >
           <svg
-            width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            aria-hidden="true"
             className={`transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
           >
-            <path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path
+              d="M2 4L6 8L10 4"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
           {expanded ? "Weniger" : "Details"}
         </button>
@@ -349,7 +383,9 @@ function EventCard({
       {expanded && (
         <div className="bg-white/90 rounded-xl px-4 py-3 flex flex-col gap-2.5">
           {event.description && (
-            <p className="text-sm text-[#3D5573] leading-relaxed">{event.description}</p>
+            <p className="text-sm text-[#3D5573] leading-relaxed">
+              {event.description}
+            </p>
           )}
           {event.longDescription && (
             <p className="text-sm text-[#3D5573] leading-relaxed whitespace-pre-line">
@@ -359,11 +395,17 @@ function EventCard({
           {(event.hosts || event.price) && (
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-[0.78rem] text-[#3D5573]">
               {event.hosts && <span className="italic">mit {event.hosts}</span>}
-              {event.price && <span className="font-medium text-[#1A3352]">{event.price}</span>}
+              {event.price && (
+                <span className="font-medium text-[#1A3352]">
+                  {event.price}
+                </span>
+              )}
             </div>
           )}
           {event.notes && (
-            <p className="text-[0.75rem] text-[#3D5573] italic">{event.notes}</p>
+            <p className="text-[0.75rem] text-[#3D5573] italic">
+              {event.notes}
+            </p>
           )}
         </div>
       )}
@@ -375,16 +417,27 @@ function EventCard({
       {/* ── Mobile: background-image card ─────────────────── */}
       <div
         className="md:hidden relative rounded-2xl overflow-hidden"
-        style={{ backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+        style={{
+          backgroundImage: `url(${imageUrl})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
         {/* Directional gradient overlay: opaque top-left → transparent bottom-right */}
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 40%, rgba(255,255,255,0.50) 100%)' }}
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(255,255,255,0.92) 40%, rgba(255,255,255,0.50) 100%)",
+          }}
         />
         <div className="relative z-10 px-5 py-7">
           {eventContent}
-          {isOpen && <div data-reg-form={event.id}><RegistrationForm event={event} onClose={onToggle} /></div>}
+          {isOpen && (
+            <div data-reg-form={event.id}>
+              <RegistrationForm event={event} onClose={onToggle} detailsExpanded={expanded} />
+            </div>
+          )}
         </div>
       </div>
 
@@ -394,7 +447,11 @@ function EventCard({
           <>
             <div className="relative overflow-hidden rounded-xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              <img
+                src={imageUrl}
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover"
+              />
             </div>
             <div className="md:col-span-2 flex flex-col justify-center">
               {eventContent}
@@ -407,29 +464,43 @@ function EventCard({
             </div>
             <div className="relative overflow-hidden rounded-xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              <img
+                src={imageUrl}
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover"
+              />
             </div>
           </>
         )}
       </div>
-      {isOpen && <div className="hidden md:block" data-reg-form={event.id}><RegistrationForm event={event} onClose={onToggle} /></div>}
+      {isOpen && (
+        <div className="hidden md:block" data-reg-form={event.id}>
+          <RegistrationForm event={event} onClose={onToggle} detailsExpanded={expanded} />
+        </div>
+      )}
     </li>
   );
 }
 
 // ── MeditierendenEvents ────────────────────────────────────
 
-export default function MeditierendenEvents({ events }: { events: Veranstaltung[] }) {
+export default function MeditierendenEvents({
+  events,
+}: {
+  events: Veranstaltung[];
+}) {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
 
   useEffect(() => {
-    const slug = new URLSearchParams(window.location.search).get('open');
+    const slug = new URLSearchParams(window.location.search).get("open");
     if (!slug) return;
-    const idx = events.findIndex(e => eventSlug(e) === slug);
+    const idx = events.findIndex((e) => eventSlug(e) === slug);
     if (idx === -1) return;
     setOpenIdx(idx);
     setTimeout(() => {
-      document.getElementById(`event-${eventSlug(events[idx])}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document
+        .getElementById(`event-${eventSlug(events[idx])}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 80);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -438,15 +509,16 @@ export default function MeditierendenEvents({ events }: { events: Veranstaltung[
     setOpenIdx(next);
     const url = new URL(window.location.href);
     if (next === null) {
-      url.searchParams.delete('open');
+      url.searchParams.delete("open");
     } else {
-      url.searchParams.set('open', eventSlug(events[i]));
+      url.searchParams.set("open", eventSlug(events[i]));
       setTimeout(() => {
-        document.querySelector(`[data-reg-form="${events[i].id}"]`)
-          ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        document
+          .querySelector(`[data-reg-form="${events[i].id}"]`)
+          ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }, 50);
     }
-    window.history.replaceState(null, '', url.toString());
+    window.history.replaceState(null, "", url.toString());
   }
 
   if (events.length === 0) {
