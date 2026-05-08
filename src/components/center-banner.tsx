@@ -34,7 +34,8 @@ export default function CenterBanner() {
           object-position:top anchors to the top, so the bottom is cropped. */}
       <div className="relative aspect-[3/2] sm:aspect-[16/7] w-full">
         <Image
-          src="/retreat-gruss.jpg"
+          // src="/retreat-gruss.jpg"
+          src="centerbildSebastianErklaert.jpeg"
           alt="Das Team des TM Center München"
           fill
           className="object-cover object-top"
