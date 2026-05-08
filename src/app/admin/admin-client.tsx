@@ -1004,13 +1004,16 @@ export default function AdminClient({
     <>
       <div className="flex gap-0 border-b border-gray-200 mb-6">
         <button className={TAB_CLS(tab === 'info-anmeldungen')} onClick={() => setTab('info-anmeldungen')}>
-          Info-Anmeldungen ({infoRegistrations.length})
+          <span className="sm:hidden">Info-Anm. ({infoRegistrations.length})</span>
+          <span className="hidden sm:inline">Info-Anmeldungen ({infoRegistrations.length})</span>
         </button>
         <button className={TAB_CLS(tab === 'veranstaltungen')} onClick={() => setTab('veranstaltungen')}>
-          Veranstaltungen ({events.length})
+          <span className="sm:hidden">Events ({events.length})</span>
+          <span className="hidden sm:inline">Veranstaltungen ({events.length})</span>
         </button>
         <button className={TAB_CLS(tab === 'anmeldungen')} onClick={() => setTab('anmeldungen')}>
-          Anmeldungen ({eventRegistrations.length})
+          <span className="sm:hidden">Anm. ({eventRegistrations.length})</span>
+          <span className="hidden sm:inline">Anmeldungen ({eventRegistrations.length})</span>
         </button>
         <button className={TAB_CLS(tab === 'vorlagen')} onClick={() => setTab('vorlagen')}>
           Vorlagen ({vorlagen.length})
@@ -1052,89 +1055,151 @@ export default function AdminClient({
                   Noch keine Veranstaltungen. Erstelle die erste!
                 </p>
               ) : (
-                <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="text-left text-gray-400 text-xs uppercase tracking-wider border-b border-gray-100">
-                        <th className="px-6 py-3">Titel</th>
-                        <th className="px-6 py-3">Datum</th>
-                        <th className="px-6 py-3">Status</th>
-                        <th className="px-6 py-3"></th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50">
-                      {sortedEvents.map(event => (
-                        <tr key={event.id} className={`hover:bg-gray-50 ${!event.visible ? 'opacity-50' : ''}`}>
-                          <td className="px-6 py-4">
-                            <p className="font-medium text-gray-800">{event.title}</p>
+                <>
+                  {/* Mobile cards */}
+                  <div className="sm:hidden space-y-2">
+                    {sortedEvents.map(event => (
+                      <div key={event.id} className={`bg-white rounded-lg border border-gray-200 px-4 py-3 ${!event.visible ? 'opacity-50' : ''}`}>
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="font-medium text-gray-800 text-sm truncate">{event.title}</p>
                             {event.subtitle && (
-                              <p className="text-xs text-gray-400 mt-0.5">{event.subtitle}</p>
+                              <p className="text-xs text-gray-400 mt-0.5 truncate">{event.subtitle}</p>
                             )}
-                          </td>
-                          <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                            {event.date}{event.time ? ` · ${event.time} Uhr` : ''}
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex flex-wrap gap-1">
-                              {event.visible
-                                ? <span className="px-2 py-0.5 rounded-full text-xs bg-green-50 text-green-600">Sichtbar</span>
-                                : <span className="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">Versteckt</span>
-                              }
-                              {event.registrationOpen
-                                ? <span className="px-2 py-0.5 rounded-full text-xs bg-blue-50 text-blue-600">Anm. offen</span>
-                                : <span className="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">Anm. geschl.</span>
-                              }
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 text-right whitespace-nowrap">
-                            <button
-                              onClick={() => {
-                                const url = `${window.location.origin}/events?open=${eventSlug(event)}`;
-                                navigator.clipboard.writeText(url);
-                                setCopiedId(event.id);
-                                setTimeout(() => setCopiedId(null), 2000);
-                              }}
-                              className="text-xs text-gray-400 hover:text-[#BCA075] mr-4 transition-colors"
-                              title="Newsletter-Link kopieren"
-                            >
-                              {copiedId === event.id ? '✓ Kopiert' : 'Link kopieren'}
+                            <p className="text-xs text-gray-500 mt-1">
+                              {event.date}{event.time ? ` · ${event.time} Uhr` : ''}
+                            </p>
+                          </div>
+                          <div className="flex flex-wrap gap-1 shrink-0">
+                            {event.visible
+                              ? <span className="px-2 py-0.5 rounded-full text-xs bg-green-50 text-green-600">Sichtbar</span>
+                              : <span className="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">Versteckt</span>
+                            }
+                            {event.registrationOpen
+                              ? <span className="px-2 py-0.5 rounded-full text-xs bg-blue-50 text-blue-600">Anm. offen</span>
+                              : <span className="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">Anm. geschl.</span>
+                            }
+                          </div>
+                        </div>
+                        <div className="mt-2 pt-2 border-t border-gray-100 flex items-center gap-4 text-xs">
+                          <button
+                            onClick={() => {
+                              const url = `${window.location.origin}/events?open=${eventSlug(event)}`;
+                              navigator.clipboard.writeText(url);
+                              setCopiedId(event.id);
+                              setTimeout(() => setCopiedId(null), 2000);
+                            }}
+                            className="text-gray-400 hover:text-[#BCA075] transition-colors"
+                          >
+                            {copiedId === event.id ? '✓ Kopiert' : 'Link'}
+                          </button>
+                          <button
+                            onClick={() => setMode({ view: 'edit', event })}
+                            className="text-[#BCA075] hover:underline"
+                          >
+                            Bearbeiten
+                          </button>
+                          {confirmDelete === event.id ? (
+                            <>
+                              <span className="text-gray-500">Sicher?</span>
+                              <button onClick={() => handleDelete(event.id)} className="text-red-500 hover:underline">Ja</button>
+                              <button onClick={() => setConfirmDelete(null)} className="text-gray-400 hover:underline">Nein</button>
+                            </>
+                          ) : (
+                            <button onClick={() => setConfirmDelete(event.id)} className="text-gray-400 hover:text-red-500 ml-auto">
+                              Löschen
                             </button>
-                            <button
-                              onClick={() => setMode({ view: 'edit', event })}
-                              className="text-xs text-[#BCA075] hover:underline mr-4"
-                            >
-                              Bearbeiten
-                            </button>
-                            {confirmDelete === event.id ? (
-                              <>
-                                <span className="text-xs text-gray-500 mr-2">Sicher?</span>
-                                <button
-                                  onClick={() => handleDelete(event.id)}
-                                  className="text-xs text-red-500 hover:underline mr-2"
-                                >
-                                  Ja, löschen
-                                </button>
-                                <button
-                                  onClick={() => setConfirmDelete(null)}
-                                  className="text-xs text-gray-400 hover:underline"
-                                >
-                                  Abbrechen
-                                </button>
-                              </>
-                            ) : (
-                              <button
-                                onClick={() => setConfirmDelete(event.id)}
-                                className="text-xs text-gray-400 hover:text-red-500"
-                              >
-                                Löschen
-                              </button>
-                            )}
-                          </td>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Desktop table */}
+                  <div className="hidden sm:block bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="text-left text-gray-400 text-xs uppercase tracking-wider border-b border-gray-100">
+                          <th className="px-6 py-3">Titel</th>
+                          <th className="px-6 py-3">Datum</th>
+                          <th className="px-6 py-3">Status</th>
+                          <th className="px-6 py-3"></th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody className="divide-y divide-gray-50">
+                        {sortedEvents.map(event => (
+                          <tr key={event.id} className={`hover:bg-gray-50 ${!event.visible ? 'opacity-50' : ''}`}>
+                            <td className="px-6 py-4">
+                              <p className="font-medium text-gray-800">{event.title}</p>
+                              {event.subtitle && (
+                                <p className="text-xs text-gray-400 mt-0.5">{event.subtitle}</p>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                              {event.date}{event.time ? ` · ${event.time} Uhr` : ''}
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex flex-wrap gap-1">
+                                {event.visible
+                                  ? <span className="px-2 py-0.5 rounded-full text-xs bg-green-50 text-green-600">Sichtbar</span>
+                                  : <span className="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">Versteckt</span>
+                                }
+                                {event.registrationOpen
+                                  ? <span className="px-2 py-0.5 rounded-full text-xs bg-blue-50 text-blue-600">Anm. offen</span>
+                                  : <span className="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">Anm. geschl.</span>
+                                }
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-right whitespace-nowrap">
+                              <button
+                                onClick={() => {
+                                  const url = `${window.location.origin}/events?open=${eventSlug(event)}`;
+                                  navigator.clipboard.writeText(url);
+                                  setCopiedId(event.id);
+                                  setTimeout(() => setCopiedId(null), 2000);
+                                }}
+                                className="text-xs text-gray-400 hover:text-[#BCA075] mr-4 transition-colors"
+                                title="Newsletter-Link kopieren"
+                              >
+                                {copiedId === event.id ? '✓ Kopiert' : 'Link kopieren'}
+                              </button>
+                              <button
+                                onClick={() => setMode({ view: 'edit', event })}
+                                className="text-xs text-[#BCA075] hover:underline mr-4"
+                              >
+                                Bearbeiten
+                              </button>
+                              {confirmDelete === event.id ? (
+                                <>
+                                  <span className="text-xs text-gray-500 mr-2">Sicher?</span>
+                                  <button
+                                    onClick={() => handleDelete(event.id)}
+                                    className="text-xs text-red-500 hover:underline mr-2"
+                                  >
+                                    Ja, löschen
+                                  </button>
+                                  <button
+                                    onClick={() => setConfirmDelete(null)}
+                                    className="text-xs text-gray-400 hover:underline"
+                                  >
+                                    Abbrechen
+                                  </button>
+                                </>
+                              ) : (
+                                <button
+                                  onClick={() => setConfirmDelete(event.id)}
+                                  className="text-xs text-gray-400 hover:text-red-500"
+                                >
+                                  Löschen
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               )}
             </>
           )}
