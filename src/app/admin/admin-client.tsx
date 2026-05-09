@@ -861,6 +861,31 @@ export default function AdminClient({
   const [error, setError] = useState('');
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState<string | null>(null);
+
+  async function handleTmwSync() {
+    setSyncing(true);
+    setSyncResult(null);
+    try {
+      const res = await fetch('/api/admin/tmw-sync', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      const { created, updated, deleted, skipped, errors } = data;
+      const parts = [
+        created.length && `${created.length} neu`,
+        updated.length && `${updated.length} aktualisiert`,
+        deleted.length && `${deleted.length} gelöscht`,
+        skipped.length && `${skipped.length} übersprungen`,
+        errors.length && `${errors.length} Fehler`,
+      ].filter(Boolean);
+      setSyncResult(parts.join(' · ') || 'Nichts zu tun');
+    } catch (e) {
+      setSyncResult(`Fehler: ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      setSyncing(false);
+    }
+  }
 
   const sortedEvents = useMemo(
     () => [...events].sort((a, b) => {
@@ -1045,7 +1070,19 @@ export default function AdminClient({
         <>
           {mode.view === 'list' && (
             <>
-              <div className="mb-4 flex justify-end">
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={handleTmwSync}
+                    disabled={syncing}
+                    className="px-4 py-2 border border-gray-200 rounded text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {syncing ? 'Synchronisiere…' : 'TMW sync'}
+                  </button>
+                  {syncResult && (
+                    <span className="text-xs text-gray-400">{syncResult}</span>
+                  )}
+                </div>
                 <button
                   onClick={() => setMode({ view: 'new' })}
                   className="px-4 py-2 bg-[#BCA075] text-white rounded text-sm font-medium hover:bg-[#a88d65]"
