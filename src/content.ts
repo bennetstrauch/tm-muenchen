@@ -246,7 +246,7 @@ export const content = {
   },
 
   hero: {
-    cta: "Kostenlosen Info-Termin wählen",
+    cta: "Kostenlosen Info-Abend entdecken",
     ctaHref: "#anmeldung",
     learnMore: "Mehr über TM erfahren",
     learnMoreHref: "#fuer-wen",

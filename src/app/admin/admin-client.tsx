@@ -474,6 +474,11 @@ function EventForm({
     setExpandedVorlageId(null);
   }
 
+  const linkedVorlageId =
+    vorlagePhase.kind === 'linked-clean' || vorlagePhase.kind === 'linked-dirty'
+      ? vorlagePhase.id
+      : null;
+
   const btnBase = 'px-4 py-2 rounded text-sm font-medium transition-colors disabled:cursor-not-allowed';
   const btnGold = `${btnBase} bg-[#BCA075] text-white hover:bg-[#a88d65] disabled:opacity-40`;
   const btnGreen = `${btnBase} bg-green-600 text-white opacity-90`;
@@ -599,19 +604,15 @@ function EventForm({
           >
             {isSaving ? 'Speichern…' : editingId ? 'Speichern' : 'Event hinzufügen'}
           </button>
-          {editingId && onSaveAndUpdateVorlage && (() => {
-            const linkedId = (vorlagePhase.kind === 'linked-clean' || vorlagePhase.kind === 'linked-dirty')
-              ? vorlagePhase.id : null;
-            return linkedId ? (
+          {editingId && onSaveAndUpdateVorlage && linkedVorlageId && (
               <button
-                onClick={() => onSaveAndUpdateVorlage(form, linkedId)}
+                onClick={() => onSaveAndUpdateVorlage(form, linkedVorlageId)}
                 disabled={isSaving || !form.title || !form.date}
                 className="px-5 py-2 bg-[#3D5573] text-white rounded text-sm font-medium hover:bg-[#1A3352] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSaving ? 'Speichern…' : 'Speichern + Vorlage aktualisieren'}
               </button>
-            ) : null;
-          })()}
+          )}
           <button
             onClick={onCancel}
             className="px-5 py-2 border border-gray-200 rounded text-sm text-gray-600 hover:bg-gray-50"
@@ -767,10 +768,34 @@ function VorlagenTab({
   );
 }
 
+// ─── EventStatusBadges ───────────────────────────────────────────────────────
+
+function EventStatusBadges({ event }: { event: Veranstaltung }) {
+  return (
+    <div className="flex flex-wrap gap-1">
+      {event.visible
+        ? <span className="px-2 py-0.5 rounded-full text-xs bg-green-50 text-green-600">Sichtbar</span>
+        : <span className="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">Versteckt</span>
+      }
+      {event.registrationOpen
+        ? <span className="px-2 py-0.5 rounded-full text-xs bg-blue-50 text-blue-600">Anm. offen</span>
+        : <span className="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">Anm. geschl.</span>
+      }
+    </div>
+  );
+}
+
 // ─── EventRegistrationsTable ──────────────────────────────────────────────────
 
 function EventRegistrationsTable({ registrations }: { registrations: EventRegistrationRecord[] }) {
   const eventTitles = Array.from(new Set(registrations.map(r => r.eventTitle).filter(Boolean))).sort();
+  const countByTitle = useMemo(
+    () => registrations.reduce((acc, r) => {
+      if (r.eventTitle) acc.set(r.eventTitle, (acc.get(r.eventTitle) ?? 0) + 1);
+      return acc;
+    }, new Map<string, number>()),
+    [registrations],
+  );
   const [filter, setFilter] = useState('');
   const filtered = filter ? registrations.filter(r => r.eventTitle === filter) : registrations;
 
@@ -786,7 +811,7 @@ function EventRegistrationsTable({ registrations }: { registrations: EventRegist
           <option value="">Alle ({registrations.length})</option>
           {eventTitles.map(t => (
             <option key={t} value={t}>
-              {t} ({registrations.filter(r => r.eventTitle === t).length})
+              {t} ({countByTitle.get(t) ?? 0})
             </option>
           ))}
         </select>
@@ -863,6 +888,13 @@ export default function AdminClient({
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<string | null>(null);
+
+  function handleCopyLink(event: Veranstaltung) {
+    const url = `${window.location.origin}/events?open=${eventSlug(event)}`;
+    navigator.clipboard.writeText(url);
+    setCopiedId(event.id);
+    setTimeout(() => setCopiedId(null), 2000);
+  }
 
   async function handleTmwSync() {
     setSyncing(true);
@@ -960,11 +992,12 @@ export default function AdminClient({
     setVorlagen(prev => [...prev, saved]);
     if (mode.view === 'edit') {
       const updated = { ...mode.event, vorlageId: saved.id };
-      await fetch(`/api/admin/events/${mode.event.id}`, {
+      const linkRes = await fetch(`/api/admin/events/${mode.event.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updated),
       });
+      if (!linkRes.ok) throw new Error((await linkRes.json()).error);
       setEvents(prev => prev.map(e => e.id === mode.event.id ? updated : e));
     }
     return saved;
@@ -1111,25 +1144,13 @@ export default function AdminClient({
                               {event.date}{event.time ? ` · ${event.time} Uhr` : ''}
                             </p>
                           </div>
-                          <div className="flex flex-wrap gap-1 shrink-0">
-                            {event.visible
-                              ? <span className="px-2 py-0.5 rounded-full text-xs bg-green-50 text-green-600">Sichtbar</span>
-                              : <span className="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">Versteckt</span>
-                            }
-                            {event.registrationOpen
-                              ? <span className="px-2 py-0.5 rounded-full text-xs bg-blue-50 text-blue-600">Anm. offen</span>
-                              : <span className="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">Anm. geschl.</span>
-                            }
+                          <div className="shrink-0">
+                            <EventStatusBadges event={event} />
                           </div>
                         </div>
                         <div className="mt-2 pt-2 border-t border-gray-100 flex items-center gap-4 text-xs">
                           <button
-                            onClick={() => {
-                              const url = `${window.location.origin}/events?open=${eventSlug(event)}`;
-                              navigator.clipboard.writeText(url);
-                              setCopiedId(event.id);
-                              setTimeout(() => setCopiedId(null), 2000);
-                            }}
+                            onClick={() => handleCopyLink(event)}
                             className="text-gray-400 hover:text-[#BCA075] transition-colors"
                           >
                             {copiedId === event.id ? '✓ Kopiert' : 'Link'}
@@ -1180,25 +1201,11 @@ export default function AdminClient({
                               {event.date}{event.time ? ` · ${event.time} Uhr` : ''}
                             </td>
                             <td className="px-6 py-4">
-                              <div className="flex flex-wrap gap-1">
-                                {event.visible
-                                  ? <span className="px-2 py-0.5 rounded-full text-xs bg-green-50 text-green-600">Sichtbar</span>
-                                  : <span className="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">Versteckt</span>
-                                }
-                                {event.registrationOpen
-                                  ? <span className="px-2 py-0.5 rounded-full text-xs bg-blue-50 text-blue-600">Anm. offen</span>
-                                  : <span className="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">Anm. geschl.</span>
-                                }
-                              </div>
+                              <EventStatusBadges event={event} />
                             </td>
                             <td className="px-6 py-4 text-right whitespace-nowrap">
                               <button
-                                onClick={() => {
-                                  const url = `${window.location.origin}/events?open=${eventSlug(event)}`;
-                                  navigator.clipboard.writeText(url);
-                                  setCopiedId(event.id);
-                                  setTimeout(() => setCopiedId(null), 2000);
-                                }}
+                                onClick={() => handleCopyLink(event)}
                                 className="text-xs text-gray-400 hover:text-[#BCA075] mr-4 transition-colors"
                                 title="Newsletter-Link kopieren"
                               >
