@@ -10,7 +10,7 @@ Issues: docs/issues/
 | 1 | Terminology sweep: Infovortrag → Infoabend | ✅ done |
 | 2 | Trust Badges strip under Hero | ✅ done |
 | 3 | New section: So läuft der Infoabend ab | ✅ done |
-| 4 | New section: Wissenschaft & Forschung | ⬜ todo |
+| 4 | New section: Wissenschaft & Forschung | ✅ done |
 | 5 | Abschluss-CTA + HowItWorks ans Ende verschieben | ⬜ todo |
 | 6 | ForWhom copy rewrite: Symptom-Sprache | ⬜ todo |
 | 7 | Neue Themes: schlaf, fokus, erschoepfung, angst | ⬜ todo |
