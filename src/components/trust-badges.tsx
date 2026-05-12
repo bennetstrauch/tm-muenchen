@@ -9,23 +9,16 @@ const badges = [
 
 export default function TrustBadges() {
   return (
-    <div className="bg-[#FAFAF8] border-b border-[#E8E4DC] py-4">
-      {/* Mobile: horizontal scroll */}
-      <div className="overflow-x-auto scrollbar-none px-5 md:px-0">
+    <div className="bg-[#FAFAF8] border-b border-[#E8E4DC] py-5">
+      <div className="px-5 md:px-0">
         <ul
-          className="
-            flex gap-3 whitespace-nowrap
-            md:flex-wrap md:whitespace-normal md:justify-center md:gap-x-6 md:gap-y-2
-          "
+          className="grid grid-cols-2 gap-x-4 gap-y-3 sm:flex sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-2"
           aria-label="Merkmale von Transzendentaler Meditation"
         >
           {badges.map((label) => (
             <li
               key={label}
-              className="
-                inline-flex items-center gap-1.5 shrink-0
-                text-[0.65rem] tracking-[0.15em] uppercase font-medium text-[#1A3352]/70
-              "
+              className="inline-flex items-center gap-1.5 text-[0.65rem] tracking-[0.15em] uppercase font-medium text-[#1A3352]/70"
             >
               <svg
                 width="10"
