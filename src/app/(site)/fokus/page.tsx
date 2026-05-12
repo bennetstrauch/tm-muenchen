@@ -13,20 +13,21 @@ import { getTrustpilotStats } from "@/lib/trustpilot";
 import { getTestimonials } from "@/content";
 
 export const metadata = {
-  title: "TM München – Innere Stille durch Transzendentale Meditation",
+  title: "TM München – Fokus und Klarheit durch Transzendentale Meditation",
   description:
-    "Dein Kopf wird einfach nicht still? TM gibt dir mühelose, tiefe Ruhe — ohne Konzentration, ohne Gedanken stoppen. Kostenloser Infoabend in München.",
+    "Dein Kopf ist voll — aber nicht klar? TM lässt Ordnung von selbst entstehen: klarer Fokus, ruhigerer Geist. Kostenloser Infoabend in München.",
 };
 
-export default async function InnereSillePage() {
+export default async function FokusPage() {
   const [events, trustpilot] = await Promise.all([getEvents(), getTrustpilotStats()]);
+
   const nextDates = formatNextDates(events);
 
   return (
     <main>
-      <PageClient initialTheme="innere-stille" nextDates={nextDates} />
+      <PageClient initialTheme="fokus" nextDates={nextDates} />
       <TrustBadges />
-      <Testimonials testimonials={getTestimonials("innere-stille")} />
+      <Testimonials testimonials={getTestimonials("fokus")} />
       <WhyTm />
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />
       <InfoabendPreview />

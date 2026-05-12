@@ -8,7 +8,8 @@ import ForWhom from "./for-whom";
 import ThemeSwitcher from "./theme-switcher";
 import { themes, type ThemeKey } from "../content";
 
-const HERO_THEMES = Object.keys(themes) as ThemeKey[];
+const RETIRED_THEMES = new Set<ThemeKey>(["innere-stille", "depression"]);
+const HERO_THEMES = (Object.keys(themes) as ThemeKey[]).filter((k) => !RETIRED_THEMES.has(k));
 
 function HeroArrow({ direction, onClick }: { direction: "left" | "right"; onClick: () => void }) {
   return (

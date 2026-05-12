@@ -55,26 +55,6 @@ export const themes: Record<string, Theme> = {
     images: STRESS_IMAGES,
     forWhomIndex: 0,
   },
-  "innere-stille": {
-    slug: "innere-stille", // URL: /innere-stille
-    label: "Innere Stille",
-    headline: ["Dein Kopf wird einfach nicht still?", "Lerne, wie er wirklich zur Ruhe kommt."],
-    subtitle: "Ohne Konzentration. Ohne Gedanken stoppen.",
-    images: STRESS_IMAGES,
-    forWhomIndex: 0,
-  },
-  depression: {
-    slug: "depression", // URL: /depression
-    label: "Depression",
-    headline: ["Wieder leicht werden.", "Ganz ohne Willenskraft."],
-    subtitle: "Tiefe Ruhe für emotionale Entlastung",
-    images: [
-      { src: "/hero/depression/1.jpg", focus: "50% 25%" },
-      { src: "/hero/stress/3.jpg", focus: "65% 50%" },
-      { src: "/hero/stress/11.jpg", focus: "70% 130%" },
-    ],
-    forWhomIndex: 3,
-  },
   "innere-freude": {
     slug: "innere-freude",
     label: "Innere Freude",
@@ -86,9 +66,62 @@ export const themes: Record<string, Theme> = {
     images: [{ src: "/hero/stress/3.jpg", focus: "65% 50%" }],
     forWhomIndex: 4,
   },
+  schlaf: {
+    slug: "schlaf", // URL: /schlaf
+    label: "Schlaf",
+    headline: ["Schläfst du eigentlich?"],
+    subtitle: "TM bringt deinem Nervensystem die Tiefenruhe, die Schlaf allein oft nicht mehr schafft.",
+    images: STRESS_IMAGES,
+    forWhomIndex: 0,
+  },
+  fokus: {
+    slug: "fokus", // URL: /fokus
+    label: "Fokus",
+    headline: ["Dein Kopf ist voll — aber nicht klar."],
+    subtitle: "TM räumt nicht auf, er lässt Ordnung von selbst entstehen: klarer Fokus, ruhigerer Geist.",
+    images: STRESS_IMAGES,
+    forWhomIndex: 2,
+  },
+  erschoepfung: {
+    slug: "erschoepfung", // URL: /erschoepfung
+    label: "Erschöpfung",
+    headline: ["Leer, obwohl du gar nichts getan hast?"],
+    subtitle: "TM gibt dir Zugang zu echter innerer Stille — nicht als Technik, sondern als natürlicher Zustand.",
+    images: STRESS_IMAGES,
+    forWhomIndex: 3,
+  },
+  angst: {
+    slug: "angst", // URL: /angst
+    label: "Angst",
+    headline: ["Innere Unruhe, die einfach nicht aufhört?"],
+    subtitle: "TM beruhigt das Nervensystem von innen — ohne Willenskraft, ohne Konzentration.",
+    images: STRESS_IMAGES,
+    forWhomIndex: 0,
+  },
+  // Retired themes — kept for data continuity but not in navigation
+  "innere-stille": {
+    slug: "innere-stille",
+    label: "Innere Stille",
+    headline: ["Dein Kopf wird einfach nicht still?", "Lerne, wie er wirklich zur Ruhe kommt."],
+    subtitle: "Ohne Konzentration. Ohne Gedanken stoppen.",
+    images: STRESS_IMAGES,
+    forWhomIndex: 0,
+  },
+  depression: {
+    slug: "depression",
+    label: "Depression",
+    headline: ["Wieder leicht werden.", "Ganz ohne Willenskraft."],
+    subtitle: "Tiefe Ruhe für emotionale Entlastung",
+    images: [
+      { src: "/hero/depression/1.jpg", focus: "50% 25%" },
+      { src: "/hero/stress/3.jpg", focus: "65% 50%" },
+      { src: "/hero/stress/11.jpg", focus: "70% 130%" },
+    ],
+    forWhomIndex: 3,
+  },
 };
 
-export type ThemeKey = "stress" | "innere-stille" | "depression" | "innere-freude";
+export type ThemeKey = "stress" | "innere-freude" | "schlaf" | "fokus" | "erschoepfung" | "angst" | "innere-stille" | "depression";
 
 // ─────────────────────────────────────────────────
 //  ERFAHRUNGSBERICHTE — Zitate von Meditierenden.
