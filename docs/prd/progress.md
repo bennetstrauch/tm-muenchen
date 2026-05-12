@@ -8,7 +8,7 @@ Issues: docs/issues/
 | # | Issue | Status |
 |---|---|---|
 | 1 | Terminology sweep: Infovortrag → Infoabend | ✅ done |
-| 2 | Trust Badges strip under Hero | ⬜ todo |
+| 2 | Trust Badges strip under Hero | ✅ done |
 | 3 | New section: So läuft der Infoabend ab | ⬜ todo |
 | 4 | New section: Wissenschaft & Forschung | ⬜ todo |
 | 5 | Abschluss-CTA + HowItWorks ans Ende verschieben | ⬜ todo |
