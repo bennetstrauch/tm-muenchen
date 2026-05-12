@@ -8,6 +8,7 @@ import CenterBanner from "@/components/center-banner";
 import Events from "@/components/events";
 import InfoabendPreview from "@/components/infoabend-preview";
 import Teachers from "@/components/teachers";
+import WissenschaftSection from "@/components/wissenschaft";
 import { getEvents, formatNextDates } from "@/lib/events";
 import { getTrustpilotStats } from "@/lib/trustpilot";
 import { getTeachers } from "@/lib/teachers";
@@ -33,6 +34,7 @@ export default async function Home() {
       <CenterBanner />
       <InfoabendPreview />
       <Events events={events} />
+      <WissenschaftSection />
       <Teachers teachers={teachers} />
     </main>
   );

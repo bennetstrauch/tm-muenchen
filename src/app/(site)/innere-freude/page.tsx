@@ -6,6 +6,7 @@ import Trustpilot from "@/components/trustpilot";
 import Testimonials from "@/components/testimonials";
 import Events from "@/components/events";
 import InfoabendPreview from "@/components/infoabend-preview";
+import WissenschaftSection from "@/components/wissenschaft";
 import { getEvents, formatNextDates } from "@/lib/events";
 import { getTrustpilotStats } from "@/lib/trustpilot";
 import { getTestimonials } from "@/content";
@@ -31,6 +32,7 @@ export default async function InnereFraudePage() {
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />
       <InfoabendPreview />
       <Events events={events} />
+      <WissenschaftSection />
     </main>
   );
 }
