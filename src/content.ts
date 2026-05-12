@@ -256,28 +256,28 @@ export const content = {
     heading: "Für wen ist TM?",
     items: [
       {
-        title: "Du hast immer zu viel im Kopf",
+        title: "Du funktionierst — aber innerlich bist du ständig angespannt?",
         description:
-          "Für alle, die selten wirklich zur Ruhe kommen — ob beruflicher Druck, voller Terminkalender oder einfach zu viele Gedanken.",
+          "• Du schläfst schlecht, obwohl du eigentlich müde bist. • Du hast nie wirklich Feierabend — der Kopf läuft einfach weiter. • Kleinigkeiten bringen dich schneller aus der Ruhe, als dir lieb ist. • Du sehnst dich nach echter Erholung, nicht nur nach Ablenkung. TM gibt dir täglich 20 Minuten tiefer Stille — und dein Nervensystem beginnt, sich nachhaltig zu erholen.",
       },
       {
-        title: "Jünger fühlen. Gesünder leben.",
+        title: "Du spürst, dass der Stress deinen Körper belastet?",
         description:
-          "TM senkt nachweislich Blutdruck und Cortisolspiegel. Viele berichten: mehr Energie, besserer Schlaf, mehr Vitalität — in jedem Alter.",
+          "• Dein Blutdruck ist zu hoch — oder du weißt, dass er es bald sein wird. • Du wachst morgens auf und bist schon erschöpft. • Kopfschmerzen, Verspannungen, schlechter Schlaf — alles hängt zusammen. • Du willst etwas ändern, aber ein weiteres 'Gesundheitsprojekt' klingt nach mehr Aufwand. TM ist das Gegenteil von Aufwand: 20 Minuten sitzen, Augen zu — und der Körper regeneriert sich von selbst.",
       },
       {
-        title: "Du willst messbare Ergebnisse",
+        title: "Du willst keine Versprechungen — du willst Belege?",
         description:
-          "TM ist die meistuntersuchte Meditationstechnik weltweit — über 400 Studien an führenden Universitäten. Die Wirkung ist dokumentiert, nicht versprochen.",
+          "• Du bist skeptisch gegenüber Meditation und das zu Recht. • Du hast schon vieles probiert, das nicht gehalten hat, was es versprach. • Du willst wissen: Wurde das wirklich untersucht? An echten Menschen, mit Kontrollgruppen? Über 400 Studien an Universitäten wie Harvard und Stanford: Blutdruck, Cortisol, Gehirnaktivität, Herzgesundheit. TM ist die meistuntersuchte Meditationstechnik weltweit — die Wirkung ist dokumentiert, nicht versprochen.",
       },
       // {
       //   title: "Du willst deine Lebensquialität von Grund auf verbessern",
       //   description: ""
       // },
       {
-        title: "Du kämpfst mit Erschöpfung oder Niedergeschlagenheit",
+        title: "Manche Tage fühlst du dich leer — auch ohne konkreten Grund?",
         description:
-          "TM ist die meistuntersuchte natürliche Methode bei Depressionen und Angststörungen — wirksam, ohne Nebenwirkungen, ganz ohne Konzentration oder Willenskraft.",
+          "• Morgens aufstehen fällt schwer, obwohl nichts Schlimmes passiert ist. • Du funktionierst nach außen, aber innen fehlt dir die Energie für die Dinge, die dir eigentlich wichtig sind. • Du hast das Gefühl, dich ständig zusammenzureißen — und weißt nicht, wie lange noch. • Freude kommt seltener, als sie sollte. TM ist kein Ersatz für professionelle Unterstützung, aber viele berichten: tiefere Ruhe, mehr Leichtigkeit, wieder mehr Zugang zu sich selbst.",
       },
       {
         title: "Du willst einen praktischen Weg zur Erleuchtung",
