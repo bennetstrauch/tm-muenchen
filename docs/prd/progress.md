@@ -13,7 +13,7 @@ Issues: docs/issues/
 | 4 | New section: Wissenschaft & Forschung | ✅ done |
 | 5 | Abschluss-CTA + HowItWorks ans Ende verschieben | ✅ done |
 | 6 | ForWhom copy rewrite: Symptom-Sprache | ✅ done |
-| 7 | Neue Themes: schlaf, fokus, erschoepfung, angst | ⬜ todo |
+| 7 | Neue Themes: schlaf, fokus, erschoepfung, angst | ✅ done |
 
 ## Notes
 
