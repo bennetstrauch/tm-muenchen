@@ -6,6 +6,7 @@ import HowItWorks from "@/components/how-it-works";
 import Trustpilot from "@/components/trustpilot";
 import CenterBanner from "@/components/center-banner";
 import Events from "@/components/events";
+import InfoabendPreview from "@/components/infoabend-preview";
 import Teachers from "@/components/teachers";
 import { getEvents, formatNextDates } from "@/lib/events";
 import { getTrustpilotStats } from "@/lib/trustpilot";
@@ -30,6 +31,7 @@ export default async function Home() {
       <HowItWorks />
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />
       <CenterBanner />
+      <InfoabendPreview />
       <Events events={events} />
       <Teachers teachers={teachers} />
     </main>
