@@ -8,6 +8,8 @@ A conversion-optimized landing page for **TM München** (Transcendental Meditati
 
 A secondary use case is a page for existing meditators to register for group sessions, retreats, and other events.
 
+The canonical term for the intro session is **Infoabend** (not Infovortrag, not Info-Termin).
+
 ## Why this exists
 
 Previous campaigns sent Instagram ad traffic to the national TM website (`meditation.de/muenchen`). Conversion was near zero — too many steps, no local personality. This site is the fix: a focused, local, high-trust landing page with a single CTA.
@@ -33,10 +35,10 @@ Previous campaigns sent Instagram ad traffic to the national TM website (`medita
 
 ## Architecture principles
 
-- **Landingpage ≠ website.** No navbar, no menu, no distracting links. One action: sign up for Infovortrag.
+- **Landingpage ≠ website.** A hamburger menu exists for existing meditators to reach `/events`, but no distracting full navbar. One primary action: sign up for Infoabend.
 - **Content lives in CMS, layout lives in code.** Non-technical colleagues edit text/images/events in CMS; Bennet controls the layout.
 - **Mobile-first always.** Primary traffic source is Instagram ads — users land directly on mobile. Every component must look great at 390px before touching desktop styles.
-- **Conversion-first structure:** Hero → Trust signals → Why TM is unique → How it works → Upcoming dates → Testimonials → FAQ → CTA
+- **Conversion-first structure:** see `CONTEXT.md` → Page structure for the confirmed section order.
 
 ## Folder structure
 
@@ -58,13 +60,16 @@ src/
 
 ## Phased roadmap
 
-| Phase | Scope |
-|---|---|
-| 1 | Hero + CTA + static events (manual) |
-| 2 | Full layout (testimonials, FAQ, benefits) |
-| 3 | CMS integration (Google Sheets or Sanity) |
-| 4 | Auto-fetch events from tnw.meditation.de API |
-| 5 | Meditators page (events, retreats) |
+Phases 1–4 are complete. Current focus: conversion optimisation.
+
+| Phase | Scope | Status |
+|---|---|---|
+| 1 | Hero + CTA + static events | ✅ done |
+| 2 | Full layout (testimonials, WhyTm, HowItWorks) | ✅ done |
+| 3 | CMS integration (Google Sheets) | ✅ done |
+| 4 | Auto-fetch events from tnw.meditation.de API | ✅ done |
+| 5 | Conversion optimisation (new sections, themes, copy) | 🔄 current |
+| 6 | Meditators page improvements | later |
 
 ## Events data
 
@@ -76,6 +81,15 @@ Lectures are currently managed at `tnw.meditation.de` and auto-synced to the nat
 - Hard limit: ~20 €/month
 - Domain already owned (tm-muenchen.de, hosted at EMVX)
 
-## Workflow
+## Development workflow (skill pipeline)
 
-Design in Google Stitch → screenshot/export → prompt Claude to build in Next.js + Tailwind → iterate. Claude is the primary coding assistant throughout.
+For any non-trivial feature or improvement, follow this pipeline:
+
+1. **/grill-with-docs** — interview to resolve all product decisions, update `CONTEXT.md` inline
+2. **/to-prd** — write a tight PRD from the grilling output (core entities, MVP scope, non-goals, definition of done)
+3. **/to-issues** — convert PRD to independently-grabbable vertical-slice issues
+4. **/tdd** — implement each issue with red-green-refactor loop (where applicable)
+5. **Ralph loop** — autonomous agent that reads PRD + progress file, picks next task, implements, commits, updates progress. Run only once the backlog is decomposed into small safe chunks.
+6. **/improve-codebase-architecture** — optional, after features stabilise
+
+Claude is the primary coding assistant throughout. No Google Stitch — design decisions happen in conversation or via screenshots.

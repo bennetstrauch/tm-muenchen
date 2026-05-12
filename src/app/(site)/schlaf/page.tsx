@@ -1,5 +1,4 @@
 import PageClient from "@/components/page-client";
-import TrustBadges from "@/components/trust-badges";
 import WhyTm from "@/components/why-tm";
 import HowItWorks from "@/components/how-it-works";
 import Trustpilot from "@/components/trustpilot";
@@ -26,7 +25,6 @@ export default async function SchlafPage() {
   return (
     <main>
       <PageClient initialTheme="schlaf" nextDates={nextDates} />
-      <TrustBadges />
       <Testimonials testimonials={getTestimonials("schlaf")} />
       <WhyTm />
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />

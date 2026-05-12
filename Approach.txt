@@ -1,0 +1,25 @@
+My recommendation for your app is:
+
+Grill me first
+Use it to force all the product decisions out of your head before Claude starts planning. That is exactly what the skill is for.
+Write one real PRD
+Keep it tight, but make it explicit: core entities, MVP scope, non-goals, and what “done” means. Matt’s flow is to write the PRD after the interview, then use it as the source of truth.
+Convert PRD to issues
+Ask for vertical slices, not layer-by-layer tasks. That matters because it reveals unknowns quickly and keeps tasks independently grabbable.
+Use TDD on each slice
+This is especially important for your app because the value depends on clean boundaries between UI, memory extraction, reminders, and persistence. Matt’s TDD skill is specifically about red-green-refactor and clearer interfaces.
+Run Ralph only once the backlog is ready
+Ralph is a loop where the agent repeatedly reads the PRD and progress file, picks the next task, implements it, commits, and updates progress. It works best when the work is already decomposed into small, safe chunks.
+Instructions if looped manually:
+Loop:                         
+  1. Pick next issue            
+  2. Re-read architecture + PRD 
+  3. Execute only this slice    
+  4. Run tests                  
+  5. Self-review                
+  6. Commit                     
+  7. Update issue               
+  8. Continue    
+
+
+THIS APPROACH WAS COPIED FORM AN APP PROJECT, BUT CORE MAYB APPLY ALSO HERE.

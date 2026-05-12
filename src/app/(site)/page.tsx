@@ -1,5 +1,4 @@
 import PageClient from "@/components/page-client";
-import TrustBadges from "@/components/trust-badges";
 import Testimonials from "@/components/testimonials";
 import WhyTm from "@/components/why-tm";
 import HowItWorks from "@/components/how-it-works";
@@ -27,7 +26,6 @@ export default async function Home() {
   return (
     <main>
       <PageClient initialTheme="stress" nextDates={nextDates} />
-      <TrustBadges />
       <Testimonials testimonials={getTestimonials("stress")} />
       <WhyTm />
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />

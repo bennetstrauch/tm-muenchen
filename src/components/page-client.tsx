@@ -4,6 +4,7 @@ import { useState } from "react";
 import React from "react";
 import { useRouter } from "next/navigation";
 import Hero from "./hero";
+import TrustBadges from "./trust-badges";
 import ForWhom from "./for-whom";
 import ThemeSwitcher from "./theme-switcher";
 import { themes, type ThemeKey } from "../content";
@@ -71,6 +72,8 @@ export default function PageClient({ initialTheme, nextDates }: { initialTheme: 
           <HeroArrow direction="right" onClick={() => navigateToTheme(HERO_THEMES[heroThemeIndex + 1])} />
         )}
       </div>
+
+      <TrustBadges />
 
       {/* ForWhom section — tab switcher sits between heading and carousel */}
       <ForWhom
