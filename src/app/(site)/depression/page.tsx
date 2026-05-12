@@ -11,7 +11,7 @@ import { getTestimonials } from "@/content";
 export const metadata = {
   title: "TM München – Transzendentale Meditation bei Depression",
   description:
-    "TM reduziert nachweislich Symptome von Depression und Erschöpfung — sanft, ohne Konzentration, ohne Nebenwirkungen. Kostenloser Infovortrag in München.",
+    "TM reduziert nachweislich Symptome von Depression und Erschöpfung — sanft, ohne Konzentration, ohne Nebenwirkungen. Kostenloser Infoabend in München.",
 };
 
 export default async function DepressionPage() {

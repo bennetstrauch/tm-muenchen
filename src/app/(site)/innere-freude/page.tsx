@@ -11,7 +11,7 @@ import { getTestimonials } from "@/content";
 export const metadata = {
   title: "TM München – Innere Freude durch Transzendentale Meditation",
   description:
-    "Entdecke den Ozean unbegrenzter Freude in dir. TM gibt dir direkten, mühelosen Zugang zu deiner innersten Natur — kostenloser Infovortrag in München.",
+    "Entdecke den Ozean unbegrenzter Freude in dir. TM gibt dir direkten, mühelosen Zugang zu deiner innersten Natur — kostenloser Infoabend in München.",
 };
 
 export default async function InnereFraudePage() {

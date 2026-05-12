@@ -65,7 +65,7 @@ export default function HowItWorks() {
               hover:bg-[#8BAAC3] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(165,195,215,0.3)]
             "
           >
-            Jetzt Infovortrag besuchen
+            Jetzt Infoabend besuchen
             <span aria-hidden="true">→</span>
           </a>
         </div>

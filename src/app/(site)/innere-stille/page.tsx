@@ -11,7 +11,7 @@ import { getTestimonials } from "@/content";
 export const metadata = {
   title: "TM München – Innere Stille durch Transzendentale Meditation",
   description:
-    "Dein Kopf wird einfach nicht still? TM gibt dir mühelose, tiefe Ruhe — ohne Konzentration, ohne Gedanken stoppen. Kostenloser Infovortrag in München.",
+    "Dein Kopf wird einfach nicht still? TM gibt dir mühelose, tiefe Ruhe — ohne Konzentration, ohne Gedanken stoppen. Kostenloser Infoabend in München.",
 };
 
 export default async function InnereSillePage() {

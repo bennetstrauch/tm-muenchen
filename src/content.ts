@@ -347,7 +347,7 @@ export const content = {
     steps: [
       {
         number: "1",
-        title: "Kostenloser Infovortrag",
+        title: "Kostenloser Infoabend",
         description:
           "Du erfährst, was TM ist, wie sie sich von anderen Techniken unterscheidet, und kannst alle Fragen stellen. Keinerlei Verpflichtung.",
       },
@@ -373,7 +373,7 @@ export const content = {
   },
 
   events: {
-    heading: "Nächste Infovorträge",
+    heading: "Nächste Infoabende",
     subheading: "Kostenlos · unverbindlich · München & Online",
     cta: "Platz sichern",
     empty: "Aktuell keine Termine geplant. Schreib uns gerne direkt an.",

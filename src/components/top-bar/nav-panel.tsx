@@ -11,7 +11,7 @@ const NAV_LINKS: NavLink[] = [
   { label: "Für wen ist TM?", href: "#fuer-wen", type: "anchor" },
   { label: "Was TM einzigartig macht", href: "#warum-tm", type: "anchor" },
   { label: "So funktioniert es", href: "#wie-es-funktioniert", type: "anchor" },
-  { label: "Nächste Infovorträge", href: "#anmeldung", type: "anchor" },
+  { label: "Nächste Infoabende", href: "#anmeldung", type: "anchor" },
   { label: "Für bereits Meditierende", href: "/events", type: "page" },
 ];
 

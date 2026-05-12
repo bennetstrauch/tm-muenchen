@@ -112,7 +112,7 @@ export function buildConfirmationHtml(p: RegistrationEmailParams): string {
       <td style="padding:20px;background:#ffffff;font-size:16px;line-height:1.6;">
         <p style="margin:0 0 12px 0;">Hallo ${p.name},</p>
         <p style="margin:0 0 20px 0;">
-          Sie haben sich erfolgreich zum ${isOnline ? "Online-" : ""}Infovortrag über
+          Sie haben sich erfolgreich zum ${isOnline ? "Online-" : ""}Infoabend über
           Transzendentale Meditation (TM) am
           <strong>${p.eventDate} um ${p.eventTime} Uhr</strong> angemeldet.
         </p>
@@ -127,7 +127,7 @@ export function buildConfirmationHtml(p: RegistrationEmailParams): string {
           <li>Ihren Kopf wieder klarzubekommen für zielgerichtetes Handeln,
               größeren Erfolg und mehr Lebensqualität.</li>
         </ul>
-        <p style="margin:0 0 8px 0;">Dies erwartet Sie im Vortrag:</p>
+        <p style="margin:0 0 8px 0;">Dies erwartet Sie im Infoabend:</p>
         <ul style="padding-left:20px;margin:0 0 8px 0;line-height:1.8;">
           <li>Ein Überblick: was ist TM, woher kommt sie, was bringt sie</li>
           <li>Was ist einzigartig an der TM — wie unterscheidet sie sich von anderen Methoden</li>
@@ -139,7 +139,7 @@ export function buildConfirmationHtml(p: RegistrationEmailParams): string {
     <tr>
       <td style="padding:20px;background:#ffffff;font-size:14px;color:#999;line-height:1.6;">
         <p style="margin:0 0 8px 0;">
-          Der kostenlose Informationsvortrag ist die Grundlage für das Erlernen der
+          Der kostenlose Infoabend ist die Grundlage für das Erlernen der
           Transzendentalen Meditation. Sollten Sie kurzfristig verhindert sein, bitten wir
           um Absage direkt beim Referenten.
         </p>
@@ -148,7 +148,7 @@ export function buildConfirmationHtml(p: RegistrationEmailParams): string {
     ${footerBlock()}`;
 
   return emailWrapper(
-    `Bestätigung: TM-${isOnline ? "Online-" : ""}Infovortrag am ${p.eventDate}`,
+    `Bestätigung: TM-${isOnline ? "Online-" : ""}Infoabend am ${p.eventDate}`,
     body
   );
 }
@@ -190,7 +190,7 @@ export function buildReminderHtml(p: RegistrationEmailParams): string {
         <p style="margin:0 0 16px 0;">Hallo ${p.name},</p>
         <p style="margin:0 0 16px 0;">
           vielen Dank für Ihre Anmeldung zu dem einführenden
-          ${isOnline ? "Online-" : ""}Infovortrag über Transzendentale Meditation —
+          ${isOnline ? "Online-" : ""}Infoabend über Transzendentale Meditation —
           wir möchten Sie daran erinnern.
         </p>
 
@@ -210,7 +210,7 @@ export function buildReminderHtml(p: RegistrationEmailParams): string {
         ${meetSection}
 
         <p style="margin:0 0 12px 0;font-size:15px;line-height:1.7;color:#777;">
-          Der kostenlose Informationsvortrag ist die Grundlage für das Erlernen
+          Der kostenlose Infoabend ist die Grundlage für das Erlernen
           der Transzendentalen Meditation.
         </p>
         <p style="margin:0 0 12px 0;font-size:15px;line-height:1.7;color:#777;">
@@ -230,7 +230,7 @@ export function buildReminderHtml(p: RegistrationEmailParams): string {
     ${footerBlock()}`;
 
   return emailWrapper(
-    `Erinnerung: Morgen um ${p.eventTime} Uhr findet Ihr TM-${isOnline ? "Online-" : ""}Infovortrag statt`,
+    `Erinnerung: Morgen um ${p.eventTime} Uhr findet Ihr TM-${isOnline ? "Online-" : ""}Infoabend statt`,
     body
   );
 }
@@ -249,7 +249,7 @@ export function buildTeacherNotificationHtml(p: RegistrationEmailParams): string
         <p style="margin:0 0 4px 0;font-size:13px;letter-spacing:3px;
                    text-transform:uppercase;color:#BCA075;">Neue Anmeldung</p>
         <h2 style="margin:0 0 20px 0;font-size:20px;">
-          ${isOnline ? "Online-" : ""}Infovortrag · ${p.eventDate} um ${p.eventTime} Uhr
+          ${isOnline ? "Online-" : ""}Infoabend · ${p.eventDate} um ${p.eventTime} Uhr
         </h2>
         <table cellpadding="6" cellspacing="0" border="0"
           style="font-size:16px;line-height:1.5;width:100%;">

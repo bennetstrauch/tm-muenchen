@@ -85,7 +85,7 @@ export async function POST(request: Request) {
     resend.emails.send({
       from: "TM München <noreply@tm-muenchen.de>",
       to: email,
-      subject: `Bestätigung: TM-${isOnline ? "Online-" : ""}Infovortrag am ${eventDate} um ${eventTime} Uhr`,
+      subject: `Bestätigung: TM-${isOnline ? "Online-" : ""}Infoabend am ${eventDate} um ${eventTime} Uhr`,
       html: buildConfirmationHtml(params),
     }),
 
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
       ? resend.emails.send({
           from: "TM München <noreply@tm-muenchen.de>",
           to: teacher.email,
-          subject: `Neue Anmeldung: ${isOnline ? "Online-" : ""}Infovortrag am ${eventDate} um ${eventTime} Uhr`,
+          subject: `Neue Anmeldung: ${isOnline ? "Online-" : ""}Infoabend am ${eventDate} um ${eventTime} Uhr`,
           html: buildTeacherNotificationHtml(params),
         })
       : Promise.resolve(),
@@ -104,7 +104,7 @@ export async function POST(request: Request) {
       ? resend.emails.send({
           from: "TM München <noreply@tm-muenchen.de>",
           to: email,
-          subject: `Erinnerung: Morgen um ${eventTime} Uhr findet Ihr TM-${isOnline ? "Online-" : ""}Infovortrag statt`,
+          subject: `Erinnerung: Morgen um ${eventTime} Uhr findet Ihr TM-${isOnline ? "Online-" : ""}Infoabend statt`,
           html: buildReminderHtml(params),
           scheduledAt: reminderScheduledAt,
         })
