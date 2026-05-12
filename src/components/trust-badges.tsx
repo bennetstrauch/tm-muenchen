@@ -12,7 +12,7 @@ export default function TrustBadges() {
     <div className="bg-[#FAFAF8] border-b border-[#E8E4DC] py-5">
       <div className="px-5 md:px-0">
         <ul
-          className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-2"
+          className="flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-2"
           aria-label="Merkmale von Transzendentaler Meditation"
         >
           {badges.map((label) => (
