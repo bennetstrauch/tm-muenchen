@@ -9,6 +9,7 @@ import Events from "@/components/events";
 import InfoabendPreview from "@/components/infoabend-preview";
 import Teachers from "@/components/teachers";
 import WissenschaftSection from "@/components/wissenschaft";
+import AbschlussCta from "@/components/abschluss-cta";
 import { getEvents, formatNextDates } from "@/lib/events";
 import { getTrustpilotStats } from "@/lib/trustpilot";
 import { getTeachers } from "@/lib/teachers";
@@ -29,13 +30,14 @@ export default async function Home() {
       <TrustBadges />
       <Testimonials testimonials={getTestimonials("stress")} />
       <WhyTm />
-      <HowItWorks />
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />
       <CenterBanner />
       <InfoabendPreview />
       <Events events={events} />
       <WissenschaftSection />
       <Teachers teachers={teachers} />
+      <HowItWorks />
+      <AbschlussCta />
     </main>
   );
 }

@@ -7,6 +7,7 @@ import Testimonials from "@/components/testimonials";
 import Events from "@/components/events";
 import InfoabendPreview from "@/components/infoabend-preview";
 import WissenschaftSection from "@/components/wissenschaft";
+import AbschlussCta from "@/components/abschluss-cta";
 import { getEvents, formatNextDates } from "@/lib/events";
 import { getTrustpilotStats } from "@/lib/trustpilot";
 import { getTestimonials } from "@/content";
@@ -28,11 +29,12 @@ export default async function InnereFraudePage() {
       <TrustBadges />
       <Testimonials testimonials={getTestimonials("innere-freude")} />
       <WhyTm />
-      <HowItWorks />
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />
       <InfoabendPreview />
       <Events events={events} />
       <WissenschaftSection />
+      <HowItWorks />
+      <AbschlussCta />
     </main>
   );
 }
