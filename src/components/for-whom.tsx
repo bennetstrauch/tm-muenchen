@@ -2,6 +2,32 @@ import React from "react";
 import Carousel from "./carousel";
 import { content } from "../content";
 
+function ForWhomDescription({ text }: { text: string }) {
+  const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
+  const bullets = lines.filter((l) => l.startsWith("•"));
+  const closing = lines.find((l) => !l.startsWith("•"));
+  if (bullets.length === 0) {
+    return <p className="text-base text-[#3D5573] leading-relaxed">{text}</p>;
+  }
+  return (
+    <div>
+      <ul className="space-y-1.5 mb-3">
+        {bullets.map((b, i) => (
+          <li key={i} className="flex gap-2 text-sm text-[#3D5573] leading-relaxed">
+            <span className="mt-1 shrink-0 w-1.5 h-1.5 rounded-full bg-[#BCA075]" />
+            <span>{b.replace(/^•\s*/, "")}</span>
+          </li>
+        ))}
+      </ul>
+      {closing && (
+        <p className="text-sm text-[#1A3352] font-medium leading-relaxed border-t border-[#E5EAF0] pt-3">
+          {closing}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function ForWhom({
   activeIndex,
   onActiveIndexChange,
@@ -36,9 +62,7 @@ export default function ForWhom({
                   {item.title}
                 </h3>
               </div>
-              <p className="text-base text-[#3D5573] leading-relaxed">
-                {item.description}
-              </p>
+              <ForWhomDescription text={item.description} />
             </div>
           ))}
         </Carousel>
