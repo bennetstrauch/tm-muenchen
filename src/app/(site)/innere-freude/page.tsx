@@ -1,4 +1,5 @@
 import PageClient from "@/components/page-client";
+import TrustBadges from "@/components/trust-badges";
 import WhyTm from "@/components/why-tm";
 import HowItWorks from "@/components/how-it-works";
 import Trustpilot from "@/components/trustpilot";
@@ -22,6 +23,7 @@ export default async function InnereFraudePage() {
   return (
     <main>
       <PageClient initialTheme="innere-freude" nextDates={nextDates} />
+      <TrustBadges />
       <Testimonials testimonials={getTestimonials("innere-freude")} />
       <WhyTm />
       <HowItWorks />
