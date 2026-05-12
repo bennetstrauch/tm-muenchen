@@ -18,7 +18,7 @@ export default function TrustBadges() {
           {badges.map((label) => (
             <li
               key={label}
-              className="inline-flex items-center gap-1.5 text-[0.65rem] tracking-[0.15em] uppercase font-medium text-[#1A3352]/70"
+              className="inline-flex items-center gap-1.5 text-[0.75rem] tracking-[0.12em] uppercase font-medium text-[#1A3352]/70"
             >
               <svg
                 width="10"
