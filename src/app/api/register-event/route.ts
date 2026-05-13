@@ -1,7 +1,9 @@
 import { Resend } from 'resend';
 import { appendEventRegistration, getVeranstaltungById } from '@/lib/veranstaltungen';
 import { calcReminderTime } from '@/lib/format';
-import { buildEventConfirmationHtml, buildEventReminderHtml, type EventEmailParams } from '@/lib/email-veranstaltung';
+import { buildEventConfirmationHtml, buildEventReminderHtml, buildLeiterNotificationHtml, type EventEmailParams } from '@/lib/email-veranstaltung';
+import { lookupTeachersByFirstNames } from '@/lib/tmw-teachers';
+import { generateToken } from '@/lib/admin-token';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -25,6 +27,50 @@ type RequestBody = {
   reminder1Hours: number;
   reminder2Hours: number;
 };
+
+async function notifyLeiter(params: {
+  hosts: string;
+  eventId: string;
+  isoDate: string;
+  eventTitle: string;
+  eventDate: string;
+  eventTime: string;
+  eventLocation: string;
+  registrantName: string;
+  registrantEmail: string;
+  registrantPhone?: string;
+  tmLehrer?: string;
+  baseUrl: string;
+}): Promise<void> {
+  const firstNames = params.hosts.split(',').map(s => s.trim()).filter(Boolean);
+  const leaders = await lookupTeachersByFirstNames(firstNames);
+  if (leaders.length === 0) return;
+
+  const token = generateToken(params.eventId, params.isoDate);
+  const magicLink = `${params.baseUrl}/admin?tab=anmeldungen&event=${encodeURIComponent(params.eventId)}&token=${encodeURIComponent(token)}`;
+
+  await Promise.all(
+    leaders.map(leader =>
+      resend.emails.send({
+        from: 'TM München <noreply@tm-muenchen.de>',
+        to: leader.email,
+        subject: `Neue Anmeldung: ${params.eventTitle} – ${params.eventDate}`,
+        html: buildLeiterNotificationHtml({
+          leiterName: leader.name.split(' ')[0],
+          registrantName: params.registrantName,
+          registrantEmail: params.registrantEmail,
+          registrantPhone: params.registrantPhone,
+          tmLehrer: params.tmLehrer,
+          eventTitle: params.eventTitle,
+          eventDate: params.eventDate,
+          eventTime: params.eventTime,
+          eventLocation: params.eventLocation,
+          magicLink,
+        }),
+      }),
+    ),
+  );
+}
 
 export async function POST(request: Request) {
   const body: RequestBody = await request.json();
@@ -96,6 +142,21 @@ export async function POST(request: Request) {
     tmLehrer,
     datumErlernen,
   }).catch(err => console.error('Sheets logging failed:', err));
+
+  notifyLeiter({
+    hosts,
+    eventId,
+    isoDate,
+    eventTitle,
+    eventDate,
+    eventTime,
+    eventLocation,
+    registrantName: name,
+    registrantEmail: email,
+    registrantPhone: phone,
+    tmLehrer,
+    baseUrl: new URL(request.url).origin,
+  }).catch(err => console.error('Leiter notification failed:', err));
 
   return Response.json({ success: true });
 }

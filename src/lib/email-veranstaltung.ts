@@ -1,5 +1,18 @@
 import { emailWrapper } from './email';
 
+export type LeiterNotificationParams = {
+  leiterName: string;
+  registrantName: string;
+  registrantEmail: string;
+  registrantPhone?: string;
+  tmLehrer?: string;
+  eventTitle: string;
+  eventDate: string;
+  eventTime: string;
+  eventLocation: string;
+  magicLink: string;
+};
+
 export type EventEmailParams = {
   name: string;
   eventTitle: string;
@@ -113,4 +126,62 @@ export function buildEventReminderHtml(p: EventEmailParams): string {
   ${footerBlock()}`;
 
   return emailWrapper(`Erinnerung: ${p.eventTitle} – ${p.eventDate}`, body);
+}
+
+export function buildLeiterNotificationHtml(p: LeiterNotificationParams): string {
+  const body = `
+  <tr>
+    <td style="padding:20px;background:#ffffff;font-size:16px;line-height:1.6;">
+      <p style="margin:0 0 20px 0;">Hallo liebe/r ${p.leiterName},</p>
+      <p style="margin:0 0 24px 0;">
+        es gibt eine neue Anmeldung für deine Veranstaltung:
+      </p>
+      <div style="background:#faf8f5;border-left:3px solid #BCA075;
+                  padding:16px 20px;margin:0 0 24px;border-radius:2px;">
+        <p style="margin:0 0 6px 0;font-size:14px;color:#aaa;
+                  text-transform:uppercase;letter-spacing:2px;">Veranstaltung</p>
+        <p style="margin:0 0 4px 0;font-size:19px;font-weight:bold;color:#1A3352;">
+          ${p.eventTitle}
+        </p>
+        <p style="margin:0 0 4px 0;font-size:16px;">
+          <strong>${p.eventDate}</strong>${p.eventTime ? ` &nbsp;·&nbsp; ${p.eventTime} Uhr` : ''}
+        </p>
+        <p style="margin:0;font-size:15px;color:#666;">${p.eventLocation}</p>
+      </div>
+      <table cellpadding="6" cellspacing="0" border="0"
+        style="font-size:15px;line-height:1.5;width:100%;margin:0 0 28px;">
+        <tr>
+          <td style="color:#999;white-space:nowrap;padding-right:16px;vertical-align:top;">Name</td>
+          <td><strong>${p.registrantName}</strong></td>
+        </tr>
+        <tr>
+          <td style="color:#999;vertical-align:top;">E-Mail</td>
+          <td><a href="mailto:${p.registrantEmail}" style="color:#BCA075;">${p.registrantEmail}</a></td>
+        </tr>
+        ${p.registrantPhone ? `
+        <tr>
+          <td style="color:#999;vertical-align:top;">Telefon</td>
+          <td>${p.registrantPhone}</td>
+        </tr>` : ''}
+        ${p.tmLehrer ? `
+        <tr>
+          <td style="color:#999;vertical-align:top;">TM-Lehrer</td>
+          <td>${p.tmLehrer}</td>
+        </tr>` : ''}
+      </table>
+      <div style="text-align:center;margin:0 0 28px;">
+        <a href="${p.magicLink}"
+          style="display:inline-block;background:#BCA075;color:#ffffff;font-family:Georgia,serif;
+                 font-size:16px;text-decoration:none;padding:12px 32px;border-radius:20px;">
+          Alle Anmeldungen ansehen →
+        </a>
+      </div>
+      <p style="margin:0;font-size:16px;">
+        Hochachtungsvoll,<br>
+        <span style="color:#BCA075;">Dein TM-München-IT-TEAM 😉</span>
+      </p>
+    </td>
+  </tr>`;
+
+  return emailWrapper(`Neue Anmeldung: ${p.eventTitle} – ${p.eventDate}`, body);
 }
