@@ -6,22 +6,33 @@ import { content } from "../content";
 export default function StickyCta() {
   const { hero } = content;
   const [hidden, setHidden] = useState(false);
+  const [ctaHref, setCtaHref] = useState<string>("#infoabend");
 
   useEffect(() => {
-    const hero = document.getElementById("hero");
-    if (!hero) return;
-    const observer = new IntersectionObserver(
+    const heroEl = document.getElementById("hero");
+    if (!heroEl) return;
+    const heroObserver = new IntersectionObserver(
       ([entry]) => setHidden(entry.isIntersecting),
       { threshold: 0.6 }
     );
-    observer.observe(hero);
-    return () => observer.disconnect();
+    heroObserver.observe(heroEl);
+    return () => heroObserver.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const infoEl = document.getElementById("infoabend");
+    if (!infoEl) return;
+    const infoObserver = new IntersectionObserver(([entry]) => {
+      setCtaHref(!entry.isIntersecting && entry.boundingClientRect.top > 0 ? "#infoabend" : "#anmeldung");
+    }, { threshold: 0 });
+    infoObserver.observe(infoEl);
+    return () => infoObserver.disconnect();
   }, []);
 
   return (
     <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] transition-all duration-300 ${hidden ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
       <a
-        href={hero.ctaHref}
+        href={ctaHref}
         className="
           inline-flex items-center gap-3
           px-9 py-4

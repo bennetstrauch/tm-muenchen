@@ -280,7 +280,7 @@ export const content = {
 
   hero: {
     cta: "Kostenlosen Info-Abend entdecken",
-    ctaHref: "#anmeldung",
+    ctaHref: "#infoabend",
     learnMore: "Mehr über TM erfahren",
     learnMoreHref: "#fuer-wen",
   },
