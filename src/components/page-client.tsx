@@ -50,7 +50,7 @@ export default function PageClient({ initialTheme, nextDates }: { initialTheme: 
     const el = document.getElementById("infoabend");
     if (!el) return;
     const observer = new IntersectionObserver(([entry]) => {
-      setCtaHref(entry.isIntersecting || entry.boundingClientRect.top > 0 ? "#infoabend" : "#anmeldung");
+      setCtaHref(!entry.isIntersecting && entry.boundingClientRect.top > 0 ? "#infoabend" : "#anmeldung");
     }, { threshold: 0 });
     observer.observe(el);
     return () => observer.disconnect();
