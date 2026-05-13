@@ -9,7 +9,7 @@ Issues: docs/issues/
 |---|---|---|
 | 8 | Placeholder-Fix: Formularfelder leeren | ✅ done |
 | 9 | Magic Link: Token-Auth im Admin-Panel | ✅ done |
-| 10 | Leiter-Benachrichtigung per E-Mail | ⬜ todo |
+| 10 | Leiter-Benachrichtigung per E-Mail | ✅ done |
 
 ## Notes
 
