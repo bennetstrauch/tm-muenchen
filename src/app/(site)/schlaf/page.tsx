@@ -24,12 +24,14 @@ export default async function SchlafPage() {
 
   return (
     <main>
-      <PageClient initialTheme="schlaf" nextDates={nextDates} />
+      <PageClient
+        initialTheme="schlaf"
+        nextDates={nextDates}
+        conversionSlot={<><InfoabendPreview /><Events events={events} /></>}
+      />
       <Testimonials testimonials={getTestimonials("schlaf")} />
       <WhyTm />
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />
-      <InfoabendPreview />
-      <Events events={events} />
       <WissenschaftSection />
       <HowItWorks />
       <AbschlussCta />

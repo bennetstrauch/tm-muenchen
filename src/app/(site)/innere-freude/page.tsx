@@ -24,12 +24,14 @@ export default async function InnereFraudePage() {
 
   return (
     <main>
-      <PageClient initialTheme="innere-freude" nextDates={nextDates} />
+      <PageClient
+        initialTheme="innere-freude"
+        nextDates={nextDates}
+        conversionSlot={<><InfoabendPreview /><Events events={events} /></>}
+      />
       <Testimonials testimonials={getTestimonials("innere-freude")} />
       <WhyTm />
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />
-      <InfoabendPreview />
-      <Events events={events} />
       <WissenschaftSection />
       <HowItWorks />
       <AbschlussCta />

@@ -24,12 +24,14 @@ export default async function DepressionPage() {
 
   return (
     <main>
-      <PageClient initialTheme="depression" nextDates={nextDates} />
+      <PageClient
+        initialTheme="depression"
+        nextDates={nextDates}
+        conversionSlot={<><InfoabendPreview /><Events events={events} /></>}
+      />
       <Testimonials testimonials={getTestimonials("depression")} />
       <WhyTm />
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />
-      <InfoabendPreview />
-      <Events events={events} />
       <WissenschaftSection />
       <HowItWorks />
       <AbschlussCta />

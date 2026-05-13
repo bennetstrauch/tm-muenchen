@@ -37,7 +37,7 @@ function HeroArrow({ direction, onClick }: { direction: "left" | "right"; onClic
   );
 }
 
-export default function PageClient({ initialTheme, nextDates }: { initialTheme: ThemeKey; nextDates?: string[] }) {
+export default function PageClient({ initialTheme, nextDates, conversionSlot }: { initialTheme: ThemeKey; nextDates?: string[]; conversionSlot?: React.ReactNode }) {
   const router = useRouter();
   const initialTab: number = themes[initialTheme].forWhomIndex;
   const [activeTab, setActiveTab] = useState<number>(initialTab);
@@ -74,6 +74,8 @@ export default function PageClient({ initialTheme, nextDates }: { initialTheme: 
       </div>
 
       <TrustBadges />
+
+      {conversionSlot}
 
       {/* ForWhom section — tab switcher sits between heading and carousel */}
       <ForWhom

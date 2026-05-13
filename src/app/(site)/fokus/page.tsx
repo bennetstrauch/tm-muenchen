@@ -24,12 +24,14 @@ export default async function FokusPage() {
 
   return (
     <main>
-      <PageClient initialTheme="fokus" nextDates={nextDates} />
+      <PageClient
+        initialTheme="fokus"
+        nextDates={nextDates}
+        conversionSlot={<><InfoabendPreview /><Events events={events} /></>}
+      />
       <Testimonials testimonials={getTestimonials("fokus")} />
       <WhyTm />
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />
-      <InfoabendPreview />
-      <Events events={events} />
       <WissenschaftSection />
       <HowItWorks />
       <AbschlussCta />

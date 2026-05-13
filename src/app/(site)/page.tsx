@@ -25,13 +25,15 @@ export default async function Home() {
 
   return (
     <main>
-      <PageClient initialTheme="stress" nextDates={nextDates} />
+      <PageClient
+        initialTheme="stress"
+        nextDates={nextDates}
+        conversionSlot={<><InfoabendPreview /><Events events={events} /></>}
+      />
       <Testimonials testimonials={getTestimonials("stress")} />
       <WhyTm />
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />
       <CenterBanner />
-      <InfoabendPreview />
-      <Events events={events} />
       <WissenschaftSection />
       <Teachers teachers={teachers} />
       <HowItWorks />

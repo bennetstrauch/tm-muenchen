@@ -216,14 +216,14 @@ export default function Events({ events }: { events: TMEvent[] }) {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
 
   return (
-    <section id="anmeldung" className="section bg-white">
+    <section id="anmeldung" className="section bg-white pt-6 sm:pt-10">
       <div className="section-inner">
 
-        <div className="text-center mb-14">
-          <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#3D5573] mb-4">
+        <div className="text-center mb-6">
+          {/* <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#3D5573] mb-4">
             Transzendentale Meditation · München
 
-          </p>
+          </p> */}
           <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight mb-3">
             {copy.heading}
           </h2>

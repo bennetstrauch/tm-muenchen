@@ -24,12 +24,14 @@ export default async function AngstPage() {
 
   return (
     <main>
-      <PageClient initialTheme="angst" nextDates={nextDates} />
+      <PageClient
+        initialTheme="angst"
+        nextDates={nextDates}
+        conversionSlot={<><InfoabendPreview /><Events events={events} /></>}
+      />
       <Testimonials testimonials={getTestimonials("angst")} />
       <WhyTm />
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />
-      <InfoabendPreview />
-      <Events events={events} />
       <WissenschaftSection />
       <HowItWorks />
       <AbschlussCta />

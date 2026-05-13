@@ -22,15 +22,15 @@ export default function InfoabendPreview() {
 
         {/* Heading block */}
         <div className="text-center mb-10">
-          <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#BCA075] mb-4">
-            Der Infoabend
-          </p>
           <h2
             id="infoabend-heading"
-            className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight"
+            className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight mb-4"
           >
             So läuft der Infoabend ab
           </h2>
+          <p className="text-lg sm:text-xl text-[#BCA075] font-medium">
+            Kostenlos &nbsp;·&nbsp; Unverbindlich &nbsp;·&nbsp; ca. 60 Minuten
+          </p>
         </div>
 
         {/* Content points */}

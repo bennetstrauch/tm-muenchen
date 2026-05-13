@@ -24,12 +24,14 @@ export default async function ErschoepfungPage() {
 
   return (
     <main>
-      <PageClient initialTheme="erschoepfung" nextDates={nextDates} />
+      <PageClient
+        initialTheme="erschoepfung"
+        nextDates={nextDates}
+        conversionSlot={<><InfoabendPreview /><Events events={events} /></>}
+      />
       <Testimonials testimonials={getTestimonials("erschoepfung")} />
       <WhyTm />
       <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />
-      <InfoabendPreview />
-      <Events events={events} />
       <WissenschaftSection />
       <HowItWorks />
       <AbschlussCta />
