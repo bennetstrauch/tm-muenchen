@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import React from "react";
 import { useRouter } from "next/navigation";
 import Hero from "./hero";
@@ -43,8 +43,18 @@ export default function PageClient({ initialTheme, nextDates }: { initialTheme: 
   const [activeTab, setActiveTab] = useState<number>(initialTab);
 
   const heroTheme = themes[initialTheme];
-
   const heroThemeIndex = HERO_THEMES.indexOf(initialTheme);
+
+  const [ctaHref, setCtaHref] = useState<string>("#infoabend");
+  useEffect(() => {
+    const el = document.getElementById("infoabend");
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      setCtaHref(entry.isIntersecting || entry.boundingClientRect.top > 0 ? "#infoabend" : "#anmeldung");
+    }, { threshold: 0 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   function navigateToTheme(key: ThemeKey) {
     const slug = themes[key].slug;
@@ -64,6 +74,7 @@ export default function PageClient({ initialTheme, nextDates }: { initialTheme: 
           subtitle={heroTheme.subtitle}
           images={heroTheme.images}
           nextDates={nextDates}
+          ctaHref={ctaHref}
         />
         {heroThemeIndex > 0 && (
           <HeroArrow direction="left" onClick={() => navigateToTheme(HERO_THEMES[heroThemeIndex - 1])} />

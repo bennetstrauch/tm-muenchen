@@ -14,6 +14,7 @@ const infoBoxes = [
 export default function InfoabendPreview() {
   return (
     <section
+      id="infoabend"
       className="section bg-[#FAFAF8] border-t border-[#E8E4DC]"
       aria-labelledby="infoabend-heading"
     >

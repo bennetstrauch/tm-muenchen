@@ -13,11 +13,13 @@ export default function Hero({
   subtitle,
   images,
   nextDates,
+  ctaHref,
 }: {
   headline?: string[];
   subtitle?: string;
   images?: HeroImage[];
   nextDates?: string[];
+  ctaHref?: string;
 } = {}) {
   const { hero } = content;
   const headlineLines = headline ?? ["Endlich wirklich abschalten.", "Ohne Anstrengung."];
@@ -78,7 +80,7 @@ export default function Hero({
         style={{ animation: "fadeInUp 0.75s ease forwards 0.28s" }}
       >
         <a
-          href={hero.ctaHref}
+          href={ctaHref ?? hero.ctaHref}
           className="
             inline-flex items-center gap-2.5
             px-8 py-4 rounded-full
