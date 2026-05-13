@@ -287,8 +287,7 @@ function EventFormFields({
             className={INPUT_CLS}
             value={form.slug ?? ''}
             onChange={e => onChange('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
-            placeholder="z.B. vollmond"
-          />
+            />
         </Field>
       </div>
 
@@ -321,7 +320,6 @@ function EventFormFields({
             className={INPUT_CLS}
             value={form.location}
             onChange={e => onChange('location', e.target.value)}
-            placeholder="Guldeinstraße 47"
             list="location-suggestions"
           />
           <datalist id="location-suggestions">
@@ -330,13 +328,13 @@ function EventFormFields({
           </datalist>
         </Field>
         <Field label="Leiter">
-          <input className={INPUT_CLS} value={form.hosts} onChange={e => onChange('hosts', e.target.value)} placeholder="Bennet, Malena" />
+          <input className={INPUT_CLS} value={form.hosts} onChange={e => onChange('hosts', e.target.value)} />
         </Field>
         <Field label="Preis (optional)">
-          <input className={INPUT_CLS} value={form.price} onChange={e => onChange('price', e.target.value)} placeholder="65 €/P.; 50 € Ehepaare" />
+          <input className={INPUT_CLS} value={form.price} onChange={e => onChange('price', e.target.value)} />
         </Field>
         <Field label="Zielgruppe (optional)">
-          <input className={INPUT_CLS} value={form.targetAudience} onChange={e => onChange('targetAudience', e.target.value)} placeholder="15–45 Jahre" />
+          <input className={INPUT_CLS} value={form.targetAudience} onChange={e => onChange('targetAudience', e.target.value)} />
         </Field>
         <Field label="Erinnerung 1 (Stunden vorher)">
           <input type="number" min="0" className={INPUT_CLS} value={form.reminder1Hours} onChange={e => onChange('reminder1Hours', parseInt(e.target.value) || 24)} />
@@ -345,16 +343,16 @@ function EventFormFields({
           <input type="number" min="0" className={INPUT_CLS} value={form.reminder2Hours} onChange={e => onChange('reminder2Hours', parseInt(e.target.value) || 0)} />
         </Field>
         <Field label="Online-Link (optional)">
-          <input className={INPUT_CLS} value={form.onlineLink} onChange={e => onChange('onlineLink', e.target.value)} placeholder="https://zoom.us/..." />
+          <input className={INPUT_CLS} value={form.onlineLink} onChange={e => onChange('onlineLink', e.target.value)} />
         </Field>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <Field label="Kurzbeschreibung">
-          <textarea className={TEXTAREA_CLS} value={form.description} onChange={e => onChange('description', e.target.value)} placeholder="mit Gruppenmeditation, Maharishi-Tape…" />
+          <textarea className={TEXTAREA_CLS} value={form.description} onChange={e => onChange('description', e.target.value)} />
         </Field>
         <Field label="Hinweise (optional)">
-          <textarea className={TEXTAREA_CLS} value={form.notes} onChange={e => onChange('notes', e.target.value)} placeholder="Weitere Infos folgen" />
+          <textarea className={TEXTAREA_CLS} value={form.notes} onChange={e => onChange('notes', e.target.value)} />
         </Field>
         <Field label="Ausführliche Beschreibung (optional)">
           <textarea className={TEXTAREA_CLS} value={form.longDescription} onChange={e => onChange('longDescription', e.target.value)} />
