@@ -6,6 +6,12 @@ export default function proxy(request: NextRequest) {
   if (pathname.startsWith('/admin')) {
     if (pathname === '/admin/login') return NextResponse.next();
 
+    // Magic link: requests with both token + event params are allowed through;
+    // the page itself verifies the token server-side.
+    const url = request.nextUrl;
+    const hasMagicLink = url.searchParams.has('token') && url.searchParams.has('event');
+    if (hasMagicLink) return NextResponse.next();
+
     const token = request.cookies.get('admin-session')?.value;
     if (!isValidToken(token)) {
       return NextResponse.redirect(new URL('/admin/login', request.url));

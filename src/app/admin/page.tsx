@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { getRegistrations } from '@/lib/sheets';
 import { getAllVeranstaltungen, getEventRegistrations } from '@/lib/veranstaltungen';
 import { getAllVorlagen } from '@/lib/vorlagen';
+import { verifyToken } from '@/lib/admin-token';
 import AdminClient from './admin-client';
 
 export const metadata: Metadata = {
@@ -11,7 +14,80 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic';
 
-export default async function AdminPage() {
+function isValidSession(token: string | undefined): boolean {
+  if (!token) return false;
+  try {
+    const decoded = atob(token);
+    const colon = decoded.indexOf(':');
+    if (colon === -1) return false;
+    return (
+      decoded.slice(0, colon) === process.env.ADMIN_USER &&
+      decoded.slice(colon + 1) === process.env.ADMIN_PASS
+    );
+  } catch {
+    return false;
+  }
+}
+
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const params = await searchParams;
+  const tokenParam = typeof params.token === 'string' ? params.token : undefined;
+  const eventParam = typeof params.event === 'string' ? params.event : undefined;
+
+  // --- Token-scoped access (magic link) ---
+  if (tokenParam && eventParam) {
+    const result = verifyToken(tokenParam, eventParam);
+    if (!result.valid) {
+      // Invalid or expired token — send to login
+      redirect('/admin/login');
+    }
+
+    // Valid token: load data and render in token-scoped mode
+    const [infoRegistrations, events, eventRegistrations, vorlagen] = await Promise.all([
+      getRegistrations().catch(() => []),
+      getAllVeranstaltungen().catch(() => []),
+      getEventRegistrations().catch(() => []),
+      getAllVorlagen().catch(() => []),
+    ]);
+
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-8 flex items-start justify-between">
+            <div>
+              <p className="text-xs tracking-widest uppercase text-[#BCA075] mb-1">
+                Transzendentale Meditation · München
+              </p>
+              <h1 className="text-2xl font-semibold text-gray-800">Anmeldungen</h1>
+            </div>
+          </div>
+
+          <Suspense>
+            <AdminClient
+              infoRegistrations={infoRegistrations}
+              initialEvents={events}
+              eventRegistrations={eventRegistrations}
+              initialVorlagen={vorlagen}
+              tokenEventId={eventParam}
+            />
+          </Suspense>
+        </div>
+      </div>
+    );
+  }
+
+  // --- Normal session-based access ---
+  const cookieStore = await cookies();
+  const sessionToken = cookieStore.get('admin-session')?.value;
+
+  if (!isValidSession(sessionToken)) {
+    redirect('/admin/login');
+  }
+
   const [infoRegistrations, events, eventRegistrations, vorlagen] = await Promise.all([
     getRegistrations().catch(() => []),
     getAllVeranstaltungen().catch(() => []),

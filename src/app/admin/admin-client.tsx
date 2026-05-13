@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import type { Registration } from '@/lib/sheets';
 import type { Veranstaltung, EventRegistrationRecord } from '@/lib/veranstaltungen';
@@ -785,7 +785,19 @@ function EventStatusBadges({ event }: { event: Veranstaltung }) {
 
 // ─── EventRegistrationsTable ──────────────────────────────────────────────────
 
-function EventRegistrationsTable({ registrations }: { registrations: EventRegistrationRecord[] }) {
+function EventRegistrationsTable({
+  registrations,
+  lockedEventId,
+}: {
+  registrations: EventRegistrationRecord[];
+  lockedEventId?: string;
+}) {
+  // Resolve locked event title from registrations by eventId
+  const lockedEventTitle = useMemo(() => {
+    if (!lockedEventId) return undefined;
+    return registrations.find(r => r.eventId === lockedEventId)?.eventTitle;
+  }, [lockedEventId, registrations]);
+
   const eventTitles = Array.from(new Set(registrations.map(r => r.eventTitle).filter(Boolean))).sort();
   const countByTitle = useMemo(
     () => registrations.reduce((acc, r) => {
@@ -794,7 +806,13 @@ function EventRegistrationsTable({ registrations }: { registrations: EventRegist
     }, new Map<string, number>()),
     [registrations],
   );
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState(lockedEventTitle ?? '');
+
+  // Sync filter when lockedEventTitle becomes available (data arrives after mount)
+  useEffect(() => {
+    if (lockedEventTitle) setFilter(lockedEventTitle);
+  }, [lockedEventTitle]);
+
   const filtered = filter ? registrations.filter(r => r.eventTitle === filter) : registrations;
 
   return (
@@ -803,8 +821,9 @@ function EventRegistrationsTable({ registrations }: { registrations: EventRegist
         <label className="text-xs text-gray-400 uppercase tracking-wider">Event</label>
         <select
           value={filter}
-          onChange={e => setFilter(e.target.value)}
-          className="text-sm border border-gray-200 rounded px-2 py-1 text-gray-700 bg-white"
+          onChange={e => { if (!lockedEventId) setFilter(e.target.value); }}
+          disabled={!!lockedEventId}
+          className="text-sm border border-gray-200 rounded px-2 py-1 text-gray-700 bg-white disabled:opacity-70 disabled:cursor-not-allowed"
         >
           <option value="">Alle ({registrations.length})</option>
           {eventTitles.map(t => (
@@ -861,19 +880,27 @@ export default function AdminClient({
   initialEvents,
   eventRegistrations,
   initialVorlagen,
+  tokenEventId,
 }: {
   infoRegistrations: Registration[];
   initialEvents: Veranstaltung[];
   eventRegistrations: EventRegistrationRecord[];
   initialVorlagen: Vorlage[];
+  tokenEventId?: string;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  // In token-scoped mode, always show the 'anmeldungen' tab and disallow switching
   const rawTab = searchParams.get('tab');
-  const tab: Tab = VALID_TABS.includes(rawTab as Tab) ? (rawTab as Tab) : 'info-anmeldungen';
+  const tab: Tab = tokenEventId
+    ? 'anmeldungen'
+    : VALID_TABS.includes(rawTab as Tab)
+      ? (rawTab as Tab)
+      : 'info-anmeldungen';
 
   function setTab(t: Tab) {
+    if (tokenEventId) return; // tab switching disabled in token-scoped mode
     router.replace(`?tab=${t}`, { scroll: false });
   }
 
@@ -1063,21 +1090,27 @@ export default function AdminClient({
   return (
     <>
       <div className="flex gap-0 border-b border-gray-200 mb-6">
-        <button className={TAB_CLS(tab === 'info-anmeldungen')} onClick={() => setTab('info-anmeldungen')}>
-          <span className="sm:hidden">Info-Anm. ({infoRegistrations.length})</span>
-          <span className="hidden sm:inline">Info-Anmeldungen ({infoRegistrations.length})</span>
-        </button>
-        <button className={TAB_CLS(tab === 'veranstaltungen')} onClick={() => setTab('veranstaltungen')}>
-          <span className="sm:hidden">Events ({events.length})</span>
-          <span className="hidden sm:inline">Veranstaltungen ({events.length})</span>
-        </button>
+        {!tokenEventId && (
+          <>
+            <button className={TAB_CLS(tab === 'info-anmeldungen')} onClick={() => setTab('info-anmeldungen')}>
+              <span className="sm:hidden">Info-Anm. ({infoRegistrations.length})</span>
+              <span className="hidden sm:inline">Info-Anmeldungen ({infoRegistrations.length})</span>
+            </button>
+            <button className={TAB_CLS(tab === 'veranstaltungen')} onClick={() => setTab('veranstaltungen')}>
+              <span className="sm:hidden">Events ({events.length})</span>
+              <span className="hidden sm:inline">Veranstaltungen ({events.length})</span>
+            </button>
+          </>
+        )}
         <button className={TAB_CLS(tab === 'anmeldungen')} onClick={() => setTab('anmeldungen')}>
           <span className="sm:hidden">Anm. ({eventRegistrations.length})</span>
           <span className="hidden sm:inline">Anmeldungen ({eventRegistrations.length})</span>
         </button>
-        <button className={TAB_CLS(tab === 'vorlagen')} onClick={() => setTab('vorlagen')}>
-          Vorlagen ({vorlagen.length})
-        </button>
+        {!tokenEventId && (
+          <button className={TAB_CLS(tab === 'vorlagen')} onClick={() => setTab('vorlagen')}>
+            Vorlagen ({vorlagen.length})
+          </button>
+        )}
       </div>
 
       {error && (
@@ -1291,7 +1324,10 @@ export default function AdminClient({
           <div className="px-6 py-4 border-b border-gray-100">
             <h2 className="font-medium text-gray-700">Anmeldungen für Veranstaltungen</h2>
           </div>
-          <EventRegistrationsTable registrations={eventRegistrations} />
+          <EventRegistrationsTable
+            registrations={eventRegistrations}
+            lockedEventId={tokenEventId}
+          />
         </div>
       )}
 
