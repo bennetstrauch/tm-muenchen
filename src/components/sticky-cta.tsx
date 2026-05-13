@@ -45,7 +45,7 @@ export default function StickyCta() {
           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A5C3D7] focus-visible:ring-offset-2
         "
       >
-        {hero.cta}
+        {ctaHref === "#anmeldung" ? "Nächste Termine" : hero.cta}
         <span aria-hidden="true">→</span>
       </a>
     </div>
