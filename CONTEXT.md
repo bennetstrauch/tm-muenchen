@@ -58,3 +58,17 @@ Two root causes for low conversion from Instagram ads:
 - **Friction gap (B):** Visitors don't know what happens when they sign up; Infoabend format is never explained; CTA unclear
 
 Both apply. B is likely the bigger factor.
+
+## Leiter-Benachrichtigung
+Automatic notification email sent to event leader(s) when a new Veranstaltung registration comes in. Triggered in `register-event/route.ts`. Host email resolved via TMW API first-name lookup (hosts field contains first names e.g. "Bennet, Malena"). Non-matched names silently skipped.
+
+Email structure: greeting with leader's first name → registrant details (name, email, phone, TM-Lehrer) → Magic-Link button → sign-off "Dein TM-München-IT-TEAM 😉"
+
+## Magic Link
+A time-limited, event-scoped admin access token embedded in the Leiter-Benachrichtigung email. Allows the recipient to view registrations for one specific event without logging in.
+
+- Format: HMAC-SHA256 token (payload: eventId + expiry timestamp; secret from env `ADMIN_TOKEN_SECRET`)
+- Expiry: 30 days after the event date
+- URL: `/admin?tab=anmeldungen&event=<eventId>&token=<token>`
+- Scope: read-only, single event — other admin tabs still require normal login
+- If token is expired or invalid: show login prompt
