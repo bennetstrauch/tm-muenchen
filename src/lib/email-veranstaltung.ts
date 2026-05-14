@@ -103,14 +103,45 @@ export function buildEventConfirmationHtml(p: EventEmailParams): string {
   return emailWrapper(`Bestätigung: ${p.eventTitle}`, body);
 }
 
-export function buildEventReminderHtml(p: EventEmailParams): string {
+export function buildCustomEmailHtml(name: string, body: string): string {
+  const paragraphs = body
+    .split(/\n\n+/)
+    .map(p => p.trim())
+    .filter(Boolean)
+    .map(p => `<p style="margin:0 0 16px 0;">${p.replace(/\n/g, '<br>')}</p>`)
+    .join('\n');
+
+  const content = `
+  <tr>
+    <td style="padding:20px;background:#ffffff;font-size:16px;line-height:1.7;color:#555;">
+      <p style="margin:0 0 20px 0;">Hallo ${name},</p>
+      ${paragraphs}
+      <p style="margin:28px 0 0;font-size:16px;">
+        Herzliche Grüße,<br>
+        <span style="color:#BCA075;">TM-Center München</span>
+      </p>
+    </td>
+  </tr>
+  ${footerBlock()}`;
+
+  return emailWrapper('Nachricht vom TM-Center München', content);
+}
+
+export function buildEventReminderHtml(p: EventEmailParams, customBody?: string): string {
+  const introText = customBody
+    ? customBody
+        .split(/\n\n+/)
+        .map(s => s.trim())
+        .filter(Boolean)
+        .map(s => `<p style="margin:0 0 16px 0;">${s.replace(/\n/g, '<br>')}</p>`)
+        .join('\n')
+    : `<p style="margin:0 0 24px 0;">wir möchten dich an deine Anmeldung erinnern:</p>`;
+
   const body = `
   <tr>
     <td style="padding:20px;background:#ffffff;font-size:16px;line-height:1.6;">
       <p style="margin:0 0 20px 0;">Hallo ${p.name},</p>
-      <p style="margin:0 0 24px 0;">
-        wir möchten dich an deine Anmeldung erinnern:
-      </p>
+      ${introText}
       ${eventBox(p)}
       ${p.isOnline && p.onlineLink ? onlineLinkBlock(p.onlineLink, '24px 0 16px') : ''}
       <p style="margin:0 0 20px 0;font-size:15px;color:#777;line-height:1.7;">

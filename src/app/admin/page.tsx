@@ -6,6 +6,7 @@ import { getRegistrations } from '@/lib/sheets';
 import { getAllVeranstaltungen, getEventRegistrations } from '@/lib/veranstaltungen';
 import { getAllVorlagen } from '@/lib/vorlagen';
 import { verifyToken } from '@/lib/admin-token';
+import { getEmailActions } from '@/lib/email-actions';
 import AdminClient from './admin-client';
 
 export const metadata: Metadata = {
@@ -47,11 +48,12 @@ export default async function AdminPage({
     }
 
     // Valid token: load data and render in token-scoped mode
-    const [infoRegistrations, events, eventRegistrations, vorlagen] = await Promise.all([
+    const [infoRegistrations, events, eventRegistrations, vorlagen, emailActions] = await Promise.all([
       getRegistrations().catch(() => []),
       getAllVeranstaltungen().catch(() => []),
       getEventRegistrations().catch(() => []),
       getAllVorlagen().catch(() => []),
+      getEmailActions().catch(() => []),
     ]);
 
     return (
@@ -72,7 +74,9 @@ export default async function AdminPage({
               initialEvents={events}
               eventRegistrations={eventRegistrations}
               initialVorlagen={vorlagen}
+              initialEmailActions={emailActions}
               tokenEventId={eventParam}
+              tokenHeader={tokenParam}
             />
           </Suspense>
         </div>
@@ -88,11 +92,12 @@ export default async function AdminPage({
     redirect('/admin/login');
   }
 
-  const [infoRegistrations, events, eventRegistrations, vorlagen] = await Promise.all([
+  const [infoRegistrations, events, eventRegistrations, vorlagen, emailActions] = await Promise.all([
     getRegistrations().catch(() => []),
     getAllVeranstaltungen().catch(() => []),
     getEventRegistrations().catch(() => []),
     getAllVorlagen().catch(() => []),
+    getEmailActions().catch(() => []),
   ]);
 
   return (
@@ -125,6 +130,7 @@ export default async function AdminPage({
             initialEvents={events}
             eventRegistrations={eventRegistrations}
             initialVorlagen={vorlagen}
+            initialEmailActions={emailActions}
           />
         </Suspense>
 

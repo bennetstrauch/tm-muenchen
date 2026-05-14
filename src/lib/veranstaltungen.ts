@@ -50,6 +50,10 @@ export type Veranstaltung = {
   slug?: string;
   vorlageId?: string;
   endTime?: string;          // "21:00" — optional end time for calendar
+  reminderSubject1?: string;
+  reminderBody1?: string;
+  reminderSubject2?: string;
+  reminderBody2?: string;
 };
 
 export type EventRegistration = {
@@ -105,6 +109,10 @@ function rowToVeranstaltung(row: string[]): Veranstaltung {
     slug: row[21] || undefined,
     vorlageId: row[22] || undefined,
     endTime: row[23] || undefined,
+    reminderSubject1: row[24] || undefined,
+    reminderBody1: row[25] || undefined,
+    reminderSubject2: row[26] || undefined,
+    reminderBody2: row[27] || undefined,
   };
 }
 
@@ -134,6 +142,10 @@ function veranstaltungToRow(v: Veranstaltung): string[] {
     v.slug ?? '',
     v.vorlageId ?? '',
     v.endTime ?? '',
+    v.reminderSubject1 ?? '',
+    v.reminderBody1 ?? '',
+    v.reminderSubject2 ?? '',
+    v.reminderBody2 ?? '',
   ];
 }
 

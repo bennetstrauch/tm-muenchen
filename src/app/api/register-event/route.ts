@@ -115,8 +115,8 @@ export async function POST(request: Request) {
       ? resend.emails.send({
           from: 'TM München <noreply@tm-muenchen.de>',
           to: email,
-          subject: `Erinnerung: ${eventTitle} – ${eventDate}`,
-          html: buildEventReminderHtml(params),
+          subject: event?.reminderSubject1 || `Erinnerung: ${eventTitle} – ${eventDate}`,
+          html: buildEventReminderHtml(params, event?.reminderBody1),
           scheduledAt: r1,
         })
       : Promise.resolve(),
@@ -125,8 +125,8 @@ export async function POST(request: Request) {
       ? resend.emails.send({
           from: 'TM München <noreply@tm-muenchen.de>',
           to: email,
-          subject: `Erinnerung: ${eventTitle} – ${eventDate}`,
-          html: buildEventReminderHtml(params),
+          subject: event?.reminderSubject2 || `Erinnerung: ${eventTitle} – ${eventDate}`,
+          html: buildEventReminderHtml(params, event?.reminderBody2),
           scheduledAt: r2,
         })
       : Promise.resolve(),

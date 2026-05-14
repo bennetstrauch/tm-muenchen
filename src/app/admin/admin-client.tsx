@@ -5,10 +5,12 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import type { Registration } from '@/lib/sheets';
 import type { Veranstaltung, EventRegistrationRecord } from '@/lib/veranstaltungen';
 import type { Vorlage } from '@/lib/vorlagen';
+import type { EmailAction } from '@/lib/email-actions';
 import { eventSlug } from '@/lib/format';
 import InfoRegistrationsTable from './registrations-table';
+import EmailActionsTab from './email-tab';
 
-type Tab = 'info-anmeldungen' | 'veranstaltungen' | 'anmeldungen' | 'vorlagen';
+type Tab = 'info-anmeldungen' | 'veranstaltungen' | 'anmeldungen' | 'vorlagen' | 'emails';
 
 type Mode =
   | { view: 'list' }
@@ -39,6 +41,10 @@ const EMPTY_FORM: Omit<Veranstaltung, 'id'> = {
   endTime: '',
   reminder1Hours: 24,
   reminder2Hours: 0,
+  reminderSubject1: '',
+  reminderBody1: '',
+  reminderSubject2: '',
+  reminderBody2: '',
   registrationOpen: true,
   visible: true,
   isPriority: false,
@@ -47,7 +53,7 @@ const EMPTY_FORM: Omit<Veranstaltung, 'id'> = {
   slug: '',
 };
 
-const VALID_TABS: Tab[] = ['info-anmeldungen', 'veranstaltungen', 'anmeldungen', 'vorlagen'];
+const VALID_TABS: Tab[] = ['info-anmeldungen', 'veranstaltungen', 'anmeldungen', 'vorlagen', 'emails'];
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -342,6 +348,34 @@ function EventFormFields({
         <Field label="Erinnerung 2 (Stunden vorher, 0 = keine)">
           <input type="number" min="0" className={INPUT_CLS} value={form.reminder2Hours} onChange={e => onChange('reminder2Hours', parseInt(e.target.value) || 0)} />
         </Field>
+      </div>
+
+      {(form.reminder1Hours > 0 || form.reminder2Hours > 0) && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          {form.reminder1Hours > 0 && (
+            <>
+              <Field label="Betreff Erinnerung 1 (optional)">
+                <input className={INPUT_CLS} value={form.reminderSubject1 ?? ''} onChange={e => onChange('reminderSubject1', e.target.value)} placeholder="Erinnerung: Veranstaltung – Datum" />
+              </Field>
+              <Field label="Text Erinnerung 1 (optional)">
+                <textarea className={TEXTAREA_CLS} value={form.reminderBody1 ?? ''} onChange={e => onChange('reminderBody1', e.target.value)} placeholder="Standardtext wird verwendet, wenn leer." />
+              </Field>
+            </>
+          )}
+          {form.reminder2Hours > 0 && (
+            <>
+              <Field label="Betreff Erinnerung 2 (optional)">
+                <input className={INPUT_CLS} value={form.reminderSubject2 ?? ''} onChange={e => onChange('reminderSubject2', e.target.value)} placeholder="Erinnerung: Veranstaltung – Datum" />
+              </Field>
+              <Field label="Text Erinnerung 2 (optional)">
+                <textarea className={TEXTAREA_CLS} value={form.reminderBody2 ?? ''} onChange={e => onChange('reminderBody2', e.target.value)} placeholder="Standardtext wird verwendet, wenn leer." />
+              </Field>
+            </>
+          )}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <Field label="Online-Link (optional)">
           <input className={INPUT_CLS} value={form.onlineLink} onChange={e => onChange('onlineLink', e.target.value)} />
         </Field>
@@ -880,27 +914,39 @@ export default function AdminClient({
   initialEvents,
   eventRegistrations,
   initialVorlagen,
+  initialEmailActions,
   tokenEventId,
+  tokenHeader,
 }: {
   infoRegistrations: Registration[];
   initialEvents: Veranstaltung[];
   eventRegistrations: EventRegistrationRecord[];
   initialVorlagen: Vorlage[];
+  initialEmailActions: EmailAction[];
   tokenEventId?: string;
+  tokenHeader?: string;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // In token-scoped mode, always show the 'anmeldungen' tab and disallow switching
   const rawTab = searchParams.get('tab');
+  const SCOPED_TABS: Tab[] = ['anmeldungen', 'emails'];
   const tab: Tab = tokenEventId
-    ? 'anmeldungen'
+    ? (SCOPED_TABS.includes(rawTab as Tab) ? (rawTab as Tab) : 'anmeldungen')
     : VALID_TABS.includes(rawTab as Tab)
       ? (rawTab as Tab)
       : 'info-anmeldungen';
 
   function setTab(t: Tab) {
-    if (tokenEventId) return; // tab switching disabled in token-scoped mode
+    if (tokenEventId) {
+      // Only allow switching between scoped tabs in magic link mode
+      if (SCOPED_TABS.includes(t)) {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('tab', t);
+        router.replace(`?${params.toString()}`, { scroll: false });
+      }
+      return;
+    }
     router.replace(`?tab=${t}`, { scroll: false });
   }
 
@@ -1105,6 +1151,9 @@ export default function AdminClient({
         <button className={TAB_CLS(tab === 'anmeldungen')} onClick={() => setTab('anmeldungen')}>
           <span className="sm:hidden">Anm. ({eventRegistrations.length})</span>
           <span className="hidden sm:inline">Anmeldungen ({eventRegistrations.length})</span>
+        </button>
+        <button className={TAB_CLS(tab === 'emails')} onClick={() => setTab('emails')}>
+          E-Mails
         </button>
         {!tokenEventId && (
           <button className={TAB_CLS(tab === 'vorlagen')} onClick={() => setTab('vorlagen')}>
@@ -1329,6 +1378,15 @@ export default function AdminClient({
             lockedEventId={tokenEventId}
           />
         </div>
+      )}
+
+      {tab === 'emails' && (
+        <EmailActionsTab
+          initialActions={initialEmailActions}
+          events={events}
+          lockedEventId={tokenEventId}
+          tokenHeader={tokenHeader}
+        />
       )}
 
       {tab === 'vorlagen' && (
