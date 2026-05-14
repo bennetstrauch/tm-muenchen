@@ -18,7 +18,7 @@ const RECIPIENTS = [
 // ── Config ────────────────────────────────────────────────────────────────────
 
 const FROM    = 'TM-Center München <info@tm-muenchen.de>';
-const SUBJECT = 'Eintägiges Retreat – Samstag, 16. Mai 🌿';
+const SUBJECT = 'Eintägiger Retreat – Samstag, 16. Mai 🌿';
 const API_KEY = process.env.RESEND_API_KEY;
 
 if (!API_KEY) {
@@ -41,7 +41,7 @@ function buildHtml(name) {
                  font-family:Georgia,serif;font-size:17px;line-height:1.7;color:#555;">
         <p style="margin:0 0 24px 0;">Hallo ${name},</p>
         <p style="margin:0 0 20px 0;">
-          unser eintägiges Retreat findet nächste Woche Samstag,
+          unser Ein-Tages-Retreat findet diese Woche Samstag,
           am 16.&nbsp;Mai im TM-Center statt.
           Wir freuen uns schon sehr auf diesen Tag.
         </p>
@@ -63,7 +63,7 @@ function buildHtml(name) {
           </p>
           <p style="margin:0 0 6px 0;font-size:20px;font-weight:bold;
                     color:#1A3352;font-family:Georgia,serif;">
-            Eintägiges Retreat
+            Eintägiger Retreat
           </p>
           <p style="margin:0 0 4px 0;font-size:16px;font-family:Georgia,serif;color:#555;">
             <strong>Samstag, 16. Mai 2026</strong>

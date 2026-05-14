@@ -406,8 +406,8 @@ export const content = {
   },
 
   events: {
-    heading: "Nächste Infoabende",
-    subheading: "Kostenlos · unverbindlich · München & Online",
+    heading: "Dein Infoabend",
+    // subheading: "Kostenlos · unverbindlich · München & Online",
     cta: "Platz sichern",
     empty: "Aktuell keine Termine geplant. Schreib uns gerne direkt an.",
   },

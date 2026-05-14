@@ -1,8 +1,9 @@
 const contentPoints = [
-  "Was TM ist und woher sie kommt",
-  "Wie die Technik funktioniert und was sie von anderen unterscheidet",
-  "Wie TM für dich persönlich passen kann und welche Wirkung du erwarten kannst",
-  "Raum für deine persönlichen Fragen",
+  "Wie TM einzigartig ist",
+  // "Was TM ist und woher sie kommt",
+  // "Wie die Technik funktioniert und was sie von anderen unterscheidet",
+  "Wie TM für dich passt",
+  "Raum für deine Story und Fragen",
 ];
 
 const infoBoxes = [
