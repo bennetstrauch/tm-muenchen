@@ -60,7 +60,6 @@ export default function PageClient({ initialTheme, nextDates, conversionSlot }: 
       <div className="relative">
         <Hero
           headline={heroTheme.headline}
-          subtitle={heroTheme.subtitle}
           images={heroTheme.images}
           nextDates={nextDates}
           ctaHref="#infoabend"

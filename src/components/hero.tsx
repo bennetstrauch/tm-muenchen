@@ -10,20 +10,17 @@ const STRESS_FALLBACK: HeroImage[] = Array.from({ length: 18 }, (_, i) => ({ src
 
 export default function Hero({
   headline,
-  subtitle,
   images,
   nextDates,
   ctaHref,
 }: {
   headline?: string[];
-  subtitle?: string;
   images?: HeroImage[];
   nextDates?: string[];
   ctaHref?: string;
 } = {}) {
   const { hero } = content;
   const headlineLines = headline ?? ["Endlich wirklich abschalten.", "Ohne Anstrengung."];
-  const subtitleText  = subtitle  ?? "regeneriert tiefer als Schlaf";
   const imagePool     = images?.length ? images : STRESS_FALLBACK;
 
   const isFirstLoad = useRef(!heroHasAnimated);
@@ -74,7 +71,7 @@ export default function Hero({
         </div>
       </div>
 
-      {/* ── Primary CTA (middle) ──────────────────────── */}
+      {/* ── Primary CTA ───────────────────────────────── */}
       <div
         className="relative z-10 flex flex-col items-center text-center mt-[5vh] gap-3 opacity-0"
         style={{ animation: "fadeInUp 0.75s ease forwards 0.28s" }}
@@ -95,35 +92,29 @@ export default function Hero({
         </a>
 
         {nextDates && nextDates.length > 0 && (
-          <p className="text-sm text-[#1A3352]/55 tracking-wide">
-            <span className="mr-1">🗓</span>
-            Nächste Termine:{" "}
-            {nextDates.map((d, i) => (
-              <span key={d} className={i >= 2 ? "hidden sm:inline" : undefined}>
-                <span className="text-[#1A3352]/75 font-medium">{d}</span>
-                {i < nextDates.length - 1 && <span className={i === 1 ? "hidden sm:inline" : undefined}> · </span>}
-              </span>
-            ))}
+          <p className="flex items-center gap-1.5 text-sm text-[#1A3352]/55 tracking-wide">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true" className="shrink-0">
+              <rect x="0.6" y="1.6" width="11.8" height="10.8" rx="1.4" stroke="currentColor" strokeWidth="1.2"/>
+              <path d="M0.6 5.2h11.8" stroke="currentColor" strokeWidth="1.2"/>
+              <path d="M4 0.6v2M9 0.6v2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+            </svg>
+            <span>
+              Nächste Termine:{" "}
+              {nextDates.map((d, i) => (
+                <span key={d} className={i >= 2 ? "hidden sm:inline" : undefined}>
+                  <span className="text-[#1A3352]/75 font-medium">{d}</span>
+                  {i < nextDates.length - 1 && <span className={i === 1 ? "hidden sm:inline" : undefined}> · </span>}
+                </span>
+              ))}
+            </span>
           </p>
         )}
       </div>
 
       <div className="flex-1 min-h-10" />
 
-      {/* ── Brand + subtitle ──────────────────────────── */}
-      <div className="relative z-10 flex flex-col items-center text-center gap-5 pb-6">
-        <div
-          className="flex flex-col items-center gap-1.5 opacity-0 -translate-y-4"
-          style={{ animation: "fadeInUp 0.75s ease forwards 0.32s" }}
-        >
-          <span className="font-display font-semibold text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight tracking-wide">
-            Transzendentale Meditation
-          </span>
-          <span className="text-base sm:text-lg text-[#1A3352]/65 font-normal tracking-[0.06em]">
-            {subtitleText}
-          </span>
-        </div>
-
+      {/* ── Scroll affordance ─────────────────────────── */}
+      <div className="relative z-10 flex flex-col items-center pb-6">
         <a
           href={hero.learnMoreHref}
           className={`

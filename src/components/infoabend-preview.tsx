@@ -6,8 +6,7 @@ const contentPoints = [
 ];
 
 const infoBoxes = [
-  { label: "Dauer", value: "ca. 60 Minuten" },
-  { label: "Format", value: "Online oder vor Ort in München" },
+  { label: "Format", value: "30 Min. · Online" },
   { label: "Kosten", value: "Kostenlos & unverbindlich" },
 ];
 
@@ -20,44 +19,18 @@ export default function InfoabendPreview() {
     >
       <div className="section-inner">
 
-        {/* Heading block */}
-        <div className="text-center mb-10">
+        {/* Heading */}
+        <div className="text-center mb-8">
           <h2
             id="infoabend-heading"
-            className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight mb-4"
+            className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight"
           >
             So läuft der Infoabend ab
           </h2>
-          <p className="text-lg sm:text-xl text-[#BCA075] font-medium">
-            Kostenlos &nbsp;·&nbsp; Unverbindlich &nbsp;·&nbsp; ca. 60 Minuten
-          </p>
         </div>
 
-        {/* Content points */}
-        <ul className="flex flex-col gap-4 mb-10" aria-label="Inhalte des Infoabends">
-          {contentPoints.map((point) => (
-            <li key={point} className="flex items-start gap-3">
-              {/* Gold dot icon */}
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                aria-hidden="true"
-                className="shrink-0 mt-[0.2em]"
-              >
-                <circle cx="8" cy="8" r="7" stroke="#BCA075" strokeWidth="1.2" />
-                <circle cx="8" cy="8" r="3" fill="#BCA075" />
-              </svg>
-              <span className="text-base text-[#1A3352]/80 leading-relaxed">
-                {point}
-              </span>
-            </li>
-          ))}
-        </ul>
-
-        {/* Info boxes */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* Info cards — scannable facts before the agenda */}
+        <div className="grid grid-cols-2 gap-4 mb-8">
           {infoBoxes.map(({ label, value }) => (
             <div
               key={label}
@@ -77,6 +50,28 @@ export default function InfoabendPreview() {
             </div>
           ))}
         </div>
+
+        {/* Agenda bullet points */}
+        <ul className="flex flex-col gap-4" aria-label="Inhalte des Infoabends">
+          {contentPoints.map((point) => (
+            <li key={point} className="flex items-start gap-3">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                aria-hidden="true"
+                className="shrink-0 mt-[0.2em]"
+              >
+                <circle cx="8" cy="8" r="7" stroke="#BCA075" strokeWidth="1.2" />
+                <circle cx="8" cy="8" r="3" fill="#BCA075" />
+              </svg>
+              <span className="text-base text-[#1A3352]/80 leading-relaxed">
+                {point}
+              </span>
+            </li>
+          ))}
+        </ul>
 
       </div>
     </section>

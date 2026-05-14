@@ -8,14 +8,14 @@ A free, non-binding introductory session (~60 min) where people learn what TM is
 ## Page structure (confirmed)
 Rationale: convince early → remove friction + sign up in the middle → deepen for hesitant visitors late → second-chance CTA at end.
 
-1. **Hero** — emotional headline, single CTA → Infoabend
-2. **Trust-Badges** *(new)* — "✔ Persönlich unterrichtet · ✔ Einfach erlernbar · ✔ Keine Konzentration nötig · ✔ Ohne Gedanken stoppen · ✔ Von Millionen weltweit praktiziert · ✔ 400+ wissenschaftliche Studien". Zeit-Investment (20 min) NOT here. Long science claim ("meistuntersuchte Technik weltweit") belongs as headline in Wissenschaft section, not as badge.
+1. **Hero** — emotional headline ("Endlich wirklich abschalten. / Ohne Anstrengung."), single primary CTA, next dates with SVG calendar icon. No bottom brand block ("Transzendentale Meditation" + subtitle removed). "regeneriert tiefer als Schlaf" dropped from hero — belongs in WhyTM/Wissenschaft. Hero is purely benefit-led + action.
+2. **Trust-Badges** — 3 visible: "✔ Persönlich unterrichtet · ✔ Einfach und mühelos · ✔ Von Millionen weltweit praktiziert". Remaining 3 ("Keine Konzentration nötig", "Ohne Gedanken stoppen", "400+ wissenschaftliche Studien") hidden behind a plain down-arrow (no text). Arrow does NOT flip. Auto-contracts when badge strip scrolls out of viewport. Zeit-Investment (20 min) NOT here. Long science claim ("meistuntersuchte Technik weltweit") belongs as headline in Wissenschaft section, not as badge.
 3. **Für wen?** — pain-point tabs with symptom language + bullets (all except Innere Freude rewritten)
 4. **Testimonials** — real quotes
 5. **Was TM einzigartig macht** — WhyTm section
 6. **Trustpilot** — rating widget
 7. **CenterBanner** — center info
-8. **So läuft der Infoabend ab** *(new)* — directly before Termine; what TM ist, wie es funktioniert, wie TM für dich passt/wirkt, Raum für Fragen; Dauer ~60 min, online/vor Ort, kostenlos & unverbindlich
+8. **So läuft der Infoabend ab** *(new)* — directly before Termine; structure: heading → 2 info cards → bullet points. Cards: "Format" (30 Min. · Online) + "Kosten" (Kostenlos & unverbindlich). "vor Ort in München" omitted from card (visible in event listings). Orange subtitle line ("Kostenlos · Unverbindlich · ca. 60 Minuten") removed — redundant with cards. Duration updated from 60 to 30 min.
 9. **Nächste Infoabende** — signup section (id="anmeldung")
 10. **Wissenschaft & Forschung** *(new)* — static teaser; ChatGPT copy basis; CTA → Infoabend. Future: AI study search (deferred).
 11. **Teachers** — personal trust
@@ -65,10 +65,24 @@ Automatic notification email sent to event leader(s) when a new Veranstaltung re
 Email structure: greeting with leader's first name → registrant details (name, email, phone, TM-Lehrer) → Magic-Link button → sign-off "Dein TM-München-IT-TEAM 😉"
 
 ## Magic Link
-A time-limited, event-scoped admin access token embedded in the Leiter-Benachrichtigung email. Allows the recipient to view registrations for one specific event without logging in.
+A time-limited, event-scoped admin access token embedded in the Leiter-Benachrichtigung email. Allows the recipient to view registrations and manage emails for one specific event without logging in.
 
 - Format: HMAC-SHA256 token (payload: eventId + expiry timestamp; secret from env `ADMIN_TOKEN_SECRET`)
 - Expiry: 30 days after the event date
 - URL: `/admin?tab=anmeldungen&event=<eventId>&token=<token>`
-- Scope: read-only, single event — other admin tabs still require normal login
+- Scope: single event — Anmeldungen tab (read) + E-Mails tab (read + compose/send), both locked to that event. Other admin tabs still require normal login.
 - If token is expired or invalid: show login prompt
+
+## E-Mail Aktion
+A stored email sent or scheduled to all registrants of a specific Veranstaltung. Persisted in the "E-Mail Aktionen" Google Sheet tab. Two kinds exist:
+
+- **Benutzerdefiniert** — free-form email composed by an admin or Leiter. Can be sent immediately or scheduled for a future datetime.
+- **Erinnerung** — automated reminder derived from the event's `reminder1Hours` / `reminder2Hours` fields. Body text can be overridden per event (`reminderBody1`, `reminderBody2` columns in Veranstaltungen sheet). Scheduled time is calculated from event date/time minus the configured hours offset, but can be manually overridden. Upcoming reminders appear as derived (virtual) entries in the E-Mails tab; a real row is written to E-Mail Aktionen when the reminder is actually sent (sent log).
+
+Canonical term: **E-Mail Aktion** (not "E-Mail", not "Broadcast", not "Kampagne")
+
+## E-Mails Tab (Admin)
+Top-level admin tab showing all E-Mail Aktionen across all Veranstaltungen, with an event filter dropdown (same pattern as Anmeldungen tab). Displays upcoming automated Erinnerungen (derived from event fields) alongside stored custom emails and the sent log. Leiter see a scoped version via Magic Link (their event only). Entry point for composing new E-Mail Aktionen.
+
+## E-Mail Compose Form
+Shared form used for both creating and editing E-Mail Aktionen (custom and reminder overrides). Fields: Veranstaltung (locked when editing), Betreff, Nachricht (plain text, injected into TM München email template with automatic "Hallo [Name]," salutation per recipient), Sendezeit (Jetzt / Planen with datetime picker), Empfänger (read-only count). Optional preview button + mandatory preview/confirmation modal on "Jetzt senden" (server-rendered iframe showing exact email HTML).
