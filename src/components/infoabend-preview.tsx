@@ -7,7 +7,7 @@ const contentPoints = [
 ];
 
 const infoBoxes = [
-  { label: "Format", value: "30 Min. · Online" },
+  { label: "Format", value: "30 Min.\nOnline" },
   { label: "Kosten", value: "Kostenlos & unverbindlich" },
 ];
 
@@ -15,7 +15,7 @@ export default function InfoabendPreview() {
   return (
     <section
       id="infoabend"
-      className="section bg-[#FAFAF8] border-t border-[#E8E4DC]"
+      className="section bg-[#FAFAF8] border-t border-[#E8E4DC] scroll-mt-20"
       aria-labelledby="infoabend-heading"
     >
       <div className="section-inner">
@@ -45,7 +45,7 @@ export default function InfoabendPreview() {
               <p className="text-[0.6rem] tracking-[0.22em] uppercase text-[#BCA075] mb-1 font-medium">
                 {label}
               </p>
-              <p className="text-[#1A3352] text-base font-medium leading-snug">
+              <p className="text-[#1A3352] text-base font-medium leading-snug whitespace-pre-line">
                 {value}
               </p>
             </div>
