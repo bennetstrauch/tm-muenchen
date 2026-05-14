@@ -227,7 +227,6 @@ export default function Events({ events }: { events: TMEvent[] }) {
           <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight mb-3">
             {copy.heading}
           </h2>
-          <p className="text-sm text-[#3D5573] tracking-wide">{copy.subheading}</p>
         </div>
 
         {events.length === 0 ? (

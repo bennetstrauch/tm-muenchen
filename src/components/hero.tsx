@@ -35,8 +35,8 @@ export default function Hero({
       {/* ── Background ────────────────────────────────── */}
       <HeroBackground images={imagePool} />
 
-      {/* ── Off-white overlay ─────────────────────────── */}
-      <div className="absolute inset-0 bg-white/60" />
+      {/* ── Directional overlay — strong at headline, fades out below ── */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(248,245,239,.88)_0%,rgba(248,245,239,.78)_35%,rgba(248,245,239,.55)_65%,rgba(248,245,239,.35)_100%)]" />
 
       {/* ── Badge ─────────────────────────────────────── */}
       <div
@@ -53,62 +53,70 @@ export default function Hero({
         </a>
       </div>
 
-      {/* ── Headline ──────────────────────────────────── */}
-      <div
-        className="relative z-10 flex flex-col items-center text-center w-full max-w-xl mt-[calc(4vh+2rem)] sm:mt-[calc(5vh+1.5rem)] opacity-0"
-        style={{ animation: "fadeInUp 0.75s ease forwards 0.12s" }}
-      >
-        <h1 className="w-full">
-          <span className="block font-display font-medium text-[2.5rem] leading-[1.2] sm:text-[clamp(3rem,8vh,5.25rem)] text-[#1A3352]">
-            {headlineLines[0]}
-          </span>
-          <span className="block font-display font-medium italic text-[2.5rem] leading-[1.2] sm:text-[clamp(3rem,8vh,5.25rem)] text-[#1A3352]">
-            {headlineLines[1]}
-          </span>
-        </h1>
-        <div className="mt-6">
-          <div className="w-10 h-px bg-[#F0C814]" />
-        </div>
-      </div>
+      {/* ── Headline + CTA (unified block with full-width glow) ──────── */}
+      <div className="relative z-10 flex flex-col items-center w-full mt-[calc(4vh+2rem)] sm:mt-[calc(5vh+1.5rem)]">
 
-      {/* ── Primary CTA ───────────────────────────────── */}
-      <div
-        className="relative z-10 flex flex-col items-center text-center mt-[5vh] gap-3 opacity-0"
-        style={{ animation: "fadeInUp 0.75s ease forwards 0.28s" }}
-      >
-        <a
-          href={ctaHref ?? hero.ctaHref}
-          className="
-            inline-flex items-center gap-2.5
-            px-8 py-4 rounded-full
-            bg-[#F59E0B] text-[#1A3352]
-            text-[0.72rem] tracking-[0.18em] uppercase font-medium
-            whitespace-nowrap shadow-[0_4px_24px_rgba(245,158,11,0.45)]
-            transition-all duration-300
-            hover:bg-[#E08C00] hover:shadow-[0_6px_28px_rgba(245,158,11,0.55)]
-          "
+        {/* Soft glow stripe — spans full viewport width behind text */}
+        <div className="absolute -inset-x-8 -inset-y-8 bg-white/30 blur-3xl -z-10" />
+
+        {/* Headline */}
+        <div
+          className="flex flex-col items-center text-center w-full max-w-xl opacity-0"
+          style={{ animation: "fadeInUp 0.75s ease forwards 0.12s" }}
         >
-          {hero.cta}
-        </a>
-
-        {nextDates && nextDates.length > 0 && (
-          <p className="flex items-center gap-1.5 text-sm text-[#1A3352]/55 tracking-wide">
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true" className="shrink-0">
-              <rect x="0.6" y="1.6" width="11.8" height="10.8" rx="1.4" stroke="currentColor" strokeWidth="1.2"/>
-              <path d="M0.6 5.2h11.8" stroke="currentColor" strokeWidth="1.2"/>
-              <path d="M4 0.6v2M9 0.6v2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-            </svg>
-            <span>
-              Nächste Termine:{" "}
-              {nextDates.map((d, i) => (
-                <span key={d} className={i >= 2 ? "hidden sm:inline" : undefined}>
-                  <span className="text-[#1A3352]/75 font-medium">{d}</span>
-                  {i < nextDates.length - 1 && <span className={i === 1 ? "hidden sm:inline" : undefined}> · </span>}
-                </span>
-              ))}
+          <h1 className="w-full">
+            <span className="block font-display font-medium text-[2.5rem] leading-[1.2] sm:text-[clamp(3rem,8vh,5.25rem)] text-[#1A3352]">
+              {headlineLines[0]}
             </span>
-          </p>
-        )}
+            <span className="block font-display font-medium italic text-[2.5rem] leading-[1.2] sm:text-[clamp(3rem,8vh,5.25rem)] text-[#1A3352]">
+              {headlineLines[1]}
+            </span>
+          </h1>
+          <div className="mt-6">
+            <div className="w-10 h-px bg-[#F0C814]" />
+          </div>
+        </div>
+
+        {/* Primary CTA */}
+        <div
+          className="flex flex-col items-center text-center mt-[5vh] gap-3 opacity-0"
+          style={{ animation: "fadeInUp 0.75s ease forwards 0.28s" }}
+        >
+          <a
+            href={ctaHref ?? hero.ctaHref}
+            className="
+              inline-flex items-center gap-2.5
+              px-8 py-4 rounded-full
+              bg-[#F59E0B] text-[#1A3352]
+              text-[0.72rem] tracking-[0.18em] uppercase font-medium
+              whitespace-nowrap shadow-[0_4px_24px_rgba(245,158,11,0.45)]
+              transition-all duration-300
+              hover:bg-[#E08C00] hover:shadow-[0_6px_28px_rgba(245,158,11,0.55)]
+            "
+          >
+            {hero.cta}
+          </a>
+
+          {nextDates && nextDates.length > 0 && (
+            <p className="flex items-center gap-1.5 text-sm text-[#1A3352]/55 tracking-wide">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true" className="shrink-0">
+                <rect x="0.6" y="1.6" width="11.8" height="10.8" rx="1.4" stroke="currentColor" strokeWidth="1.2"/>
+                <path d="M0.6 5.2h11.8" stroke="currentColor" strokeWidth="1.2"/>
+                <path d="M4 0.6v2M9 0.6v2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+              </svg>
+              <span>
+                Nächste Termine:{" "}
+                {nextDates.map((d, i) => (
+                  <span key={d} className={i >= 2 ? "hidden sm:inline" : undefined}>
+                    <span className="text-[#1A3352]/75 font-medium">{d}</span>
+                    {i < nextDates.length - 1 && <span className={i === 1 ? "hidden sm:inline" : undefined}> · </span>}
+                  </span>
+                ))}
+              </span>
+            </p>
+          )}
+        </div>
+
       </div>
 
       <div className="flex-1 min-h-10" />
