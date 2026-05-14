@@ -15,7 +15,7 @@ export default function InfoabendPreview() {
   return (
     <section
       id="infoabend"
-      className="section bg-[#FAFAF8] border-t border-[#E8E4DC] scroll-mt-20"
+      className="section bg-[#FAFAF8] border-t border-[#E8E4DC] scroll-mt-10"
       aria-labelledby="infoabend-heading"
     >
       <div className="section-inner">
@@ -45,7 +45,7 @@ export default function InfoabendPreview() {
               <p className="text-[0.6rem] tracking-[0.22em] uppercase text-[#BCA075] mb-1 font-medium">
                 {label}
               </p>
-              <p className="text-[#1A3352] text-base font-medium leading-snug whitespace-pre-line">
+              <p className="text-[#1A3352] text-base font-medium leading-snug whitespace-pre-line sm:whitespace-normal">
                 {value}
               </p>
             </div>
