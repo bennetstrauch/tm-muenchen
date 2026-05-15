@@ -87,11 +87,11 @@ export default function Hero({
             className="
               inline-flex items-center gap-2.5
               px-8 py-4 rounded-full
-              bg-[#F59E0B] text-[#1A3352]
+              bg-[#E08D0E] text-[#1A3352]
               text-[0.72rem] tracking-[0.18em] uppercase font-medium
-              whitespace-nowrap shadow-[0_4px_24px_rgba(245,158,11,0.45)]
+              whitespace-nowrap shadow-[0_4px_22px_rgba(220,140,15,0.36)]
               transition-all duration-300
-              hover:bg-[#E08C00] hover:shadow-[0_6px_28px_rgba(245,158,11,0.55)]
+              hover:bg-[#CC7D09] hover:shadow-[0_6px_26px_rgba(220,140,15,0.46)]
             "
           >
             {hero.cta}
