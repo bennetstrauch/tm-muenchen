@@ -56,6 +56,7 @@ export default function Carousel({
   const lastReportedRef = useRef(activeIndex ?? 0);
 
   const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
 
   // ── Sync external activeIndex → animate if it differs from current ──
   useEffect(() => {
@@ -102,13 +103,17 @@ export default function Carousel({
 
   function onTouchStart(e: React.TouchEvent) {
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
   }
   function onTouchEnd(e: React.TouchEvent) {
     if (touchStartX.current === null) return;
     const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = e.changedTouches[0].clientY - (touchStartY.current ?? 0);
+    touchStartX.current = null;
+    touchStartY.current = null;
+    if (Math.abs(dy) > Math.abs(dx)) return; // vertical scroll — ignore
     if (dx < -50) next();
     else if (dx > 50) prev();
-    touchStartX.current = null;
   }
 
   // Active index to show in dots (show destination during transition)
