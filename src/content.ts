@@ -315,7 +315,7 @@ export const content = {
       {
         title: "Du willst einen praktischen Weg zur Erleuchtung",
         description:
-          "Die erste Stufe der Erleuchtung: Volkommene innere Zufriedenheit und Klarheit und das schlummert bereits in jedem von uns. Wir müssen nur wissen wie wir dorthin gelangen. TM gibt dir den Zugang auf direkte, einfache Weise. Wir erfahren unsere innerste Natur - reine Glückseligkeit. Diese Erfahrung während TM erfolgt in tiefer Stille, körperlich und geistig. Dadurch kann sich der Körper tief regenerieren und von Stressen befreien: Die Folge: Wir werden mehr un dm ehr dazu fähig die immense Freude in uns auch während des Alltags zu leben und kontinuirlich zu entfalten.  ",
+          "Die erste Stufe der Erleuchtung: Vollkommene innere Zufriedenheit und Klarheit und das schlummert bereits in jedem von uns. Wir müssen nur wissen wie wir dorthin gelangen. TM gibt dir den Zugang auf direkte, einfache Weise. Wir erfahren unsere innerste Natur - reine Glückseligkeit. Diese Erfahrung während TM erfolgt in tiefer Stille, körperlich und geistig. Dadurch kann sich der Körper tief regenerieren und von Stressen befreien: Die Folge: Wir werden mehr un dm ehr dazu fähig die immense Freude in uns auch während des Alltags zu leben und kontinuirlich zu entfalten.  ",
       },
     ],
   },
