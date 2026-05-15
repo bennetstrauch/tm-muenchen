@@ -86,3 +86,15 @@ Top-level admin tab showing all E-Mail Aktionen across all Veranstaltungen, with
 
 ## E-Mail Compose Form
 Shared form used for both creating and editing E-Mail Aktionen (custom and reminder overrides). Fields: Veranstaltung (locked when editing), Betreff, Nachricht (plain text, injected into TM München email template with automatic "Hallo [Name]," salutation per recipient), Sendezeit (Jetzt / Planen with datetime picker), Empfänger (read-only count). Optional preview button + mandatory preview/confirmation modal on "Jetzt senden" (server-rendered iframe showing exact email HTML).
+
+## Meta Pixel
+Client-side ad-conversion tracking for Instagram/Facebook campaigns. Pixel ID: `2767733383607726`.
+
+Fires three standard events:
+- `PageView` — on every page load after consent
+- `ViewContent` — when a visitor opens the Infoabend registration form (Anmelden button clicked)
+- `Lead` — when a registration is successfully submitted
+
+**Consent**: Pixel only loads after explicit opt-in via the Cookie-Banner. Consent stored in `localStorage` key `tm_cookie_consent`. Not loaded on admin pages (consistent with Vercel Analytics exclusion).
+
+**Cookie-Banner**: Custom bottom-bar component (no external CMP library). One sentence of copy + "Akzeptieren" / "Ablehnen" buttons. Styled in the site's blue/gold theme. Shown only on first visit; subsequent visits read localStorage directly.

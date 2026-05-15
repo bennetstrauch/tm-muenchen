@@ -81,6 +81,7 @@ function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => v
       }
 
       setFormState("success");
+      window.fbq?.("track", "Lead");
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : "Anmeldung fehlgeschlagen.");
       setFormState("error");
@@ -182,7 +183,10 @@ function EventRow({
           </div>
 
           <button
-            onClick={onToggle}
+            onClick={() => {
+              if (!isOpen) window.fbq?.("track", "ViewContent");
+              onToggle();
+            }}
             className="
               inline-flex items-center gap-2 flex-shrink-0
               px-6 py-3

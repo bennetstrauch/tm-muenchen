@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Lora, Plus_Jakarta_Sans, Cormorant_Garamond } from "next/font/google";
 import { headers } from "next/headers";
 import { Analytics } from "@vercel/analytics/next";
+import CookieBanner from "@/components/cookie-banner";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -39,6 +40,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="min-h-full flex flex-col">
         {children}
         {!isAdmin && <Analytics />}
+        {!isAdmin && <CookieBanner />}
       </body>
     </html>
   );
