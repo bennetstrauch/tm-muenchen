@@ -14,7 +14,7 @@ type Tab = 'info-anmeldungen' | 'veranstaltungen' | 'anmeldungen' | 'vorlagen' |
 
 type Mode =
   | { view: 'list' }
-  | { view: 'new' }
+  | { view: 'new'; initialVorlage?: Vorlage }
   | { view: 'edit'; event: Veranstaltung };
 
 type VorlagePhase =
@@ -257,6 +257,36 @@ function findConflicts(
   });
 }
 
+// ─── TimeSelect ──────────────────────────────────────────────────────────────
+
+const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
+const MINUTES = ['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'];
+const SEL_CLS = 'flex-1 border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#BCA075] bg-white';
+
+function TimeSelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const parts = value ? value.split(':') : [];
+  const hh = parts[0] || '';
+  const mm = parts[1] || '';
+
+  function update(newHh: string, newMm: string) {
+    onChange(newHh && newMm ? `${newHh}:${newMm}` : '');
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <select className={SEL_CLS} value={hh} onChange={e => update(e.target.value, mm || '00')}>
+        <option value="">HH</option>
+        {HOURS.map(h => <option key={h} value={h}>{h}</option>)}
+      </select>
+      <span className="text-gray-400 font-medium select-none">:</span>
+      <select className={SEL_CLS} value={mm} onChange={e => update(hh, e.target.value)}>
+        <option value="">MM</option>
+        {MINUTES.map(m => <option key={m} value={m}>{m}</option>)}
+      </select>
+    </div>
+  );
+}
+
 // ─── EventFormFields (shared between EventForm and VorlagenTab) ───────────────
 
 function EventFormFields({
@@ -315,11 +345,11 @@ function EventFormFields({
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-        <Field label="Uhrzeit * (HH:MM)">
-          <input type="time" className={INPUT_CLS} value={form.time} onChange={e => onChange('time', e.target.value)} />
+        <Field label="Uhrzeit *">
+          <TimeSelect value={form.time} onChange={v => onChange('time', v)} />
         </Field>
         <Field label="Ende ca. (optional)">
-          <input type="time" className={INPUT_CLS} value={form.endTime ?? ''} onChange={e => onChange('endTime', e.target.value)} />
+          <TimeSelect value={form.endTime ?? ''} onChange={v => onChange('endTime', v || undefined)} />
         </Field>
         <Field label="Ort">
           <input
@@ -667,11 +697,13 @@ function VorlagenTab({
   vorlagen,
   onUpdate,
   onDelete,
+  onCreateFromVorlage,
   events,
 }: {
   vorlagen: Vorlage[];
   onUpdate: (v: Vorlage) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
+  onCreateFromVorlage: (v: Vorlage) => void;
   events: Veranstaltung[];
 }) {
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -779,7 +811,10 @@ function VorlagenTab({
                 </p>
               </div>
               <div className="shrink-0 flex items-center gap-3 text-xs whitespace-nowrap">
-                <button onClick={() => startEdit(v)} className="text-[#BCA075] hover:underline">
+                <button onClick={() => onCreateFromVorlage(v)} className="text-[#BCA075] hover:underline">
+                  Event erstellen
+                </button>
+                <button onClick={() => startEdit(v)} className="text-gray-500 hover:underline">
                   Bearbeiten
                 </button>
                 {confirmDelete === v.id ? (
@@ -1050,6 +1085,11 @@ export default function AdminClient({
     } finally {
       setConfirmDelete(null);
     }
+  }
+
+  function handleCreateFromVorlage(v: Vorlage) {
+    setTab('veranstaltungen');
+    setMode({ view: 'new', initialVorlage: v });
   }
 
   async function handleSaveAsVorlage(v: Omit<Vorlage, 'id'>): Promise<Vorlage> {
@@ -1336,7 +1376,9 @@ export default function AdminClient({
             <>
               <h2 className="text-lg font-medium text-gray-700 mb-4">Neue Veranstaltung</h2>
               <EventForm
-                initial={EMPTY_FORM}
+                initial={mode.initialVorlage
+                  ? (({ id, name, ...data }) => ({ ...data, date: '', vorlageId: id }))(mode.initialVorlage)
+                  : EMPTY_FORM}
                 onSave={handleCreate}
                 onCancel={() => setMode({ view: 'list' })}
                 isSaving={saving}
@@ -1394,6 +1436,7 @@ export default function AdminClient({
           vorlagen={vorlagen}
           onUpdate={handleUpdateVorlageFull}
           onDelete={handleDeleteVorlage}
+          onCreateFromVorlage={handleCreateFromVorlage}
           events={events}
         />
       )}
