@@ -956,13 +956,14 @@ type WaPanelProps = {
   emailResult: { ok: boolean; msg: string } | null;
   onWhatsappOpen: () => void;
   onEmailSend: () => void;
+  onClose: () => void;
 };
 
 function WaPanel({
   event, greeting, setGreeting, freetext, setFreetext,
   signoff, setSignoff, showDesc, setShowDesc,
   marking, emailSending, emailResult,
-  onWhatsappOpen, onEmailSend,
+  onWhatsappOpen, onEmailSend, onClose,
 }: WaPanelProps) {
   const [copied, setCopied] = useState(false);
 
@@ -980,7 +981,16 @@ function WaPanel({
     });
   }
   return (
-    <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-2 space-y-3">
+    <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-2 space-y-3 relative">
+      <button
+        onClick={onClose}
+        className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors"
+        aria-label="Schließen"
+      >
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+      </button>
       <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">WhatsApp-Post</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1532,6 +1542,7 @@ export default function AdminClient({
                             emailResult={waEmailResult}
                             onWhatsappOpen={() => handleWhatsappOpen(event)}
                             onEmailSend={() => handleWaEmail(event)}
+                            onClose={() => setWaPanelId(null)}
                           />
                         )}
                       </div>
@@ -1625,6 +1636,7 @@ export default function AdminClient({
                                   emailResult={waEmailResult}
                                   onWhatsappOpen={() => handleWhatsappOpen(event)}
                                   onEmailSend={() => handleWaEmail(event)}
+                                  onClose={() => setWaPanelId(null)}
                                 />
                               </td>
                             </tr>
