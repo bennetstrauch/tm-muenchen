@@ -943,6 +943,150 @@ function EventRegistrationsTable({
   );
 }
 
+// ─── WaPanel ─────────────────────────────────────────────────────────────────
+
+type WaPanelProps = {
+  event: Veranstaltung;
+  greeting: string;     setGreeting:     (v: string) => void;
+  freetext: string;     setFreetext:     (v: string) => void;
+  signoff: string;      setSignoff:      (v: string) => void;
+  showDesc: boolean;    setShowDesc:     (v: boolean) => void;
+  marking: boolean;
+  emailSending: boolean;
+  emailResult: { ok: boolean; msg: string } | null;
+  onWhatsappOpen: () => void;
+  onEmailSend: () => void;
+};
+
+function WaPanel({
+  event, greeting, setGreeting, freetext, setFreetext,
+  signoff, setSignoff, showDesc, setShowDesc,
+  marking, emailSending, emailResult,
+  onWhatsappOpen, onEmailSend,
+}: WaPanelProps) {
+  const [copied, setCopied] = useState(false);
+
+  const preview = generateWhatsAppText(event, {
+    greeting: greeting || undefined,
+    description: showDesc ? (event.description || undefined) : undefined,
+    freetext: freetext || undefined,
+    signoff: signoff || 'Liebe Grüße',
+  });
+
+  function handleCopy() {
+    navigator.clipboard.writeText(preview).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+  return (
+    <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-2 space-y-3">
+      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">WhatsApp-Post</p>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label className="block text-xs text-gray-400 mb-1">Begrüßung (optional)</label>
+          <input
+            type="text"
+            value={greeting}
+            onChange={e => setGreeting(e.target.value)}
+            placeholder="z. B. Liebe Meditierende,"
+            className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-green-400"
+          />
+        </div>
+        <div>
+          <label className="block text-xs text-gray-400 mb-1">Grußformel</label>
+          <input
+            type="text"
+            value={signoff}
+            onChange={e => setSignoff(e.target.value)}
+            className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-green-400"
+          />
+        </div>
+      </div>
+
+      <div className="flex items-center gap-4 flex-wrap">
+        {event.description && (
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={showDesc}
+              onChange={e => setShowDesc(e.target.checked)}
+              className="h-3.5 w-3.5 rounded border-gray-300 accent-green-600 cursor-pointer"
+            />
+            <span className="text-xs text-gray-500">Kurzbeschreibung einfügen</span>
+          </label>
+        )}
+      </div>
+
+      <div>
+        <label className="block text-xs text-gray-400 mb-1">Freitext-Zusatz (optional)</label>
+        <input
+          type="text"
+          value={freetext}
+          onChange={e => setFreetext(e.target.value)}
+          placeholder="z. B. Bringt gerne Freunde mit!"
+          className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-green-400"
+        />
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-1">
+          <label className="text-xs text-gray-400">Vorschau</label>
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            {copied ? '✓ Kopiert' : 'Text kopieren'}
+          </button>
+        </div>
+        <pre className="text-xs text-gray-700 bg-white border border-gray-100 rounded p-3 whitespace-pre-wrap font-sans leading-relaxed">
+          {preview}
+        </pre>
+      </div>
+
+      <div className="flex items-center gap-3 flex-wrap">
+        <button
+          onClick={onWhatsappOpen}
+          disabled={marking}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-xs font-medium rounded hover:bg-green-700 disabled:opacity-50 transition-colors"
+        >
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 1C4.134 1 1 4.134 1 8c0 1.26.338 2.442.928 3.458L1 15l3.644-.908A6.965 6.965 0 0 0 8 15c3.866 0 7-3.134 7-7s-3.134-7-7-7z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+            <path d="M5.5 6.5c.167-.5.667-1.5 1.5-1.5.4 0 .667.333.833.667l.5 1c.083.167.083.333 0 .5L7.5 8c.333.667 1 1.333 1.667 1.667l.833-.833c.167-.167.333-.167.5 0l1 .5c.333.167.667.433.667.833 0 .833-1 1.333-1.5 1.5-1.667.5-4.167-1-5-3.167z" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          WhatsApp öffnen
+        </button>
+
+        <button
+          onClick={onEmailSend}
+          disabled={emailSending}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-600 text-xs font-medium rounded hover:bg-gray-50 disabled:opacity-50 transition-colors"
+        >
+          <svg width="13" height="13" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+            <rect x="0.75" y="0.75" width="14.5" height="10.5" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
+            <path d="M1 1.5L8 7L15 1.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+          </svg>
+          {emailSending ? 'Wird gesendet…' : 'Text als E-Mail senden'}
+        </button>
+
+        {emailResult && (
+          <span className={`text-xs ${emailResult.ok ? 'text-green-600' : 'text-red-500'}`}>
+            {emailResult.msg}
+          </span>
+        )}
+
+        {event.whatsappPostedAt && (
+          <span className="text-xs text-gray-400">
+            Gepostet: {new Date(event.whatsappPostedAt).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── AdminClient ──────────────────────────────────────────────────────────────
 
 export default function AdminClient({
@@ -1002,6 +1146,7 @@ export default function AdminClient({
   const [waFreetext, setWaFreetext] = useState('');
   const [waSignoff, setWaSignoff] = useState('Liebe Grüße');
   const [waMarking, setWaMarking] = useState(false);
+  const [waShowDesc, setWaShowDesc] = useState(false);
   const [waEmailSending, setWaEmailSending] = useState(false);
   const [waEmailResult, setWaEmailResult] = useState<{ ok: boolean; msg: string } | null>(null);
 
@@ -1010,15 +1155,12 @@ export default function AdminClient({
     setWaGreeting('');
     setWaFreetext('');
     setWaSignoff('Liebe Grüße');
+    setWaShowDesc(false);
     setWaEmailResult(null);
   }
 
   async function handleWaEmail(event: Veranstaltung) {
-    const text = generateWhatsAppText(event, {
-      greeting: waGreeting || undefined,
-      freetext: waFreetext || undefined,
-      signoff: waSignoff || 'Liebe Grüße',
-    });
+    const text = buildWaText(event);
     setWaEmailSending(true);
     setWaEmailResult(null);
     try {
@@ -1046,12 +1188,17 @@ export default function AdminClient({
     }
   }
 
-  async function handleWhatsappOpen(event: Veranstaltung) {
-    const text = generateWhatsAppText(event, {
+  function buildWaText(event: Veranstaltung) {
+    return generateWhatsAppText(event, {
       greeting: waGreeting || undefined,
+      description: waShowDesc ? (event.description || undefined) : undefined,
       freetext: waFreetext || undefined,
       signoff: waSignoff || 'Liebe Grüße',
     });
+  }
+
+  async function handleWhatsappOpen(event: Veranstaltung) {
+    const text = buildWaText(event);
     window.open(buildWhatsappUrl(text), '_blank');
     setWaMarking(true);
     try {
@@ -1240,97 +1387,6 @@ export default function AdminClient({
     setVorlagen(prev => prev.filter(v => v.id !== id));
   }
 
-  function WaPanel({ event }: { event: Veranstaltung }) {
-    const preview = generateWhatsAppText(event, {
-      greeting: waGreeting || undefined,
-      freetext: waFreetext || undefined,
-      signoff: waSignoff || 'Liebe Grüße',
-    });
-    return (
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-2 space-y-3">
-        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">WhatsApp-Post</p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs text-gray-400 mb-1">Begrüßung (optional)</label>
-            <input
-              type="text"
-              value={waGreeting}
-              onChange={e => setWaGreeting(e.target.value)}
-              placeholder="z. B. Liebe Meditierende,"
-              className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-green-400"
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-gray-400 mb-1">Grußformel</label>
-            <input
-              type="text"
-              value={waSignoff}
-              onChange={e => setWaSignoff(e.target.value)}
-              className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-green-400"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-xs text-gray-400 mb-1">Freitext-Zusatz (optional)</label>
-          <input
-            type="text"
-            value={waFreetext}
-            onChange={e => setWaFreetext(e.target.value)}
-            placeholder="z. B. Bringt gerne Freunde mit!"
-            className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-green-400"
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs text-gray-400 mb-1">Vorschau</label>
-          <pre className="text-xs text-gray-700 bg-white border border-gray-100 rounded p-3 whitespace-pre-wrap font-sans leading-relaxed">
-            {preview}
-          </pre>
-        </div>
-
-        <div className="flex items-center gap-3 flex-wrap">
-          <button
-            onClick={() => handleWhatsappOpen(event)}
-            disabled={waMarking}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-xs font-medium rounded hover:bg-green-700 disabled:opacity-50 transition-colors"
-          >
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M8 1C4.134 1 1 4.134 1 8c0 1.26.338 2.442.928 3.458L1 15l3.644-.908A6.965 6.965 0 0 0 8 15c3.866 0 7-3.134 7-7s-3.134-7-7-7z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
-              <path d="M5.5 6.5c.167-.5.667-1.5 1.5-1.5.4 0 .667.333.833.667l.5 1c.083.167.083.333 0 .5L7.5 8c.333.667 1 1.333 1.667 1.667l.833-.833c.167-.167.333-.167.5 0l1 .5c.333.167.667.433.667.833 0 .833-1 1.333-1.5 1.5-1.667.5-4.167-1-5-3.167z" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            WhatsApp öffnen
-          </button>
-
-          <button
-            onClick={() => handleWaEmail(event)}
-            disabled={waEmailSending}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-600 text-xs font-medium rounded hover:bg-gray-50 disabled:opacity-50 transition-colors"
-          >
-            <svg width="13" height="13" viewBox="0 0 16 12" fill="none" aria-hidden="true">
-              <rect x="0.75" y="0.75" width="14.5" height="10.5" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
-              <path d="M1 1.5L8 7L15 1.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-            </svg>
-            {waEmailSending ? 'Wird gesendet…' : 'Text als E-Mail senden'}
-          </button>
-
-          {waEmailResult && (
-            <span className={`text-xs ${waEmailResult.ok ? 'text-green-600' : 'text-red-500'}`}>
-              {waEmailResult.msg}
-            </span>
-          )}
-
-          {event.whatsappPostedAt && (
-            <span className="text-xs text-gray-400">
-              Gepostet: {new Date(event.whatsappPostedAt).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-            </span>
-          )}
-        </div>
-      </div>
-    );
-  }
-
   const TAB_CLS = (active: boolean) =>
     `px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
       active
@@ -1465,7 +1521,18 @@ export default function AdminClient({
                           )}
                         </div>
                         {waPanelId === event.id && (
-                          <WaPanel event={event} />
+                          <WaPanel
+                            event={event}
+                            greeting={waGreeting} setGreeting={setWaGreeting}
+                            freetext={waFreetext} setFreetext={setWaFreetext}
+                            signoff={waSignoff}   setSignoff={setWaSignoff}
+                            showDesc={waShowDesc} setShowDesc={setWaShowDesc}
+                            marking={waMarking}
+                            emailSending={waEmailSending}
+                            emailResult={waEmailResult}
+                            onWhatsappOpen={() => handleWhatsappOpen(event)}
+                            onEmailSend={() => handleWaEmail(event)}
+                          />
                         )}
                       </div>
                     ))}
@@ -1547,7 +1614,18 @@ export default function AdminClient({
                           {waPanelId === event.id && (
                             <tr key={`${event.id}-wa`}>
                               <td colSpan={4} className="px-6 pb-4">
-                                <WaPanel event={event} />
+                                <WaPanel
+                                  event={event}
+                                  greeting={waGreeting} setGreeting={setWaGreeting}
+                                  freetext={waFreetext} setFreetext={setWaFreetext}
+                                  signoff={waSignoff}   setSignoff={setWaSignoff}
+                                  showDesc={waShowDesc} setShowDesc={setWaShowDesc}
+                                  marking={waMarking}
+                                  emailSending={waEmailSending}
+                                  emailResult={waEmailResult}
+                                  onWhatsappOpen={() => handleWhatsappOpen(event)}
+                                  onEmailSend={() => handleWaEmail(event)}
+                                />
                               </td>
                             </tr>
                           )}

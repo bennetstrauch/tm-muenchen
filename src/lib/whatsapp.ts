@@ -4,6 +4,7 @@ import { formatVeranstaltungDate } from './format';
 
 type Options = {
   greeting?: string;
+  description?: string;
   freetext?: string;
   signoff?: string;
 };
@@ -13,7 +14,7 @@ export function buildWhatsappUrl(text: string): string {
 }
 
 export function generateWhatsAppText(event: Veranstaltung, options: Options = {}): string {
-  const { greeting, freetext, signoff = 'Liebe Grüße' } = options;
+  const { greeting, description, freetext, signoff = 'Liebe Grüße' } = options;
 
   const leiter = event.hosts
     .split(',')
@@ -37,6 +38,11 @@ export function generateWhatsAppText(event: Veranstaltung, options: Options = {}
   if (event.price) parts.push(event.price);
   parts.push('');
   parts.push(`Jetzt anmelden:\n${signupUrl}`);
+
+  if (description) {
+    parts.push('');
+    parts.push(description);
+  }
 
   if (freetext) {
     parts.push('');
