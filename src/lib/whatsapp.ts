@@ -37,7 +37,7 @@ export function generateWhatsAppText(event: Veranstaltung, options: Options = {}
   parts.push(`📍 ${location}`);
   if (event.price) parts.push(event.price);
   parts.push('');
-  parts.push(`Jetzt anmelden:\n${signupUrl}`);
+  parts.push(`*Jetzt anmelden:*\n${signupUrl}`);
 
   if (description) {
     parts.push('');

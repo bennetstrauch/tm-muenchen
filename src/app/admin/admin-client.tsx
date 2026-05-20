@@ -1051,7 +1051,7 @@ function WaPanel({
             {copied ? '✓ Kopiert' : 'Text kopieren'}
           </button>
         </div>
-        <pre className="text-xs text-gray-700 bg-white border border-gray-100 rounded p-3 whitespace-pre-wrap font-sans leading-relaxed">
+        <pre className="text-xs text-gray-700 bg-white border border-gray-100 rounded p-3 whitespace-pre-wrap leading-relaxed" style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", ui-sans-serif, system-ui, sans-serif' }}>
           {preview}
         </pre>
       </div>
