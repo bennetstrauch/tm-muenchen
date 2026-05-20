@@ -277,7 +277,7 @@ export const content = {
     email: email,
     emailHref: `mailto:${email}`,
     instagram: "https://www.instagram.com/muenchentranszendiert",
-    whatsappCommunity: "https://chat.whatsapp.com/L8cvH1LG3cu5aavhZkte3D",
+    whatsappCommunity: "https://chat.whatsapp.com/JyYjiLgQ7dn4ewQLedUVC4?mode=gi_t",
   },
 
   hero: {
