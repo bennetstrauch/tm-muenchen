@@ -65,7 +65,7 @@ function RegistrationForm({
   const [phone, setPhone] = useState("");
   const [tmLehrer, setTmLehrer] = useState("");
   const [datumErlernen, setDatumErlernen] = useState("");
-  const [saveProfile, setSaveProfile] = useState(false);
+  const [saveProfile, setSaveProfile] = useState(true);
 
   useEffect(() => {
     const saved = loadProfile();
@@ -75,7 +75,7 @@ function RegistrationForm({
     setPhone(saved.phone ?? "");
     setTmLehrer(saved.tmLehrer ?? "");
     setDatumErlernen(saved.datumErlernen ?? "");
-    setSaveProfile(saved.saveProfile ?? false);
+    setSaveProfile(saved.saveProfile ?? true);
   }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
