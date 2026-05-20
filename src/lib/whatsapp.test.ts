@@ -106,14 +106,14 @@ describe('generateWhatsAppText', () => {
 });
 
 describe('buildWhatsappUrl', () => {
-  it('returns a wa.me URL with the text URL-encoded', () => {
+  it('returns a web.whatsapp.com URL with the text URL-encoded', () => {
     const url = buildWhatsappUrl('Hallo Welt!');
-    expect(url).toBe('https://wa.me/?text=Hallo%20Welt!');
+    expect(url).toBe('https://web.whatsapp.com/send?text=Hallo%20Welt!');
   });
 
   it('encodes newlines and special characters', () => {
     const url = buildWhatsappUrl('Zeile 1\nZeile 2 & mehr');
-    expect(url).toContain('https://wa.me/?text=');
+    expect(url).toContain('https://web.whatsapp.com/send?text=');
     expect(url).toContain('%0A'); // newline encoded
     expect(url).toContain('Zeile%201');
   });

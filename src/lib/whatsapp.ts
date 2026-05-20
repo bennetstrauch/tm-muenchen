@@ -10,7 +10,9 @@ type Options = {
 };
 
 export function buildWhatsappUrl(text: string): string {
-  return `https://wa.me/?text=${encodeURIComponent(text)}`;
+  // web.whatsapp.com/send stays in the browser, which handles Unicode encoding correctly.
+  // wa.me on Windows routes through Shell → WhatsApp Desktop and mangles emoji to "?".
+  return `https://web.whatsapp.com/send?text=${encodeURIComponent(text)}`;
 }
 
 export function generateWhatsAppText(event: Veranstaltung, options: Options = {}): string {
