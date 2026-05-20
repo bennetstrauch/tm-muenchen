@@ -87,6 +87,64 @@ Top-level admin tab showing all E-Mail Aktionen across all Veranstaltungen, with
 ## E-Mail Compose Form
 Shared form used for both creating and editing E-Mail Aktionen (custom and reminder overrides). Fields: Veranstaltung (locked when editing), Betreff, Nachricht (plain text, injected into TM München email template with automatic "Hallo [Name]," salutation per recipient), Sendezeit (Jetzt / Planen with datetime picker), Empfänger (read-only count). Optional preview button + mandatory preview/confirmation modal on "Jetzt senden" (server-rendered iframe showing exact email HTML).
 
+## WhatsApp Community
+
+The center runs a **WhatsApp Community** (not a group) for existing meditators to receive event announcements and updates.
+
+Invite link: `https://chat.whatsapp.com/L8cvH1LG3cu5aavhZkte3D`
+
+### Where it appears on the public site
+
+- **Header (TopBar)**: WhatsApp icon shown **only on `/events`** — not on the landing page or theme pages. Instagram icon shown on all pages.
+- **`/events` page**: Standalone CTA block below the event list — "Keine Events verpassen — tritt unserer WhatsApp-Community bei."
+- **Registration success state** (after event sign-up): Always show WhatsApp join button with copy like "Ankündigungen auf WhatsApp für neue Events erhalten?" — no opt-in checkbox, just a visible CTA the user can ignore.
+
+WhatsApp tracking: no localStorage flag for "already joined" — CTA always shown, small and non-intrusive.
+
+### Admin: WhatsApp post generation
+
+In the Veranstaltungen tab, each event row has a **"WhatsApp-Post erstellen"** button. Clicking expands an inline panel (no page navigation) with:
+
+- Optional admin greeting (top, above title)
+- Pre-filled generated post text (editable)
+- Optional freetext addition (below the link)
+- Grußformel field (default: "Liebe Grüße", editable)
+- Leiter names pulled automatically from event `hosts` field
+
+Generated text format:
+```
+[Optionale Begrüßung]
+
+🧘 [Titel]
+[Untertitel, wenn vorhanden]
+
+📅 [Datum], [Uhrzeit] Uhr
+📍 [Online / Ort]
+[Preis, wenn vorhanden]
+
+Jetzt anmelden:
+tm-muenchen.de/events?open=[slug]
+
+[Freitext-Zusatz, wenn vorhanden]
+
+Liebe Grüße,
+[Leiter1], [Leiter2]
+```
+
+Two action buttons:
+1. **"WhatsApp öffnen"** — opens `wa.me/?text=[encoded]`, marks event as posted automatically on click
+2. **"Text als E-Mail senden"** — shows resolved Leiter email addresses (same lookup logic as Leiter-Benachrichtigung), sends via Resend, marks as posted on success
+
+**"Als gepostet markieren"** is automatic (no manual button). Posted status stored in Veranstaltungen Sheet as `whatsappPostedAt` column — reserved for future use (e.g. "Update schicken?" prompt when Zeit/Ort changes on a posted event — deferred).
+
+Note: WhatsApp messages are plaintext — no hidden link text possible. Event URL is always visible; use the clean slug format `tm-muenchen.de/events?open=[slug]`.
+
+## Instagram
+
+Handle: `https://www.instagram.com/muenchentranszendiert`
+
+Instagram icon shown in TopBar on **all pages** (landing page, theme variants, `/events`).
+
 ## Meta Pixel
 Client-side ad-conversion tracking for Instagram/Facebook campaigns. Pixel ID: `2767733383607726`.
 

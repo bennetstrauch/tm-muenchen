@@ -1,6 +1,22 @@
-import { updateVeranstaltung, deleteVeranstaltung, getVeranstaltungById } from '@/lib/veranstaltungen';
+import { updateVeranstaltung, deleteVeranstaltung, getVeranstaltungById, updateWhatsappPosted } from '@/lib/veranstaltungen';
 import type { Veranstaltung } from '@/lib/veranstaltungen';
 import { updateCalendarEvent, deleteCalendarEvent, isGuldeinEvent } from '@/lib/calendar';
+
+export async function PATCH(
+  request: Request,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await context.params;
+    const { whatsappPostedAt } = await request.json() as { whatsappPostedAt: string };
+    if (!whatsappPostedAt) return Response.json({ error: 'whatsappPostedAt fehlt.' }, { status: 400 });
+    await updateWhatsappPosted(id, whatsappPostedAt);
+    return Response.json({ success: true });
+  } catch (err) {
+    console.error('Admin events PATCH failed:', err);
+    return Response.json({ error: 'Fehler beim Aktualisieren.' }, { status: 500 });
+  }
+}
 
 export async function PUT(
   request: Request,

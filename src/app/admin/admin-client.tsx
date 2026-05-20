@@ -6,7 +6,8 @@ import type { Registration } from '@/lib/sheets';
 import type { Veranstaltung, EventRegistrationRecord } from '@/lib/veranstaltungen';
 import type { Vorlage } from '@/lib/vorlagen';
 import type { EmailAction } from '@/lib/email-actions';
-import { eventSlug } from '@/lib/format';
+import { eventSlug, formatVeranstaltungDate } from '@/lib/format';
+import { generateWhatsAppText, buildWhatsappUrl } from '@/lib/whatsapp';
 import InfoRegistrationsTable from './registrations-table';
 import EmailActionsTab from './email-tab';
 
@@ -995,6 +996,79 @@ export default function AdminClient({
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<string | null>(null);
 
+  // WhatsApp post panel
+  const [waPanelId, setWaPanelId] = useState<string | null>(null);
+  const [waGreeting, setWaGreeting] = useState('');
+  const [waFreetext, setWaFreetext] = useState('');
+  const [waSignoff, setWaSignoff] = useState('Liebe Grüße');
+  const [waMarking, setWaMarking] = useState(false);
+  const [waEmailSending, setWaEmailSending] = useState(false);
+  const [waEmailResult, setWaEmailResult] = useState<{ ok: boolean; msg: string } | null>(null);
+
+  function openWaPanel(event: Veranstaltung) {
+    setWaPanelId(prev => prev === event.id ? null : event.id);
+    setWaGreeting('');
+    setWaFreetext('');
+    setWaSignoff('Liebe Grüße');
+    setWaEmailResult(null);
+  }
+
+  async function handleWaEmail(event: Veranstaltung) {
+    const text = generateWhatsAppText(event, {
+      greeting: waGreeting || undefined,
+      freetext: waFreetext || undefined,
+      signoff: waSignoff || 'Liebe Grüße',
+    });
+    setWaEmailSending(true);
+    setWaEmailResult(null);
+    try {
+      const res = await fetch('/api/admin/whatsapp-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventId: event.id,
+          eventTitle: event.title,
+          hosts: event.hosts,
+          text,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Fehler beim Senden.');
+      setWaEmailResult({ ok: true, msg: `Gesendet an: ${(data.sentTo as string[]).join(', ')}` });
+      setEvents(prev => prev.map(e => e.id === event.id
+        ? { ...e, whatsappPostedAt: new Date().toISOString() }
+        : e
+      ));
+    } catch (err) {
+      setWaEmailResult({ ok: false, msg: err instanceof Error ? err.message : 'Fehler beim Senden.' });
+    } finally {
+      setWaEmailSending(false);
+    }
+  }
+
+  async function handleWhatsappOpen(event: Veranstaltung) {
+    const text = generateWhatsAppText(event, {
+      greeting: waGreeting || undefined,
+      freetext: waFreetext || undefined,
+      signoff: waSignoff || 'Liebe Grüße',
+    });
+    window.open(buildWhatsappUrl(text), '_blank');
+    setWaMarking(true);
+    try {
+      await fetch(`/api/admin/events/${event.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ whatsappPostedAt: new Date().toISOString() }),
+      });
+      setEvents(prev => prev.map(e => e.id === event.id
+        ? { ...e, whatsappPostedAt: new Date().toISOString() }
+        : e
+      ));
+    } finally {
+      setWaMarking(false);
+    }
+  }
+
   function handleCopyLink(event: Veranstaltung) {
     const url = `${window.location.origin}/events?open=${eventSlug(event)}`;
     navigator.clipboard.writeText(url);
@@ -1166,6 +1240,97 @@ export default function AdminClient({
     setVorlagen(prev => prev.filter(v => v.id !== id));
   }
 
+  function WaPanel({ event }: { event: Veranstaltung }) {
+    const preview = generateWhatsAppText(event, {
+      greeting: waGreeting || undefined,
+      freetext: waFreetext || undefined,
+      signoff: waSignoff || 'Liebe Grüße',
+    });
+    return (
+      <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-2 space-y-3">
+        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">WhatsApp-Post</p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs text-gray-400 mb-1">Begrüßung (optional)</label>
+            <input
+              type="text"
+              value={waGreeting}
+              onChange={e => setWaGreeting(e.target.value)}
+              placeholder="z. B. Liebe Meditierende,"
+              className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-green-400"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-gray-400 mb-1">Grußformel</label>
+            <input
+              type="text"
+              value={waSignoff}
+              onChange={e => setWaSignoff(e.target.value)}
+              className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-green-400"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs text-gray-400 mb-1">Freitext-Zusatz (optional)</label>
+          <input
+            type="text"
+            value={waFreetext}
+            onChange={e => setWaFreetext(e.target.value)}
+            placeholder="z. B. Bringt gerne Freunde mit!"
+            className="w-full text-xs border border-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-green-400"
+          />
+        </div>
+
+        <div>
+          <label className="block text-xs text-gray-400 mb-1">Vorschau</label>
+          <pre className="text-xs text-gray-700 bg-white border border-gray-100 rounded p-3 whitespace-pre-wrap font-sans leading-relaxed">
+            {preview}
+          </pre>
+        </div>
+
+        <div className="flex items-center gap-3 flex-wrap">
+          <button
+            onClick={() => handleWhatsappOpen(event)}
+            disabled={waMarking}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-xs font-medium rounded hover:bg-green-700 disabled:opacity-50 transition-colors"
+          >
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 1C4.134 1 1 4.134 1 8c0 1.26.338 2.442.928 3.458L1 15l3.644-.908A6.965 6.965 0 0 0 8 15c3.866 0 7-3.134 7-7s-3.134-7-7-7z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+              <path d="M5.5 6.5c.167-.5.667-1.5 1.5-1.5.4 0 .667.333.833.667l.5 1c.083.167.083.333 0 .5L7.5 8c.333.667 1 1.333 1.667 1.667l.833-.833c.167-.167.333-.167.5 0l1 .5c.333.167.667.433.667.833 0 .833-1 1.333-1.5 1.5-1.667.5-4.167-1-5-3.167z" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            WhatsApp öffnen
+          </button>
+
+          <button
+            onClick={() => handleWaEmail(event)}
+            disabled={waEmailSending}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-600 text-xs font-medium rounded hover:bg-gray-50 disabled:opacity-50 transition-colors"
+          >
+            <svg width="13" height="13" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+              <rect x="0.75" y="0.75" width="14.5" height="10.5" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
+              <path d="M1 1.5L8 7L15 1.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+            </svg>
+            {waEmailSending ? 'Wird gesendet…' : 'Text als E-Mail senden'}
+          </button>
+
+          {waEmailResult && (
+            <span className={`text-xs ${waEmailResult.ok ? 'text-green-600' : 'text-red-500'}`}>
+              {waEmailResult.msg}
+            </span>
+          )}
+
+          {event.whatsappPostedAt && (
+            <span className="text-xs text-gray-400">
+              Gepostet: {new Date(event.whatsappPostedAt).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   const TAB_CLS = (active: boolean) =>
     `px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
       active
@@ -1276,6 +1441,12 @@ export default function AdminClient({
                             {copiedId === event.id ? '✓ Kopiert' : 'Link'}
                           </button>
                           <button
+                            onClick={() => openWaPanel(event)}
+                            className={`transition-colors ${waPanelId === event.id ? 'text-green-600 font-medium' : 'text-gray-400 hover:text-green-600'}`}
+                          >
+                            WhatsApp
+                          </button>
+                          <button
                             onClick={() => setMode({ view: 'edit', event })}
                             className="text-[#BCA075] hover:underline"
                           >
@@ -1293,6 +1464,9 @@ export default function AdminClient({
                             </button>
                           )}
                         </div>
+                        {waPanelId === event.id && (
+                          <WaPanel event={event} />
+                        )}
                       </div>
                     ))}
                   </div>
@@ -1310,6 +1484,7 @@ export default function AdminClient({
                       </thead>
                       <tbody className="divide-y divide-gray-50">
                         {sortedEvents.map(event => (
+                          <>
                           <tr key={event.id} className={`hover:bg-gray-50 ${!event.visible ? 'opacity-50' : ''}`}>
                             <td className="px-6 py-4">
                               <p className="font-medium text-gray-800">{event.title}</p>
@@ -1330,6 +1505,12 @@ export default function AdminClient({
                                 title="Newsletter-Link kopieren"
                               >
                                 {copiedId === event.id ? '✓ Kopiert' : 'Link kopieren'}
+                              </button>
+                              <button
+                                onClick={() => openWaPanel(event)}
+                                className={`text-xs mr-4 transition-colors ${waPanelId === event.id ? 'text-green-600 font-medium' : 'text-gray-400 hover:text-green-600'}`}
+                              >
+                                WhatsApp
                               </button>
                               <button
                                 onClick={() => setMode({ view: 'edit', event })}
@@ -1363,6 +1544,14 @@ export default function AdminClient({
                               )}
                             </td>
                           </tr>
+                          {waPanelId === event.id && (
+                            <tr key={`${event.id}-wa`}>
+                              <td colSpan={4} className="px-6 pb-4">
+                                <WaPanel event={event} />
+                              </td>
+                            </tr>
+                          )}
+                          </>
                         ))}
                       </tbody>
                     </table>

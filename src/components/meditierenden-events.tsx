@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import type { Veranstaltung } from "@/lib/veranstaltungen";
 import { formatVeranstaltungDate, eventSlug } from "@/lib/format";
+import { content } from "@/content";
 
 const INPUT_CLS = `
   w-full border border-[#DBEAFE] rounded-md px-4 py-2.5
@@ -147,9 +148,32 @@ function RegistrationForm({
         <p className="text-[#287E1A] font-medium text-sm mb-1">
           Anmeldung erfolgreich!
         </p>
-        <p className="text-[#3D5573] text-sm">
+        <p className="text-[#3D5573] text-sm mb-5">
           Wir haben dir eine Bestätigung per E-Mail geschickt.
         </p>
+        <div className="border-t border-[#DBEAFE] pt-5">
+          <p className="text-[0.78rem] text-[#3D5573] mb-3">
+            Ankündigungen für neue Events direkt auf WhatsApp erhalten?
+          </p>
+          <a
+            href={content.contact.whatsappCommunity}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="
+              inline-flex items-center gap-2 px-5 py-2.5
+              bg-[#F0FDF4] border border-[#22C55E]/30 text-[#166534]
+              text-[0.68rem] tracking-[0.14em] uppercase font-medium rounded-full
+              transition-all duration-200
+              hover:bg-[#DCFCE7] hover:border-[#22C55E]/60
+            "
+          >
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 1C4.134 1 1 4.134 1 8c0 1.26.338 2.442.928 3.458L1 15l3.644-.908A6.965 6.965 0 0 0 8 15c3.866 0 7-3.134 7-7s-3.134-7-7-7z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+              <path d="M5.5 6.5c.167-.5.667-1.5 1.5-1.5.4 0 .667.333.833.667l.5 1c.083.167.083.333 0 .5L7.5 8c.333.667 1 1.333 1.667 1.667l.833-.833c.167-.167.333-.167.5 0l1 .5c.333.167.667.433.667.833 0 .833-1 1.333-1.5 1.5-1.667.5-4.167-1-5-3.167z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Community beitreten
+          </a>
+        </div>
       </div>
     );
   }

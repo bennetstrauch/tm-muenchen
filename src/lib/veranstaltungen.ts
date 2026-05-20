@@ -54,6 +54,7 @@ export type Veranstaltung = {
   reminderBody1?: string;
   reminderSubject2?: string;
   reminderBody2?: string;
+  whatsappPostedAt?: string;
 };
 
 export type EventRegistration = {
@@ -83,7 +84,7 @@ export function parseBool(val: string): boolean {
   return ['true', 'ja', '1', 'yes', 'x'].includes((val ?? '').toLowerCase().trim());
 }
 
-function rowToVeranstaltung(row: string[]): Veranstaltung {
+export function parseVeranstaltungRow(row: string[]): Veranstaltung {
   return {
     id: row[0] ?? '',
     title: row[1] ?? '',
@@ -113,6 +114,7 @@ function rowToVeranstaltung(row: string[]): Veranstaltung {
     reminderBody1: row[25] || undefined,
     reminderSubject2: row[26] || undefined,
     reminderBody2: row[27] || undefined,
+    whatsappPostedAt: row[28] || undefined,
   };
 }
 
@@ -162,14 +164,14 @@ async function readAllEventRows(): Promise<{ rows: string[][] }> {
 export async function getVeranstaltungById(id: string): Promise<Veranstaltung | null> {
   const { rows } = await readAllEventRows();
   const row = rows.find(r => r[0] === id);
-  return row ? rowToVeranstaltung(row) : null;
+  return row ? parseVeranstaltungRow(row) : null;
 }
 
 export async function getAllVeranstaltungen(): Promise<Veranstaltung[]> {
   const { rows } = await readAllEventRows();
   return rows
     .filter(row => row.length >= 2 && row[0])
-    .map(rowToVeranstaltung);
+    .map(parseVeranstaltungRow);
 }
 
 export async function getVeranstaltungen(): Promise<Veranstaltung[]> {
@@ -256,6 +258,24 @@ export async function deleteVeranstaltung(id: string): Promise<void> {
         },
       }],
     },
+  });
+}
+
+export async function updateWhatsappPosted(id: string, timestamp: string): Promise<void> {
+  const sheets = getSheets();
+  const res = await sheets.spreadsheets.values.get({
+    spreadsheetId: SPREADSHEET_ID,
+    range: `${EVENTS_TAB}!A:A`,
+  });
+  const col = (res.data.values ?? []) as string[][];
+  const idx = col.findIndex((row, i) => i > 0 && row[0] === id);
+  if (idx === -1) throw new Error(`Veranstaltung ${id} not found`);
+  // Column 28 = column AC (1-indexed: 29)
+  await sheets.spreadsheets.values.update({
+    spreadsheetId: SPREADSHEET_ID,
+    range: `${EVENTS_TAB}!AC${idx + 1}`,
+    valueInputOption: 'USER_ENTERED',
+    requestBody: { values: [[timestamp]] },
   });
 }
 

@@ -276,6 +276,8 @@ export const content = {
     phoneHref: "tel:+491637354836",
     email: email,
     emailHref: `mailto:${email}`,
+    instagram: "https://www.instagram.com/muenchentranszendiert",
+    whatsappCommunity: "https://chat.whatsapp.com/L8cvH1LG3cu5aavhZkte3D",
   },
 
   hero: {
