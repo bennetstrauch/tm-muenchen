@@ -107,9 +107,10 @@ export default function Hero({
               <span>
                 Nächste Termine:{" "}
                 {nextDates.map((d, i) => (
-                  <span key={d} className={i >= 2 ? "hidden sm:inline" : undefined}>
+                  // mobile: first date only; desktop (sm+): up to 2 dates
+                  <span key={d} className={i >= 1 ? "hidden sm:inline" : undefined}>
                     <span className="text-[#1A3352]/75 font-medium">{d}</span>
-                    {i < nextDates.length - 1 && <span className={i === 1 ? "hidden sm:inline" : undefined}> · </span>}
+                    {i < nextDates.length - 1 && <span className="hidden sm:inline"> · </span>}
                   </span>
                 ))}
               </span>

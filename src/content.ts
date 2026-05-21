@@ -69,7 +69,7 @@ export const themes: Record<string, Theme> = {
   schlaf: {
     slug: "schlaf", // URL: /schlaf
     label: "Schlaf",
-    headline: ["Schläfst du eigentlich?"],
+    headline: ["Schläfst du eigentlich?", "Ohne Schlafmittel. Ohne Willenskraft."],
     subtitle: "TM bringt deinem Nervensystem die Tiefenruhe, die Schlaf allein oft nicht mehr schafft.",
     images: STRESS_IMAGES,
     forWhomIndex: 0,
@@ -77,7 +77,7 @@ export const themes: Record<string, Theme> = {
   fokus: {
     slug: "fokus", // URL: /fokus
     label: "Fokus",
-    headline: ["Dein Kopf ist voll — aber nicht klar."],
+    headline: ["Dein Kopf ist voll — aber nicht klar.", "Klarheit erzwingst du nicht — sie entsteht."],
     subtitle: "TM räumt nicht auf, er lässt Ordnung von selbst entstehen: klarer Fokus, ruhigerer Geist.",
     images: STRESS_IMAGES,
     forWhomIndex: 2,
@@ -85,7 +85,7 @@ export const themes: Record<string, Theme> = {
   erschoepfung: {
     slug: "erschoepfung", // URL: /erschoepfung
     label: "Erschöpfung",
-    headline: ["Leer, obwohl du gar nichts getan hast?"],
+    headline: ["Leer, obwohl du gar nichts getan hast?", "Echte Energie. Von innen."],
     subtitle: "TM gibt dir Zugang zu echter innerer Stille — nicht als Technik, sondern als natürlicher Zustand.",
     images: STRESS_IMAGES,
     forWhomIndex: 3,
@@ -93,35 +93,14 @@ export const themes: Record<string, Theme> = {
   angst: {
     slug: "angst", // URL: /angst
     label: "Angst",
-    headline: ["Innere Unruhe, die einfach nicht aufhört?"],
+    headline: ["Innere Unruhe, die einfach nicht aufhört?", "Ohne Willenskraft. Ohne Konzentration."],
     subtitle: "TM beruhigt das Nervensystem von innen — ohne Willenskraft, ohne Konzentration.",
     images: STRESS_IMAGES,
     forWhomIndex: 0,
   },
-  // Retired themes — kept for data continuity but not in navigation
-  "innere-stille": {
-    slug: "innere-stille",
-    label: "Innere Stille",
-    headline: ["Dein Kopf wird einfach nicht still?", "Lerne, wie er wirklich zur Ruhe kommt."],
-    subtitle: "Ohne Konzentration. Ohne Gedanken stoppen.",
-    images: STRESS_IMAGES,
-    forWhomIndex: 0,
-  },
-  depression: {
-    slug: "depression",
-    label: "Depression",
-    headline: ["Wieder leicht werden.", "Ganz ohne Willenskraft."],
-    subtitle: "Tiefe Ruhe für emotionale Entlastung",
-    images: [
-      { src: "/hero/depression/1.jpg", focus: "50% 25%" },
-      { src: "/hero/stress/3.jpg", focus: "65% 50%" },
-      { src: "/hero/stress/11.jpg", focus: "70% 130%" },
-    ],
-    forWhomIndex: 3,
-  },
 };
 
-export type ThemeKey = "stress" | "innere-freude" | "schlaf" | "fokus" | "erschoepfung" | "angst" | "innere-stille" | "depression";
+export type ThemeKey = "stress" | "innere-freude" | "schlaf" | "fokus" | "erschoepfung" | "angst";
 
 // ─────────────────────────────────────────────────
 //  ERFAHRUNGSBERICHTE — Zitate von Meditierenden.
@@ -145,18 +124,7 @@ export const defaultTestimonials: Testimonial[] = [
   },
 ];
 
-const themeTestimonials: Partial<Record<string, Testimonial[]>> = {
-  // "depression2" — not mapped to the depression theme yet, preserved for later
-  depression2: [
-    {
-      quote:
-        "Man findet das Gold von innen herein und verabschiedet sich vom Müll.",
-      name: "David Lynch",
-      detail: "Filmregisseur",
-      image: "/testamonials/david_lynch_grayscale.jpg",
-    },
-  ],
-};
+const themeTestimonials: Partial<Record<ThemeKey, Testimonial[]>> = {};
 
 export function getTestimonials(themeKey: ThemeKey): Testimonial[] {
   return themeTestimonials[themeKey] ?? defaultTestimonials;
@@ -359,7 +327,7 @@ export const content = {
           "Studien zeigen, dass TM die Koordination verschiedener Gehirnbereiche verbessert. Diese integriertere Funktionsweise ist bei Spitzensportlern, Führungskräften und Kreativen dokumentiert, die TM regelmäßig praktizieren.",
       },
       {
-        title: "Stress abbauen — auch den Tiefsitzenden",
+        title: "Stress abbauen — auch den tiefsitzenden",
         short:
           "Nicht nur akuter Stress, sondern auch langfristig angesammelter Druck lässt sich durch TM abbauen. Viele berichten: weniger Angst, besserer Schlaf, mehr Resilienz.",
         expanded:

@@ -121,10 +121,13 @@ export function formatEventDate(isoDate: string): { weekday: string; date: strin
   };
 }
 
-export function formatNextDates(events: TMEvent[], count = 3): string[] {
+// Format: "Di 19, 20:00" — weekday abbrev (no dot) + day number + time.
+// Hero shows 1 date on mobile, 2 on desktop; pass count=2 to keep the array small.
+export function formatNextDates(events: TMEvent[], count = 2): string[] {
   return events.slice(0, count).map(e => {
     const d = new Date(`${e.date}T12:00:00`);
     const weekday = d.toLocaleDateString("de-DE", { weekday: "short" }).replace(".", "");
-    return `${weekday}, ${e.time}`;
+    const day = d.getDate();
+    return `${weekday} ${day}, ${e.time}`;
   });
 }
