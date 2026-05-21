@@ -14,7 +14,7 @@ function ForWhomDescription({ text }: { text: string }) {
       <ul className="space-y-1.5 mb-3">
         {bullets.map((b, i) => (
           <li key={i} className="flex gap-2 text-sm text-[#3D5573] leading-relaxed">
-            <span className="mt-1 shrink-0 w-1.5 h-1.5 rounded-full bg-[#BCA075]" />
+            <span className="mt-2 shrink-0 w-1.5 h-1.5 rounded-full bg-[#BCA075]" />
             <span>{b.replace(/^•\s*/, "")}</span>
           </li>
         ))}
