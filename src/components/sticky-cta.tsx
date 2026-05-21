@@ -1,14 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { content } from "../content";
 
 export default function StickyCta() {
   const { hero } = content;
-  const [hidden, setHidden] = useState(false);
+  const pathname = usePathname();
+  // Start hidden — hero is always visible on load/navigation
+  const [hidden, setHidden] = useState(true);
   const [ctaHref, setCtaHref] = useState<string>("#infoabend");
 
   useEffect(() => {
+    // Reset and re-attach on every navigation so we watch the new #hero element
+    setHidden(true);
     const heroEl = document.getElementById("hero");
     if (!heroEl) return;
     const heroObserver = new IntersectionObserver(
@@ -17,7 +22,7 @@ export default function StickyCta() {
     );
     heroObserver.observe(heroEl);
     return () => heroObserver.disconnect();
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
     const infoEl = document.getElementById("infoabend");

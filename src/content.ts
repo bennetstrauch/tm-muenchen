@@ -77,7 +77,7 @@ export const themes: Record<string, Theme> = {
   fokus: {
     slug: "fokus", // URL: /fokus
     label: "Fokus",
-    headline: ["Dein Kopf ist voll — aber nicht klar.", "Klarheit erzwingst du nicht — sie entsteht."],
+    headline: ["Dein Kopf ist voll, aber nicht klar?", "Klarheit erzwingst du nicht — sie entsteht."],
     subtitle: "TM räumt nicht auf, er lässt Ordnung von selbst entstehen: klarer Fokus, ruhigerer Geist.",
     images: STRESS_IMAGES,
     forWhomIndex: 2,
@@ -93,7 +93,7 @@ export const themes: Record<string, Theme> = {
   angst: {
     slug: "angst", // URL: /angst
     label: "Angst",
-    headline: ["Innere Unruhe, die einfach nicht aufhört?", "Ohne Willenskraft. Ohne Konzentration."],
+    headline: ["Innere Unruhe, endlich aufhören lassen?", "Ohne Willenskraft. Ohne Konzentration."],
     subtitle: "TM beruhigt das Nervensystem von innen — ohne Willenskraft, ohne Konzentration.",
     images: STRESS_IMAGES,
     forWhomIndex: 0,
