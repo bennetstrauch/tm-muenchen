@@ -48,6 +48,6 @@ function isValidToken(token: string | undefined): boolean {
 }
 
 export const config = {
-  // Run on all paths except Next.js internals and static files
-  matcher: ["/((?!_next/static|_next/image|favicon\\.ico).*)"],
+  // Exclude Next.js internals, static assets, and any path with a file extension
+  matcher: ["/((?!_next/static|_next/image|favicon\\.ico|.*\\..*).*)" ],
 };
