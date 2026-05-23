@@ -1,0 +1,36 @@
+name: Auto-translate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - messages/de.json
+
+permissions:
+  contents: write
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Translate delta strings
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node .github/scripts/translate.mjs
+
+      - name: Commit translations
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add messages/en.json messages/fr.json messages/es.json
+          git diff --staged --quiet && echo "No changes to commit" && exit 0
+          git commit -m "chore: auto-translate strings [skip ci]"
+          git push
