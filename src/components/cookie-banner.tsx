@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 const STORAGE_KEY = "tm_cookie_consent";
 const PIXEL_ID = "2767733383607726";
@@ -8,7 +9,6 @@ const PIXEL_ID = "2767733383607726";
 function loadPixel() {
   if (typeof window === "undefined" || window.fbq) return;
 
-  // Meta pixel bootstrap (verbatim from Meta, typed loosely to satisfy TS)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const n: any = function (...args: unknown[]) {
     n.callMethod ? n.callMethod.apply(n, args) : n.queue.push(args);
@@ -30,6 +30,7 @@ function loadPixel() {
 }
 
 export default function CookieBanner() {
+  const t = useTranslations("CookieBanner");
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -57,22 +58,20 @@ export default function CookieBanner() {
   return (
     <div className="fixed bottom-0 inset-x-0 z-50 bg-[#1A3352] text-white px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
       <p className="text-xs text-white/80 max-w-xl leading-relaxed">
-        Wir verwenden Meta Pixel, um besser zu verstehen, welche Inhalte
-        Menschen ansprechen und wie viele sich für unseren Infoabend
-        anmelden.{" "}
+        {t("text")}
       </p>
       <div className="flex items-center gap-3 flex-shrink-0">
         <button
           onClick={accept}
           className="text-[0.68rem] tracking-[0.15em] uppercase font-medium px-4 py-2 rounded-full bg-[#F59E0B] text-[#1A3352] hover:bg-[#FDE68A] transition-colors"
         >
-          Akzeptieren
+          {t("accept")}
         </button>
         <button
           onClick={decline}
           className="text-[0.68rem] tracking-[0.15em] uppercase font-medium text-white/60 hover:text-white transition-colors"
         >
-          Ablehnen
+          {t("decline")}
         </button>
       </div>
     </div>

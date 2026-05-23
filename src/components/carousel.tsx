@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import React from "react";
+import { useTranslations } from "next-intl";
 
 function ChevronLeft() {
   return (
@@ -27,9 +28,6 @@ type TransitionState = {
   phase: "setup" | "running";
 };
 
-/**
- * arrowOffsetPx — distance from the top of the slide container to the arrow center.
- */
 export default function Carousel({
   children,
   arrowOffsetPx = 110,
@@ -41,34 +39,30 @@ export default function Carousel({
   activeIndex?: number;
   onIndexChange?: (index: number) => void;
 }) {
+  const t = useTranslations("Carousel");
   const slides = React.Children.toArray(children);
   const total = slides.length;
 
   const [current, setCurrent] = useState(activeIndex ?? 0);
   const [transition, setTransition] = useState<TransitionState | null>(null);
 
-  // isFirstRender: true only during the very first render cycle.
-  // Used to play a slide-in animation on page load / theme navigation.
   const isFirstRender = useRef(true);
   useEffect(() => { isFirstRender.current = false; }, []);
 
-  // Guard against re-triggering from our own onIndexChange calls.
   const lastReportedRef = useRef(activeIndex ?? 0);
 
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
 
-  // ── Sync external activeIndex → animate if it differs from current ──
   useEffect(() => {
     if (activeIndex === undefined) return;
-    if (activeIndex === lastReportedRef.current) return; // we caused this update
-    if (transition !== null) return;                     // already animating
+    if (activeIndex === lastReportedRef.current) return;
+    if (transition !== null) return;
     lastReportedRef.current = activeIndex;
     startTransition(current, activeIndex, activeIndex > current ? "left" : "right");
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIndex]);
 
-  // ── After "setup" phase, kick off the CSS transition ──
   useEffect(() => {
     if (transition?.phase !== "setup") return;
     const id = requestAnimationFrame(() =>
@@ -91,7 +85,7 @@ export default function Carousel({
   }
 
   function goTo(i: number, direction: Direction) {
-    if (transition) return; // block during animation
+    if (transition) return;
     if (i === current) return;
     lastReportedRef.current = i;
     startTransition(current, i, direction);
@@ -111,17 +105,14 @@ export default function Carousel({
     const dy = e.changedTouches[0].clientY - (touchStartY.current ?? 0);
     touchStartX.current = null;
     touchStartY.current = null;
-    if (Math.abs(dy) > Math.abs(dx)) return; // vertical scroll — ignore
+    if (Math.abs(dy) > Math.abs(dx)) return;
     if (dx < -50) next();
     else if (dx > 50) prev();
   }
 
-  // Active index to show in dots (show destination during transition)
   const displayIndex = transition ? transition.to : current;
 
-  // ── Render the slide area ──────────────────────────────────────────
   function renderSlides() {
-    // Idle state — single slide, entry animation on first render
     if (!transition) {
       return (
         <div
@@ -134,12 +125,8 @@ export default function Carousel({
       );
     }
 
-    // Transition state — two slides side by side, translateX pushes them
     const { from, to, direction, phase } = transition;
-
-    // "left"  → new slide enters from right:  [from | to],  0% → -100%
-    // "right" → new slide enters from left:   [to | from], -100% → 0%
-    const isLeft = direction === "left";
+    const isLeft   = direction === "left";
     const leftSlide  = isLeft ? from : to;
     const rightSlide = isLeft ? to   : from;
     const startX     = isLeft ? 0    : -100;
@@ -167,7 +154,7 @@ export default function Carousel({
 
         <button
           onClick={prev}
-          aria-label="Vorherige"
+          aria-label={t("prev")}
           style={{ marginTop: arrowOffsetPx }}
           className="text-[#1A3352]/30 hover:text-[#1A3352]
                      transition-colors duration-200 focus-visible:outline-none"
@@ -186,7 +173,7 @@ export default function Carousel({
 
         <button
           onClick={next}
-          aria-label="Nächste"
+          aria-label={t("next")}
           style={{ marginTop: arrowOffsetPx }}
           className="text-[#1A3352]/30 hover:text-[#1A3352]
                      transition-colors duration-200 focus-visible:outline-none"
@@ -196,13 +183,12 @@ export default function Carousel({
 
       </div>
 
-      {/* Dots */}
       <div className="flex justify-center items-center gap-2.5 mt-6">
         {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => goTo(i, i > displayIndex ? "left" : "right")}
-            aria-label={`Slide ${i + 1} von ${total}`}
+            aria-label={t("slideLabel", { current: i + 1, total })}
             className={`rounded-full transition-all duration-300 focus-visible:outline-none ${
               i === displayIndex
                 ? "w-5 h-[5px] bg-[#1A3352]"

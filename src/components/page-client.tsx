@@ -3,19 +3,20 @@
 import { useState } from "react";
 import React from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import Hero from "./hero";
 import TrustBadges from "./trust-badges";
 import ForWhom from "./for-whom";
 import ThemeSwitcher from "./theme-switcher";
-import { themes, type ThemeKey } from "../content";
+import { themes, themeKeyToCamel, type ThemeKey } from "../content";
 
 const HERO_THEMES = Object.keys(themes) as ThemeKey[];
 
-function HeroArrow({ direction, onClick }: { direction: "left" | "right"; onClick: () => void }) {
+function HeroArrow({ direction, onClick, label }: { direction: "left" | "right"; onClick: () => void; label: string }) {
   return (
     <button
       onClick={onClick}
-      aria-label={direction === "left" ? "Vorheriges Thema" : "Nächstes Thema"}
+      aria-label={label}
       className="
         absolute top-1/2 -translate-y-1/2 z-20
         flex items-center justify-center
@@ -37,37 +38,40 @@ function HeroArrow({ direction, onClick }: { direction: "left" | "right"; onClic
 }
 
 export default function PageClient({ initialTheme, nextDates, conversionSlot }: { initialTheme: ThemeKey; nextDates?: string[]; conversionSlot?: React.ReactNode }) {
-  const router = useRouter();
+  const tNav    = useTranslations("Nav");
+  const tThemes = useTranslations("Themes");
+  const router  = useRouter();
+
   const initialTab: number = themes[initialTheme].forWhomIndex;
   const [activeTab, setActiveTab] = useState<number>(initialTab);
 
-  const heroTheme = themes[initialTheme];
+  const heroTheme      = themes[initialTheme];
   const heroThemeIndex = HERO_THEMES.indexOf(initialTheme);
+  const camelKey       = themeKeyToCamel(initialTheme);
+  const headline       = [
+    tThemes(`${camelKey}.headline0` as Parameters<typeof tThemes>[0]),
+    tThemes(`${camelKey}.headline1` as Parameters<typeof tThemes>[0]),
+  ];
 
   function navigateToTheme(key: ThemeKey) {
     const slug = themes[key].slug;
     router.push(slug ? `/${slug}` : "/", { scroll: false });
   }
 
-  function handleTabChange(index: number) {
-    setActiveTab(index);
-  }
-
   return (
     <>
-      {/* Hero with prev/next theme arrows overlaid */}
       <div className="relative">
         <Hero
-          headline={heroTheme.headline}
+          headline={headline}
           images={heroTheme.images}
           nextDates={nextDates}
           ctaHref="#infoabend"
         />
         {heroThemeIndex > 0 && (
-          <HeroArrow direction="left" onClick={() => navigateToTheme(HERO_THEMES[heroThemeIndex - 1])} />
+          <HeroArrow direction="left" label={tNav("prevTheme")} onClick={() => navigateToTheme(HERO_THEMES[heroThemeIndex - 1])} />
         )}
         {heroThemeIndex < HERO_THEMES.length - 1 && (
-          <HeroArrow direction="right" onClick={() => navigateToTheme(HERO_THEMES[heroThemeIndex + 1])} />
+          <HeroArrow direction="right" label={tNav("nextTheme")} onClick={() => navigateToTheme(HERO_THEMES[heroThemeIndex + 1])} />
         )}
       </div>
 
@@ -75,11 +79,10 @@ export default function PageClient({ initialTheme, nextDates, conversionSlot }: 
 
       {conversionSlot}
 
-      {/* ForWhom section — tab switcher sits between heading and carousel */}
       <ForWhom
         activeIndex={activeTab}
-        onActiveIndexChange={handleTabChange}
-        tabSlot={<ThemeSwitcher activeTab={activeTab} onTabChange={handleTabChange} />}
+        onActiveIndexChange={(i) => setActiveTab(i)}
+        tabSlot={<ThemeSwitcher activeTab={activeTab} onTabChange={(i) => setActiveTab(i)} />}
       />
     </>
   );

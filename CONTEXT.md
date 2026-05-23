@@ -156,3 +156,43 @@ Fires three standard events:
 **Consent**: Pixel only loads after explicit opt-in via the Cookie-Banner. Consent stored in `localStorage` key `tm_cookie_consent`. Not loaded on admin pages (consistent with Vercel Analytics exclusion).
 
 **Cookie-Banner**: Custom bottom-bar component (no external CMP library). One sentence of copy + "Akzeptieren" / "Ablehnen" buttons. Styled in the site's blue/gold theme. Shown only on first visit; subsequent visits read localStorage directly.
+
+## Sprachen (i18n)
+
+Supported locales: **DE** (source, no URL prefix), **EN** (`/en`), **FR** (`/fr`), **ES** (`/es`). Per-center configurable in Phase 2 (multi-tenancy).
+
+Locale priority on first visit: `localStorage` key `tm_locale` → `Accept-Language` browser header → `de`.
+
+URL slugs for theme pages remain German across all locales (e.g. `/en/schlaf`, not `/en/sleep`).
+
+### TM abbreviation per locale
+The abbreviation "TM" is locale-specific — every standalone "TM" string must use an i18n key:
+- DE/EN: **TM**
+- FR/ES: **MT** (Méditation Transcendantale / Meditación Trascendental)
+
+### Translation architecture
+- **Static strings**: next-intl JSON files (`/messages/de.json` is source of truth; `en.json`, `fr.json`, `es.json` are auto-generated).
+- **Translation engine**: Claude API. Follows `translation-glossary.json` for TM-specific terms.
+- **Auto-translation**: GitHub Action on push to `main` when German strings change. Detects delta vs. `de.snapshot.json`, translates only changed keys, commits back directly.
+- **Lock file**: `translation-locks.json` — keys listed here are never auto-overwritten.
+- **Dynamic content** (teacher bios, TMW API event text): translated via Claude API and persisted in Supabase `translation_cache` table (keyed by SHA-256 of source text + locale). Cache hit = no API call.
+
+### Teacher language filter
+Each teacher can have up to 4 teaching languages, stored in Supabase `teacher_languages` table (not from TMW API). When a visitor views the site in locale X, only teachers who teach in X are shown. Fallback: if no teacher matches, all teachers are shown. Teacher language assignment and per-locale bio overrides are managed in the Admin "Lehrer" tab.
+
+### Language switcher
+Globe icon in the TopBar, to the RIGHT of the hamburger menu icon (both on the left side of the header). Opens an inline dropdown of active locales. Selecting a locale navigates to the locale-prefixed URL and writes `tm_locale` to `localStorage`.
+
+### Admin tabs added for i18n
+- **Lehrer**: assign teaching languages per teacher, edit bio override per locale.
+- **Einstellungen**: choose active locales for this site, WhatsApp toggle + link, contact info.
+
+## Multi-Tenancy (Phase 2)
+
+Deployment model: single Vercel deployment, multi-tenant by hostname. Next.js middleware resolves hostname → tenant config. Design updates deploy once and affect all centers simultaneously.
+
+Tenant config stored in Supabase `tenants` table (not Google Sheets, not JSON in repo). Managed via each center's admin panel. Each center has its own admin login (hashed password in Supabase). Bennet has platform super-admin access.
+
+For Phase 1 (language feature), Einstellungen are stored as a single well-known Supabase row (`tenant = muenchen`). Phase 2 adds more rows — no schema migration needed.
+
+Centers keep their own domains (e.g. `tm-berlin.de`). No shared platform domain.

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import Carousel from "./carousel";
 import { trustpilotReviews, type TrustpilotReview } from "../content";
 
-// ── Trustpilot green stars ────────────────────────────────
 function TpStars() {
   return (
     <div className="flex gap-0.5" aria-label="5 von 5 Sternen">
@@ -21,8 +21,7 @@ function TpStars() {
   );
 }
 
-// ── "Verifiziert" badge — matches widget style ────────────
-function VerifiedBadge() {
+function VerifiedBadge({ label }: { label: string }) {
   return (
     <span className="inline-flex items-center gap-1.5 text-[0.75rem] text-[#555] underline underline-offset-2">
       <span className="inline-flex items-center justify-center w-[1.1rem] h-[1.1rem] rounded-full bg-[#555] flex-shrink-0">
@@ -30,22 +29,24 @@ function VerifiedBadge() {
           <path d="M1 3.5L3 5.5L7 1.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </span>
-      Verifiziert
+      {label}
     </span>
   );
 }
 
-// ── Single review card ────────────────────────────────────
-function ReviewCard({ review }: { review: TrustpilotReview }) {
+function ReviewCard({ review, index }: { review: TrustpilotReview; index: number }) {
+  const t = useTranslations("Trustpilot");
   const [expanded, setExpanded] = useState(false);
   const [clamped, setClamped] = useState(false);
   const textRef = useRef<HTMLParagraphElement>(null);
+
+  const title = t(`review${index}Title` as Parameters<typeof t>[0]);
+  const quote = t(`review${index}Quote` as Parameters<typeof t>[0]);
 
   useEffect(() => {
     const el = textRef.current;
     if (!el) return;
     const check = () => {
-      // Only measure when collapsed — scrollHeight > clientHeight means text is cut off
       if (!expanded) setClamped(el.scrollHeight > el.clientHeight + 1);
     };
     check();
@@ -57,43 +58,38 @@ function ReviewCard({ review }: { review: TrustpilotReview }) {
   return (
     <div className="bg-white rounded-2xl px-7 py-6">
 
-      {/* Stars + verified */}
       <div className="flex items-center justify-between mb-3">
         <TpStars />
         <a href={review.url} target="_blank" rel="noopener noreferrer">
-          <VerifiedBadge />
+          <VerifiedBadge label={t("verified")} />
         </a>
       </div>
 
-      {/* Title */}
       <a
         href={review.url}
         target="_blank"
         rel="noopener noreferrer"
         className="block font-semibold text-[#1A3352] text-base leading-snug mb-3 hover:underline"
       >
-        {review.titleDE}
+        {title}
       </a>
 
-      {/* Quote */}
       <p
         ref={textRef}
         className={`text-base text-[#3D5573] leading-relaxed ${!expanded ? "line-clamp-6" : ""}`}
       >
-        {review.quoteDE}
+        {quote}
       </p>
 
-      {/* Expand / collapse — only shown when text is actually clamped */}
       {(clamped || expanded) && (
         <button
           onClick={() => setExpanded(e => !e)}
           className="mt-2 inline-flex items-center gap-1 text-[0.7rem] tracking-[0.12em] uppercase text-[#1A3352]/50 hover:text-[#1A3352] transition-colors duration-200 focus-visible:outline-none"
         >
-          {expanded ? <>Weniger <span>↑</span></> : <>Mehr lesen <span>↓</span></>}
+          {expanded ? <>{t("collapse")} <span>↑</span></> : <>{t("readMore")} <span>↓</span></>}
         </button>
       )}
 
-      {/* Name → links to Trustpilot review */}
       <a
         href={review.url}
         target="_blank"
@@ -111,7 +107,6 @@ function ReviewCard({ review }: { review: TrustpilotReview }) {
   );
 }
 
-// ── Section ───────────────────────────────────────────────
 export default function Trustpilot({
   rating = "4,8",
   reviewCount = "8.072",
@@ -119,20 +114,20 @@ export default function Trustpilot({
   rating?: string;
   reviewCount?: string;
 }) {
+  const t = useTranslations("Trustpilot");
+
   return (
     <section className="section bg-[#EFF6FF]">
       <div className="section-inner">
 
-        {/* Heading */}
         <div className="text-center mb-10">
           <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight mb-8">
-            Was andere sagen
+            {t("heading")}
           </h2>
 
-          {/* Rating summary */}
           <div className="inline-flex flex-col items-center gap-4">
             <div className="flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#DBEAFE] bg-white">
-              <span className="text-[1rem] text-[#1A3352] font-medium">Exzellent</span>
+              <span className="text-[1rem] text-[#1A3352] font-medium">{t("ratingLabel")}</span>
               <span className="text-[#C8D8E8] text-[1rem]">|</span>
               <span className="text-[1.2rem] font-semibold tracking-tight text-[#1A1A1A]">Trustpilot</span>
             </div>
@@ -147,7 +142,7 @@ export default function Trustpilot({
                   const full = Math.floor(val);
                   const pct = Math.round((val - full) * 100);
                   return (
-                    <div className="flex gap-0.5" aria-label={`${rating} von 5 Sternen`}>
+                    <div className="flex gap-0.5" aria-label={t("starsLabel", { rating })}>
                       {[0, 1, 2, 3, 4].map(i => {
                         const gradId = `tp-star-${i}`;
                         const isPartial = i === full;
@@ -172,29 +167,27 @@ export default function Trustpilot({
                   );
                 })()}
                 <span className="text-[1rem] font-medium text-[#007A4D]">
-                  {reviewCount} verifizierte Bewertungen
+                  {t("verifiedCount", { count: reviewCount })}
                 </span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Mobile: 1 card per slide */}
         <div className="md:hidden">
           <Carousel arrowOffsetPx={80}>
             {trustpilotReviews.map((review, i) => (
-              <ReviewCard key={i} review={review} />
+              <ReviewCard key={i} review={review} index={i} />
             ))}
           </Carousel>
         </div>
 
-        {/* Desktop: 2 cards per slide */}
         <div className="hidden md:block">
           <Carousel arrowOffsetPx={80}>
             {Array.from({ length: Math.ceil(trustpilotReviews.length / 2) }, (_, i) => (
               <div key={i} className="grid grid-cols-2 gap-4">
                 {trustpilotReviews.slice(i * 2, i * 2 + 2).map((review, j) => (
-                  <ReviewCard key={j} review={review} />
+                  <ReviewCard key={j} review={review} index={i * 2 + j} />
                 ))}
               </div>
             ))}

@@ -2,12 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import Carousel from "./carousel";
 import { type TMTeacher } from "../lib/teachers";
 
 const AUTO_MS = 5000;
-
-// ── Single teacher card ───────────────────────────────────
 
 function TeacherCard({
   teacher,
@@ -18,10 +17,11 @@ function TeacherCard({
   expanded: boolean;
   onToggle: () => void;
 }) {
+  const t = useTranslations("Teachers");
+
   return (
     <div className="flex flex-col items-center text-center px-4 py-2">
 
-      {/* Round photo */}
       <div className="relative w-24 h-24 rounded-full overflow-hidden ring-2 ring-[#DBEAFE] ring-offset-2 mb-4 flex-shrink-0">
         <Image
           src={teacher.imageUrl}
@@ -33,12 +33,10 @@ function TeacherCard({
         />
       </div>
 
-      {/* Name */}
       <p className="font-semibold text-[#1A3352] text-[0.95rem] leading-snug mb-2">
         {teacher.name}
       </p>
 
-      {/* Bio — one line collapsed, full text expanded */}
       <p className={`text-sm text-[#3D5573] leading-relaxed ${!expanded ? "line-clamp-3 md:line-clamp-1" : ""}`}>
         {teacher.bio}
       </p>
@@ -47,16 +45,15 @@ function TeacherCard({
         onClick={onToggle}
         className="mt-2 inline-flex items-center gap-1 text-[0.7rem] tracking-[0.12em] uppercase text-[#1A3352]/50 hover:text-[#1A3352] transition-colors duration-200 focus-visible:outline-none"
       >
-        {expanded ? <>Weniger <span>↑</span></> : <>Mehr lesen <span>↓</span></>}
+        {expanded ? <>{t("collapse")} <span>↑</span></> : <>{t("readMore")} <span>↓</span></>}
       </button>
 
     </div>
   );
 }
 
-// ── Section ───────────────────────────────────────────────
-
 export default function Teachers({ teachers }: { teachers: TMTeacher[] }) {
+  const t = useTranslations("Teachers");
   const totalMobile  = teachers.length;
   const totalDesktop = Math.ceil(teachers.length / 3);
 
@@ -114,32 +111,30 @@ export default function Teachers({ teachers }: { teachers: TMTeacher[] }) {
 
         <div className="text-center mb-10">
           <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#3D5573] mb-4">
-            TM Center München
+            {t("eyebrow")}
           </p>
           <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight">
-            Ihre Lehrer
+            {t("heading")}
           </h2>
         </div>
 
-        {/* Mobile — 1 teacher per slide */}
         <div className="md:hidden">
           <Carousel
             activeIndex={mobileIdx}
             onIndexChange={handleMobileNav}
             arrowOffsetPx={48}
           >
-            {teachers.map(t => (
+            {teachers.map(teacher => (
               <TeacherCard
-                key={t.name}
-                teacher={t}
-                expanded={expandedName === t.name}
-                onToggle={() => handleToggle(t.name)}
+                key={teacher.name}
+                teacher={teacher}
+                expanded={expandedName === teacher.name}
+                onToggle={() => handleToggle(teacher.name)}
               />
             ))}
           </Carousel>
         </div>
 
-        {/* Desktop — 3 teachers per slide */}
         <div className="hidden md:block">
           <Carousel
             activeIndex={desktopIdx}
@@ -148,12 +143,12 @@ export default function Teachers({ teachers }: { teachers: TMTeacher[] }) {
           >
             {Array.from({ length: totalDesktop }, (_, i) => (
               <div key={i} className="grid grid-cols-3 gap-6">
-                {teachers.slice(i * 3, i * 3 + 3).map(t => (
+                {teachers.slice(i * 3, i * 3 + 3).map(teacher => (
                   <TeacherCard
-                    key={t.name}
-                    teacher={t}
-                    expanded={expandedName === t.name}
-                    onToggle={() => handleToggle(t.name)}
+                    key={teacher.name}
+                    teacher={teacher}
+                    expanded={expandedName === teacher.name}
+                    onToggle={() => handleToggle(teacher.name)}
                   />
                 ))}
               </div>

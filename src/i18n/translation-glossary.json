@@ -1,0 +1,27 @@
+{
+  "_comment": "TM-specific term mappings per locale. Used as context/instructions for the auto-translation GitHub Action.",
+  "TM": {
+    "de": "TM",
+    "en": "TM",
+    "fr": "MT",
+    "es": "MT"
+  },
+  "Transzendentale Meditation": {
+    "de": "Transzendentale Meditation",
+    "en": "Transcendental Meditation",
+    "fr": "Méditation Transcendantale",
+    "es": "Meditación Trascendental"
+  },
+  "Infoabend": {
+    "de": "Infoabend",
+    "en": "info session",
+    "fr": "séance d'introduction",
+    "es": "sesión introductoria"
+  },
+  "TM Center München": {
+    "de": "TM Center München",
+    "en": "TM Center Munich",
+    "fr": "Centre MT Munich",
+    "es": "Centro MT Múnich"
+  }
+}

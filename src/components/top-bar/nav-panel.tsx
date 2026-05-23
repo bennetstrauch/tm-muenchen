@@ -3,16 +3,17 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useNavContext } from "@/contexts/nav-context";
 
-type NavLink = { label: string; href: string; type: "anchor" | "page" };
+type NavLink = { labelKey: string; href: string; type: "anchor" | "page" };
 
 const NAV_LINKS: NavLink[] = [
-  { label: "Für wen ist TM?", href: "#fuer-wen", type: "anchor" },
-  { label: "Was TM einzigartig macht", href: "#warum-tm", type: "anchor" },
-  { label: "So funktioniert es", href: "#wie-es-funktioniert", type: "anchor" },
-  { label: "Nächste Infoabende", href: "#anmeldung", type: "anchor" },
-  { label: "Für bereits Meditierende", href: "/events", type: "page" },
+  { labelKey: "link0", href: "#fuer-wen",              type: "anchor" },
+  { labelKey: "link1", href: "#warum-tm",              type: "anchor" },
+  { labelKey: "link2", href: "#wie-es-funktioniert",   type: "anchor" },
+  { labelKey: "link3", href: "#anmeldung",             type: "anchor" },
+  { labelKey: "link4", href: "/events",                type: "page"   },
 ];
 
 const ITEM_BASE_CLS = `
@@ -44,6 +45,7 @@ const chevron = (
 );
 
 export default function NavPanel() {
+  const t = useTranslations("Nav");
   const { isOpen, setIsOpen, setPanelHeight } = useNavContext();
   const router = useRouter();
   const innerRef = useRef<HTMLDivElement>(null);
@@ -91,6 +93,7 @@ export default function NavPanel() {
         <div ref={innerRef} className="min-h-0">
           <div className="bg-white/95 backdrop-blur-md border-b border-[#1A3352]/10 shadow-[0_8px_24px_rgba(26,51,82,0.07)]">
             {NAV_LINKS.map((link, i) => {
+              const label = t(link.labelKey as Parameters<typeof t>[0]);
               const cls = `${ITEM_BASE_CLS}${i > 0 ? " border-t border-[#1A3352]/8" : ""}`;
               if (link.type === "page") {
                 return (
@@ -100,7 +103,7 @@ export default function NavPanel() {
                     onClick={() => setIsOpen(false)}
                     className={cls}
                   >
-                    {link.label}
+                    {label}
                     {chevron}
                   </Link>
                 );
@@ -111,7 +114,7 @@ export default function NavPanel() {
                   onClick={() => handleNavClick(link.href)}
                   className={cls}
                 >
-                  {link.label}
+                  {label}
                   {chevron}
                 </button>
               );

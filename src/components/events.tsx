@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { type TMEvent, formatEventDate } from "../lib/events";
 import { content } from "../content";
-
-// ── Shared styles ─────────────────────────────────────────
 
 const INPUT_CLS = `
   w-full border border-[#DBEAFE] rounded-md px-4 py-2.5
@@ -13,9 +12,8 @@ const INPUT_CLS = `
   bg-white
 `;
 
-// ── IndividualAppointment ─────────────────────────────────
-
 function IndividualAppointment() {
+  const t = useTranslations("Events");
   const { contact } = content;
   return (
     <a
@@ -35,18 +33,17 @@ function IndividualAppointment() {
           <path d="M1 6.5h14" stroke="currentColor" strokeWidth="1" />
           <path d="M5 1v3M11 1v3" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
         </svg>
-        <span className="text-sm font-medium tracking-wide">Individuellen Termin anfragen</span>
+        <span className="text-sm font-medium tracking-wide">{t("individualAppointment")}</span>
       </div>
       <span className="text-[#A5C3D7] group-hover:translate-x-0.5 transition-transform" aria-hidden="true">→</span>
     </a>
   );
 }
 
-// ── RegistrationForm ──────────────────────────────────────
-
 type FormState = "idle" | "submitting" | "success" | "error";
 
 function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => void }) {
+  const t = useTranslations("Events");
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const { weekday, date } = formatEventDate(event.date);
@@ -77,13 +74,13 @@ function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => v
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error ?? "Unbekannter Fehler");
+        throw new Error(data.error ?? t("formErrorUnknown"));
       }
 
       setFormState("success");
       window.fbq?.("track", "Lead");
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : "Anmeldung fehlgeschlagen.");
+      setErrorMsg(err instanceof Error ? err.message : t("formErrorFailed"));
       setFormState("error");
     }
   }
@@ -91,10 +88,8 @@ function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => v
   if (formState === "success") {
     return (
       <div className="py-6 px-1">
-        <p className="text-[#287E1A] font-medium text-sm mb-1">Anmeldung erfolgreich!</p>
-        <p className="text-[#3D5573] text-sm">
-          Wir haben Ihnen eine Bestätigung an Ihre E-Mail-Adresse geschickt.
-        </p>
+        <p className="text-[#287E1A] font-medium text-sm mb-1">{t("formSuccessTitle")}</p>
+        <p className="text-[#3D5573] text-sm">{t("formSuccessBody")}</p>
       </div>
     );
   }
@@ -102,11 +97,11 @@ function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => v
   return (
     <form onSubmit={handleSubmit} className="py-5 px-1">
       <div className="mb-3">
-        <input name="name" type="text" placeholder="Name *" required className={INPUT_CLS} />
+        <input name="name" type="text" placeholder={t("formName")} required className={INPUT_CLS} />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-        <input name="email" type="email" placeholder="E-Mail *" required className={INPUT_CLS} />
-        <input name="phone" type="tel" placeholder="Telefon (optional)" className={INPUT_CLS} />
+        <input name="email" type="email" placeholder={t("formEmail")} required className={INPUT_CLS} />
+        <input name="phone" type="tel" placeholder={t("formPhone")} className={INPUT_CLS} />
       </div>
 
       {formState === "error" && (
@@ -127,21 +122,19 @@ function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => v
             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A5C3D7]
           "
         >
-          {formState === "submitting" ? "Wird gesendet…" : "Jetzt anmelden"}
+          {formState === "submitting" ? t("formSubmitting") : t("formSubmit")}
         </button>
         <button
           type="button"
           onClick={onClose}
           className="text-[0.68rem] tracking-[0.12em] uppercase text-[#3D5573] hover:text-[#1A3352] transition-colors"
         >
-          Abbrechen
+          {t("formCancel")}
         </button>
       </div>
     </form>
   );
 }
-
-// ── EventRow ──────────────────────────────────────────────
 
 function EventRow({
   event,
@@ -152,15 +145,14 @@ function EventRow({
   isOpen: boolean;
   onToggle: () => void;
 }) {
+  const t = useTranslations("Events");
   const { weekday, date } = formatEventDate(event.date);
-  const { events: copy } = content;
   const isPresenz = event.type === "Präsenz";
 
   return (
     <li className="py-7">
       <div className="flex flex-col gap-2">
 
-        {/* Top row: date+meta left, button right */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col gap-1 min-w-0">
             <div className="flex items-baseline gap-2 flex-wrap">
@@ -197,11 +189,10 @@ function EventRow({
               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B] focus-visible:ring-offset-2
             "
           >
-            {isOpen ? "Schließen ×" : copy.cta}
+            {isOpen ? t("close") : t("cta")}
           </button>
         </div>
 
-        {/* Location below — full width, no squeezing */}
         {isPresenz && (
           <span className="text-[0.75rem] text-[#3D5573]">{event.location}</span>
         )}
@@ -213,10 +204,8 @@ function EventRow({
   );
 }
 
-// ── Events (page section) ─────────────────────────────────
-
 export default function Events({ events }: { events: TMEvent[] }) {
-  const { events: copy } = content;
+  const t = useTranslations("Events");
   const [openIdx, setOpenIdx] = useState<number | null>(null);
 
   return (
@@ -224,12 +213,8 @@ export default function Events({ events }: { events: TMEvent[] }) {
       <div className="section-inner">
 
         <div className="text-center mb-6">
-          {/* <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#3D5573] mb-4">
-            Transzendentale Meditation · München
-
-          </p> */}
           <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight mb-3">
-            {copy.heading}
+            {t("heading")}
           </h2>
         </div>
 

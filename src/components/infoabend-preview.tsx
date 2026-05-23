@@ -1,17 +1,20 @@
-const contentPoints = [
-  "Wie TM einzigartig ist",
-  // "Was TM ist und woher sie kommt",
-  // "Wie die Technik funktioniert und was sie von anderen unterscheidet",
-  "Wie TM für dich passt",
-  "Raum für deine Story und Fragen",
-];
+import { getTranslations } from "next-intl/server";
 
-const infoBoxes = [
-  { label: "Format", value: "30 Min.\nOnline" },
-  { label: "Kosten", value: "Kostenlos & unverbindlich" },
-];
+const POINT_COUNT = 3;
+const BOX_COUNT = 2;
 
-export default function InfoabendPreview() {
+export default async function InfoabendPreview() {
+  const t = await getTranslations("InfoabendPreview");
+
+  const infoBoxes = Array.from({ length: BOX_COUNT }, (_, i) => ({
+    label: t(`box${i}Label` as Parameters<typeof t>[0]),
+    value: t(`box${i}Value` as Parameters<typeof t>[0]),
+  }));
+
+  const contentPoints = Array.from({ length: POINT_COUNT }, (_, i) =>
+    t(`point${i}` as Parameters<typeof t>[0])
+  );
+
   return (
     <section
       id="infoabend"
@@ -20,17 +23,15 @@ export default function InfoabendPreview() {
     >
       <div className="section-inner">
 
-        {/* Heading */}
         <div className="text-center mb-8">
           <h2
             id="infoabend-heading"
             className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight"
           >
-            So läuft der Infoabend ab
+            {t("heading")}
           </h2>
         </div>
 
-        {/* Info cards — scannable facts before the agenda */}
         <div className="grid grid-cols-2 gap-4 mb-8">
           {infoBoxes.map(({ label, value }) => (
             <div
@@ -52,7 +53,6 @@ export default function InfoabendPreview() {
           ))}
         </div>
 
-        {/* Agenda bullet points */}
         <ul className="flex flex-col gap-4" aria-label="Inhalte des Infoabends">
           {contentPoints.map((point) => (
             <li key={point} className="flex items-start gap-3">

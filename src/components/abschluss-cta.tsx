@@ -1,4 +1,8 @@
-export default function AbschlussCta() {
+import { getTranslations } from "next-intl/server";
+
+export default async function AbschlussCta() {
+  const t = await getTranslations("AbschlussCta");
+
   return (
     <section className="section bg-[#1A3352]" aria-labelledby="abschluss-cta-heading">
       <div className="section-inner">
@@ -8,10 +12,10 @@ export default function AbschlussCta() {
             id="abschluss-cta-heading"
             className="font-display font-light text-[2rem] sm:text-[2.75rem] text-white leading-tight mb-6"
           >
-            Finde heraus, ob TM zu dir passt
+            {t("heading")}
           </h2>
           <p className="text-base text-white/70 leading-relaxed max-w-md mx-auto mb-10">
-            Komm zu einem kostenlosen Infoabend — ohne Verpflichtung.
+            {t("body")}
           </p>
           <a
             href="#anmeldung"
@@ -25,7 +29,7 @@ export default function AbschlussCta() {
               hover:bg-[#8BAAC3] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(165,195,215,0.3)]
             "
           >
-            Jetzt Platz sichern
+            {t("cta")}
             <span aria-hidden="true">→</span>
           </a>
         </div>

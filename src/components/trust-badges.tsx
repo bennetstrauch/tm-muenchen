@@ -1,18 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 
-const VISIBLE_BADGES = [
-  "Persönlich unterrichtet",
-  "Einfach und mühelos",
-  "Von Millionen weltweit praktiziert",
-];
-
-const HIDDEN_BADGES = [
-  "Keine Konzentration nötig",
-  "Ohne Gedanken stoppen",
-  "400+ wissenschaftliche Studien",
-];
+const VISIBLE_COUNT = 3;
+const HIDDEN_COUNT  = 3;
 
 function CheckIcon() {
   return (
@@ -33,8 +25,16 @@ function Badge({ label }: { label: string }) {
 }
 
 export default function TrustBadges() {
+  const t = useTranslations("TrustBadges");
   const [expanded, setExpanded] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  const visibleBadges = Array.from({ length: VISIBLE_COUNT }, (_, i) =>
+    t(`badge${i}` as Parameters<typeof t>[0])
+  );
+  const hiddenBadges = Array.from({ length: HIDDEN_COUNT }, (_, i) =>
+    t(`badge${VISIBLE_COUNT + i}` as Parameters<typeof t>[0])
+  );
 
   useEffect(() => {
     const el = ref.current;
@@ -52,17 +52,17 @@ export default function TrustBadges() {
       <div className="px-5 md:px-0">
         <ul
           className="flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-2"
-          aria-label="Merkmale von Transzendentaler Meditation"
+          aria-label={t("ariaLabel")}
         >
-          {VISIBLE_BADGES.map((label) => <Badge key={label} label={label} />)}
-          {expanded && HIDDEN_BADGES.map((label) => <Badge key={label} label={label} />)}
+          {visibleBadges.map((label) => <Badge key={label} label={label} />)}
+          {expanded && hiddenBadges.map((label) => <Badge key={label} label={label} />)}
         </ul>
 
         <div className="flex justify-center mt-3">
           <button
             onClick={() => setExpanded((e) => !e)}
             aria-expanded={expanded}
-            aria-label={expanded ? "Weniger anzeigen" : "Mehr anzeigen"}
+            aria-label={expanded ? t("showLess") : t("showMore")}
             className="text-[#1A3352]/35 hover:text-[#1A3352]/60 transition-colors p-1"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">

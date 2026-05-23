@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { forWhomTabs } from "../content";
+import { useTranslations } from "next-intl";
+
+const TAB_COUNT = 5;
 
 function getVisibleSlots(activeTab: number, total: number): [number, number, number] {
   const prev = (activeTab - 1 + total) % total;
@@ -16,16 +18,15 @@ export default function ThemeSwitcher({
   activeTab: number;
   onTabChange: (index: number) => void;
 }) {
+  const t = useTranslations("ForWhom");
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const total = forWhomTabs.length;
+  const total = TAB_COUNT;
   const visibleSlots = getVisibleSlots(activeTab, total);
-  const hiddenTabs = forWhomTabs
-    .map((tab, i) => ({ ...tab, index: i }))
-    .filter((_, i) => !visibleSlots.includes(i));
+  const allIndexes = Array.from({ length: total }, (_, i) => i);
+  const hiddenIndexes = allIndexes.filter((i) => !visibleSlots.includes(i));
 
-  // Close dropdown on outside click
   useEffect(() => {
     if (!open) return;
     function handler(e: MouseEvent) {
@@ -41,7 +42,7 @@ export default function ThemeSwitcher({
     <div className="flex items-center justify-center gap-0 sm:gap-1 mb-10">
 
       {visibleSlots.map((slotIndex, i) => {
-        const tab = forWhomTabs[slotIndex];
+        const label    = t(`tab${slotIndex}` as Parameters<typeof t>[0]);
         const isActive = slotIndex === activeTab;
         return (
           <div key={slotIndex} className="flex items-center gap-1">
@@ -60,20 +61,19 @@ export default function ThemeSwitcher({
                 }
               `}
             >
-              {tab.label}
+              {label}
             </button>
           </div>
         );
       })}
 
-      {/* Dropdown for hidden tabs */}
-      {hiddenTabs.length > 0 && (
+      {hiddenIndexes.length > 0 && (
         <div className="flex items-center gap-1" ref={dropdownRef}>
           <span className="text-[#1A3352]/20 text-[0.55rem] select-none px-0.5">·</span>
           <div className="relative">
             <button
               onClick={() => setOpen(o => !o)}
-              aria-label="Weitere Themen"
+              aria-label={t("moreThemes")}
               className={`
                 px-1.5 sm:px-2 py-1 rounded
                 text-[0.65rem] tracking-[0.15em] uppercase
@@ -98,10 +98,10 @@ export default function ThemeSwitcher({
                 py-1.5 min-w-[9rem]
                 flex flex-col
               ">
-                {hiddenTabs.map(tab => (
+                {hiddenIndexes.map(idx => (
                   <button
-                    key={tab.index}
-                    onClick={() => { onTabChange(tab.index); setOpen(false); }}
+                    key={idx}
+                    onClick={() => { onTabChange(idx); setOpen(false); }}
                     className="
                       px-4 py-2 text-left
                       text-[0.65rem] tracking-[0.15em] uppercase
@@ -110,7 +110,7 @@ export default function ThemeSwitcher({
                       transition-colors duration-150 focus-visible:outline-none
                     "
                   >
-                    {tab.label}
+                    {t(`tab${idx}` as Parameters<typeof t>[0])}
                   </button>
                 ))}
               </div>

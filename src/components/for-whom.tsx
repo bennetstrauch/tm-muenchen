@@ -1,6 +1,6 @@
 import React from "react";
+import { getTranslations } from "next-intl/server";
 import Carousel from "./carousel";
-import { content } from "../content";
 
 function ForWhomDescription({ text }: { text: string }) {
   const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
@@ -28,7 +28,9 @@ function ForWhomDescription({ text }: { text: string }) {
   );
 }
 
-export default function ForWhom({
+const ITEM_COUNT = 5;
+
+export default async function ForWhom({
   activeIndex,
   onActiveIndexChange,
   tabSlot,
@@ -37,7 +39,12 @@ export default function ForWhom({
   onActiveIndexChange?: (index: number) => void;
   tabSlot?: React.ReactNode;
 }) {
-  const { forWhom } = content;
+  const t = await getTranslations("ForWhom");
+
+  const items = Array.from({ length: ITEM_COUNT }, (_, i) => ({
+    title: t(`item${i}Title` as Parameters<typeof t>[0]),
+    description: t(`item${i}Description` as Parameters<typeof t>[0]),
+  }));
 
   return (
     <section id="fuer-wen" className="section bg-[#EFF6FF]">
@@ -45,17 +52,17 @@ export default function ForWhom({
 
         <div className="text-center mb-8">
           <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#3D5573] mb-4">
-            Für dich
+            {t("eyebrow")}
           </p>
           <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight">
-            {forWhom.heading}
+            {t("heading")}
           </h2>
         </div>
 
         {tabSlot}
 
         <Carousel arrowOffsetPx={110} activeIndex={activeIndex} onIndexChange={onActiveIndexChange}>
-          {forWhom.items.map((item, i) => (
+          {items.map((item, i) => (
             <div key={i} className="bg-white rounded-2xl px-7 py-6">
               <div className="mb-3 text-center">
                 <h3 className="font-[family-name:var(--font-jakarta)] font-semibold text-[1.2rem] text-[#1A3352] leading-snug">

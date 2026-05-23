@@ -2,17 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { content } from "../content";
 
 export default function StickyCta() {
+  const t = useTranslations("Hero");
+  const tSticky = useTranslations("StickyCta");
   const { hero } = content;
   const pathname = usePathname();
-  // Start hidden — hero is always visible on load/navigation
   const [hidden, setHidden] = useState(true);
   const [ctaHref, setCtaHref] = useState<string>("#infoabend");
 
   useEffect(() => {
-    // Reset and re-attach on every navigation so we watch the new #hero element
     setHidden(true);
     const heroEl = document.getElementById("hero");
     if (!heroEl) return;
@@ -50,7 +51,7 @@ export default function StickyCta() {
           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A5C3D7] focus-visible:ring-offset-2
         "
       >
-        {ctaHref === "#anmeldung" ? "Nächste Termine" : hero.cta}
+        {ctaHref === "#anmeldung" ? tSticky("nextTermine") : t("cta")}
         <span aria-hidden="true">→</span>
       </a>
     </div>

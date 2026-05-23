@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { content, type HeroImage } from "../content";
 import HeroBackground from "./hero-background";
 
@@ -19,8 +20,10 @@ export default function Hero({
   nextDates?: string[];
   ctaHref?: string;
 } = {}) {
+  const t       = useTranslations("Hero");
+  const tThemes = useTranslations("Themes");
   const { hero } = content;
-  const headlineLines = headline ?? ["Endlich wirklich abschalten.", "Ohne Anstrengung."];
+  const headlineLines = headline ?? [tThemes("stress.headline0"), tThemes("stress.headline1")];
   const imagePool     = images?.length ? images : STRESS_FALLBACK;
 
   const isFirstLoad = useRef(!heroHasAnimated);
@@ -32,10 +35,8 @@ export default function Hero({
   return (
     <section id="hero" className="relative overflow-hidden min-h-[100dvh] flex flex-col items-center px-8 pt-14">
 
-      {/* ── Background ────────────────────────────────── */}
       <HeroBackground images={imagePool} />
 
-      {/* ── Directional overlay — strong at headline, fades out below ── */}
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(248,245,239,.88)_0%,rgba(248,245,239,.78)_35%,rgba(248,245,239,.55)_65%,rgba(248,245,239,.35)_100%)]" />
 
       {/* ── Badge ─────────────────────────────────────── */}
@@ -48,18 +49,15 @@ export default function Hero({
           className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#cc6b1a]/20 border border-[#cc6b1a]/50 hover:bg-[#cc6b1a]/30 transition-colors duration-200"
         >
           <span className="text-[0.6rem] tracking-[0.18em] uppercase text-[#1A3352] font-medium">
-            Die einzige Technik ihrer Art
+            {t("badge")}
           </span>
         </a>
       </div>
 
-      {/* ── Headline + CTA (unified block with full-width glow) ──────── */}
       <div className="relative z-10 flex flex-col items-center w-full mt-[calc(4vh+2rem)] sm:mt-[calc(5vh+1.5rem)]">
 
-        {/* Soft glow stripe — spans full viewport width behind text */}
         <div className="absolute -inset-x-8 -inset-y-8 bg-white/30 blur-3xl -z-10" />
 
-        {/* Headline */}
         <div
           className="flex flex-col items-center text-center w-full max-w-xl opacity-0"
           style={{ animation: "fadeInUp 0.75s ease forwards 0.12s" }}
@@ -77,7 +75,6 @@ export default function Hero({
           </div>
         </div>
 
-        {/* Primary CTA */}
         <div
           className="flex flex-col items-center text-center mt-[5vh] gap-3 opacity-0"
           style={{ animation: "fadeInUp 0.75s ease forwards 0.28s" }}
@@ -94,7 +91,7 @@ export default function Hero({
               hover:bg-[#CC7D09] hover:shadow-[0_6px_26px_rgba(220,140,15,0.46)]
             "
           >
-            {hero.cta}
+            {t("cta")}
           </a>
 
           {nextDates && nextDates.length > 0 && (
@@ -105,9 +102,8 @@ export default function Hero({
                 <path d="M4 0.6v2M9 0.6v2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
               </svg>
               <span>
-                Nächste Termine:{" "}
+                {t("nextDatesPrefix")}{" "}
                 {nextDates.map((d, i) => (
-                  // mobile: first date only; desktop (sm+): up to 2 dates
                   <span key={d} className={i >= 1 ? "hidden sm:inline" : undefined}>
                     <span className="text-[#1A3352]/75 font-medium">{d}</span>
                     {i < nextDates.length - 1 && <span className="hidden sm:inline"> · </span>}
@@ -122,7 +118,6 @@ export default function Hero({
 
       <div className="flex-1 min-h-10" />
 
-      {/* ── Scroll affordance ─────────────────────────── */}
       <div className="relative z-10 flex flex-col items-center pb-6">
         <a
           href={hero.learnMoreHref}
@@ -138,7 +133,7 @@ export default function Hero({
           `}
           style={staticAnim("fadeInUp 0.75s ease forwards 0.48s")}
         >
-          {hero.learnMore}
+          {t("learnMore")}
           <span aria-hidden="true">↓</span>
         </a>
       </div>

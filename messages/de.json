@@ -1,0 +1,220 @@
+{
+  "Hero": {
+    "badge": "Die einzige Technik ihrer Art",
+    "cta": "Kostenlosen Info-Abend entdecken",
+    "learnMore": "Mehr über TM erfahren",
+    "nextDatesPrefix": "Nächste Termine:"
+  },
+  "TrustBadges": {
+    "badge0": "Persönlich unterrichtet",
+    "badge1": "Einfach und mühelos",
+    "badge2": "Von Millionen weltweit praktiziert",
+    "badge3": "Keine Konzentration nötig",
+    "badge4": "Ohne Gedanken stoppen",
+    "badge5": "400+ wissenschaftliche Studien",
+    "ariaLabel": "Merkmale von Transzendentaler Meditation",
+    "showMore": "Mehr anzeigen",
+    "showLess": "Weniger anzeigen"
+  },
+  "ForWhom": {
+    "eyebrow": "Für dich",
+    "heading": "Für wen ist TM?",
+    "tab0": "Stress",
+    "tab1": "Gesundheit",
+    "tab2": "Wissenschaft",
+    "tab3": "Depression",
+    "tab4": "Innere Freude",
+    "moreThemes": "Weitere Themen",
+    "item0Title": "Du funktionierst — aber innerlich bist du ständig angespannt?",
+    "item0Description": "• Du schläfst schlecht, obwohl du eigentlich müde bist.\n• Du hast nie wirklich Feierabend — der Kopf läuft einfach weiter.\n• Kleinigkeiten bringen dich schneller aus der Ruhe, als dir lieb ist.\n• Du sehnst dich nach echter Erholung, nicht nur nach Ablenkung.\n\nTM gibt dir täglich 20 Minuten tiefer Stille — und dein Nervensystem beginnt, sich nachhaltig zu erholen.",
+    "item1Title": "Du spürst, dass der Stress deinen Körper belastet?",
+    "item1Description": "• Dein Blutdruck ist zu hoch — oder du weißt, dass er es bald sein wird.\n• Du wachst morgens auf und bist schon erschöpft.\n• Kopfschmerzen, Verspannungen, schlechter Schlaf — alles hängt zusammen.\n• Du willst etwas ändern, aber ein weiteres Gesundheitsprojekt klingt nach mehr Aufwand.\n\nTM ist das Gegenteil von Aufwand: 20 Minuten sitzen, Augen zu — und der Körper regeneriert sich von selbst.",
+    "item2Title": "Du willst keine Versprechungen — du willst Belege?",
+    "item2Description": "• Du bist skeptisch gegenüber Meditation — und das zu Recht.\n• Du hast schon vieles probiert, das nicht hielt, was es versprach.\n• Du willst wissen: Wurde das wirklich untersucht? An echten Menschen, mit Kontrollgruppen?\n• Über 400 Studien an Universitäten wie Harvard und Stanford: Blutdruck, Cortisol, Schlaf, Herzgesundheit.\n\nTM ist die meistuntersuchte Meditationstechnik weltweit — die Wirkung ist dokumentiert, nicht versprochen.",
+    "item3Title": "Manche Tage fühlst du dich leer — auch ohne konkreten Grund?",
+    "item3Description": "• Morgens aufstehen fällt schwer, obwohl nichts Schlimmes passiert ist.\n• Du funktionierst nach außen, aber innen fehlt dir die Energie für die Dinge, die dir wichtig sind.\n• Du hast das Gefühl, dich ständig zusammenzureißen — und weißt nicht, wie lange noch.\n• Freude kommt seltener, als sie sollte.\n\nTM ist kein Ersatz für professionelle Unterstützung — aber viele berichten: tiefere Ruhe, mehr Leichtigkeit, wieder mehr Zugang zu sich selbst.",
+    "item4Title": "Du willst einen praktischen Weg zur Erleuchtung",
+    "item4Description": "Die erste Stufe der Erleuchtung: Vollkommene innere Zufriedenheit und Klarheit und das schlummert bereits in jedem von uns. Wir müssen nur wissen wie wir dorthin gelangen. TM gibt dir den Zugang auf direkte, einfache Weise. Wir erfahren unsere innerste Natur - reine Glückseligkeit. Diese Erfahrung während TM erfolgt in tiefer Stille, körperlich und geistig. Dadurch kann sich der Körper tief regenerieren und von Stressen befreien: Die Folge: Wir werden mehr und mehr dazu fähig die immense Freude in uns auch während des Alltags zu leben und kontinuierlich zu entfalten."
+  },
+  "WhyTm": {
+    "eyebrow": "Warum TM?",
+    "heading": "Was TM einzigartig macht",
+    "subheading": "Transzendentale Meditation unterscheidet sich grundlegend von anderen Techniken.",
+    "benefit0Title": "Mühelos — keine Konzentration nötig",
+    "benefit0Short": "Die meisten Meditationstechniken erfordern Fokus oder Willenskraft. TM ist anders: Der Geist darf sich ganz natürlich beruhigen — ohne Anstrengung. Deshalb finden viele Menschen TM überraschend leicht zu erlernen.",
+    "benefit0Expanded": "Weil die Technik mühelos ist, bewegt sich der Geist spontan in Richtung ruhigerer Gedankenebenen. Meditation geschieht von selbst — nicht durch Disziplin. Das macht TM auch für Menschen zugänglich, die mit anderen Techniken keine Erfahrung gemacht haben.",
+    "benefit1Title": "Tiefer als Schlaf — der Körper erholt sich wirklich",
+    "benefit1Short": "Während der TM erreicht der Körper eine Tiefenruhe, die Studien zufolge tiefer ist als im Schlaf — während der Geist wach und klar bleibt. In dieser Ruhe baut das Nervensystem angesammelten Stress ab.",
+    "benefit1Expanded": "Dieser Zustand unterscheidet sich messbar von Entspannung, Schlaf oder Konzentration. Viele erleben: tiefe Stille, Klarheit, frische Energie — noch bevor sie die Wirkung im Alltag bewusst bemerken.",
+    "benefit2Title": "Von innen heraus glücklich",
+    "benefit2Short": "Jeder Mensch trägt ein Reservoir an vollkommener Zufriedenheit in sich - Ein Meer der Freude, das durch TM zugänglich wird — mehr und mehr innere Zufriedenheit und weniger Reizbarkeit im Alltag.",
+    "benefit2Expanded": "Was von allerlei Philosophen, Mystikern und Weisen seit Jahrtausenden beschrieben wird, wird durch TM konkret und beständig integriert. Nicht nur das, es ist auch wissenschaftlich messbar.",
+    "benefit3Title": "Klarer denken, ruhiger reagieren",
+    "benefit3Short": "Diverse Studien zeigen: Regelmäßig Praktizierende reagieren ruhiger in stressigen Situationen, entscheiden klarer, sind kreativer. Das ist keine Selbstsuggestion — sondern messbar in der Gehirnaktivität.",
+    "benefit3Expanded": "Studien zeigen, dass TM die Koordination verschiedener Gehirnbereiche verbessert. Diese integriertere Funktionsweise ist bei Spitzensportlern, Führungskräften und Kreativen dokumentiert, die TM regelmäßig praktizieren.",
+    "benefit4Title": "Stress abbauen — auch den tiefsitzenden",
+    "benefit4Short": "Nicht nur akuter Stress, sondern auch langfristig angesammelter Druck lässt sich durch TM abbauen. Viele berichten: weniger Angst, besserer Schlaf, mehr Resilienz.",
+    "benefit4Expanded": "TM wurde in Studien bei stressbedingten Beschwerden und Traumaverarbeitung untersucht — darunter auch bei PTBS. Die physiologische Tiefenruhe unterstützt die natürliche Selbstregulation des Körpers auf eine Weise, die andere Entspannungstechniken schlicht nicht erreichen.",
+    "benefit5Title": "Über 400 Studien an führenden Universitäten",
+    "benefit5Short": "Transzendentale Meditation ist die meistuntersuchte Meditationstechnik weltweit. Forschungsgebiete: Stress, Herzgesundheit, Gehirnfunktion, Leistung und Resilienz.",
+    "benefit5Expanded": "Weil TM standardisiert gelehrt wird, lässt sie sich wissenschaftlich zuverlässiger untersuchen als viele andere Ansätze. Studien erschienen u.a. im American Journal of Cardiology und dem International Journal of Neuroscience."
+  },
+  "HowItWorks": {
+    "eyebrow": "Der Weg",
+    "heading": "So funktioniert es",
+    "subheading": "Von Neugier bis zur täglichen Praxis — in vier einfachen Schritten.",
+    "step0Title": "Kostenloser Infoabend",
+    "step0Description": "Du erfährst, was TM ist, wie sie sich von anderen Techniken unterscheidet, und kannst alle Fragen stellen. Keinerlei Verpflichtung.",
+    "step1Title": "Persönliche Unterweisung",
+    "step1Description": "Die Technik wird von einem zertifizierten Lehrer persönlich vermittelt — individuell, in deinem eigenen Tempo. Keine Vorkenntnisse nötig.",
+    "step2Title": "Täglich zuhause meditieren",
+    "step2Description": "20 Minuten, bequem sitzend, zweimal täglich. Keine App, keine Führung, kein Fokussieren — nur mühelose, eigenständige Praxis.",
+    "step3Title": "Die Wirkung entfaltet sich",
+    "step3Description": "Mit regelmäßiger Praxis überträgt sich die Ruhe in den Alltag: mehr Energie, mehr Klarheit — auch in stressigen Momenten.",
+    "bottomCta": "Jetzt Infoabend besuchen"
+  },
+  "Events": {
+    "heading": "Dein Infoabend",
+    "cta": "Platz sichern",
+    "empty": "Aktuell keine Termine geplant. Schreib uns gerne direkt an.",
+    "close": "Schließen ×",
+    "individualAppointment": "Individuellen Termin anfragen",
+    "formName": "Name *",
+    "formEmail": "E-Mail *",
+    "formPhone": "Telefon (optional)",
+    "formSubmit": "Jetzt anmelden",
+    "formSubmitting": "Wird gesendet…",
+    "formCancel": "Abbrechen",
+    "formSuccessTitle": "Anmeldung erfolgreich!",
+    "formSuccessBody": "Wir haben Ihnen eine Bestätigung an Ihre E-Mail-Adresse geschickt.",
+    "formErrorUnknown": "Unbekannter Fehler",
+    "formErrorFailed": "Anmeldung fehlgeschlagen."
+  },
+  "Trustpilot": {
+    "heading": "Was andere sagen",
+    "ratingLabel": "Exzellent",
+    "verified": "Verifiziert",
+    "starsLabel": "{rating} von 5 Sternen",
+    "verifiedCount": "{count} verifizierte Bewertungen",
+    "readMore": "Mehr lesen",
+    "collapse": "Weniger",
+    "review0Title": "Ich liebe TM",
+    "review0Quote": "Ich liebe TM! Ich fühle mich so entspannt und geerdet, wie ich es nie für möglich gehalten hätte. Erstaunlich, welch eine Tiefe der Entspannung möglich ist — tiefer als Schlaf. TM ist so einfach und doch so tiefgründig, dass jeder es tun kann. Es ist mein täglicher Anker.",
+    "review1Title": "Wunderbar 😊",
+    "review1Quote": "Mein einziges Bedauern ist, dass ich nicht früher damit angefangen habe. Absolut lebensverändernd. Ich fühle mich so friedvoll und glücklich.",
+    "review2Title": "Meine Tochter und ich sind sehr glücklich",
+    "review2Quote": "Meine Tochter und ich meditieren täglich und sind sehr glücklich damit. Es hat uns viel Klarheit und inneren Frieden gebracht. Wir freuen uns immer auf unsere 2 täglichen Meditationen. Die Lehrer sind sehr engagiert und leicht zu verstehen.",
+    "review3Title": "Sehr professionell, von Anfang bis Ende",
+    "review3Quote": "Sehr professionell — von E-Mails über Benachrichtigungen bis zur Einführung. Sehr freundliche, geduldige und erfahrene Lehrer. Viele gute, wissenschaftlich fundierte Informationen.",
+    "review4Title": "Eine der besten Entscheidungen seit Jahren",
+    "review4Quote": "Dies ist eine der besten Entscheidungen, die ich seit vielen Jahren getroffen habe. Wer einen starken Einstieg in den Tag braucht — für den ist das genau das Richtige.",
+    "review5Title": "Es ist real",
+    "review5Quote": "Es ist real. Es ist ein Weg, in einer Zeit, die ganz dir gehört, in Frieden zu leben.",
+    "review6Title": "Eine deutliche Veränderung schon nach 3 Wochen",
+    "review6Quote": "Schon nach nur 3 Wochen TM habe ich eine deutliche Veränderung bei meinem Angstniveau festgestellt.",
+    "review7Title": "Ich kann endlich meditieren.",
+    "review7Quote": "Ich kann endlich meditieren."
+  },
+  "Testimonials": {
+    "quote0": "Transzendentale Meditation ermöglicht es mir, nach innen zu gehen und eine Tiefe von Ruhe und Frieden zu finden, die ich sonst nirgendwo erlebe.",
+    "detail0": "Comedian"
+  },
+  "Teachers": {
+    "eyebrow": "TM Center München",
+    "heading": "Ihre Lehrer",
+    "readMore": "Mehr lesen",
+    "collapse": "Weniger"
+  },
+  "CenterBanner": {
+    "eyebrow": "TM Center München",
+    "line1": "Vor Ort oder online —",
+    "line2": "wir sind für Sie da.",
+    "ariaLabel": "TM Center München"
+  },
+  "AbschlussCta": {
+    "heading": "Finde heraus, ob TM zu dir passt",
+    "body": "Komm zu einem kostenlosen Infoabend — ohne Verpflichtung.",
+    "cta": "Jetzt Platz sichern"
+  },
+  "Wissenschaft": {
+    "eyebrow": "Wissenschaft & Forschung",
+    "heading": "TM gehört zu den am besten untersuchten Meditationstechniken weltweit",
+    "body": "In zahlreichen Studien an führenden Universitäten wurde untersucht, wie TM Stress, mentale Belastung und allgemeines Wohlbefinden beeinflusst.",
+    "bullet0": "Aktuelle Forschungsergebnisse zu Stress, Herzgesundheit und Gehirnfunktion",
+    "bullet1": "Praktische Erfahrungen von Lehrern und Meditierenden",
+    "bullet2": "Wie TM sich von anderen Techniken unterscheidet — und warum das wissenschaftlich messbar ist",
+    "cta": "Beim Infoabend mehr erfahren"
+  },
+  "InfoabendPreview": {
+    "heading": "So läuft der Infoabend ab",
+    "box0Label": "Format",
+    "box0Value": "30 Min.\nOnline",
+    "box1Label": "Kosten",
+    "box1Value": "Kostenlos & unverbindlich",
+    "point0": "Wie TM einzigartig ist",
+    "point1": "Wie TM für dich passt",
+    "point2": "Raum für deine Story und Fragen"
+  },
+  "Nav": {
+    "link0": "Für wen ist TM?",
+    "link1": "Was TM einzigartig macht",
+    "link2": "So funktioniert es",
+    "link3": "Nächste Infoabende",
+    "link4": "Für bereits Meditierende",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen",
+    "prevTheme": "Vorheriges Thema",
+    "nextTheme": "Nächstes Thema"
+  },
+  "Carousel": {
+    "prev": "Vorherige",
+    "next": "Nächste",
+    "slideLabel": "Slide {current} von {total}"
+  },
+  "CookieBanner": {
+    "text": "Wir verwenden Meta Pixel, um besser zu verstehen, welche Inhalte Menschen ansprechen und wie viele sich für unseren Infoabend anmelden.",
+    "accept": "Akzeptieren",
+    "decline": "Ablehnen"
+  },
+  "StickyCta": {
+    "nextTermine": "Nächste Termine"
+  },
+  "Themes": {
+    "stress": {
+      "label": "Stress",
+      "headline0": "Endlich wirklich abschalten.",
+      "headline1": "Ohne Anstrengung.",
+      "subtitle": "regeneriert tiefer als Schlaf"
+    },
+    "innereFreude": {
+      "label": "Innere Freude",
+      "headline0": "Jeder hat einen Ozean unbegrenzter Freude in sich.",
+      "headline1": "TM gibt dir den Zugang.",
+      "subtitle": "Einfach und verlässlich in dein Glück eintauchen"
+    },
+    "schlaf": {
+      "label": "Schlaf",
+      "headline0": "Schläfst du eigentlich?",
+      "headline1": "Ohne Schlafmittel. Ohne Willenskraft.",
+      "subtitle": "TM bringt deinem Nervensystem die Tiefenruhe, die Schlaf allein oft nicht mehr schafft."
+    },
+    "fokus": {
+      "label": "Fokus",
+      "headline0": "Dein Kopf ist voll, aber nicht klar?",
+      "headline1": "Klarheit erzwingst du nicht — sie entsteht.",
+      "subtitle": "TM räumt nicht auf, er lässt Ordnung von selbst entstehen: klarer Fokus, ruhigerer Geist."
+    },
+    "erschoepfung": {
+      "label": "Erschöpfung",
+      "headline0": "Leer, obwohl du gar nichts getan hast?",
+      "headline1": "Echte Energie. Von innen.",
+      "subtitle": "TM gibt dir Zugang zu echter innerer Stille — nicht als Technik, sondern als natürlicher Zustand."
+    },
+    "angst": {
+      "label": "Angst",
+      "headline0": "Innere Unruhe, endlich aufhören lassen?",
+      "headline1": "Ohne Willenskraft. Ohne Konzentration.",
+      "subtitle": "TM beruhigt das Nervensystem von innen — ohne Willenskraft, ohne Konzentration."
+    }
+  }
+}

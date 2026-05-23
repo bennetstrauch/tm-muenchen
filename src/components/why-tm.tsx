@@ -1,29 +1,36 @@
+import { getTranslations } from "next-intl/server";
 import Carousel from "./carousel";
 import Expandable from "./expandable";
-import { content } from "../content";
 
-export default function WhyTm() {
-  const { whyTm } = content;
+const BENEFIT_COUNT = 6;
+
+export default async function WhyTm() {
+  const t = await getTranslations("WhyTm");
+
+  const benefits = Array.from({ length: BENEFIT_COUNT }, (_, i) => ({
+    title:    t(`benefit${i}Title`    as Parameters<typeof t>[0]),
+    short:    t(`benefit${i}Short`    as Parameters<typeof t>[0]),
+    expanded: t(`benefit${i}Expanded` as Parameters<typeof t>[0]),
+  }));
 
   return (
     <section id="warum-tm" className="section bg-white">
       <div className="section-inner">
 
-        {/* Heading */}
         <div className="text-center mb-16">
           <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#3D5573] mb-4">
-            Warum TM?
+            {t("eyebrow")}
           </p>
           <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight mb-4">
-            {whyTm.heading}
+            {t("heading")}
           </h2>
           <p className="text-base text-[#3D5573] leading-relaxed max-w-md mx-auto">
-            {whyTm.subheading}
+            {t("subheading")}
           </p>
         </div>
 
         <Carousel arrowOffsetPx={145}>
-          {whyTm.benefits.map((benefit, i) => (
+          {benefits.map((benefit, i) => (
             <div key={i} className="border-t border-b border-[#DBEAFE] pt-8 pb-8">
               <div className="flex gap-3 items-start mb-3">
                 <span

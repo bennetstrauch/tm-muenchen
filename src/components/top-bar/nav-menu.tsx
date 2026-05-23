@@ -1,14 +1,16 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useNavContext } from "@/contexts/nav-context";
 
 export default function NavMenu() {
+  const t = useTranslations("Nav");
   const { isOpen, setIsOpen } = useNavContext();
 
   return (
     <button
       onClick={() => setIsOpen(!isOpen)}
-      aria-label={isOpen ? "Menü schließen" : "Menü öffnen"}
+      aria-label={isOpen ? t("closeMenu") : t("openMenu")}
       aria-expanded={isOpen}
       className="flex flex-col justify-center items-center gap-[5px] w-9 h-9 rounded-full hover:bg-[#1A3352]/8 transition-all duration-200 focus-visible:outline-none flex-shrink-0"
     >
