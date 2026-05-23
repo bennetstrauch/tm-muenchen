@@ -1,6 +1,10 @@
+"use client";
+
 import React from "react";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 import Carousel from "./carousel";
+
+const ITEM_COUNT = 5;
 
 function ForWhomDescription({ text }: { text: string }) {
   const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
@@ -28,9 +32,7 @@ function ForWhomDescription({ text }: { text: string }) {
   );
 }
 
-const ITEM_COUNT = 5;
-
-export default async function ForWhom({
+export default function ForWhom({
   activeIndex,
   onActiveIndexChange,
   tabSlot,
@@ -39,10 +41,10 @@ export default async function ForWhom({
   onActiveIndexChange?: (index: number) => void;
   tabSlot?: React.ReactNode;
 }) {
-  const t = await getTranslations("ForWhom");
+  const t = useTranslations("ForWhom");
 
   const items = Array.from({ length: ITEM_COUNT }, (_, i) => ({
-    title: t(`item${i}Title` as Parameters<typeof t>[0]),
+    title:       t(`item${i}Title`       as Parameters<typeof t>[0]),
     description: t(`item${i}Description` as Parameters<typeof t>[0]),
   }));
 
