@@ -26,7 +26,7 @@
   },
   "Hero": {
     "badge": "The only technique of its kind.",
-    "cta": "Find a free intro talk",
+    "cta": "Find a free info session",
     "learnMore": "Learn more about TM",
     "nextDatesPrefix": "Upcoming dates:"
   },
@@ -88,7 +88,7 @@
     "eyebrow": "The path",
     "heading": "How it works",
     "subheading": "From curiosity to daily practice — in four simple steps.",
-    "step0Title": "Free intro talk",
+    "step0Title": "Free info session",
     "step0Description": "Find out what TM is, how it differs from other techniques, and get all your questions answered. No commitment whatsoever.",
     "step1Title": "Personal instruction",
     "step1Description": "The technique is taught one-on-one by a certified teacher — at your own pace, tailored to you. No prior experience needed.",
@@ -96,10 +96,10 @@
     "step2Description": "20 minutes, sitting comfortably, twice a day. No app, no guidance, no focusing — just effortless, independent practice.",
     "step3Title": "The benefits unfold",
     "step3Description": "With regular practice, the calm carries over into daily life: more energy, more clarity — even in stressful moments.",
-    "bottomCta": "Attend an intro talk"
+    "bottomCta": "Attend an info session"
   },
   "Events": {
-    "heading": "Your intro talk",
+    "heading": "Your info session",
     "cta": "Save your spot",
     "empty": "No upcoming dates at the moment. Feel free to reach out to us directly.",
     "close": "Close ×",
@@ -133,7 +133,7 @@
   },
   "AbschlussCta": {
     "heading": "Find out if TM is right for you",
-    "body": "Join a free intro talk — no commitment, no pressure.",
+    "body": "Join a free info session — no commitment, no pressure.",
     "cta": "Reserve your spot"
   },
   "Wissenschaft": {
@@ -143,10 +143,10 @@
     "bullet0": "Latest findings on stress, heart health, and brain function",
     "bullet1": "Real-world experiences from teachers and meditators",
     "bullet2": "How TM differs from other techniques — and why that difference is scientifically measurable",
-    "cta": "Learn more at an intro talk"
+    "cta": "Learn more at an info session"
   },
   "InfoabendPreview": {
-    "heading": "What to expect at the intro talk",
+    "heading": "What to expect at the info session",
     "box0Label": "Format",
     "box0Value": "30 min.\nOnline",
     "box1Label": "Cost",
@@ -159,7 +159,7 @@
     "link0": "Who is TM for?",
     "link1": "What makes TM unique",
     "link2": "How it works",
-    "link3": "Upcoming intro talks",
+    "link3": "Upcoming info sessions",
     "link4": "For existing meditators",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
@@ -172,7 +172,7 @@
     "slideLabel": "Slide {current} of {total}"
   },
   "CookieBanner": {
-    "text": "We use Meta Pixel to better understand what content resonates with people and how many sign up for our intro talk.",
+    "text": "We use Meta Pixel to better understand what content resonates with people and how many sign up for our info session.",
     "accept": "Accept",
     "decline": "Decline"
   },
