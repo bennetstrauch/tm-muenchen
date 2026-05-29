@@ -187,6 +187,46 @@ Globe icon in the TopBar, to the RIGHT of the hamburger menu icon (both on the l
 - **Lehrer**: assign teaching languages per teacher, edit bio override per locale.
 - **Einstellungen**: choose active locales for this site, WhatsApp toggle + link, contact info.
 
+### End-to-end language flow
+
+```
+Visitor arrives
+  → locale resolved: localStorage(tm_locale) → Accept-Language → "de"
+  → next-intl middleware rewrites URL to [locale] segment
+  → page rendered in resolved locale
+
+Static UI strings
+  → next-intl reads /messages/{locale}.json at render time
+  → de.json is source of truth; EN/FR/ES auto-translated by GitHub Action on push
+
+Dynamic content (teacher bios, event descriptions from TMW API)
+  → lib/translate.ts: SHA-256(source text + locale) → Supabase translation_cache lookup
+  → cache hit → return cached translation (no API call)
+  → cache miss → Claude API → store in cache → return
+
+Teacher section
+  → getTeachers(locale) fetches TMW API → deduplicates by name
+  → queries Supabase teacher_languages WHERE locale = X
+  → if rows exist: filter to matching teachers + apply bio_override where set
+  → if no rows: show all teachers (fallback)
+  → bios translated via translation_cache (after filter, before render)
+  → teachers shuffled randomly on each ISR cycle (no single teacher always first)
+
+Visitor registers for Infoabend
+  → locale sent in POST body to /api/register
+  → confirmation + reminder emails rendered in that locale (locale-keyed string map in lib/email.ts)
+  → locale appended as column H in Google Sheets "Info Anmeldungen"
+  → reminder scheduled via Resend for 9:00 AM Munich time the day before
+
+WhatsApp button (TopBar)
+  → visibility controlled by Supabase settings row (tenant = "muenchen") → whatsapp_enabled
+  → link URL: whatsapp_link from settings, falling back to content.ts default
+
+⚠️  active_locales is stored in Supabase settings but NOT yet wired to the locale switcher
+    or middleware. The switcher still shows all locales from routing.ts. Wiring requires
+    middleware changes — deferred to Phase 2.
+```
+
 ## Multi-Tenancy (Phase 2)
 
 Deployment model: single Vercel deployment, multi-tenant by hostname. Next.js middleware resolves hostname → tenant config. Design updates deploy once and affect all centers simultaneously.
