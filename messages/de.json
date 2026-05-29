@@ -88,7 +88,10 @@
     "formSuccessTitle": "Anmeldung erfolgreich!",
     "formSuccessBody": "Wir haben Ihnen eine Bestätigung an Ihre E-Mail-Adresse geschickt.",
     "formErrorUnknown": "Unbekannter Fehler",
-    "formErrorFailed": "Anmeldung fehlgeschlagen."
+    "formErrorFailed": "Anmeldung fehlgeschlagen.",
+    "typeOnline": "Online",
+    "typePraesenz": "Vor Ort",
+    "timeDisplay": "{time} Uhr"
   },
   "Trustpilot": {
     "heading": "Was andere sagen",

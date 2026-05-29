@@ -10,18 +10,20 @@ import Teachers from "@/components/teachers";
 import WissenschaftSection from "@/components/wissenschaft";
 import AbschlussCta from "@/components/abschluss-cta";
 import { getEvents, formatNextDates } from "@/lib/events";
+import { getLocale } from "next-intl/server";
 import { getTrustpilotStats } from "@/lib/trustpilot";
 import { getTeachers } from "@/lib/teachers";
 import { getTestimonials } from "@/content";
 
 export default async function Home() {
-  const [events, trustpilot, teachers] = await Promise.all([
+  const [events, trustpilot, teachers, locale] = await Promise.all([
     getEvents(),
     getTrustpilotStats(),
     getTeachers(),
+    getLocale(),
   ]);
 
-  const nextDates = formatNextDates(events);
+  const nextDates = formatNextDates(events, 2, locale);
 
   return (
     <main>

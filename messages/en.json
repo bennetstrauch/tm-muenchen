@@ -113,7 +113,10 @@
     "formSuccessTitle": "You're registered!",
     "formSuccessBody": "We've sent a confirmation to your email address.",
     "formErrorUnknown": "Unknown error",
-    "formErrorFailed": "Registration failed."
+    "formErrorFailed": "Registration failed.",
+    "typeOnline": "Online",
+    "typePraesenz": "In person",
+    "timeDisplay": "{time}"
   },
   "Testimonials": {
     "quote0": "Transcendental Meditation allows me to go inward and find a depth of stillness and peace I don't experience anywhere else.",

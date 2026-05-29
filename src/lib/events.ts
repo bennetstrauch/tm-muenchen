@@ -112,21 +112,27 @@ export async function getEvents(): Promise<TMEvent[]> {
   }
 }
 
+const LOCALE_BCP47: Record<string, string> = {
+  de: "de-DE", en: "en-GB", fr: "fr-FR", es: "es-ES",
+};
+
 // ── Date formatting helper ────────────────────────────────
-export function formatEventDate(isoDate: string): { weekday: string; date: string } {
+export function formatEventDate(isoDate: string, locale = "de"): { weekday: string; date: string } {
   const d = new Date(`${isoDate}T12:00:00`);
+  const bcp47 = LOCALE_BCP47[locale] ?? "de-DE";
   return {
-    weekday: d.toLocaleDateString("de-DE", { weekday: "short" }),
-    date: d.toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" }),
+    weekday: d.toLocaleDateString(bcp47, { weekday: "short" }),
+    date: d.toLocaleDateString(bcp47, { day: "numeric", month: "long", year: "numeric" }),
   };
 }
 
 // Format: "Di 19, 20:00" — weekday abbrev (no dot) + day number + time.
 // Hero shows 1 date on mobile, 2 on desktop; pass count=2 to keep the array small.
-export function formatNextDates(events: TMEvent[], count = 2): string[] {
+export function formatNextDates(events: TMEvent[], count = 2, locale = "de"): string[] {
+  const bcp47 = LOCALE_BCP47[locale] ?? "de-DE";
   return events.slice(0, count).map(e => {
     const d = new Date(`${e.date}T12:00:00`);
-    const weekday = d.toLocaleDateString("de-DE", { weekday: "short" }).replace(".", "");
+    const weekday = d.toLocaleDateString(bcp47, { weekday: "short" }).replace(".", "");
     const day = d.getDate();
     return `${weekday} ${day}, ${e.time}`;
   });

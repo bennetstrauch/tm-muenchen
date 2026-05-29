@@ -88,7 +88,10 @@
     "formSuccessTitle": "Inscription confirmée !",
     "formSuccessBody": "Nous t'avons envoyé une confirmation à ton adresse e-mail.",
     "formErrorUnknown": "Erreur inconnue",
-    "formErrorFailed": "L'inscription a échoué."
+    "formErrorFailed": "L'inscription a échoué.",
+    "typeOnline": "Online",
+    "typePraesenz": "En présentiel",
+    "timeDisplay": "{time}"
   },
   "Trustpilot": {
     "heading": "Ce qu'ils en disent",

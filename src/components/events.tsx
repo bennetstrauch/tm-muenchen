@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { type TMEvent, formatEventDate } from "../lib/events";
 import { content } from "../content";
 
@@ -146,7 +146,8 @@ function EventRow({
   onToggle: () => void;
 }) {
   const t = useTranslations("Events");
-  const { weekday, date } = formatEventDate(event.date);
+  const locale = useLocale();
+  const { weekday, date } = formatEventDate(event.date, locale);
   const isPresenz = event.type === "Präsenz";
 
   return (
@@ -160,13 +161,13 @@ function EventRow({
               <span className="font-[family-name:var(--font-jakarta)] font-semibold text-[1.05rem] text-[#1A3352] leading-snug whitespace-nowrap">{date}</span>
             </div>
             <div className="flex items-center gap-3 text-start text-[#1A3352]/60">
-              <span className="whitespace-nowrap">{event.time} Uhr</span>
+              <span className="whitespace-nowrap">{t("timeDisplay", { time: event.time })}</span>
               <span className="text-[#DBEAFE]">·</span>
               <span className={`
                 text-[0.65rem] tracking-[0.12em] uppercase font-medium px-2 py-0.5 rounded-full whitespace-nowrap
                 ${isPresenz ? "bg-[#F59E0B]/20 text-[#1A3352]" : "bg-[#DBEAFE] text-[#1A3352]"}
               `}>
-                {event.type}
+                {t(event.type === "Online" ? "typeOnline" : "typePraesenz")}
               </span>
             </div>
             {event.teacherName && (

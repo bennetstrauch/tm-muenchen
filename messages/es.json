@@ -88,7 +88,10 @@
     "formSuccessTitle": "¡Inscripción confirmada!",
     "formSuccessBody": "Te hemos enviado una confirmación a tu dirección de correo electrónico.",
     "formErrorUnknown": "Error desconocido",
-    "formErrorFailed": "La inscripción ha fallado."
+    "formErrorFailed": "La inscripción ha fallado.",
+    "typeOnline": "Online",
+    "typePraesenz": "Presencial",
+    "timeDisplay": "{time}"
   },
   "Trustpilot": {
     "heading": "Lo que dicen otros",
