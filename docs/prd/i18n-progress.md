@@ -12,8 +12,8 @@ PRD: docs/prd-i18n-phase1.md
 | Events | Locale-aware date formatting + event type labels | ✅ done |
 | Supabase schema | `translation_cache`, `teacher_languages`, `settings` tables | ✅ done |
 | Translation cache | `lib/translate.ts` — SHA-256 cache → Claude fallback | ✅ done |
-| Teacher filter | `getTeachers(locale?)` — Supabase query + bio_override | ❌ not started |
-| Teacher bio translation | Translate API bios via `getTranslation()` | ❌ not started |
+| Teacher filter | `getTeachers(locale?)` — Supabase query + bio_override | ✅ done |
+| Teacher bio translation | Translate API bios via `getTranslation()` | ✅ done |
 | Admin — Lehrer tab | Language assignments + bio overrides per teacher | ❌ not started |
 | Admin — Einstellungen tab | Active locales, WhatsApp toggle, contact info | ❌ not started |
 | Registration locale | `locale` field in POST body + Sheets column H | ❌ not started |
