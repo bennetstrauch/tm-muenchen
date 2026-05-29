@@ -81,6 +81,29 @@ Lectures are currently managed at `tnw.meditation.de` and auto-synced to the nat
 - Hard limit: ~20 €/month
 - Domain already owned (tm-muenchen.de, hosted at EMVX)
 
+## Anti-patterns
+
+Do not:
+- introduce global state unless truly shared across distant components
+- add abstractions for hypothetical future reuse
+- reach for a library when a platform primitive works
+- use client components by default — server-first
+- add visual complexity that doesn't serve conversion
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues (`gh` CLI). See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default label vocabulary (needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context — one `CONTEXT.md` + `docs/adr/` at repo root. See `docs/agents/domain.md`.
+
 ## Development workflow (skill pipeline)
 
 For any non-trivial feature or improvement, follow this pipeline:
