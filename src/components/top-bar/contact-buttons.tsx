@@ -3,8 +3,9 @@
 import { useState, useRef, useEffect } from "react";
 import { content } from "../../content";
 
-export default function ContactButtons({ showWhatsApp }: { showWhatsApp?: boolean }) {
+export default function ContactButtons({ showWhatsApp, whatsappLink }: { showWhatsApp?: boolean; whatsappLink?: string | null }) {
   const { contact } = content;
+  const resolvedWhatsappLink = whatsappLink ?? contact.whatsappCommunity;
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -76,7 +77,7 @@ export default function ContactButtons({ showWhatsApp }: { showWhatsApp?: boolea
             </a>
             {showWhatsApp && (
               <a
-                href={contact.whatsappCommunity}
+                href={resolvedWhatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setOpen(false)}

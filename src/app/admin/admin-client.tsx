@@ -11,8 +11,9 @@ import { generateWhatsAppText, buildWhatsappUrl } from '@/lib/whatsapp';
 import InfoRegistrationsTable from './registrations-table';
 import EmailActionsTab from './email-tab';
 import LehrerTab from './lehrer-tab';
+import EinstellungenTab from './einstellungen-tab';
 
-type Tab = 'info-anmeldungen' | 'veranstaltungen' | 'anmeldungen' | 'vorlagen' | 'emails' | 'lehrer';
+type Tab = 'info-anmeldungen' | 'veranstaltungen' | 'anmeldungen' | 'vorlagen' | 'emails' | 'lehrer' | 'einstellungen';
 
 type Mode =
   | { view: 'list' }
@@ -55,7 +56,7 @@ const EMPTY_FORM: Omit<Veranstaltung, 'id'> = {
   slug: '',
 };
 
-const VALID_TABS: Tab[] = ['info-anmeldungen', 'veranstaltungen', 'anmeldungen', 'vorlagen', 'emails', 'lehrer'];
+const VALID_TABS: Tab[] = ['info-anmeldungen', 'veranstaltungen', 'anmeldungen', 'vorlagen', 'emails', 'lehrer', 'einstellungen'];
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -1435,6 +1436,9 @@ export default function AdminClient({
             <button className={TAB_CLS(tab === 'lehrer')} onClick={() => setTab('lehrer')}>
               Lehrer
             </button>
+            <button className={TAB_CLS(tab === 'einstellungen')} onClick={() => setTab('einstellungen')}>
+              Einstellungen
+            </button>
           </>
         )}
       </div>
@@ -1727,6 +1731,7 @@ export default function AdminClient({
       )}
 
       {tab === 'lehrer' && <LehrerTab />}
+      {tab === 'einstellungen' && <EinstellungenTab />}
     </>
   );
 }

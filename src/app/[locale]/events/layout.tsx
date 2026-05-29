@@ -6,7 +6,7 @@ import { NavProvider } from '@/contexts/nav-context';
 export default function EventsLayout({ children }: { children: React.ReactNode }) {
   return (
     <NavProvider>
-      <TopBar showWhatsApp />
+      <TopBar whatsappEnabled />
       <NavPanel />
       <MainOffset>
         {children}

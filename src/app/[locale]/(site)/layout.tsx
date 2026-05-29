@@ -4,11 +4,13 @@ import NavPanel from "@/components/top-bar/nav-panel";
 import MainOffset from "@/components/main-offset";
 import CookieBanner from "@/components/cookie-banner";
 import { NavProvider } from "@/contexts/nav-context";
+import { getSettings } from "@/lib/settings";
 
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+  const settings = await getSettings();
   return (
     <NavProvider>
-      <TopBar />
+      <TopBar whatsappEnabled={settings.whatsapp_enabled} whatsappLink={settings.whatsapp_link} />
       <NavPanel />
       <MainOffset>
         {children}

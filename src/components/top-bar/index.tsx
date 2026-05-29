@@ -2,7 +2,13 @@ import NavMenu from "./nav-menu";
 import TopBarLogo from "./logo";
 import ContactButtons from "./contact-buttons";
 
-export default function TopBar({ showWhatsApp }: { showWhatsApp?: boolean }) {
+export default function TopBar({
+  whatsappEnabled,
+  whatsappLink,
+}: {
+  whatsappEnabled?: boolean;
+  whatsappLink?: string | null;
+}) {
   return (
     <header className="fixed top-0 left-0 right-0 z-[9998] h-14 flex items-center px-5 bg-white/10 backdrop-blur-md border-b border-white/15">
       <NavMenu />
@@ -11,7 +17,7 @@ export default function TopBar({ showWhatsApp }: { showWhatsApp?: boolean }) {
         <TopBarLogo />
       </div>
       <div className="ml-auto">
-        <ContactButtons showWhatsApp={showWhatsApp} />
+        <ContactButtons showWhatsApp={whatsappEnabled} whatsappLink={whatsappLink} />
       </div>
     </header>
   );
