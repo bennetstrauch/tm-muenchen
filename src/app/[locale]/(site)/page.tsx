@@ -16,11 +16,11 @@ import { getTeachers } from "@/lib/teachers";
 import { getTestimonials } from "@/content";
 
 export default async function Home() {
-  const [events, trustpilot, teachers, locale] = await Promise.all([
+  const locale = await getLocale();
+  const [events, trustpilot, teachers] = await Promise.all([
     getEvents(),
     getTrustpilotStats(),
-    getTeachers(),
-    getLocale(),
+    getTeachers(locale),
   ]);
 
   const nextDates = formatNextDates(events, 2, locale);
