@@ -3,7 +3,9 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { usePathname, Link as IntlLink } from "@/i18n/navigation";
+import { routing, type Locale } from "@/i18n/routing";
 import { useNavContext } from "@/contexts/nav-context";
 
 type NavLink = { labelKey: string; href: string; type: "anchor" | "page" };
@@ -44,10 +46,14 @@ const chevron = (
   </svg>
 );
 
+const LOCALE_LABELS: Record<Locale, string> = { de: "DE", en: "EN", fr: "FR", es: "ES" };
+
 export default function NavPanel() {
   const t = useTranslations("Nav");
   const { isOpen, setIsOpen, setPanelHeight } = useNavContext();
   const router = useRouter();
+  const locale = useLocale() as Locale;
+  const pathname = usePathname();
   const innerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -119,6 +125,25 @@ export default function NavPanel() {
                 </button>
               );
             })}
+
+            {/* Language switcher */}
+            <div className="border-t border-[#1A3352]/8 px-5 py-3 flex items-center gap-1">
+              {routing.locales.map((l, i) => (
+                <IntlLink
+                  key={l}
+                  href={pathname}
+                  locale={l}
+                  onClick={() => setIsOpen(false)}
+                  className={`px-2.5 py-1 rounded-md text-[0.8rem] tracking-wider transition-colors ${
+                    l === locale
+                      ? "font-semibold text-[#1A3352] bg-[#1A3352]/8"
+                      : "font-normal text-[#3D5573] hover:bg-[#1A3352]/5"
+                  }${i > 0 ? " ml-0.5" : ""}`}
+                >
+                  {LOCALE_LABELS[l]}
+                </IntlLink>
+              ))}
+            </div>
           </div>
         </div>
       </div>

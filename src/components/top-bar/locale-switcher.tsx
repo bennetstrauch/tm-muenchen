@@ -12,21 +12,6 @@ const LOCALE_LABELS: Record<Locale, string> = {
   es: "ES",
 };
 
-function GlobeIcon() {
-  return (
-    <svg
-      width="18" height="18" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth="1.75"
-      strokeLinecap="round" strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <path d="M12 2a14.5 14.5 0 0 0 0 20A14.5 14.5 0 0 0 12 2" />
-      <path d="M2 12h20" />
-    </svg>
-  );
-}
-
 export default function LocaleSwitcher() {
   const locale = useLocale() as Locale;
   const pathname = usePathname();
@@ -49,10 +34,9 @@ export default function LocaleSwitcher() {
         onClick={() => setOpen((v) => !v)}
         aria-label="Sprache wechseln"
         aria-expanded={open}
-        className="flex items-center gap-1 h-9 px-2 rounded-full text-[#1A3352] hover:bg-[#1A3352]/8 transition-colors duration-200 focus-visible:outline-none"
+        className="flex items-center h-9 px-2 rounded-full text-[#1A3352] hover:bg-[#1A3352]/8 transition-colors duration-200 focus-visible:outline-none"
       >
-        <GlobeIcon />
-        <span className="text-[0.7rem] font-semibold tracking-wide leading-none">
+        <span className="text-[0.8rem] font-medium tracking-wider leading-none">
           {LOCALE_LABELS[locale]}
         </span>
       </button>
