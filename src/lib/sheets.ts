@@ -2,7 +2,7 @@ import { google } from 'googleapis';
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID!;
 const TAB = 'Info Anmeldungen';
-const RANGE = `${TAB}!A:G`;
+const RANGE = `${TAB}!A:H`;
 
 export function getSheets() {
   const creds = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON!);
@@ -23,23 +23,26 @@ export type Registration = {
   eventType: string;
 };
 
-export async function appendRegistration(r: Omit<Registration, 'timestamp'>) {
+export function buildRegistrationRow(r: Omit<Registration, 'timestamp'>, locale = 'de'): string[] {
+  return [
+    new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin' }),
+    r.name,
+    r.email,
+    r.phone ?? '',
+    r.eventDate,
+    r.eventTime,
+    r.eventType,
+    locale,
+  ];
+}
+
+export async function appendRegistration(r: Omit<Registration, 'timestamp'>, locale = 'de') {
   const sheets = getSheets();
   await sheets.spreadsheets.values.append({
     spreadsheetId: SHEET_ID,
     range: RANGE,
     valueInputOption: 'USER_ENTERED',
-    requestBody: {
-      values: [[
-        new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin' }),
-        r.name,
-        r.email,
-        r.phone ?? '',
-        r.eventDate,
-        r.eventTime,
-        r.eventType,
-      ]],
-    },
+    requestBody: { values: [buildRegistrationRow(r, locale)] },
   });
 }
 

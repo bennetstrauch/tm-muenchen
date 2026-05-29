@@ -44,9 +44,10 @@ type FormState = "idle" | "submitting" | "success" | "error";
 
 function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => void }) {
   const t = useTranslations("Events");
+  const locale = useLocale();
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMsg, setErrorMsg] = useState("");
-  const { weekday, date } = formatEventDate(event.date);
+  const { weekday, date } = formatEventDate(event.date, locale);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -69,6 +70,7 @@ function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => v
           eventType: event.type,
           meetLink: event.type === "Online" ? event.registrationUrl : undefined,
           teacherName: event.teacherName,
+          locale,
         }),
       });
 

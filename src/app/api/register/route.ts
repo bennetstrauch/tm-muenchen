@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { buildConfirmationHtml, buildReminderHtml, buildTeacherNotificationHtml } from "@/lib/email";
+import { buildConfirmationHtml, buildReminderHtml, buildTeacherNotificationHtml, buildConfirmationSubject, buildReminderSubject } from "@/lib/email";
 import type { RegistrationEmailParams } from "@/lib/email";
 import { appendRegistration } from "@/lib/sheets";
 
@@ -15,6 +15,7 @@ type RequestBody = {
   eventType: "Online" | "Präsenz";
   meetLink?: string;
   teacherName?: string;
+  locale?: string;
 };
 
 type TMWTeacher = {
@@ -27,7 +28,7 @@ type TMWTeacher = {
 
 export async function POST(request: Request) {
   const body: RequestBody = await request.json();
-  const { name, email, phone, isoDate, eventDate, eventTime, eventType, meetLink, teacherName } = body;
+  const { name, email, phone, isoDate, eventDate, eventTime, eventType, meetLink, teacherName, locale = "de" } = body;
 
   if (!name?.trim() || !email?.trim()) {
     return Response.json({ error: "Pflichtfelder fehlen." }, { status: 400 });
@@ -64,6 +65,7 @@ export async function POST(request: Request) {
   const params: RegistrationEmailParams = {
     name, email, phone,
     eventDate, eventTime, eventType, meetLink,
+    locale,
     teacher,
   };
 
@@ -85,7 +87,7 @@ export async function POST(request: Request) {
     resend.emails.send({
       from: "TM München <noreply@tm-muenchen.de>",
       to: email,
-      subject: `Bestätigung: TM-${isOnline ? "Online-" : ""}Infoabend am ${eventDate} um ${eventTime} Uhr`,
+      subject: buildConfirmationSubject(eventDate, eventTime, isOnline, locale),
       html: buildConfirmationHtml(params),
     }),
 
@@ -104,7 +106,7 @@ export async function POST(request: Request) {
       ? resend.emails.send({
           from: "TM München <noreply@tm-muenchen.de>",
           to: email,
-          subject: `Erinnerung: Morgen um ${eventTime} Uhr findet Ihr TM-${isOnline ? "Online-" : ""}Infoabend statt`,
+          subject: buildReminderSubject(eventTime, isOnline, locale),
           html: buildReminderHtml(params),
           scheduledAt: reminderScheduledAt,
         })
@@ -112,7 +114,7 @@ export async function POST(request: Request) {
   ]);
 
   // Log to Google Sheets — non-fatal
-  appendRegistration({ name, email, phone: phone ?? '', eventDate, eventTime, eventType })
+  appendRegistration({ name, email, phone: phone ?? '', eventDate, eventTime, eventType }, locale)
     .catch(err => console.error('Sheets logging failed:', err));
 
   return Response.json({ success: true });
