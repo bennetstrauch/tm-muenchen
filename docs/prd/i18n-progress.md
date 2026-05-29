@@ -15,7 +15,7 @@ PRD: docs/prd-i18n-phase1.md
 | Teacher filter | `getTeachers(locale?)` — Supabase query + bio_override | ✅ done |
 | Teacher bio translation | Translate API bios via `getTranslation()` | ✅ done |
 | Admin — Lehrer tab | Language assignments + bio overrides per teacher | ✅ done |
-| Admin — Einstellungen tab | Active locales, WhatsApp toggle, contact info | ❌ not started |
+| Admin — Einstellungen tab | Active locales, WhatsApp toggle, contact info | ✅ done |
 | Registration locale | `locale` field in POST body + Sheets column H | ❌ not started |
 | Localised emails | Confirmation + reminder in registrant's language | ❌ not started |
 
