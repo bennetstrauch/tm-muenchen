@@ -1,1 +1,220 @@
-{}
+{
+  "Hero": {
+    "badge": "La seule technique de son genre",
+    "cta": "Découvrez la séance d'introduction gratuite",
+    "learnMore": "En savoir plus sur MT",
+    "nextDatesPrefix": "Prochaines dates :"
+  },
+  "TrustBadges": {
+    "badge0": "Enseignée personnellement",
+    "badge1": "Simple et sans effort",
+    "badge2": "Pratiquée par des millions de personnes dans le monde",
+    "badge3": "Aucune concentration requise",
+    "badge4": "Sans arrêter les pensées",
+    "badge5": "400+ études scientifiques",
+    "ariaLabel": "Caractéristiques de la Méditation Transcendantale",
+    "showMore": "Afficher plus",
+    "showLess": "Afficher moins"
+  },
+  "ForWhom": {
+    "eyebrow": "Pour toi",
+    "heading": "Pour qui est la MT ?",
+    "tab0": "Stress",
+    "tab1": "Santé",
+    "tab2": "Science",
+    "tab3": "Dépression",
+    "tab4": "Joie intérieure",
+    "moreThemes": "Autres thèmes",
+    "item0Title": "Tu fonctionnes — mais intérieurement, tu es constamment tendu ?",
+    "item0Description": "• Tu dors mal, même si tu es pourtant fatigué.\n• Tu n'as jamais vraiment fini ta journée — ta tête continue de tourner.\n• Les petites choses te dérangent plus facilement que tu ne le voudrais.\n• Tu aspires à un vrai repos, pas seulement à une distraction.\n\nMT te donne quotidiennement 20 minutes de silence profond — et ton système nerveux commence à se régénérer durablement.",
+    "item1Title": "Tu sens que le stress fatigue ton corps ?",
+    "item1Description": "• Ta tension artérielle est trop élevée — ou tu sais qu'elle le sera bientôt.\n• Tu te réveilles le matin déjà épuisé.\n• Maux de tête, tensions, mauvais sommeil — tout est lié.\n• Tu veux changer quelque chose, mais un nouveau projet de santé semble être un effort supplémentaire.\n\nMT est l'inverse d'un effort : 20 minutes assis, yeux fermés — et le corps se régénère de lui-même.",
+    "item2Title": "Tu ne veux pas de promesses — tu veux des preuves ?",
+    "item2Description": "• Tu es sceptique face à la méditation — c'est justifié.\n• Tu as déjà essayé beaucoup de choses qui n'ont pas tenu leurs promesses.\n• Tu veux savoir : a-t-ce vraiment été étudié ? Sur des gens réels, avec des groupes de contrôle ?\n• Plus de 400 études menées dans des universités comme Harvard et Stanford : tension artérielle, cortisol, sommeil, santé cardiaque.\n\nMT est la technique de méditation la plus étudiée au monde — son efficacité est documentée, non promesse.",
+    "item3Title": "Certains jours, tu te sens vide — sans raison précise ?",
+    "item3Description": "• Te lever le matin est difficile, même si rien de grave n'est arrivé.\n• Tu fonctionnes en apparence, mais tu manques d'énergie pour les choses qui t'importent.\n• Tu as l'impression de te retenir constamment — et tu ne sais pas combien de temps cela durera encore.\n• La joie arrive moins souvent qu'elle ne devrait.\n\nMT n'est pas un substitut à un soutien professionnel — mais beaucoup rapportent : un repos plus profond, plus de légèreté, un meilleur accès à soi-même.",
+    "item4Title": "Tu veux un chemin pratique vers l'illumination",
+    "item4Description": "Le premier stade de l'illumination : la satisfaction intérieure parfaite et la clarté — cela sommeille déjà en chacun de nous. Nous devons seulement savoir comment y accéder. MT te donne l'accès de manière directe et simple. Nous découvrons notre nature la plus profonde — la béatitude pure. Cette expérience pendant la MT se fait dans le silence profond, physiquement et mentalement. Cela permet au corps de se régénérer profondément et de se libérer des stress : en conséquence, nous devenons de plus en plus capables de vivre la joie immense en nous aussi pendant la vie quotidienne et de la déployer continuellement."
+  },
+  "WhyTm": {
+    "eyebrow": "Pourquoi MT ?",
+    "heading": "Ce qui rend MT unique",
+    "subheading": "La Méditation Transcendantale se distingue fondamentalement des autres techniques.",
+    "benefit0Title": "Sans effort — aucune concentration requise",
+    "benefit0Short": "La plupart des techniques de méditation demandent de la concentration ou de la volonté. MT est différente : l'esprit peut se calmer tout naturellement — sans effort. C'est pourquoi beaucoup trouvent MT étonnamment facile à apprendre.",
+    "benefit0Expanded": "Parce que la technique est sans effort, l'esprit se meut spontanément vers des niveaux de pensée plus calmes. La méditation se fait d'elle-même — pas par la discipline. Cela rend MT accessible aussi aux personnes qui n'ont pas eu d'expérience avec d'autres techniques.",
+    "benefit1Title": "Plus profond que le sommeil — le corps se régénère vraiment",
+    "benefit1Short": "Pendant la MT, le corps atteint un repos profond qui, selon les études, est plus profond que le sommeil — tandis que l'esprit reste éveillé et clair. Dans ce repos, le système nerveux élimine le stress accumulé.",
+    "benefit1Expanded": "Cet état est mesurément différent de la détente, du sommeil ou de la concentration. Beaucoup vivent : silence profond, clarté, énergie nouvelle — avant même de remarquer consciemment l'effet dans la vie quotidienne.",
+    "benefit2Title": "Heureux de l'intérieur",
+    "benefit2Short": "Chaque personne porte en elle un réservoir de satisfaction parfaite — un océan de joie accessible par la MT — plus de satisfaction intérieure et moins d'irritabilité au quotidien.",
+    "benefit2Expanded": "Ce que des philosophes, des mystiques et des sages décrivent depuis des millénaires devient concret et régulièrement intégré par la MT. Et ce n'est pas tout — c'est aussi mesurable scientifiquement.",
+    "benefit3Title": "Penser plus clair, réagir plus calme",
+    "benefit3Short": "Plusieurs études le montrent : les praticiens réguliers réagissent plus calmement en situations stressantes, décident plus clairement, sont plus créatifs. Ce n'est pas de l'auto-suggestion — c'est mesurable dans l'activité cérébrale.",
+    "benefit3Expanded": "Les études montrent que la MT améliore la coordination entre différentes régions du cerveau. Ce fonctionnement plus intégré est documenté chez les athlètes de haut niveau, les dirigeants et les créatifs qui pratiquent régulièrement la MT.",
+    "benefit4Title": "Réduire le stress — même celui qui s'accumule depuis longtemps",
+    "benefit4Short": "La MT permet de réduire non seulement le stress aigu, mais aussi la pression accumulée à long terme. Beaucoup rapportent : moins d'anxiété, meilleur sommeil, plus de résilience.",
+    "benefit4Expanded": "La MT a été étudiée dans des recherches sur les troubles liés au stress et le traitement des traumatismes — y compris le TSPT. Le repos physiologique profond soutient l'autorégulation naturelle du corps d'une manière que d'autres techniques de relaxation ne peuvent tout simplement pas atteindre.",
+    "benefit5Title": "Plus de 400 études dans les universités les plus prestigieuses",
+    "benefit5Short": "La Méditation Transcendantale est la technique de méditation la plus étudiée au monde. Domaines de recherche : stress, santé cardiaque, fonctions cérébrales, performance et résilience.",
+    "benefit5Expanded": "Parce que la MT est enseignée de manière standardisée, elle peut être étudiée scientifiquement de façon plus fiable que beaucoup d'autres approches. Des études ont été publiées notamment dans l'American Journal of Cardiology et l'International Journal of Neuroscience."
+  },
+  "HowItWorks": {
+    "eyebrow": "Le parcours",
+    "heading": "Comment ça marche",
+    "subheading": "De la curiosité à la pratique quotidienne — en quatre étapes simples.",
+    "step0Title": "Séance d'introduction gratuite",
+    "step0Description": "Tu découvres ce qu'est la MT, comment elle diffère des autres techniques, et tu peux poser toutes tes questions. Aucun engagement.",
+    "step1Title": "Instruction personnelle",
+    "step1Description": "La technique t'est enseignée personnellement par un instructeur certifié — individuellement, à ton rythme. Aucune connaissance préalable requise.",
+    "step2Title": "Méditer quotidiennement à la maison",
+    "step2Description": "20 minutes, assis confortablement, deux fois par jour. Pas d'app, pas de guidage, pas de concentration — juste une pratique naturelle et autonome.",
+    "step3Title": "L'effet se déploie",
+    "step3Description": "Avec une pratique régulière, le calme s'étend à la vie quotidienne : plus d'énergie, plus de clarté — même dans les moments stressants.",
+    "bottomCta": "Assister à une séance d'introduction maintenant"
+  },
+  "Events": {
+    "heading": "Ta séance d'introduction",
+    "cta": "Réserver ta place",
+    "empty": "Aucune date prévue actuellement. N'hésite pas à nous écrire directement.",
+    "close": "Fermer ×",
+    "individualAppointment": "Demander un rendez-vous individuel",
+    "formName": "Nom *",
+    "formEmail": "E-mail *",
+    "formPhone": "Téléphone (optionnel)",
+    "formSubmit": "S'inscrire maintenant",
+    "formSubmitting": "Envoi en cours…",
+    "formCancel": "Annuler",
+    "formSuccessTitle": "Inscription réussie !",
+    "formSuccessBody": "Nous vous avons envoyé une confirmation à votre adresse e-mail.",
+    "formErrorUnknown": "Erreur inconnue",
+    "formErrorFailed": "L'inscription a échoué."
+  },
+  "Trustpilot": {
+    "heading": "Ce que les autres disent",
+    "ratingLabel": "Excellent",
+    "verified": "Vérifié",
+    "starsLabel": "{rating} sur 5 étoiles",
+    "verifiedCount": "{count} avis vérifiés",
+    "readMore": "En savoir plus",
+    "collapse": "Moins",
+    "review0Title": "J'adore la MT",
+    "review0Quote": "J'adore la MT ! Je me sens si détendu et enraciné, bien plus que je ne l'aurais jamais cru possible. C'est incroyable la profondeur de détente qui est possible — plus profonde que le sommeil. La MT est si simple et pourtant si profonde que tout le monde peut la pratiquer. C'est mon ancre quotidienne.",
+    "review1Title": "Merveilleux 😊",
+    "review1Quote": "Mon seul regret est de ne pas avoir commencé plus tôt. Absolument transformateur. Je me sens si paisible et heureux.",
+    "review2Title": "Ma fille et moi sommes très heureux",
+    "review2Quote": "Ma fille et moi méditons quotidiennement et en sommes très heureux. Cela nous a apporté beaucoup de clarté et de paix intérieure. Nous nous réjouissons toujours de nos 2 méditations quotidiennes. Les professeurs sont très engagés et faciles à comprendre.",
+    "review3Title": "Très professionnel, du début à la fin",
+    "review3Quote": "Très professionnel — des e-mails aux notifications en passant par l'introduction. Des professeurs très amicaux, patients et expérimentés. Beaucoup de bonnes informations fondées sur la science.",
+    "review4Title": "L'une des meilleures décisions depuis des années",
+    "review4Quote": "C'est l'une des meilleures décisions que j'ai prises depuis de nombreuses années. Si vous avez besoin d'un bon démarrage pour votre journée — c'est exactement ce qu'il vous faut.",
+    "review5Title": "C'est réel",
+    "review5Quote": "C'est réel. C'est une façon de vivre en paix pendant un temps qui t'appartient complètement.",
+    "review6Title": "Un changement notable après seulement 3 semaines",
+    "review6Quote": "Après seulement 3 semaines de MT, j'ai remarqué un changement notable dans mon niveau d'anxiété.",
+    "review7Title": "Je peux enfin méditer.",
+    "review7Quote": "Je peux enfin méditer."
+  },
+  "Testimonials": {
+    "quote0": "La Méditation Transcendantale me permet d'aller vers l'intérieur et de trouver une profondeur de calme et de paix que je ne trouve nulle part ailleurs.",
+    "detail0": "Comédien"
+  },
+  "Teachers": {
+    "eyebrow": "Centre MT Munich",
+    "heading": "Vos professeurs",
+    "readMore": "En savoir plus",
+    "collapse": "Moins"
+  },
+  "CenterBanner": {
+    "eyebrow": "Centre MT Munich",
+    "line1": "En personne ou en ligne —",
+    "line2": "nous sommes là pour vous.",
+    "ariaLabel": "Centre MT Munich"
+  },
+  "AbschlussCta": {
+    "heading": "Découvrez si la MT vous convient",
+    "body": "Venez à une séance d'introduction gratuite — sans engagement.",
+    "cta": "Réservez votre place maintenant"
+  },
+  "Wissenschaft": {
+    "eyebrow": "Science & Recherche",
+    "heading": "La MT figure parmi les techniques de méditation les plus étudiées au monde",
+    "body": "De nombreuses études menées dans les meilleures universités ont examiné comment la MT influence le stress, la charge mentale et le bien-être général.",
+    "bullet0": "Résultats de recherche actuels sur le stress, la santé cardiaque et la fonction cérébrale",
+    "bullet1": "Expériences pratiques d'enseignants et de méditants",
+    "bullet2": "Comment la MT se distingue des autres techniques — et pourquoi c'est mesurable scientifiquement",
+    "cta": "En savoir plus lors de la séance d'introduction"
+  },
+  "InfoabendPreview": {
+    "heading": "Voici comment se déroule la séance d'introduction",
+    "box0Label": "Format",
+    "box0Value": "30 min\nEn ligne",
+    "box1Label": "Coûts",
+    "box1Value": "Gratuit et sans engagement",
+    "point0": "Ce qui rend la MT unique",
+    "point1": "Comment la MT s'adapte à toi",
+    "point2": "Espace pour ton histoire et tes questions"
+  },
+  "Nav": {
+    "link0": "Pour qui est la MT ?",
+    "link1": "Ce qui rend la MT unique",
+    "link2": "Comment ça fonctionne",
+    "link3": "Prochaines séances d'introduction",
+    "link4": "Pour ceux qui médient déjà",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "prevTheme": "Thème précédent",
+    "nextTheme": "Thème suivant"
+  },
+  "Carousel": {
+    "prev": "Précédent",
+    "next": "Suivant",
+    "slideLabel": "Diapositive {current} sur {total}"
+  },
+  "CookieBanner": {
+    "text": "Nous utilisons Meta Pixel pour mieux comprendre quel contenu interpelle les gens et combien se inscrivent à notre séance d'introduction.",
+    "accept": "Accepter",
+    "decline": "Refuser"
+  },
+  "StickyCta": {
+    "nextTermine": "Prochains rendez-vous"
+  },
+  "Themes": {
+    "stress": {
+      "label": "Stress",
+      "headline0": "Enfin vraiment déconnecter.",
+      "headline1": "Sans effort.",
+      "subtitle": "régénère plus profondément que le sommeil"
+    },
+    "innereFreude": {
+      "label": "Joie intérieure",
+      "headline0": "Chacun porte en lui un océan de joie illimitée.",
+      "headline1": "La MT t'en donne accès.",
+      "subtitle": "Plonge simplement et avec assurance dans ton bonheur"
+    },
+    "schlaf": {
+      "label": "Sommeil",
+      "headline0": "Est-ce que tu dors vraiment ?",
+      "headline1": "Sans somnifères. Sans force de volonté.",
+      "subtitle": "La MT offre à ton système nerveux le repos profond que le sommeil seul ne peut souvent plus fournir."
+    },
+    "fokus": {
+      "label": "Concentration",
+      "headline0": "Ta tête est pleine, mais pas claire ?",
+      "headline1": "La clarté ne s'impose pas — elle émerge.",
+      "subtitle": "La MT ne range pas, elle laisse l'ordre émerger de lui-même : une clarté de focus, un esprit plus calme."
+    },
+    "erschoepfung": {
+      "label": "Épuisement",
+      "headline0": "Vide, alors que tu n'as rien fait?",
+      "headline1": "Une vraie énergie. De l'intérieur.",
+      "subtitle": "La MT t'offre l'accès à une vraie paix intérieure — non comme une technique, mais comme un état naturel."
+    },
+    "angst": {
+      "label": "Peur",
+      "headline0": "L'agitation intérieure, enfin la laisser partir?",
+      "headline1": "Sans effort de volonté. Sans concentration.",
+      "subtitle": "La MT apaise le système nerveux de l'intérieur — sans effort de volonté, sans concentration."
+    }
+  }
+}
