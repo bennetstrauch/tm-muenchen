@@ -27,10 +27,11 @@ async function translateViaClaude(text: string, locale: string, context: string)
   if (!apiKey) throw new Error("ANTHROPIC_API_KEY not set");
 
   const prompt = [
-    `You are translating content for TM München, a Transcendental Meditation center in Munich.`,
+    `You are a professional copywriter and translator localising content for TM München, a Transcendental Meditation center in Munich.`,
     `Context: ${context}`,
     `Target language: ${LOCALE_NAMES[locale]}`,
-    `Tone: warm, professional. Preserve line breaks and punctuation exactly.`,
+    `Tone: warm, direct, and natural. Write like a trusted friend — not a brochure.`,
+    `Use informal "you" (French: "tu", Spanish: "tú"). Preserve line breaks and punctuation exactly.`,
     ``,
     `Glossary (always use these exact translations):`,
     buildGlossaryText(locale),
@@ -48,7 +49,7 @@ async function translateViaClaude(text: string, locale: string, context: string)
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      model: "claude-haiku-4-5-20251001",
+      model: "claude-sonnet-4-6",
       max_tokens: 1024,
       messages: [{ role: "user", content: prompt }],
     }),
