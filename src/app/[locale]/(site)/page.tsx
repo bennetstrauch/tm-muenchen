@@ -17,11 +17,12 @@ import { getTestimonials } from "@/content";
 
 export default async function Home() {
   const locale = await getLocale();
-  const [events, trustpilot, teachers] = await Promise.all([
+  const [events, trustpilot, teachersRaw] = await Promise.all([
     getEvents(),
     getTrustpilotStats(),
     getTeachers(locale),
   ]);
+  const teachers = [...teachersRaw].sort(() => Math.random() - 0.5);
 
   const nextDates = formatNextDates(events, 2, locale);
 

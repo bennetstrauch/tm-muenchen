@@ -10,8 +10,9 @@ import { eventSlug, formatVeranstaltungDate } from '@/lib/format';
 import { generateWhatsAppText, buildWhatsappUrl } from '@/lib/whatsapp';
 import InfoRegistrationsTable from './registrations-table';
 import EmailActionsTab from './email-tab';
+import LehrerTab from './lehrer-tab';
 
-type Tab = 'info-anmeldungen' | 'veranstaltungen' | 'anmeldungen' | 'vorlagen' | 'emails';
+type Tab = 'info-anmeldungen' | 'veranstaltungen' | 'anmeldungen' | 'vorlagen' | 'emails' | 'lehrer';
 
 type Mode =
   | { view: 'list' }
@@ -54,7 +55,7 @@ const EMPTY_FORM: Omit<Veranstaltung, 'id'> = {
   slug: '',
 };
 
-const VALID_TABS: Tab[] = ['info-anmeldungen', 'veranstaltungen', 'anmeldungen', 'vorlagen', 'emails'];
+const VALID_TABS: Tab[] = ['info-anmeldungen', 'veranstaltungen', 'anmeldungen', 'vorlagen', 'emails', 'lehrer'];
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -1427,9 +1428,14 @@ export default function AdminClient({
           E-Mails
         </button>
         {!tokenEventId && (
-          <button className={TAB_CLS(tab === 'vorlagen')} onClick={() => setTab('vorlagen')}>
-            Vorlagen ({vorlagen.length})
-          </button>
+          <>
+            <button className={TAB_CLS(tab === 'vorlagen')} onClick={() => setTab('vorlagen')}>
+              Vorlagen ({vorlagen.length})
+            </button>
+            <button className={TAB_CLS(tab === 'lehrer')} onClick={() => setTab('lehrer')}>
+              Lehrer
+            </button>
+          </>
         )}
       </div>
 
@@ -1719,6 +1725,8 @@ export default function AdminClient({
           events={events}
         />
       )}
+
+      {tab === 'lehrer' && <LehrerTab />}
     </>
   );
 }

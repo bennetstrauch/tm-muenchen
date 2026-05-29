@@ -32,26 +32,30 @@ async function fetchTeachersForCenter(id: number, token: string): Promise<TMTeac
   }));
 }
 
-export async function getTeachers(locale = "de"): Promise<TMTeacher[]> {
+export async function getTeachersRaw(): Promise<TMTeacher[]> {
   const token = process.env.TMW_API_KEY;
   if (!token) return [];
-
   try {
     const [c108, c109] = await Promise.allSettled([
       fetchTeachersForCenter(108, token),
       fetchTeachersForCenter(109, token),
     ]);
-
     const from108 = c108.status === "fulfilled" ? c108.value : [];
     const from109 = c109.status === "fulfilled" ? c109.value : [];
-
     const seen = new Set<string>();
-    const deduped = [...from108, ...from109].filter(t => {
+    return [...from108, ...from109].filter(t => {
       if (seen.has(t.name)) return false;
       seen.add(t.name);
       return true;
     });
+  } catch {
+    return [];
+  }
+}
 
+export async function getTeachers(locale = "de"): Promise<TMTeacher[]> {
+  try {
+    const deduped = await getTeachersRaw();
     if (locale === "de") return deduped;
 
     const { getSupabase } = await import("./supabase");
