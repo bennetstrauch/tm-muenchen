@@ -55,6 +55,8 @@ function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => v
     setErrorMsg("");
 
     const fd = new FormData(e.currentTarget);
+    const eventId = crypto.randomUUID();
+    const hasConsent = localStorage.getItem("tm_cookie_consent") === "accepted";
 
     try {
       const res = await fetch("/api/register", {
@@ -71,6 +73,8 @@ function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => v
           meetLink: event.type === "Online" ? event.registrationUrl : undefined,
           teacherName: event.teacherName,
           locale,
+          eventId,
+          hasConsent,
         }),
       });
 
@@ -80,7 +84,7 @@ function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => v
       }
 
       setFormState("success");
-      window.fbq?.("track", "Lead");
+      if (hasConsent) window.fbq?.("track", "Lead", {}, { eventID: eventId });
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : t("formErrorFailed"));
       setFormState("error");

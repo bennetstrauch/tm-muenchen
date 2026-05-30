@@ -2,6 +2,7 @@ import { Resend } from "resend";
 import { buildConfirmationHtml, buildReminderHtml, buildTeacherNotificationHtml, buildConfirmationSubject, buildReminderSubject } from "@/lib/email";
 import type { RegistrationEmailParams } from "@/lib/email";
 import { appendRegistration } from "@/lib/sheets";
+import { sendCapiLead } from "@/lib/capi";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -16,6 +17,8 @@ type RequestBody = {
   meetLink?: string;
   teacherName?: string;
   locale?: string;
+  eventId?: string;
+  hasConsent?: boolean;
 };
 
 type TMWTeacher = {
@@ -28,7 +31,11 @@ type TMWTeacher = {
 
 export async function POST(request: Request) {
   const body: RequestBody = await request.json();
-  const { name, email, phone, isoDate, eventDate, eventTime, eventType, meetLink, teacherName, locale = "de" } = body;
+  const { name, email, phone, isoDate, eventDate, eventTime, eventType, meetLink, teacherName, locale = "de", eventId, hasConsent } = body;
+
+  const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  const clientUserAgent = request.headers.get("user-agent") ?? undefined;
+  const eventSourceUrl = request.headers.get("referer") ?? "https://tm-muenchen.de";
 
   if (!name?.trim() || !email?.trim()) {
     return Response.json({ error: "Pflichtfelder fehlen." }, { status: 400 });
@@ -122,6 +129,19 @@ export async function POST(request: Request) {
       if (attempt < 2) await new Promise(r => setTimeout(r, 300));
       else console.error('Sheets logging failed after 3 attempts:', err);
     }
+  }
+
+  // Facebook Conversions API — non-fatal
+  if (eventId) {
+    sendCapiLead({
+      eventId,
+      eventSourceUrl,
+      clientIp: hasConsent ? clientIp : undefined,
+      clientUserAgent,
+      email: hasConsent ? email : undefined,
+      name: hasConsent ? name : undefined,
+      phone: hasConsent ? phone : undefined,
+    }).catch(err => console.error("CAPI failed:", err));
   }
 
   return Response.json({ success: true });

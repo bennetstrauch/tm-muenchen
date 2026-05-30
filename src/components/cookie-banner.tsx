@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 
 const STORAGE_KEY = "tm_cookie_consent";
-const PIXEL_ID = "2767733383607726";
+const PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID!;
 
 function loadPixel() {
   if (typeof window === "undefined" || window.fbq) return;
