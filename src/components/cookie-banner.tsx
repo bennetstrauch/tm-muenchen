@@ -42,15 +42,20 @@ export default function CookieBanner() {
     }
   }, []);
 
+  function dismiss() {
+    setVisible(false);
+    window.dispatchEvent(new Event("cookie-consent-dismissed"));
+  }
+
   function accept() {
     localStorage.setItem(STORAGE_KEY, "accepted");
-    setVisible(false);
+    dismiss();
     loadPixel();
   }
 
   function decline() {
     localStorage.setItem(STORAGE_KEY, "declined");
-    setVisible(false);
+    dismiss();
   }
 
   if (!visible) return null;

@@ -11,7 +11,17 @@ export default function StickyCta() {
   const { hero } = content;
   const pathname = usePathname();
   const [hidden, setHidden] = useState(true);
+  const [bannerVisible, setBannerVisible] = useState(false);
   const [ctaHref, setCtaHref] = useState<string>("#infoabend");
+
+  useEffect(() => {
+    if (!localStorage.getItem("tm_cookie_consent")) {
+      setBannerVisible(true);
+      const handler = () => setBannerVisible(false);
+      window.addEventListener("cookie-consent-dismissed", handler);
+      return () => window.removeEventListener("cookie-consent-dismissed", handler);
+    }
+  }, []);
 
   useEffect(() => {
     setHidden(true);
@@ -36,7 +46,7 @@ export default function StickyCta() {
   }, []);
 
   return (
-    <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] transition-all duration-300 ${hidden ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+    <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] transition-all duration-300 ${hidden || bannerVisible ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
       <a
         href={ctaHref}
         className="
