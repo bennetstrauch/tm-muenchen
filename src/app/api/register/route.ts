@@ -113,9 +113,16 @@ export async function POST(request: Request) {
       : Promise.resolve(),
   ]);
 
-  // Log to Google Sheets — non-fatal
-  appendRegistration({ name, email, phone: phone ?? '', eventDate, eventTime, eventType }, locale)
-    .catch(err => console.error('Sheets logging failed:', err));
+  // Log to Google Sheets — non-fatal, retry up to 3 times
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      await appendRegistration({ name, email, phone: phone ?? '', eventDate, eventTime, eventType }, locale);
+      break;
+    } catch (err) {
+      if (attempt < 2) await new Promise(r => setTimeout(r, 300));
+      else console.error('Sheets logging failed after 3 attempts:', err);
+    }
+  }
 
   return Response.json({ success: true });
 }
