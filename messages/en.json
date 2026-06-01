@@ -219,5 +219,12 @@
       "headline1": "No willpower. No concentration.",
       "subtitle": "TM calms your nervous system from within — no willpower, no concentration needed."
     }
+  },
+  "Footer": {
+    "tagline": "Learn more about Transcendental Meditation on the national website.",
+    "cta": "Go to national website"
+  },
+  "LegalPages": {
+    "localeNotice": "This page is only available in German."
   }
 }

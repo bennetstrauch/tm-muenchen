@@ -219,5 +219,12 @@
       "headline1": "Sans effort de volonté. Sans concentration.",
       "subtitle": "La MT apaise le système nerveux de l'intérieur — sans effort de volonté, sans concentration."
     }
+  },
+  "Footer": {
+    "tagline": "Découvre la Méditation Transcendantale sur le site national.",
+    "cta": "Voir le site national"
+  },
+  "LegalPages": {
+    "localeNotice": "Cette page est disponible en allemand uniquement."
   }
 }
