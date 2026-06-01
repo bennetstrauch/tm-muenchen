@@ -21,6 +21,7 @@ export default function StickyCta() {
   const pathname = usePathname();
   const [hidden, setHidden] = useState(true);
   const [suppressed, setSuppressed] = useState(false);
+  const [released, setReleased] = useState(false);
   const [bannerVisible, setBannerVisible] = useState(false);
   const [ctaHref, setCtaHref] = useState<string>("#infoabend");
 
@@ -64,6 +65,17 @@ export default function StickyCta() {
   }, [pathname]);
 
   useEffect(() => {
+    const el = document.getElementById("fuer-wen");
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setReleased(entry.isIntersecting),
+      { threshold: 0.5 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [pathname]);
+
+  useEffect(() => {
     const infoEl = document.getElementById("infoabend");
     if (!infoEl) return;
     const infoObserver = new IntersectionObserver(([entry]) => {
@@ -73,7 +85,7 @@ export default function StickyCta() {
     return () => infoObserver.disconnect();
   }, []);
 
-  const visible = !hidden && !suppressed && !bannerVisible;
+  const visible = !hidden && (!suppressed || released) && !bannerVisible;
 
   return (
     <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] transition-all duration-300 ${visible ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
