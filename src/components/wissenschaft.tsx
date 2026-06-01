@@ -11,6 +11,7 @@ export default async function WissenschaftSection() {
 
   return (
     <section
+      id="wissenschaft"
       className="section bg-[#1A3352]"
       aria-labelledby="wissenschaft-heading"
     >

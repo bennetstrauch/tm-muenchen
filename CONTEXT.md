@@ -10,17 +10,17 @@ Rationale: convince early → remove friction + sign up in the middle → deepen
 
 1. **Hero** — emotional headline ("Endlich wirklich abschalten. / Ohne Anstrengung."), single primary CTA, next dates with SVG calendar icon. No bottom brand block ("Transzendentale Meditation" + subtitle removed). "regeneriert tiefer als Schlaf" dropped from hero — belongs in WhyTM/Wissenschaft. Hero is purely benefit-led + action.
 2. **Trust-Badges** — 3 visible: "✔ Persönlich unterrichtet · ✔ Einfach und mühelos · ✔ Von Millionen weltweit praktiziert". Remaining 3 ("Keine Konzentration nötig", "Ohne Gedanken stoppen", "400+ wissenschaftliche Studien") hidden behind a plain down-arrow (no text). Arrow does NOT flip. Auto-contracts when badge strip scrolls out of viewport. Zeit-Investment (20 min) NOT here. Long science claim ("meistuntersuchte Technik weltweit") belongs as headline in Wissenschaft section, not as badge.
-3. **Für wen?** — pain-point tabs with symptom language + bullets (all except Innere Freude rewritten)
-4. **Testimonials** — real quotes
-5. **Was TM einzigartig macht** — WhyTm section
-6. **Trustpilot** — rating widget
-7. **CenterBanner** — center info
-8. **So läuft der Infoabend ab** *(new)* — directly before Termine; structure: heading → 2 info cards → bullet points. Cards: "Format" (30 Min. · Online) + "Kosten" (Kostenlos & unverbindlich). "vor Ort in München" omitted from card (visible in event listings). Orange subtitle line ("Kostenlos · Unverbindlich · ca. 60 Minuten") removed — redundant with cards. Duration updated from 60 to 30 min.
-9. **Nächste Infoabende** — signup section (id="anmeldung")
-10. **Wissenschaft & Forschung** *(new)* — static teaser; ChatGPT copy basis; CTA → Infoabend. Future: AI study search (deferred).
-11. **Teachers** — personal trust
-12. **So funktioniert es** *(moved to late)* — "what happens after the Infoabend"; for hesitant visitors who scroll past signup
-13. **Abschluss-CTA** *(new)* — "Finde heraus, ob TM zu dir passt"
+3. **So läuft der Infoabend ab** (id="infoabend") — directly before Termine; structure: heading → 2 info cards → bullet points. Cards: "Format" (30 Min. · Online) + "Kosten" (Kostenlos & unverbindlich). "vor Ort in München" omitted from card (visible in event listings). Orange subtitle line ("Kostenlos · Unverbindlich · ca. 60 Minuten") removed — redundant with cards. Duration updated from 60 to 30 min.
+4. **Nächste Infoabende** — signup section (id="anmeldung")
+5. **Für wen?** — pain-point tabs with symptom language + bullets (all except Innere Freude rewritten). Intentionally placed *after* signup so hesitant visitors who skip the form can self-identify and return.
+6. **Testimonials** — real quotes
+7. **Was TM einzigartig macht** — WhyTm section
+8. **Trustpilot** — rating widget
+9. **CenterBanner** — center info
+10. **Wissenschaft & Forschung** (id="wissenschaft") — static teaser; ChatGPT copy basis; CTA → Infoabend. Future: AI study search (deferred).
+11. **Teachers** (id="lehrer") — personal trust
+12. **So funktioniert es** (id="wie-es-funktioniert") — "what happens after the Infoabend"; for hesitant visitors who scroll past signup
+13. **Abschluss-CTA** (id="abschluss-cta") — "Finde heraus, ob TM zu dir passt"
 
 ## Theme
 A themed variant of the landing page targeting a specific audience segment via a distinct hero headline, subtitle, images, and ForWhom default tab. Each theme has its own URL slug.
@@ -236,3 +236,36 @@ Tenant config stored in Supabase `tenants` table (not Google Sheets, not JSON in
 For Phase 1 (language feature), Einstellungen are stored as a single well-known Supabase row (`tenant = muenchen`). Phase 2 adds more rows — no schema migration needed.
 
 Centers keep their own domains (e.g. `tm-berlin.de`). No shared platform domain.
+
+## Footer
+
+A slim footer shown on the landing page and all theme variants (site layout), but **not** on `/events`. Contains three things:
+
+1. **Nationale Website** — text link + button to `meditation.de` ("Erfahre mehr über TM auf unserer nationalen Website" / "Zur nationalen Website")
+2. **Legal links** — Impressum · Datenschutz
+3. **Vereinsname** — "Transzendentale Meditation München e.V."
+
+Design principle: clean and minimal — one row on desktop, stacked on mobile.
+
+## Impressum
+
+Static German-language page at `/impressum` (under `[locale]` routing). Content is hardcoded German — not run through the i18n/auto-translate system, as it is a legal text specific to German law. A notice is shown when `locale !== 'de'` informing the visitor the page is only available in German.
+
+Legal entity: **Transzendentale Meditation München e.V.**
+Address: Guldenstraße 47, 80639 München
+1. Vorsitzender: Christoph Fereber
+2. Vorsitzender: Wolfgang Arden
+Registergericht: Amtsgericht München (VR-Nummer: [Placeholder — to be filled in])
+Contact: +49 163 7354 836 · info@tm-muenchen.de
+
+In Phase 2 (multi-tenancy), these fields move to Supabase `tenants` table.
+
+## Datenschutz
+
+Static German-language page at `/datenschutz`. Same locale-notice behaviour as Impressum. Covers:
+- Anmeldeformular (Infoabend registration) — data stored in Google Sheets (transitioning to Supabase) + emails via Resend
+- Supabase (teacher data, settings, translation cache)
+- Vercel (hosting)
+- Meta Pixel (only after cookie consent)
+
+Google Sheets section can be removed once registration data is fully migrated to Supabase.

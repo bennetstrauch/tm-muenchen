@@ -3,6 +3,7 @@ import TopBar from "@/components/top-bar";
 import NavPanel from "@/components/top-bar/nav-panel";
 import MainOffset from "@/components/main-offset";
 import CookieBanner from "@/components/cookie-banner";
+import Footer from "@/components/footer";
 import { NavProvider } from "@/contexts/nav-context";
 import { getSettings } from "@/lib/settings";
 
@@ -15,6 +16,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <MainOffset>
         {children}
       </MainOffset>
+      <Footer />
       <StickyCta />
       <CookieBanner />
     </NavProvider>

@@ -182,6 +182,13 @@
   "StickyCta": {
     "nextTermine": "Nächste Termine"
   },
+  "Footer": {
+    "tagline": "Erfahre mehr über Transzendentale Meditation auf der nationalen Website.",
+    "cta": "Zur nationalen Website"
+  },
+  "LegalPages": {
+    "localeNotice": "Diese Seite ist nur auf Deutsch verfügbar."
+  },
   "Themes": {
     "stress": {
       "label": "Stress",

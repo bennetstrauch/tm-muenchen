@@ -106,7 +106,7 @@ export default function Teachers({ teachers }: { teachers: TMTeacher[] }) {
   if (teachers.length === 0) return null;
 
   return (
-    <section className="section bg-[#EFF6FF]">
+    <section id="lehrer" className="section bg-[#EFF6FF]">
       <div className="section-inner">
 
         <div className="text-center mb-10">

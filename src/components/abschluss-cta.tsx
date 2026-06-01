@@ -4,7 +4,7 @@ export default async function AbschlussCta() {
   const t = await getTranslations("AbschlussCta");
 
   return (
-    <section className="section bg-[#1A3352]" aria-labelledby="abschluss-cta-heading">
+    <section id="abschluss-cta" className="section bg-[#1A3352]" aria-labelledby="abschluss-cta-heading">
       <div className="section-inner">
 
         <div className="text-center">

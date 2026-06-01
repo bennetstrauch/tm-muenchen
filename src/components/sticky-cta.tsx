@@ -5,12 +5,22 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { content } from "../content";
 
+const SUPPRESSED_IDS = [
+  "infoabend",
+  "anmeldung",
+  "wissenschaft",
+  "lehrer",
+  "wie-es-funktioniert",
+  "abschluss-cta",
+];
+
 export default function StickyCta() {
   const t = useTranslations("Hero");
   const tSticky = useTranslations("StickyCta");
   const { hero } = content;
   const pathname = usePathname();
   const [hidden, setHidden] = useState(true);
+  const [suppressed, setSuppressed] = useState(false);
   const [bannerVisible, setBannerVisible] = useState(false);
   const [ctaHref, setCtaHref] = useState<string>("#infoabend");
 
@@ -36,6 +46,24 @@ export default function StickyCta() {
   }, [pathname]);
 
   useEffect(() => {
+    const counts = new Map<string, boolean>();
+    const observers: IntersectionObserver[] = [];
+
+    for (const id of SUPPRESSED_IDS) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+      const obs = new IntersectionObserver(([entry]) => {
+        counts.set(id, entry.isIntersecting);
+        setSuppressed([...counts.values()].some(Boolean));
+      }, { threshold: 0 });
+      obs.observe(el);
+      observers.push(obs);
+    }
+
+    return () => observers.forEach(o => o.disconnect());
+  }, [pathname]);
+
+  useEffect(() => {
     const infoEl = document.getElementById("infoabend");
     if (!infoEl) return;
     const infoObserver = new IntersectionObserver(([entry]) => {
@@ -45,8 +73,10 @@ export default function StickyCta() {
     return () => infoObserver.disconnect();
   }, []);
 
+  const visible = !hidden && !suppressed && !bannerVisible;
+
   return (
-    <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] transition-all duration-300 ${hidden || bannerVisible ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+    <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] transition-all duration-300 ${visible ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
       <a
         href={ctaHref}
         className="
