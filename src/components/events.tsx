@@ -211,9 +211,15 @@ function EventRow({
   );
 }
 
+const INITIAL_COUNT = 3;
+
 export default function Events({ events }: { events: TMEvent[] }) {
   const t = useTranslations("Events");
   const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const [showAll, setShowAll] = useState(false);
+
+  const visibleEvents = showAll ? events : events.slice(0, INITIAL_COUNT);
+  const hiddenCount = events.length - INITIAL_COUNT;
 
   return (
     <section id="anmeldung" className="section bg-white pt-6 sm:pt-10">
@@ -230,7 +236,7 @@ export default function Events({ events }: { events: TMEvent[] }) {
         ) : (
           <>
             <ul className="divide-y divide-[#DBEAFE] px-4">
-              {events.map((event, i) => (
+              {visibleEvents.map((event, i) => (
                 <EventRow
                   key={i}
                   event={event}
@@ -240,6 +246,21 @@ export default function Events({ events }: { events: TMEvent[] }) {
               ))}
             </ul>
             <div className="px-4">
+              {!showAll && hiddenCount > 0 && (
+                <button
+                  onClick={() => setShowAll(true)}
+                  className="
+                    w-full mt-2 mb-1 py-3
+                    text-[0.68rem] tracking-[0.18em] uppercase font-medium
+                    text-[#3D5573] hover:text-[#1A3352]
+                    border border-dashed border-[#A5C3D7]/60 rounded-2xl
+                    hover:border-[#A5C3D7] hover:bg-[#A5C3D7]/5
+                    transition-all duration-200
+                  "
+                >
+                  {t("showAll", { count: hiddenCount })}
+                </button>
+              )}
               <IndividualAppointment />
             </div>
           </>

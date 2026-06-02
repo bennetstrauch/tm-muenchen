@@ -91,7 +91,8 @@
     "formErrorFailed": "Anmeldung fehlgeschlagen.",
     "typeOnline": "Online",
     "typePraesenz": "Vor Ort",
-    "timeDisplay": "{time} Uhr"
+    "timeDisplay": "{time} Uhr",
+    "showAll": "Alle {count} weiteren Termine zeigen"
   },
   "Trustpilot": {
     "heading": "Was andere sagen",
