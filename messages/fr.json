@@ -91,7 +91,8 @@
     "formErrorFailed": "L'inscription a échoué.",
     "typeOnline": "En ligne",
     "typePraesenz": "Sur place",
-    "timeDisplay": "{time} h"
+    "timeDisplay": "{time} h",
+    "showAll": "Voir les {count} autres dates"
   },
   "Trustpilot": {
     "heading": "Ce qu'ils en disent",

@@ -116,7 +116,8 @@
     "formErrorFailed": "Registration failed.",
     "typeOnline": "Online",
     "typePraesenz": "In Person",
-    "timeDisplay": "{time}"
+    "timeDisplay": "{time}",
+    "showAll": "Show all {count} more dates"
   },
   "Testimonials": {
     "quote0": "Transcendental Meditation allows me to go inward and find a depth of stillness and peace I don't experience anywhere else.",
