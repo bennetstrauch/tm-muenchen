@@ -91,7 +91,8 @@
     "formErrorFailed": "La inscripción ha fallado.",
     "typeOnline": "Online",
     "typePraesenz": "Presencial",
-    "timeDisplay": "{time} h"
+    "timeDisplay": "{time} h",
+    "showAll": "Ver las {count} fechas restantes"
   },
   "Trustpilot": {
     "heading": "Lo que dicen otros",

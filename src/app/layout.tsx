@@ -34,6 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html
       lang="de"
+      data-scroll-behavior="smooth"
       className={`${geistSans.variable} ${cormorant.variable} ${lora.variable} ${plusJakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
