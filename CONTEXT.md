@@ -229,11 +229,68 @@ WhatsApp button (TopBar)
 
 ## Multi-Tenancy (Phase 2)
 
-Deployment model: single Vercel deployment, multi-tenant by hostname. Next.js middleware resolves hostname → tenant config. Design updates deploy once and affect all centers simultaneously.
+Deployment model: single Vercel deployment, multi-tenant by hostname. Next.js middleware resolves hostname → tenant config. Design updates deploy once and affect all centers simultaneously. See ADR 0004.
 
-Tenant config stored in Supabase `tenants` table (not Google Sheets, not JSON in repo). Managed via each center's admin panel. Each center has its own admin login (hashed password in Supabase). Bennet has platform super-admin access.
+### Tenant
 
-For Phase 1 (language feature), Einstellungen are stored as a single well-known Supabase row (`tenant = muenchen`). Phase 2 adds more rows — no schema migration needed.
+A TM center running on this platform. Identified by a short text slug (e.g. `muenchen`, `berlin`) which is the primary key of the `tenants` table. Externally identified by hostname (`tm-muenchen.de`, `tm-berlin.de`, any domain format). The slug is also used for TMW API city lookup, hero/CenterBanner image selection, and filtering all tenant-scoped Supabase rows.
+
+### Tenant config (`tenants` table)
+
+Replaces the Phase 1 `settings` table. One row per center:
+
+```
+tenant               text  PK  (slug, e.g. 'muenchen')
+hostname             text      (e.g. 'tm-muenchen.de')
+admin_password_hash  text
+active_locales       text[]
+whatsapp_enabled     bool
+whatsapp_link        text
+contact_email        text
+contact_phone        text
+from_email           text      (Resend sender address, e.g. 'info@tm-muenchen.de')
+instagram_link       text      (default: https://www.instagram.com/tmdeutschland)
+city                 text      (display name, e.g. 'München')
+center_image_url     text      (nullable; falls back to München default)
+tmw_center_ids       int[]     (TMW API center IDs for this tenant)
+impressum_content    text      (free text; legal entity varies — Verein, individual, etc.)
+```
+
+Unknown hostnames redirect to `tm-muenchen.de`. Local dev resolves tenant via `DEV_TENANT` env var.
+
+### Auth
+
+One hashed password per tenant row. Admin logs in at their own domain's `/admin` — tenant is implicit from hostname, no username needed. Super-admin (Bennet) accesses `/super-admin` via `SUPER_ADMIN_PASSWORD_HASH` env var. See ADR 0006.
+
+### Tenant threading
+
+`middleware.ts` sets `x-tenant` request header. `getCurrentTenant()` in `lib/tenant.ts` reads it and fetches the full tenant row from Supabase, wrapped in React `cache()` for per-request memoization (one DB call per request regardless of how many components call it).
+
+### Data isolation
+
+All operational data tables include a `tenant` column. Queries always filter `WHERE tenant = current_tenant`. Center admins see only their own data. Super-admin sees across all tenants via a tenant filter.
+
+Affected tables: `veranstaltungen`, `anmeldungen`, `vorlagen`, `teacher_languages`. See ADR 0005 for the migration of Veranstaltungen and Anmeldungen from Google Sheets.
+
+### Teachers (multi-tenant)
+
+`teacher_languages` table gains a `tenant` column: `(tenant, teacher_name, locale, bio_override)` with PK `(tenant, teacher_name, locale)`. Teachers are sourced from the TMW API using the tenant's `tmw_center_ids`. The admin Lehrer tab shows all teachers returned by the API for this tenant's center IDs; language assignments and bio overrides are stored in `teacher_languages`.
+
+### TMW center ID discovery
+
+Deferred. When onboarding a new center, Bennet enters `tmw_center_ids` manually in the super-admin UI. A "Test" button verifies the IDs by hitting the TMW API and showing center name + lecture count. A discovery/search endpoint in the TMW API (if it exists) can be added later.
+
+### Landing page content
+
+Shared across all tenants — hero copy, section text, and testimonials are not per-tenant. CenterBanner uses `tenants.city` for the city name and `tenants.center_image_url` for the image (falls back to München default).
+
+### Super-admin
+
+Route: `/super-admin`. Protected by `SUPER_ADMIN_PASSWORD_HASH` env var (not in the `tenants` table). Allows Bennet to create and edit tenants (all `tenants` fields), see cross-tenant data, and onboard new centers without code changes.
+
+### Email sending (multi-tenant)
+
+One shared Resend account managed by Bennet. Each tenant has its own verified sender domain (`tenants.from_email`). Bennet adds DNS verification records in the shared Resend account during center onboarding. Volume per center is low (registrations × ~3 emails each) — well within Resend free tier across all centers.
 
 Centers keep their own domains (e.g. `tm-berlin.de`). No shared platform domain.
 
