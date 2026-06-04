@@ -88,7 +88,7 @@ export default async function ImpressumPage() {
             <Eyebrow>Inhaltlich verantwortlich nach § 18 Abs. 2 MStV</Eyebrow>
             <p>
               Bennet Strauch<br />
-              Guldenstraße 47<br />
+              Guldeinstraße 47<br />
               80639 München
             </p>
           </section>
