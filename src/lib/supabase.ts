@@ -16,6 +16,25 @@ type TeacherLanguagesRow = {
   updated_at: string;
 };
 
+type TenantRow = {
+  tenant: string;
+  hostname: string;
+  admin_password_hash: string;
+  active_locales: string[];
+  whatsapp_enabled: boolean;
+  whatsapp_link: string | null;
+  contact_email: string;
+  contact_phone: string;
+  from_email: string;
+  instagram_link: string;
+  city: string;
+  center_image_url: string | null;
+  tmw_center_ids: number[];
+  impressum_content: string;
+};
+
+// Phantom: the `settings` table was renamed to `tenants` (migration 001). The
+// admin Einstellungen route still references it and is rewritten in #46.
 type SettingsRow = {
   tenant: string;
   active_locales: string[];
@@ -38,6 +57,12 @@ export type Database = {
         Row: TeacherLanguagesRow;
         Insert: Omit<TeacherLanguagesRow, "created_at" | "updated_at">;
         Update: Partial<Omit<TeacherLanguagesRow, "created_at" | "updated_at">>;
+        Relationships: [];
+      };
+      tenants: {
+        Row: TenantRow;
+        Insert: TenantRow;
+        Update: Partial<TenantRow>;
         Relationships: [];
       };
       settings: {

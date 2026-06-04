@@ -1,5 +1,14 @@
 import { getSupabase } from '@/lib/supabase';
-import { type SiteSettings } from '@/lib/settings';
+
+// Local to the admin Einstellungen flow; the underlying table is migrated to
+// `tenants` and this route is rewritten in #46.
+type SiteSettings = {
+  active_locales: string[];
+  whatsapp_enabled: boolean;
+  whatsapp_link: string | null;
+  contact_email: string;
+  contact_phone: string;
+};
 
 export const dynamic = 'force-dynamic';
 

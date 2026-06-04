@@ -1,35 +1,46 @@
 import createLocaleMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
+import { resolveTenantSlug } from "./lib/tenant";
 
 const handleLocale = createLocaleMiddleware(routing);
 
-export default function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Resolve tenant from hostname (or DEV_TENANT in dev). Unknown host -> München.
+  const slug = await resolveTenantSlug(request);
+  if (slug === null) {
+    return NextResponse.redirect("https://tm-muenchen.de");
+  }
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-tenant", slug);
+  const withTenant = { request: { headers: requestHeaders } };
 
   // Admin: auth gate, no locale routing
   if (pathname.startsWith("/admin")) {
-    if (pathname === "/admin/login") return NextResponse.next();
+    if (pathname === "/admin/login") return NextResponse.next(withTenant);
 
     // Magic link: token + event params let the page verify server-side
     const url = request.nextUrl;
     const hasMagicLink = url.searchParams.has("token") && url.searchParams.has("event");
-    if (hasMagicLink) return NextResponse.next();
+    if (hasMagicLink) return NextResponse.next(withTenant);
 
     const token = request.cookies.get("admin-session")?.value;
     if (!isValidToken(token)) {
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
-    return NextResponse.next();
+    return NextResponse.next(withTenant);
   }
 
   // API: no locale routing
   if (pathname.startsWith("/api")) {
-    return NextResponse.next();
+    return NextResponse.next(withTenant);
   }
 
-  // Everything else: next-intl locale routing
-  return handleLocale(request);
+  // Everything else: next-intl locale routing. Pass a request carrying x-tenant
+  // so next-intl forwards it downstream (it clones request headers on rewrite).
+  return handleLocale(new NextRequest(request.url, { headers: requestHeaders }));
 }
 
 function isValidToken(token: string | undefined): boolean {

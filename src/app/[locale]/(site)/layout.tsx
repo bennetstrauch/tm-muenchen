@@ -5,13 +5,13 @@ import MainOffset from "@/components/main-offset";
 import CookieBanner from "@/components/cookie-banner";
 import Footer from "@/components/footer";
 import { NavProvider } from "@/contexts/nav-context";
-import { getSettings } from "@/lib/settings";
+import { getCurrentTenant } from "@/lib/tenant";
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const settings = await getSettings();
+  const tenant = await getCurrentTenant();
   return (
     <NavProvider>
-      <TopBar whatsappEnabled={settings.whatsapp_enabled} whatsappLink={settings.whatsapp_link} />
+      <TopBar whatsappEnabled={tenant.whatsapp_enabled} whatsappLink={tenant.whatsapp_link} />
       <NavPanel />
       <MainOffset>
         {children}
