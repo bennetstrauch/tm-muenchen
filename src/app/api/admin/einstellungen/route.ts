@@ -1,25 +1,24 @@
 import { getSupabase } from '@/lib/supabase';
+import { getCurrentTenant, type TenantSettings } from '@/lib/tenant';
 
-// Local to the admin Einstellungen flow; the underlying table is migrated to
-// `tenants` and this route is rewritten in #46.
-type SiteSettings = {
-  active_locales: string[];
-  whatsapp_enabled: boolean;
-  whatsapp_link: string | null;
-  contact_email: string;
-  contact_phone: string;
-};
+// The only tenant columns this tab may read or write. Acts as the whitelist:
+// admin_password_hash, hostname, tenant, etc. can never be read out or written.
+function pickSettings(source: Partial<TenantSettings>): TenantSettings {
+  return {
+    active_locales: source.active_locales ?? [],
+    whatsapp_enabled: source.whatsapp_enabled ?? false,
+    whatsapp_link: source.whatsapp_link ?? null,
+    contact_email: source.contact_email ?? '',
+    contact_phone: source.contact_phone ?? '',
+  };
+}
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const { data } = await getSupabase()
-      .from('settings')
-      .select('*')
-      .eq('tenant', 'muenchen')
-      .single();
-    return Response.json(data ?? null);
+    const tenant = await getCurrentTenant();
+    return Response.json(pickSettings(tenant));
   } catch (err) {
     console.error('Einstellungen GET failed:', err);
     return Response.json({ error: 'Fehler beim Laden.' }, { status: 500 });
@@ -28,10 +27,12 @@ export async function GET() {
 
 export async function PUT(request: Request) {
   try {
-    const body: SiteSettings = await request.json();
+    const body: Partial<TenantSettings> = await request.json();
+    const tenant = await getCurrentTenant();
     const { error } = await getSupabase()
-      .from('settings')
-      .upsert({ ...body, tenant: 'muenchen' }, { onConflict: 'tenant' });
+      .from('tenants')
+      .update(pickSettings(body))
+      .eq('tenant', tenant.tenant);
     if (error) throw error;
     return Response.json({ ok: true });
   } catch (err) {

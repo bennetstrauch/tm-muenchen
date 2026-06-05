@@ -6,6 +6,12 @@ import type { Database } from "./supabase";
 
 export type TenantConfig = Database["public"]["Tables"]["tenants"]["Row"];
 
+// The subset of a tenant row that the admin Einstellungen tab may read and edit.
+export type TenantSettings = Pick<
+  TenantConfig,
+  "active_locales" | "whatsapp_enabled" | "whatsapp_link" | "contact_email" | "contact_phone"
+>;
+
 function normalizeHost(host: string): string {
   return host.replace(/^www\./, "").split(":")[0];
 }

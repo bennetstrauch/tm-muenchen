@@ -1,16 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
-// Local to the admin Einstellungen flow; the underlying table is migrated to
-// `tenants` and this tab is rewritten in #46.
-type SiteSettings = {
-  active_locales: string[];
-  whatsapp_enabled: boolean;
-  whatsapp_link: string | null;
-  contact_email: string;
-  contact_phone: string;
-};
+import type { TenantSettings } from '@/lib/tenant';
 
 const ALL_LOCALES = [
   { code: 'de', label: 'Deutsch' },
@@ -22,7 +13,7 @@ const ALL_LOCALES = [
 const INPUT_CLS = 'w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#BCA075]';
 const CHECK_CLS = 'h-4 w-4 accent-[#BCA075]';
 
-const DEFAULTS: SiteSettings = {
+const DEFAULTS: TenantSettings = {
   active_locales: ['de', 'en', 'fr', 'es'],
   whatsapp_enabled: true,
   whatsapp_link: '',
@@ -31,7 +22,7 @@ const DEFAULTS: SiteSettings = {
 };
 
 export default function EinstellungenTab() {
-  const [settings, setSettings] = useState<SiteSettings>(DEFAULTS);
+  const [settings, setSettings] = useState<TenantSettings>(DEFAULTS);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [result, setResult] = useState<{ ok: boolean; msg: string } | null>(null);

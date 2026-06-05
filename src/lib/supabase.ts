@@ -33,17 +33,6 @@ type TenantRow = {
   impressum_content: string;
 };
 
-// Phantom: the `settings` table was renamed to `tenants` (migration 001). The
-// admin Einstellungen route still references it and is rewritten in #46.
-type SettingsRow = {
-  tenant: string;
-  active_locales: string[];
-  whatsapp_enabled: boolean;
-  whatsapp_link: string | null;
-  contact_email: string;
-  contact_phone: string;
-};
-
 export type Database = {
   public: {
     Tables: {
@@ -63,12 +52,6 @@ export type Database = {
         Row: TenantRow;
         Insert: TenantRow;
         Update: Partial<TenantRow>;
-        Relationships: [];
-      };
-      settings: {
-        Row: SettingsRow;
-        Insert: SettingsRow;
-        Update: Partial<SettingsRow>;
         Relationships: [];
       };
     };
