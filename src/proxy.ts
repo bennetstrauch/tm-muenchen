@@ -2,6 +2,7 @@ import createLocaleMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
 import { resolveTenantSlug } from "./lib/tenant";
+import { verifySessionToken } from "./lib/admin-session";
 
 const handleLocale = createLocaleMiddleware(routing);
 
@@ -27,7 +28,7 @@ export default async function proxy(request: NextRequest) {
     if (hasMagicLink) return NextResponse.next(withTenant);
 
     const token = request.cookies.get("admin-session")?.value;
-    if (!isValidToken(token)) {
+    if (!token || !verifySessionToken(token, slug)) {
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
     return NextResponse.next(withTenant);
@@ -41,21 +42,6 @@ export default async function proxy(request: NextRequest) {
   // Everything else: next-intl locale routing. Pass a request carrying x-tenant
   // so next-intl forwards it downstream (it clones request headers on rewrite).
   return handleLocale(new NextRequest(request.url, { headers: requestHeaders }));
-}
-
-function isValidToken(token: string | undefined): boolean {
-  if (!token) return false;
-  try {
-    const decoded = atob(token);
-    const colon = decoded.indexOf(":");
-    if (colon === -1) return false;
-    return (
-      decoded.slice(0, colon) === process.env.ADMIN_USER &&
-      decoded.slice(colon + 1) === process.env.ADMIN_PASS
-    );
-  } catch {
-    return false;
-  }
 }
 
 export const config = {

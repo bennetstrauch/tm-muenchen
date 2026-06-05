@@ -6,6 +6,8 @@ import { getRegistrations } from '@/lib/sheets';
 import { getAllVeranstaltungen, getEventRegistrations } from '@/lib/veranstaltungen';
 import { getAllVorlagen } from '@/lib/vorlagen';
 import { verifyToken } from '@/lib/admin-token';
+import { verifySessionToken } from '@/lib/admin-session';
+import { getCurrentTenant } from '@/lib/tenant';
 import { getEmailActions } from '@/lib/email-actions';
 import AdminClient from './admin-client';
 
@@ -14,21 +16,6 @@ export const metadata: Metadata = {
 };
 
 export const dynamic = 'force-dynamic';
-
-function isValidSession(token: string | undefined): boolean {
-  if (!token) return false;
-  try {
-    const decoded = atob(token);
-    const colon = decoded.indexOf(':');
-    if (colon === -1) return false;
-    return (
-      decoded.slice(0, colon) === process.env.ADMIN_USER &&
-      decoded.slice(colon + 1) === process.env.ADMIN_PASS
-    );
-  } catch {
-    return false;
-  }
-}
 
 export default async function AdminPage({
   searchParams,
@@ -87,8 +74,9 @@ export default async function AdminPage({
   // --- Normal session-based access ---
   const cookieStore = await cookies();
   const sessionToken = cookieStore.get('admin-session')?.value;
+  const { tenant } = await getCurrentTenant();
 
-  if (!isValidSession(sessionToken)) {
+  if (!sessionToken || !verifySessionToken(sessionToken, tenant)) {
     redirect('/admin/login');
   }
 
