@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
 import { resolveTenantSlug } from "./lib/tenant";
 import { verifySessionToken } from "./lib/admin-session";
+import { isAuthorizedAdminApi } from "./lib/admin-api-gate";
 
 const handleLocale = createLocaleMiddleware(routing);
 
@@ -34,7 +35,20 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.next(withTenant);
   }
 
-  // API: no locale routing
+  // Admin API: auth gate (session cookie, or a scoped magic-link token header)
+  if (pathname.startsWith("/api/admin")) {
+    const authorized = isAuthorizedAdminApi(pathname, slug, {
+      sessionToken: request.cookies.get("admin-session")?.value,
+      tokenHeader: request.headers.get("x-admin-token") ?? undefined,
+      tokenEvent: request.headers.get("x-admin-token-event") ?? undefined,
+    });
+    if (!authorized) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    return NextResponse.next(withTenant);
+  }
+
+  // Other API (public endpoints): no locale routing
   if (pathname.startsWith("/api")) {
     return NextResponse.next(withTenant);
   }

@@ -122,10 +122,16 @@ export default function EmailActionsTab({
     [events],
   );
 
+  const tokenHeaders: Record<string, string> = {};
+  if (tokenHeader && lockedEventId) {
+    tokenHeaders['x-admin-token'] = tokenHeader;
+    tokenHeaders['x-admin-token-event'] = lockedEventId;
+  }
+
   async function handleDelete(id: string) {
     setError('');
     try {
-      const res = await fetch(`/api/admin/email-actions/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/admin/email-actions/${id}`, { method: 'DELETE', headers: tokenHeaders });
       if (!res.ok) throw new Error((await res.json()).error);
       setActions(prev => prev.filter(a => a.id !== id));
     } catch (e) {
@@ -139,7 +145,7 @@ export default function EmailActionsTab({
     if (updated) {
       setActions(prev => prev.map(a => a.id === updated.id ? updated : a));
     } else {
-      fetch('/api/admin/email-actions')
+      fetch('/api/admin/email-actions', { headers: tokenHeaders })
         .then(r => r.json())
         .then((data: EmailAction[]) => setActions(data))
         .catch(() => {});

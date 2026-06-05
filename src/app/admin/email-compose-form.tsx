@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import type { EmailAction } from '@/lib/email-actions';
 import type { Veranstaltung } from '@/lib/veranstaltungen';
 import { formatVeranstaltungDate } from '@/lib/format';
@@ -47,6 +47,7 @@ function PreviewModal({
   onConfirm,
   onClose,
   sending,
+  tokenHeaders,
 }: {
   subject: string;
   body: string;
@@ -54,6 +55,7 @@ function PreviewModal({
   onConfirm: () => void;
   onClose: () => void;
   sending: boolean;
+  tokenHeaders: Record<string, string>;
 }) {
   const [html, setHtml] = useState('');
   const [loading, setLoading] = useState(true);
@@ -62,13 +64,13 @@ function PreviewModal({
     setLoading(true);
     fetch('/api/admin/email-preview', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...tokenHeaders },
       body: JSON.stringify({ body, sampleName }),
     })
       .then(r => r.json())
       .then(d => { setHtml(d.html ?? ''); setLoading(false); })
       .catch(() => setLoading(false));
-  }, [body, sampleName]);
+  }, [body, sampleName, tokenHeaders]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
@@ -165,6 +167,17 @@ export default function ComposeForm({
   const eventLocked = !!lockedEventId || target.mode !== 'new';
   const sampleName = selectedEvent?.hosts?.split(',')[0]?.trim() ?? 'Marlena';
 
+  // In magic-link (Leiter) mode every admin API call must carry the scoped token
+  // so the proxy gate lets it through.
+  const tokenHeaders = useMemo<Record<string, string>>(() => {
+    const h: Record<string, string> = {};
+    if (tokenHeader) {
+      h['x-admin-token'] = tokenHeader;
+      h['x-admin-token-event'] = eventId;
+    }
+    return h;
+  }, [tokenHeader, eventId]);
+
   async function saveReminderEdit() {
     if (!selectedEvent || target.mode !== 'edit-reminder') return;
     setSaving(true);
@@ -175,7 +188,7 @@ export default function ComposeForm({
         : { reminderSubject2: subject, reminderBody2: body, reminder2Hours: reminderHours };
       const res = await fetch(`/api/admin/events/${selectedEvent.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...tokenHeaders },
         body: JSON.stringify({ ...selectedEvent, ...patch }),
       });
       if (!res.ok) throw new Error((await res.json()).error);
@@ -200,7 +213,7 @@ export default function ComposeForm({
       };
       const res = await fetch(`/api/admin/email-actions/${updated.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...tokenHeaders },
         body: JSON.stringify(updated),
       });
       if (!res.ok) throw new Error((await res.json()).error);
@@ -224,14 +237,9 @@ export default function ComposeForm({
     setSending(true);
     setError('');
     try {
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-      if (tokenHeader) {
-        headers['x-admin-token'] = tokenHeader;
-        headers['x-admin-token-event'] = eventId;
-      }
       const res = await fetch('/api/admin/email-send', {
         method: 'POST',
-        headers,
+        headers: { 'Content-Type': 'application/json', ...tokenHeaders },
         body: JSON.stringify({
           eventId,
           eventTitle: selectedEvent?.title ?? '',
@@ -260,14 +268,9 @@ export default function ComposeForm({
     setSaving(true);
     setError('');
     try {
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-      if (tokenHeader) {
-        headers['x-admin-token'] = tokenHeader;
-        headers['x-admin-token-event'] = eventId;
-      }
       const res = await fetch('/api/admin/email-send', {
         method: 'POST',
-        headers,
+        headers: { 'Content-Type': 'application/json', ...tokenHeaders },
         body: JSON.stringify({
           eventId,
           eventTitle: selectedEvent?.title ?? '',
@@ -297,6 +300,7 @@ export default function ComposeForm({
           onConfirm={confirmSend}
           onClose={() => setShowPreview(false)}
           sending={sending}
+          tokenHeaders={tokenHeaders}
         />
       )}
 
