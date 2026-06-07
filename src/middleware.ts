@@ -1,16 +1,16 @@
 import createLocaleMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
-import { resolveTenantSlug } from "./lib/tenant";
+import { resolveTenantSlug } from "./lib/tenant-edge";
 import { verifySessionToken } from "./lib/admin-session";
 import { isAuthorizedAdminApi } from "./lib/admin-api-gate";
 
 const handleLocale = createLocaleMiddleware(routing);
 
-export default async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Resolve tenant from hostname (or DEV_TENANT in dev). Unknown host -> München.
+  // Resolve tenant from hostname (or DEV_TENANT in dev). Unknown host → München.
   const slug = await resolveTenantSlug(request);
   if (slug === null) {
     return NextResponse.redirect("https://tm-muenchen.de");
@@ -19,11 +19,11 @@ export default async function proxy(request: NextRequest) {
   requestHeaders.set("x-tenant", slug);
   const withTenant = { request: { headers: requestHeaders } };
 
-  // Admin: auth gate, no locale routing
+  // Admin UI: auth gate, no locale routing.
   if (pathname.startsWith("/admin")) {
     if (pathname === "/admin/login") return NextResponse.next(withTenant);
 
-    // Magic link: token + event params let the page verify server-side
+    // Magic-link: token + event params — the page verifies server-side.
     const url = request.nextUrl;
     const hasMagicLink = url.searchParams.has("token") && url.searchParams.has("event");
     if (hasMagicLink) return NextResponse.next(withTenant);
@@ -35,7 +35,7 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.next(withTenant);
   }
 
-  // Admin API: auth gate (session cookie, or a scoped magic-link token header)
+  // Admin API: auth gate (session cookie or scoped magic-link token header).
   if (pathname.startsWith("/api/admin")) {
     const authorized = isAuthorizedAdminApi(pathname, slug, {
       sessionToken: request.cookies.get("admin-session")?.value,
@@ -48,17 +48,19 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.next(withTenant);
   }
 
-  // Other API (public endpoints): no locale routing
+  // Public API: no locale routing needed.
   if (pathname.startsWith("/api")) {
     return NextResponse.next(withTenant);
   }
 
-  // Everything else: next-intl locale routing. Pass a request carrying x-tenant
-  // so next-intl forwards it downstream (it clones request headers on rewrite).
+  // Everything else: next-intl locale routing. Pass the request carrying x-tenant
+  // so next-intl forwards it downstream when it rewrites the URL.
   return handleLocale(new NextRequest(request.url, { headers: requestHeaders }));
 }
 
 export const config = {
-  // Exclude Next.js internals, static assets, file extensions, and metadata routes
-  matcher: ["/((?!_next/static|_next/image|favicon\\.ico|icon|apple-icon|opengraph-image|twitter-image|manifest|robots\\.txt|sitemap\\.xml|.*\\..*).*)" ],
+  // Exclude Next.js internals, static assets, file extensions, and metadata routes.
+  matcher: [
+    "/((?!_next/static|_next/image|favicon\\.ico|icon|apple-icon|opengraph-image|twitter-image|manifest|robots\\.txt|sitemap\\.xml|.*\\..*).*)",
+  ],
 };
