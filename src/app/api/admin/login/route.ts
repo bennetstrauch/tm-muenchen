@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Passwort falsch." }, { status: 401 });
   }
 
-  const token = createSessionToken(tenant.tenant);
+  const token = await createSessionToken(tenant.tenant);
   const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
 
   return new Response(JSON.stringify({ success: true }), {

@@ -27,17 +27,17 @@ function isLeiterPath(pathname: string): boolean {
  * full-admin session cookie grants every route; a valid magic-link token grants
  * only the Leiter routes.
  */
-export function isAuthorizedAdminApi(
+export async function isAuthorizedAdminApi(
   pathname: string,
   tenant: string,
   { sessionToken, tokenHeader, tokenEvent }: AdminApiCredentials,
-): boolean {
+): Promise<boolean> {
   if (pathname === "/api/admin/login") return true;
 
-  if (sessionToken && verifySessionToken(sessionToken, tenant)) return true;
+  if (sessionToken && await verifySessionToken(sessionToken, tenant)) return true;
 
   if (tokenHeader && tokenEvent && isLeiterPath(pathname)) {
-    return verifyToken(tokenHeader, tokenEvent).valid;
+    return (await verifyToken(tokenHeader, tokenEvent)).valid;
   }
 
   return false;

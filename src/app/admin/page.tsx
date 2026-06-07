@@ -28,7 +28,7 @@ export default async function AdminPage({
 
   // --- Token-scoped access (magic link) ---
   if (tokenParam && eventParam) {
-    const result = verifyToken(tokenParam, eventParam);
+    const result = await verifyToken(tokenParam, eventParam);
     if (!result.valid) {
       // Invalid or expired token — send to login
       redirect('/admin/login');
@@ -76,7 +76,7 @@ export default async function AdminPage({
   const sessionToken = cookieStore.get('admin-session')?.value;
   const { tenant } = await getCurrentTenant();
 
-  if (!sessionToken || !verifySessionToken(sessionToken, tenant)) {
+  if (!sessionToken || !await verifySessionToken(sessionToken, tenant)) {
     redirect('/admin/login');
   }
 

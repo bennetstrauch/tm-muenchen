@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     const tokenHeader = request.headers.get('x-admin-token');
     const tokenEventHeader = request.headers.get('x-admin-token-event');
     if (tokenHeader && tokenEventHeader) {
-      const result = verifyToken(tokenHeader, tokenEventHeader);
+      const result = await verifyToken(tokenHeader, tokenEventHeader);
       if (!result.valid || tokenEventHeader !== eventId) {
         return Response.json({ error: 'Nicht autorisiert.' }, { status: 403 });
       }

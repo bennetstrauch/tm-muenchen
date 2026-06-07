@@ -46,7 +46,7 @@ async function notifyLeiter(params: {
   const leaders = await lookupTeachersByFirstNames(firstNames);
   if (leaders.length === 0) return;
 
-  const token = generateToken(params.eventId, params.isoDate);
+  const token = await generateToken(params.eventId, params.isoDate);
   const magicLink = `${params.baseUrl}/admin?tab=anmeldungen&event=${encodeURIComponent(params.eventId)}&token=${encodeURIComponent(token)}`;
 
   await Promise.all(

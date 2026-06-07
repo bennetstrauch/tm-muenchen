@@ -29,7 +29,7 @@ export async function middleware(request: NextRequest) {
     if (hasMagicLink) return NextResponse.next(withTenant);
 
     const token = request.cookies.get("admin-session")?.value;
-    if (!token || !verifySessionToken(token, slug)) {
+    if (!token || !await verifySessionToken(token, slug)) {
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
     return NextResponse.next(withTenant);
@@ -37,7 +37,7 @@ export async function middleware(request: NextRequest) {
 
   // Admin API: auth gate (session cookie or scoped magic-link token header).
   if (pathname.startsWith("/api/admin")) {
-    const authorized = isAuthorizedAdminApi(pathname, slug, {
+    const authorized = await isAuthorizedAdminApi(pathname, slug, {
       sessionToken: request.cookies.get("admin-session")?.value,
       tokenHeader: request.headers.get("x-admin-token") ?? undefined,
       tokenEvent: request.headers.get("x-admin-token-event") ?? undefined,

@@ -7,17 +7,14 @@ interface SessionPayload {
   exp: number;
 }
 
-/** Issue a signed admin session token scoped to a tenant, valid for one year. */
-export function createSessionToken(tenant: string): string {
+export async function createSessionToken(tenant: string): Promise<string> {
   const exp = Math.floor((Date.now() + ONE_YEAR_MS) / 1000);
   return sign({ tenant, exp } satisfies SessionPayload);
 }
 
-/** True if the token is a valid, unexpired session for the given tenant. */
-export function verifySessionToken(token: string, expectedTenant: string): boolean {
-  const parsed = verify<SessionPayload>(token);
+export async function verifySessionToken(token: string, expectedTenant: string): Promise<boolean> {
+  const parsed = await verify<SessionPayload>(token);
   if (!parsed || parsed.tenant !== expectedTenant) return false;
-
   const nowSeconds = Math.floor(Date.now() / 1000);
   return parsed.exp > nowSeconds;
 }
