@@ -81,6 +81,41 @@ A stored email sent or scheduled to all registrants of a specific Veranstaltung.
 
 Canonical term: **E-Mail Aktion** (not "E-Mail", not "Broadcast", not "Kampagne")
 
+## Admin-Komponentenarchitektur
+
+```
+admin/page.tsx          — Server component: fetches all data (events, registrations,
+                          email actions, vorlagen) via Google Sheets; resolves tenant
+                          + auth (session cookie or magic-link token); passes everything
+                          as props to AdminClient.
+
+AdminClient             — Single large client component owning all admin state:
+                          events[], vorlagen[], mode (list/new/edit). Renders tab bar
+                          and delegates to tab sub-components. Holds setEvents so that
+                          event edits in the Veranstaltungen tab stay in sync everywhere.
+
+EmailActionsTab         — Owns actions[] state (email actions list). Holds localEvents[]
+                          (copy of events prop) so that reminder-hour saves can update
+                          the derived-reminders display without a page reload. Also
+                          receives registrationsByEvent (Record<eventId, count>) for
+                          showing expected recipient counts on pending actions.
+                          Mounts ComposeForm when composing/editing.
+
+ComposeForm             — Stateless form for new/edit-action/edit-reminder. Calls:
+                            onSaved(action?)   — EmailActionsTab refetches or patches actions[]
+                            onEventUpdated(ev) — EmailActionsTab patches localEvents[]
+                          Both callbacks are needed: a reminder save changes an event
+                          field (reminder hours), not an email action.
+```
+
+### Token-header flow (Magic Link / Leiter mode)
+
+`page.tsx` passes `tokenHeader` and `tokenEventId` to AdminClient → EmailActionsTab → ComposeForm. Each component builds a `tokenHeaders` object (`x-admin-token` + `x-admin-token-event`) that is spread into every admin API fetch. Without these headers the proxy gate returns 401 for magic-link sessions.
+
+### registrationsByEvent
+
+Computed in AdminClient from `eventRegistrations[]` (Google Sheets "Veranstaltungen Anmeldungen" tab) as `Record<eventId, count>`. Passed to EmailActionsTab, which shows `~N` for pending email actions before send, and the real `recipientCount` after. Shows `—` when count is 0 (no registrations yet, or migration not done — see ADR 0005).
+
 ## E-Mails Tab (Admin)
 Top-level admin tab showing all E-Mail Aktionen across all Veranstaltungen, with an event filter dropdown (same pattern as Anmeldungen tab). Displays upcoming automated Erinnerungen (derived from event fields) alongside stored custom emails and the sent log. Leiter see a scoped version via Magic Link (their event only). Entry point for composing new E-Mail Aktionen.
 

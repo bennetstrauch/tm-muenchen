@@ -52,13 +52,16 @@ export default function EmailActionsTab({
   events,
   lockedEventId,
   tokenHeader,
+  registrationsByEvent = {},
 }: {
   initialActions: EmailAction[];
   events: Veranstaltung[];
   lockedEventId?: string;
   tokenHeader?: string;
+  registrationsByEvent?: Record<string, number>;
 }) {
   const [actions, setActions] = useState<EmailAction[]>(initialActions);
+  const [localEvents, setLocalEvents] = useState<Veranstaltung[]>(events);
   const [filter, setFilter] = useState(lockedEventId ?? '');
   const [composing, setComposing] = useState<ComposeTarget | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
@@ -76,7 +79,7 @@ export default function EmailActionsTab({
   );
 
   const derivedReminders = useMemo<DerivedReminderEntry[]>(() => {
-    const evts = lockedEventId ? events.filter(e => e.id === lockedEventId) : events;
+    const evts = lockedEventId ? localEvents.filter(e => e.id === lockedEventId) : localEvents;
     const entries: DerivedReminderEntry[] = [];
     for (const ev of evts) {
       if (ev.date < today) continue;
@@ -102,7 +105,7 @@ export default function EmailActionsTab({
       }
     }
     return entries;
-  }, [events, sentSet, today, lockedEventId]);
+  }, [localEvents, sentSet, today, lockedEventId]);
 
   const rows = useMemo<EmailRow[]>(() => {
     const stored: EmailRow[] = actions
@@ -118,8 +121,8 @@ export default function EmailActionsTab({
   }, [actions, derivedReminders, filter]);
 
   const eventTitles = useMemo(
-    () => Array.from(new Set(events.map(e => ({ id: e.id, title: e.title })))),
-    [events],
+    () => Array.from(new Set(localEvents.map(e => ({ id: e.id, title: e.title })))),
+    [localEvents],
   );
 
   const tokenHeaders: Record<string, string> = {};
@@ -157,10 +160,11 @@ export default function EmailActionsTab({
     return (
       <ComposeForm
         target={composing}
-        events={events}
+        events={localEvents}
         lockedEventId={lockedEventId}
         onClose={() => setComposing(null)}
         onSaved={handleSaved}
+        onEventUpdated={ev => setLocalEvents(prev => prev.map(e => e.id === ev.id ? ev : e))}
         tokenHeader={tokenHeader}
       />
     );
@@ -204,7 +208,7 @@ export default function EmailActionsTab({
           <div className="sm:hidden divide-y divide-gray-50">
             {rows.map((row, i) => {
               if (row.kind === 'derived') {
-                const ev = events.find(e => e.id === row.eventId);
+                const ev = localEvents.find(e => e.id === row.eventId);
                 return (
                   <div key={`d-${i}`} className="px-4 py-3">
                     <div className="flex items-start justify-between gap-2">
@@ -256,9 +260,11 @@ export default function EmailActionsTab({
                         )}
                       </>
                     )}
-                    {action.recipientCount > 0 && (
+                    {action.recipientCount > 0 ? (
                       <span className="text-gray-400">{action.recipientCount} Empfänger</span>
-                    )}
+                    ) : action.status === 'pending' && registrationsByEvent[action.eventId] > 0 ? (
+                      <span className="text-gray-400">~{registrationsByEvent[action.eventId]} Empfänger</span>
+                    ) : null}
                   </div>
                 </div>
               );
@@ -281,7 +287,7 @@ export default function EmailActionsTab({
               <tbody className="divide-y divide-gray-50">
                 {rows.map((row, i) => {
                   if (row.kind === 'derived') {
-                    const ev = events.find(e => e.id === row.eventId);
+                    const ev = localEvents.find(e => e.id === row.eventId);
                     return (
                       <tr key={`d-${i}`} className="hover:bg-gray-50">
                         <td className="px-6 py-4 font-medium text-gray-800 max-w-xs truncate">{row.subject}</td>
@@ -314,7 +320,11 @@ export default function EmailActionsTab({
                       </td>
                       <td className="px-6 py-4">{statusBadge(action.status)}</td>
                       <td className="px-6 py-4 text-gray-500 text-xs">
-                        {action.recipientCount > 0 ? action.recipientCount : '—'}
+                        {action.recipientCount > 0
+                          ? action.recipientCount
+                          : action.status === 'pending' && registrationsByEvent[action.eventId] > 0
+                            ? `~${registrationsByEvent[action.eventId]}`
+                            : '—'}
                       </td>
                       <td className="px-6 py-4 text-right whitespace-nowrap">
                         {action.status === 'pending' && (

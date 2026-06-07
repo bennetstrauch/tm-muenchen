@@ -115,6 +115,7 @@ export default function ComposeForm({
   lockedEventId,
   onClose,
   onSaved,
+  onEventUpdated,
   tokenHeader,
 }: {
   target: ComposeTarget;
@@ -122,6 +123,7 @@ export default function ComposeForm({
   lockedEventId?: string;
   onClose: () => void;
   onSaved: (action?: EmailAction) => void;
+  onEventUpdated?: (event: Veranstaltung) => void;
   tokenHeader?: string;
 }) {
   const isReminderEdit = target.mode === 'edit-reminder';
@@ -192,6 +194,7 @@ export default function ComposeForm({
         body: JSON.stringify({ ...selectedEvent, ...patch }),
       });
       if (!res.ok) throw new Error((await res.json()).error);
+      onEventUpdated?.({ ...selectedEvent, ...patch });
       onSaved();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Fehler');
@@ -341,7 +344,11 @@ export default function ComposeForm({
               min="1"
               className={INPUT_CLS}
               value={reminderHours}
-              onChange={e => setReminderHours(parseInt(e.target.value) || 24)}
+              onFocus={e => e.target.select()}
+              onChange={e => {
+                const v = parseInt(e.target.value, 10);
+                if (!isNaN(v) && v > 0) setReminderHours(v);
+              }}
             />
             {selectedEvent && reminderHours > 0 && (
               <p className="text-xs text-gray-400 mt-1">
