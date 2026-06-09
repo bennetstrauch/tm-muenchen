@@ -12,7 +12,7 @@ const tenantRow = {
   from_email: "x",
   instagram_link: "y",
   city: "München",
-  center_image_url: null,
+  center_image_url: "https://blob.example.com/center/muenchen/photo.webp",
   tmw_center_ids: [1],
   impressum_content: "z",
 };
@@ -33,7 +33,7 @@ beforeEach(() => {
 });
 
 describe("admin Einstellungen", () => {
-  it("GET returns only the editable settings, never the password hash", async () => {
+  it("GET returns only the editable settings, including center_image_url, never the password hash", async () => {
     const { GET } = await import("./route");
     const data = await (await GET()).json();
     expect(data).toEqual({
@@ -42,11 +42,13 @@ describe("admin Einstellungen", () => {
       whatsapp_link: "https://chat.whatsapp.com/x",
       contact_email: "a@b.de",
       contact_phone: "123",
+      center_image_url: "https://blob.example.com/center/muenchen/photo.webp",
     });
     expect(data).not.toHaveProperty("admin_password_hash");
+    expect(data).not.toHaveProperty("hostname");
   });
 
-  it("PUT writes only editable columns to the current tenant row, ignoring anything else", async () => {
+  it("PUT writes center_image_url along with other editable columns", async () => {
     const { PUT } = await import("./route");
     const req = new Request("http://localhost/api/admin/einstellungen", {
       method: "PUT",
@@ -57,22 +59,46 @@ describe("admin Einstellungen", () => {
         whatsapp_link: null,
         contact_email: "new@b.de",
         contact_phone: "999",
-        admin_password_hash: "HACKED",
-        tenant: "berlin",
+        center_image_url: "https://blob.example.com/center/muenchen/new.webp",
       }),
     });
 
     const res = await PUT(req);
 
     expect(res.ok).toBe(true);
-    expect(from).toHaveBeenCalledWith("tenants");
     expect(update).toHaveBeenCalledWith({
       active_locales: ["de"],
       whatsapp_enabled: false,
       whatsapp_link: null,
       contact_email: "new@b.de",
       contact_phone: "999",
+      center_image_url: "https://blob.example.com/center/muenchen/new.webp",
     });
-    expect(eq).toHaveBeenCalledWith("tenant", "muenchen");
+  });
+
+  it("PUT ignores sensitive fields even when passed in the body", async () => {
+    const { PUT } = await import("./route");
+    const req = new Request("http://localhost/api/admin/einstellungen", {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        active_locales: ["de"],
+        whatsapp_enabled: false,
+        whatsapp_link: null,
+        contact_email: "new@b.de",
+        contact_phone: "999",
+        center_image_url: null,
+        admin_password_hash: "HACKED",
+        tenant: "berlin",
+        hostname: "evil.de",
+      }),
+    });
+
+    await PUT(req);
+
+    const written = update.mock.calls[0][0];
+    expect(written).not.toHaveProperty("admin_password_hash");
+    expect(written).not.toHaveProperty("tenant");
+    expect(written).not.toHaveProperty("hostname");
   });
 });

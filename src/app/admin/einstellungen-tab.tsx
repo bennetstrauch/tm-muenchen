@@ -19,12 +19,14 @@ const DEFAULTS: TenantSettings = {
   whatsapp_link: '',
   contact_email: '',
   contact_phone: '',
+  center_image_url: null,
 };
 
 export default function EinstellungenTab() {
   const [settings, setSettings] = useState<TenantSettings>(DEFAULTS);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [result, setResult] = useState<{ ok: boolean; msg: string } | null>(null);
 
   useEffect(() => {
@@ -41,6 +43,27 @@ export default function EinstellungenTab() {
         ? prev.active_locales.filter(l => l !== code)
         : [...prev.active_locales, code],
     }));
+  }
+
+  async function handleCenterImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setResult(null);
+    try {
+      const form = new FormData();
+      form.append('file', file);
+      form.append('prefix', 'center');
+      const res = await fetch('/api/admin/images/upload', { method: 'POST', body: form });
+      if (!res.ok) throw new Error();
+      const { url } = await res.json();
+      setSettings(prev => ({ ...prev, center_image_url: url }));
+    } catch {
+      setResult({ ok: false, msg: 'Bild-Upload fehlgeschlagen.' });
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
   }
 
   async function handleSave() {
@@ -122,6 +145,32 @@ export default function EinstellungenTab() {
               onChange={e => setSettings(prev => ({ ...prev, contact_phone: e.target.value }))}
             />
           </div>
+        </div>
+
+        <div>
+          <p className="text-xs font-medium text-gray-500 mb-2">Centerbild</p>
+          {settings.center_image_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={settings.center_image_url}
+              alt="Centerbild Vorschau"
+              className="w-full aspect-[3/2] object-cover rounded mb-2"
+            />
+          ) : (
+            <p className="text-sm text-gray-400 mb-2">Kein Bild gesetzt.</p>
+          )}
+          <label className="inline-block cursor-pointer">
+            <span className={`text-sm ${uploading ? 'text-gray-400' : 'text-[#BCA075] hover:underline cursor-pointer'}`}>
+              {uploading ? 'Wird hochgeladen…' : 'Bild hochladen'}
+            </span>
+            <input
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              disabled={uploading}
+              onChange={handleCenterImageUpload}
+            />
+          </label>
         </div>
 
       </div>

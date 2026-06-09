@@ -27,7 +27,7 @@ function LotusIcon() {
 
 export default async function CenterBanner() {
   const [t, tenant] = await Promise.all([getTranslations("CenterBanner"), getCurrentTenant()]);
-  const imageSrc = tenant.center_image_url ?? "/centerbildSebastianErklaert.jpeg";
+  const imageSrc = tenant.center_image_url ?? "/center-default.jpg";
 
   return (
     <section className="relative overflow-hidden" aria-label={t("ariaLabel")}>

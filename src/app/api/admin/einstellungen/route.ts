@@ -10,6 +10,7 @@ function pickSettings(source: Partial<TenantSettings>): TenantSettings {
     whatsapp_link: source.whatsapp_link ?? null,
     contact_email: source.contact_email ?? '',
     contact_phone: source.contact_phone ?? '',
+    center_image_url: source.center_image_url ?? null,
   };
 }
 
