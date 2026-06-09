@@ -7,7 +7,7 @@ import { isAuthorizedAdminApi } from "./lib/admin-api-gate";
 
 const handleLocale = createLocaleMiddleware(routing);
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Resolve tenant from hostname (or DEV_TENANT in dev). Unknown host → München.

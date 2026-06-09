@@ -41,7 +41,7 @@ function makeRequest(url: string, opts: { cookie?: string } = {}): NextRequest {
 }
 
 async function load() {
-  return (await import("./middleware")).middleware;
+  return (await import("./proxy")).proxy;
 }
 
 // ── Unknown tenant ────────────────────────────────────────────────────────────
