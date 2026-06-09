@@ -5,9 +5,11 @@ import ContactButtons from "./contact-buttons";
 export default function TopBar({
   whatsappEnabled,
   whatsappLink,
+  instagramLink,
 }: {
   whatsappEnabled?: boolean;
   whatsappLink?: string | null;
+  instagramLink?: string;
 }) {
   return (
     <header className="fixed top-0 left-0 right-0 z-[9998] h-14 flex items-center px-5 bg-white/10 backdrop-blur-md border-b border-white/15">
@@ -17,7 +19,7 @@ export default function TopBar({
         <TopBarLogo />
       </div>
       <div className="ml-auto">
-        <ContactButtons showWhatsApp={whatsappEnabled} whatsappLink={whatsappLink} />
+        <ContactButtons showWhatsApp={whatsappEnabled} whatsappLink={whatsappLink} instagramLink={instagramLink} />
       </div>
     </header>
   );

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
+import { getCurrentTenant } from "@/lib/tenant";
 
 function LotusIcon() {
   return (
@@ -25,14 +26,15 @@ function LotusIcon() {
 }
 
 export default async function CenterBanner() {
-  const t = await getTranslations("CenterBanner");
+  const [t, tenant] = await Promise.all([getTranslations("CenterBanner"), getCurrentTenant()]);
+  const imageSrc = tenant.center_image_url ?? "/centerbildSebastianErklaert.jpeg";
 
   return (
     <section className="relative overflow-hidden" aria-label={t("ariaLabel")}>
       <div className="relative aspect-[3/2] sm:aspect-[16/7] w-full">
         <Image
-          src="/centerbildSebastianErklaert.jpeg"
-          alt="Das Team des TM Center München"
+          src={imageSrc}
+          alt={`Das Team des TM Center ${tenant.city}`}
           fill
           className="object-cover object-top"
           sizes="100vw"

@@ -6,6 +6,7 @@ import { buildCustomEmailHtml, buildEventReminderHtml } from '@/lib/email-verans
 import { createEmailAction } from '@/lib/email-actions';
 import { formatVeranstaltungDate } from '@/lib/format';
 import type { EmailActionType } from '@/lib/email-actions';
+import { getCurrentTenant } from '@/lib/tenant';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,12 +16,13 @@ async function sendBulk(
   recipients: { name: string; email: string }[],
   subject: string,
   buildHtml: (name: string) => string,
+  from: string,
 ): Promise<{ sent: number; errors: string[] }> {
   let sent = 0;
   const errors: string[] = [];
   for (const r of recipients) {
     const result = await resend.emails.send({
-      from: 'TM München <noreply@tm-muenchen.de>',
+      from,
       to: r.email,
       subject,
       html: buildHtml(r.name || 'liebe/r Teilnehmer/in'),
@@ -45,10 +47,11 @@ export async function GET(request: Request) {
 
   try {
     // ── 1. Pending custom bulk emails past their scheduledAt ─────────────────
-    const [allActions, allRegistrations, allEvents] = await Promise.all([
+    const [allActions, allRegistrations, allEvents, tenant] = await Promise.all([
       getEmailActions(),
       getEventRegistrations(),
       getAllVeranstaltungen(),
+      getCurrentTenant(),
     ]);
 
     const pendingCustom = allActions.filter(
@@ -66,6 +69,7 @@ export async function GET(request: Request) {
         recipients,
         action.subject,
         name => buildCustomEmailHtml(name, action.body),
+        tenant.from_email,
       );
       if (sent > 0) {
         await markEmailActionSent(action.id, sent);
@@ -121,6 +125,7 @@ export async function GET(request: Request) {
             },
             slot.body,
           ),
+          tenant.from_email,
         );
 
         const action = await createEmailAction({

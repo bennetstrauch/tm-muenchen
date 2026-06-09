@@ -1,6 +1,7 @@
 import { Resend } from 'resend';
 import { lookupTeachersByFirstNames } from '@/lib/tmw-teachers';
 import { updateWhatsappPosted } from '@/lib/veranstaltungen';
+import { getCurrentTenant } from '@/lib/tenant';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -20,7 +21,7 @@ export async function POST(request: Request) {
   }
 
   const firstNames = hosts.split(',').map(s => s.trim()).filter(Boolean);
-  const leiter = await lookupTeachersByFirstNames(firstNames);
+  const [leiter, tenant] = await Promise.all([lookupTeachersByFirstNames(firstNames), getCurrentTenant()]);
 
   if (leiter.length === 0) {
     return Response.json({ error: 'Keine Leiter-E-Mail-Adressen gefunden.' }, { status: 422 });
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
   await Promise.all(
     leiter.map(l =>
       resend.emails.send({
-        from: 'TM München <noreply@tm-muenchen.de>',
+        from: tenant.from_email,
         to: l.email,
         subject: `WhatsApp-Post: ${eventTitle}`,
         text,

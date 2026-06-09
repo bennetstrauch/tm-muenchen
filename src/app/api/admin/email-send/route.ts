@@ -3,6 +3,7 @@ import { getEventRegistrations } from '@/lib/veranstaltungen';
 import { createEmailAction, markEmailActionSent, markEmailActionFailed } from '@/lib/email-actions';
 import { buildCustomEmailHtml } from '@/lib/email-veranstaltung';
 import { verifyToken } from '@/lib/admin-token';
+import { getCurrentTenant } from '@/lib/tenant';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -67,7 +68,7 @@ export async function POST(request: Request) {
       createdBy,
     });
 
-    const allRegistrations = await getEventRegistrations();
+    const [allRegistrations, tenant] = await Promise.all([getEventRegistrations(), getCurrentTenant()]);
     const recipients = allRegistrations.filter(r => r.eventId === eventId);
 
     if (recipients.length === 0) {
@@ -80,7 +81,7 @@ export async function POST(request: Request) {
 
     for (const r of recipients) {
       const result = await resend.emails.send({
-        from: 'TM München <noreply@tm-muenchen.de>',
+        from: tenant.from_email,
         to: r.email,
         subject,
         html: buildCustomEmailHtml(r.name || 'liebe/r Teilnehmer/in', body),

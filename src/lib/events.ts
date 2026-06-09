@@ -73,39 +73,27 @@ async function fetchCenter(
 }
 
 // ── Main export ───────────────────────────────────────────
-export async function getEvents(): Promise<TMEvent[]> {
+export async function getEvents(centerIds: number[] = [108, 109]): Promise<TMEvent[]> {
   const token = process.env.TMW_API_KEY;
   if (!token) return DEMO_EVENTS;
 
   const today = new Date().toISOString().slice(0, 10);
 
   try {
-    // Fetch both centers in parallel; if one fails, fall back gracefully
-    const [center108, center109] = await Promise.allSettled([
-      fetchCenter(108, token),
-      fetchCenter(109, token),
-    ]);
+    const settled = await Promise.allSettled(centerIds.map(id => fetchCenter(id, token)));
+    const [primary = [], ...rest] = settled.map(r => r.status === "fulfilled" ? r.value : []);
 
-    const from108 = center108.status === "fulfilled" ? center108.value : [];
-    const from109 = center109.status === "fulfilled" ? center109.value : [];
-
-    // Build a set of online datetime keys already covered by center 108
-    const onlineKeysCoveredBy108 = new Set(
-      from108
-        .filter((e) => e.type === "Online")
-        .map((e) => `${e.date}|${e.time}`)
+    // Secondary centers: keep all in-person events; drop online duplicates already in primary
+    const primaryOnlineKeys = new Set(
+      primary.filter(e => e.type === "Online").map(e => `${e.date}|${e.time}`)
+    );
+    const secondary = rest.flatMap(arr =>
+      arr.filter(e => e.type !== "Online" || !primaryOnlineKeys.has(`${e.date}|${e.time}`))
     );
 
-    // From center 109: keep all in-person, drop online if 108 has one at same time
-    const filtered109 = from109.filter(
-      (e) => e.type !== "Online" || !onlineKeysCoveredBy108.has(`${e.date}|${e.time}`)
-    );
-
-    const merged = [...from108, ...filtered109]
+    return [...primary, ...secondary]
       .filter((e) => e.date >= today)
       .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
-
-    return merged;
   } catch (err) {
     console.error("[events] fetch failed, using demo data:", err);
     return DEMO_EVENTS;

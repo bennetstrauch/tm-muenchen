@@ -14,11 +14,13 @@ import { getLocale } from "next-intl/server";
 import { getTrustpilotStats } from "@/lib/trustpilot";
 import { getTeachers } from "@/lib/teachers";
 import { getTestimonials } from "@/content";
+import { getCurrentTenant } from "@/lib/tenant";
 
 export default async function Home() {
   const locale = await getLocale();
+  const tenant = await getCurrentTenant();
   const [events, trustpilot, teachersRaw] = await Promise.all([
-    getEvents(),
+    getEvents(tenant.tmw_center_ids),
     getTrustpilotStats(),
     getTeachers(locale),
   ]);

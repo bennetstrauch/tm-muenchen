@@ -3,6 +3,7 @@ import { buildConfirmationHtml, buildReminderHtml, buildTeacherNotificationHtml,
 import type { RegistrationEmailParams } from "@/lib/email";
 import { appendRegistration } from "@/lib/sheets";
 import { sendCapiLead } from "@/lib/capi";
+import { getCurrentTenant } from "@/lib/tenant";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -40,6 +41,8 @@ export async function POST(request: Request) {
   if (!name?.trim() || !email?.trim()) {
     return Response.json({ error: "Pflichtfelder fehlen." }, { status: 400 });
   }
+
+  const tenant = await getCurrentTenant();
 
   // Fetch teacher details from TMW API
   let teacher: RegistrationEmailParams["teacher"] = null;
@@ -92,7 +95,7 @@ export async function POST(request: Request) {
   await Promise.all([
     // Confirmation to registrant
     resend.emails.send({
-      from: "TM München <noreply@tm-muenchen.de>",
+      from: tenant.from_email,
       to: email,
       subject: buildConfirmationSubject(eventDate, eventTime, isOnline, locale),
       html: buildConfirmationHtml(params),
@@ -101,7 +104,7 @@ export async function POST(request: Request) {
     // Notification to teacher
     teacher?.email
       ? resend.emails.send({
-          from: "TM München <noreply@tm-muenchen.de>",
+          from: tenant.from_email,
           to: teacher.email,
           subject: `Neue Anmeldung: ${isOnline ? "Online-" : ""}Infoabend am ${eventDate} um ${eventTime} Uhr`,
           html: buildTeacherNotificationHtml(params),
@@ -111,7 +114,7 @@ export async function POST(request: Request) {
     // Scheduled reminder — day before at 9:00 AM Munich time
     reminderScheduledAt
       ? resend.emails.send({
-          from: "TM München <noreply@tm-muenchen.de>",
+          from: tenant.from_email,
           to: email,
           subject: buildReminderSubject(eventTime, isOnline, locale),
           html: buildReminderHtml(params),

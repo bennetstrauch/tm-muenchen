@@ -3,9 +3,10 @@
 import { useState, useRef, useEffect } from "react";
 import { content } from "../../content";
 
-export default function ContactButtons({ showWhatsApp, whatsappLink }: { showWhatsApp?: boolean; whatsappLink?: string | null }) {
+export default function ContactButtons({ showWhatsApp, whatsappLink, instagramLink }: { showWhatsApp?: boolean; whatsappLink?: string | null; instagramLink?: string }) {
   const { contact } = content;
   const resolvedWhatsappLink = whatsappLink ?? contact.whatsappCommunity;
+  const resolvedInstagramLink = instagramLink ?? contact.instagram;
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -22,7 +23,7 @@ export default function ContactButtons({ showWhatsApp, whatsappLink }: { showWha
     <div className="flex items-center gap-1 flex-shrink-0">
       {/* Instagram — always visible */}
       <a
-        href={contact.instagram}
+        href={resolvedInstagramLink}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Instagram"

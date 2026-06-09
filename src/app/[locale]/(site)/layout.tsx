@@ -11,7 +11,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   const tenant = await getCurrentTenant();
   return (
     <NavProvider>
-      <TopBar whatsappEnabled={tenant.whatsapp_enabled} whatsappLink={tenant.whatsapp_link} />
+      <TopBar whatsappEnabled={tenant.whatsapp_enabled} whatsappLink={tenant.whatsapp_link} instagramLink={tenant.instagram_link} />
       <NavPanel />
       <MainOffset>
         {children}

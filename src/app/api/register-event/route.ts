@@ -4,6 +4,7 @@ import { calcReminderTime } from '@/lib/format';
 import { buildEventConfirmationHtml, buildEventReminderHtml, buildLeiterNotificationHtml, type EventEmailParams } from '@/lib/email-veranstaltung';
 import { lookupTeachersByFirstNames } from '@/lib/tmw-teachers';
 import { generateToken } from '@/lib/admin-token';
+import { getCurrentTenant } from '@/lib/tenant';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -41,6 +42,7 @@ async function notifyLeiter(params: {
   registrantPhone?: string;
   tmLehrer?: string;
   baseUrl: string;
+  fromEmail: string;
 }): Promise<void> {
   const firstNames = params.hosts.split(',').map(s => s.trim()).filter(Boolean);
   const leaders = await lookupTeachersByFirstNames(firstNames);
@@ -52,7 +54,7 @@ async function notifyLeiter(params: {
   await Promise.all(
     leaders.map(leader =>
       resend.emails.send({
-        from: 'TM München <noreply@tm-muenchen.de>',
+        from: params.fromEmail,
         to: leader.email,
         subject: `Neue Anmeldung: ${params.eventTitle} – ${params.eventDate}`,
         html: buildLeiterNotificationHtml({
@@ -86,7 +88,7 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Pflichtfelder fehlen.' }, { status: 400 });
   }
 
-  const event = await getVeranstaltungById(eventId);
+  const [event, tenant] = await Promise.all([getVeranstaltungById(eventId), getCurrentTenant()]);
   const requiresTmFields = !event?.auchFuerNichtMeditierende;
 
   if (requiresTmFields && (!tmLehrer?.trim() || !datumErlernen?.trim())) {
@@ -105,7 +107,7 @@ export async function POST(request: Request) {
 
   await Promise.all([
     resend.emails.send({
-      from: 'TM München <noreply@tm-muenchen.de>',
+      from: tenant.from_email,
       to: email,
       subject: `Bestätigung: ${eventTitle} – ${eventDate}`,
       html: buildEventConfirmationHtml(params),
@@ -113,7 +115,7 @@ export async function POST(request: Request) {
 
     r1
       ? resend.emails.send({
-          from: 'TM München <noreply@tm-muenchen.de>',
+          from: tenant.from_email,
           to: email,
           subject: event?.reminderSubject1 || `Erinnerung: ${eventTitle} – ${eventDate}`,
           html: buildEventReminderHtml(params, event?.reminderBody1),
@@ -123,7 +125,7 @@ export async function POST(request: Request) {
 
     r2
       ? resend.emails.send({
-          from: 'TM München <noreply@tm-muenchen.de>',
+          from: tenant.from_email,
           to: email,
           subject: event?.reminderSubject2 || `Erinnerung: ${eventTitle} – ${eventDate}`,
           html: buildEventReminderHtml(params, event?.reminderBody2),
@@ -156,6 +158,7 @@ export async function POST(request: Request) {
     registrantPhone: phone,
     tmLehrer,
     baseUrl: new URL(request.url).origin,
+    fromEmail: tenant.from_email,
   }).catch(err => console.error('Leiter notification failed:', err));
 
   return Response.json({ success: true });
