@@ -21,23 +21,23 @@ export type Theme = {
 };
 
 const STRESS_IMAGES: HeroImage[] = [
-  { src: "/hero/stress/1.jpg", focus: "45% 30%" },
-  { src: "/hero/stress/2.jpg", focus: "62% 25%" },
+  // { src: "/hero/stress/1.jpg", focus: "45% 30%" },
+  // { src: "/hero/stress/2.jpg", focus: "62% 25%" },
   { src: "/hero/stress/3.jpg", focus: "65% 50%" },
   { src: "/hero/stress/4.jpg", focus: "50% 50%" },
   { src: "/hero/stress/5.jpg", focus: "45% 50%" },
   { src: "/hero/stress/6.jpg", focus: "50% 45%" },
-  { src: "/hero/stress/7.jpg", focus: "45% 35%" },
+  // { src: "/hero/stress/7.jpg", focus: "45% 35%" },
   { src: "/hero/stress/8.jpg", focus: "62% 35%" },
   { src: "/hero/stress/9.jpg", focus: "45% 40%" },
   { src: "/hero/stress/10.jpg", focus: "45% 30%" },
   // { src: "/hero/stress/11.jpg", focus: "70% 130%" },
   { src: "/hero/stress/12.jpg", focus: "35% 35%" },
-  { src: "/hero/stress/13.jpg", focus: "50% 40%" },
-  { src: "/hero/stress/14.jpg", focus: "70% 30%" },
+  // { src: "/hero/stress/13.jpg", focus: "50% 40%" },
+  // { src: "/hero/stress/14.jpg", focus: "70% 30%" },
   { src: "/hero/stress/15.jpg", focus: "55% 30%" },
-  { src: "/hero/stress/17.jpg", focus: "55% 30%" },
-  { src: "/hero/stress/18.jpg", focus: "50% 50%" },
+  // { src: "/hero/stress/17.jpg", focus: "55% 30%" },
+  // { src: "/hero/stress/18.jpg", focus: "50% 50%" },
 ];
 
 export const themes: Record<string, Theme> = {
