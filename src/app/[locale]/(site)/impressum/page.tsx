@@ -27,7 +27,7 @@ export default async function ImpressumPage() {
           Impressum
         </h1>
 
-        {tenant.impressum_content ? (
+        {tenant.impressum_content?.trimStart().startsWith('<') ? (
           <div
             className="text-sm text-[#1A3352]/75 leading-relaxed"
             dangerouslySetInnerHTML={{ __html: tenant.impressum_content }}
