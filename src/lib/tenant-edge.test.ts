@@ -1,20 +1,9 @@
 import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 
-// ── Supabase mock (shared across all tests in this file) ──────────────────────
-
-const single = vi.fn();
-const eqSpy = vi.fn(() => ({ single }));
-const from = vi.fn(() => ({ select: () => ({ eq: eqSpy }) }));
-vi.mock("./supabase", () => ({ getSupabase: () => ({ from }) }));
-
-// ── NODE_ENV helpers ──────────────────────────────────────────────────────────
-
 beforeEach(() => {
   vi.resetModules();
   vi.unstubAllEnvs();
-  single.mockReset();
-  from.mockClear();
-  eqSpy.mockClear();
+  vi.restoreAllMocks();
 });
 
 afterEach(() => {
@@ -29,9 +18,20 @@ async function load() {
   return import("./tenant-edge");
 }
 
-// Minimal NextRequest-shaped stub — only what resolveTenantSlug uses.
 function fakeRequest(host: string | null): { headers: { get(k: string): string | null } } {
   return { headers: { get: (k: string) => (k === "host" ? host : null) } };
+}
+
+function mockFetch(rows: { tenant: string }[], ok = true) {
+  return vi.spyOn(globalThis, "fetch").mockResolvedValue({
+    ok,
+    json: async () => rows,
+  } as Response);
+}
+
+function stubSupabaseEnv() {
+  vi.stubEnv("SUPABASE_URL", "https://test.supabase.co");
+  vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "test-key");
 }
 
 // ── normalizeHost ─────────────────────────────────────────────────────────────
@@ -70,37 +70,68 @@ describe("resolveTenantSlug (development)", () => {
   });
 
   it("falls back to 'muenchen' when DEV_TENANT is unset", async () => {
-    // DEV_TENANT intentionally not stubbed
     const { resolveTenantSlug } = await load();
     expect(await resolveTenantSlug(fakeRequest(null) as never)).toBe("muenchen");
   });
 
-  it("never calls Supabase in dev mode", async () => {
+  it("never calls fetch in dev mode", async () => {
+    const fetchSpy = mockFetch([]);
     const { resolveTenantSlug } = await load();
     await resolveTenantSlug(fakeRequest("tm-muenchen.de") as never);
-    expect(from).not.toHaveBeenCalled();
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 });
 
 // ── resolveTenantSlug — production mode ───────────────────────────────────────
 
 describe("resolveTenantSlug (production)", () => {
+  beforeEach(() => stubSupabaseEnv());
+
   it("returns the tenant slug for a known hostname", async () => {
-    single.mockResolvedValue({ data: { tenant: "muenchen" }, error: null });
+    mockFetch([{ tenant: "muenchen" }]);
     const { resolveTenantSlug } = await load();
     expect(await resolveTenantSlug(fakeRequest("tm-muenchen.de") as never)).toBe("muenchen");
   });
 
   it("returns null for an unknown hostname", async () => {
-    single.mockResolvedValue({ data: null, error: { message: "no rows" } });
+    mockFetch([]);
     const { resolveTenantSlug } = await load();
     expect(await resolveTenantSlug(fakeRequest("unknown.de") as never)).toBeNull();
   });
 
-  it("normalises the hostname before querying Supabase (strips www. and port)", async () => {
-    single.mockResolvedValue({ data: { tenant: "muenchen" }, error: null });
+  it("normalises the hostname before querying (strips www. and port)", async () => {
+    const fetchSpy = mockFetch([{ tenant: "muenchen" }]);
     const { resolveTenantSlug } = await load();
     await resolveTenantSlug(fakeRequest("www.tm-muenchen.de:443") as never);
-    expect(eqSpy).toHaveBeenCalledWith("hostname", "tm-muenchen.de");
+    expect(fetchSpy).toHaveBeenCalledWith(
+      expect.stringContaining("hostname=eq.tm-muenchen.de"),
+      expect.anything(),
+    );
+  });
+
+  it("caches the result so fetch is only called once per hostname", async () => {
+    const fetchSpy = mockFetch([{ tenant: "muenchen" }]);
+    const { resolveTenantSlug } = await load();
+    await resolveTenantSlug(fakeRequest("tm-muenchen.de") as never);
+    await resolveTenantSlug(fakeRequest("tm-muenchen.de") as never);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("falls back to 'muenchen' when env vars are missing", async () => {
+    vi.unstubAllEnvs();
+    const { resolveTenantSlug } = await load();
+    expect(await resolveTenantSlug(fakeRequest("tm-muenchen.de") as never)).toBe("muenchen");
+  });
+
+  it("falls back to 'muenchen' when fetch throws", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("network error"));
+    const { resolveTenantSlug } = await load();
+    expect(await resolveTenantSlug(fakeRequest("tm-muenchen.de") as never)).toBe("muenchen");
+  });
+
+  it("falls back to 'muenchen' when fetch returns non-ok", async () => {
+    mockFetch([], false);
+    const { resolveTenantSlug } = await load();
+    expect(await resolveTenantSlug(fakeRequest("tm-muenchen.de") as never)).toBe("muenchen");
   });
 });
