@@ -149,7 +149,7 @@ export default function EmailActionsTab({
       setActions(prev => prev.map(a => a.id === updated.id ? updated : a));
     } else {
       fetch('/api/admin/email-actions', { headers: tokenHeaders })
-        .then(r => r.json())
+        .then(r => r.ok ? r.json() : Promise.reject(r.status))
         .then((data: EmailAction[]) => setActions(data))
         .catch(() => {});
     }

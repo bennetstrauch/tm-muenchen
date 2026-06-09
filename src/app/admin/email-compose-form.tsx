@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import type { EmailAction } from '@/lib/email-actions';
 import type { Veranstaltung } from '@/lib/veranstaltungen';
 import { formatVeranstaltungDate } from '@/lib/format';
@@ -169,16 +169,9 @@ export default function ComposeForm({
   const eventLocked = !!lockedEventId || target.mode !== 'new';
   const sampleName = selectedEvent?.hosts?.split(',')[0]?.trim() ?? 'Marlena';
 
-  // In magic-link (Leiter) mode every admin API call must carry the scoped token
-  // so the proxy gate lets it through.
-  const tokenHeaders = useMemo<Record<string, string>>(() => {
-    const h: Record<string, string> = {};
-    if (tokenHeader) {
-      h['x-admin-token'] = tokenHeader;
-      h['x-admin-token-event'] = eventId;
-    }
-    return h;
-  }, [tokenHeader, eventId]);
+  const tokenHeaders: Record<string, string> = tokenHeader
+    ? { 'x-admin-token': tokenHeader, 'x-admin-token-event': eventId }
+    : {};
 
   async function saveReminderEdit() {
     if (!selectedEvent || target.mode !== 'edit-reminder') return;
