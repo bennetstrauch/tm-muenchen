@@ -48,9 +48,10 @@ const chevron = (
 
 const LOCALE_LABELS: Record<Locale, string> = { de: "DE", en: "EN", fr: "FR", es: "ES" };
 
-export default function NavPanel() {
+export default function NavPanel({ activeLocales }: { activeLocales: string[] }) {
   const t = useTranslations("Nav");
   const { isOpen, setIsOpen, setPanelHeight } = useNavContext();
+  const locales = routing.locales.filter((l) => activeLocales.includes(l));
   const router = useRouter();
   const locale = useLocale() as Locale;
   const pathname = usePathname();
@@ -127,8 +128,9 @@ export default function NavPanel() {
             })}
 
             {/* Language switcher */}
+            {locales.length > 1 && (
             <div className="border-t border-[#1A3352]/8 px-5 py-3 flex items-center gap-1">
-              {routing.locales.map((l, i) => (
+              {locales.map((l, i) => (
                 <IntlLink
                   key={l}
                   href={pathname}
@@ -144,6 +146,7 @@ export default function NavPanel() {
                 </IntlLink>
               ))}
             </div>
+            )}
           </div>
         </div>
       </div>

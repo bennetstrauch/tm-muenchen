@@ -96,7 +96,8 @@ describe("admin Einstellungen", () => {
 
     await PUT(req);
 
-    const written = update.mock.calls[0][0];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const written = (update.mock.calls as any[][])[0][0];
     expect(written).not.toHaveProperty("admin_password_hash");
     expect(written).not.toHaveProperty("tenant");
     expect(written).not.toHaveProperty("hostname");

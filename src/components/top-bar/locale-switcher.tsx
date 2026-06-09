@@ -12,21 +12,23 @@ const LOCALE_LABELS: Record<Locale, string> = {
   es: "ES",
 };
 
-export default function LocaleSwitcher() {
+export default function LocaleSwitcher({ activeLocales }: { activeLocales: string[] }) {
   const locale = useLocale() as Locale;
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
+  const locales = routing.locales.filter((l) => activeLocales.includes(l));
+
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
     if (open) document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
+
+  if (locales.length <= 1) return null;
 
   return (
     <div ref={ref} className="relative">
@@ -43,7 +45,7 @@ export default function LocaleSwitcher() {
 
       {open && (
         <div className="absolute left-0 top-[calc(100%+6px)] bg-white rounded-xl shadow-lg border border-[#E5EAF0] py-1 min-w-[80px] z-[9999]">
-          {routing.locales.map((l) => (
+          {locales.map((l) => (
             <Link
               key={l}
               href={pathname}
