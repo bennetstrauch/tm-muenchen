@@ -1,6 +1,7 @@
 import { updateVeranstaltung, deleteVeranstaltung, getVeranstaltungById, updateWhatsappPosted } from '@/lib/veranstaltungen';
 import type { Veranstaltung } from '@/lib/veranstaltungen';
 import { updateCalendarEvent, deleteCalendarEvent, isGuldeinEvent } from '@/lib/calendar';
+import { getCurrentTenant } from '@/lib/tenant';
 
 export async function PATCH(
   request: Request,
@@ -10,7 +11,8 @@ export async function PATCH(
     const { id } = await context.params;
     const { whatsappPostedAt } = await request.json() as { whatsappPostedAt: string };
     if (!whatsappPostedAt) return Response.json({ error: 'whatsappPostedAt fehlt.' }, { status: 400 });
-    await updateWhatsappPosted(id, whatsappPostedAt);
+    const { tenant } = await getCurrentTenant();
+    await updateWhatsappPosted(id, whatsappPostedAt, tenant);
     return Response.json({ success: true });
   } catch (err) {
     console.error('Admin events PATCH failed:', err);
@@ -24,9 +26,10 @@ export async function PUT(
 ) {
   try {
     const { id } = await context.params;
+    const { tenant } = await getCurrentTenant();
     const body: Veranstaltung = await request.json();
     const event = { ...body, id };
-    await updateVeranstaltung(event);
+    await updateVeranstaltung(event, tenant);
 
     if (isGuldeinEvent(event)) {
       try {
@@ -49,8 +52,9 @@ export async function DELETE(
 ) {
   try {
     const { id } = await context.params;
-    const event = await getVeranstaltungById(id);
-    await deleteVeranstaltung(id);
+    const { tenant } = await getCurrentTenant();
+    const event = await getVeranstaltungById(id, tenant);
+    await deleteVeranstaltung(id, tenant);
     if (event && isGuldeinEvent(event)) {
       try {
         await deleteCalendarEvent(id);

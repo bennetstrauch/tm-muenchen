@@ -35,11 +35,12 @@ export default async function AdminPage({
     }
 
     // Valid token: load data and render in token-scoped mode
+    const { tenant: tenantSlug } = await getCurrentTenant();
     const [infoRegistrations, events, eventRegistrations, vorlagen, emailActions] = await Promise.all([
       getRegistrations().catch(() => []),
-      getAllVeranstaltungen().catch(() => []),
-      getEventRegistrations().catch(() => []),
-      getAllVorlagen().catch(() => []),
+      getAllVeranstaltungen(tenantSlug).catch(() => []),
+      getEventRegistrations(tenantSlug).catch(() => []),
+      getAllVorlagen(tenantSlug).catch(() => []),
       getEmailActions().catch(() => []),
     ]);
 
@@ -82,9 +83,9 @@ export default async function AdminPage({
 
   const [infoRegistrations, events, eventRegistrations, vorlagen, emailActions] = await Promise.all([
     getRegistrations().catch(() => []),
-    getAllVeranstaltungen().catch(() => []),
-    getEventRegistrations().catch(() => []),
-    getAllVorlagen().catch(() => []),
+    getAllVeranstaltungen(tenant).catch(() => []),
+    getEventRegistrations(tenant).catch(() => []),
+    getAllVorlagen(tenant).catch(() => []),
     getEmailActions().catch(() => []),
   ]);
 

@@ -1,13 +1,18 @@
 import { getTeachersRaw } from '@/lib/teachers';
 import { getSupabase } from '@/lib/supabase';
+import { getCurrentTenant } from '@/lib/tenant';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
+    const tenant = await getCurrentTenant();
     const [teachers, { data: assignments }] = await Promise.all([
-      getTeachersRaw(),
-      getSupabase().from('teacher_languages').select('teacher_name, locale, bio_override'),
+      getTeachersRaw(tenant.tmw_center_ids),
+      getSupabase()
+        .from('teacher_languages')
+        .select('teacher_name, locale, bio_override')
+        .eq('tenant', tenant.tenant),
     ]);
     return Response.json({ teachers, assignments: assignments ?? [] });
   } catch (err) {
@@ -18,13 +23,16 @@ export async function GET() {
 
 export async function PUT(request: Request) {
   try {
+    const tenant = await getCurrentTenant();
     const rows: { teacher_name: string; locale: string; bio_override: string | null }[] =
       await request.json();
 
     const supabase = getSupabase();
-    await supabase.from('teacher_languages').delete().neq('teacher_name', '');
+    await supabase.from('teacher_languages').delete().eq('tenant', tenant.tenant);
     if (rows.length > 0) {
-      const { error } = await supabase.from('teacher_languages').insert(rows);
+      const { error } = await supabase
+        .from('teacher_languages')
+        .insert(rows.map(r => ({ ...r, tenant: tenant.tenant })));
       if (error) throw error;
     }
 

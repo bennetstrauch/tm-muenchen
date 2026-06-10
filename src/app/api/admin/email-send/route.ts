@@ -68,7 +68,8 @@ export async function POST(request: Request) {
       createdBy,
     });
 
-    const [allRegistrations, tenant] = await Promise.all([getEventRegistrations(), getCurrentTenant()]);
+    const tenant = await getCurrentTenant();
+    const allRegistrations = await getEventRegistrations(tenant.tenant);
     const recipients = allRegistrations.filter(r => r.eventId === eventId);
 
     if (recipients.length === 0) {

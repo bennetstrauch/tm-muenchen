@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     )
   );
 
-  await updateWhatsappPosted(eventId, new Date().toISOString()).catch(err =>
+  await updateWhatsappPosted(eventId, new Date().toISOString(), tenant.tenant).catch(err =>
     console.error('whatsappPostedAt write failed:', err)
   );
 

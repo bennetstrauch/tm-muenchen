@@ -1,9 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getVeranstaltungen, createVeranstaltung, deleteVeranstaltung } from './veranstaltungen';
+import { getAllVorlagen, createVorlage } from './vorlagen';
 
-// Proxy-based Supabase chain mock.
-// Any method returns the chain (unlimited depth). insert/eq are intercepted to
-// capture their arguments. Awaiting the chain resolves with `result`.
 function makeChain(result: unknown, captured: { lastInsert: unknown; eqCalls: [string, unknown][] }): unknown {
   return new Proxy({} as Record<string, unknown>, {
     get(_, key: string) {
@@ -32,20 +29,21 @@ vi.mock('./supabase', () => ({ getSupabase: vi.fn() }));
 import { getSupabase } from './supabase';
 
 const DB_ROW = {
-  id: 'uuid-1',
+  id: 'uuid-v1',
   tenant: 'muenchen',
+  name: 'Infoabend Vorlage',
   title: 'Infoabend',
-  subtitle: 'sub',
-  description: 'desc',
-  long_description: 'long',
-  date: '2099-12-01',
+  subtitle: '',
+  description: '',
+  long_description: '',
+  date: null,
   time: '19:00',
   location: 'München',
   is_online: false,
   online_link: '',
-  hosts: 'Anna',
-  price: 'kostenlos',
-  target_audience: 'alle',
+  hosts: '',
+  price: '',
+  target_audience: '',
   notes: '',
   reminder1_hours: 24,
   reminder2_hours: 0,
@@ -55,66 +53,49 @@ const DB_ROW = {
   image_url: null,
   auch_fuer_nicht_meditierende: false,
   slug: null,
-  vorlage_id: null,
   end_time: null,
   reminder_subject1: null,
   reminder_body1: null,
   reminder_subject2: null,
   reminder_body2: null,
-  whatsapp_posted_at: null,
 };
 
-describe('getVeranstaltungen', () => {
+describe('getAllVorlagen', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('maps snake_case DB row to camelCase Veranstaltung', async () => {
+  it('returns vorlagen mapped to the Vorlage type', async () => {
     const { client } = mockSupabase([DB_ROW]);
     vi.mocked(getSupabase).mockReturnValue(client as ReturnType<typeof getSupabase>);
 
-    const result = await getVeranstaltungen('muenchen');
+    const result = await getAllVorlagen('muenchen');
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
-      id: 'uuid-1',
-      title: 'Infoabend',
-      longDescription: 'long',
+      id: 'uuid-v1',
+      name: 'Infoabend Vorlage',
+      longDescription: '',
       isOnline: false,
-      registrationOpen: true,
       reminder1Hours: 24,
-      auchFuerNichtMeditierende: false,
     });
   });
 });
 
-describe('createVeranstaltung', () => {
+describe('createVorlage', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('inserts with the correct tenant slug', async () => {
+  it('inserts with tenant and name', async () => {
     const { client, captured } = mockSupabase(null);
     vi.mocked(getSupabase).mockReturnValue(client as ReturnType<typeof getSupabase>);
 
-    await createVeranstaltung({
-      title: 'Infoabend', subtitle: '', description: '', longDescription: '',
-      date: '2099-12-01', time: '19:00', location: 'München', isOnline: false,
-      onlineLink: '', hosts: '', price: '', targetAudience: '', notes: '',
-      reminder1Hours: 24, reminder2Hours: 0, registrationOpen: true, visible: true,
-      isPriority: false, auchFuerNichtMeditierende: false,
+    await createVorlage({
+      name: 'Test Vorlage', title: '', subtitle: '', description: '', longDescription: '',
+      date: '', time: '', location: '', isOnline: false, onlineLink: '', hosts: '',
+      price: '', targetAudience: '', notes: '', reminder1Hours: 24, reminder2Hours: 0,
+      registrationOpen: true, visible: true, isPriority: false, auchFuerNichtMeditierende: false,
     }, 'muenchen');
 
-    expect((captured.lastInsert as Record<string, unknown>).tenant).toBe('muenchen');
-  });
-});
-
-describe('deleteVeranstaltung', () => {
-  beforeEach(() => vi.clearAllMocks());
-
-  it('scopes the delete to both id and tenant', async () => {
-    const { client, captured } = mockSupabase(null);
-    vi.mocked(getSupabase).mockReturnValue(client as ReturnType<typeof getSupabase>);
-
-    await deleteVeranstaltung('uuid-1', 'muenchen');
-
-    expect(captured.eqCalls).toContainEqual(['id', 'uuid-1']);
-    expect(captured.eqCalls).toContainEqual(['tenant', 'muenchen']);
+    const inserted = captured.lastInsert as Record<string, unknown>;
+    expect(inserted.tenant).toBe('muenchen');
+    expect(inserted.name).toBe('Test Vorlage');
   });
 });

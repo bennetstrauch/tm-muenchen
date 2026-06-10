@@ -47,11 +47,11 @@ export async function GET(request: Request) {
 
   try {
     // ── 1. Pending custom bulk emails past their scheduledAt ─────────────────
-    const [allActions, allRegistrations, allEvents, tenant] = await Promise.all([
+    const tenant = await getCurrentTenant();
+    const [allActions, allRegistrations, allEvents] = await Promise.all([
       getEmailActions(),
-      getEventRegistrations(),
-      getAllVeranstaltungen(),
-      getCurrentTenant(),
+      getEventRegistrations(tenant.tenant),
+      getAllVeranstaltungen(tenant.tenant),
     ]);
 
     const pendingCustom = allActions.filter(

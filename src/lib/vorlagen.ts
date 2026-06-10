@@ -1,198 +1,107 @@
-import { getSheets } from './sheets';
-import { parseBool, type Veranstaltung } from './veranstaltungen';
+import { getSupabase } from './supabase';
+import type { Veranstaltung } from './veranstaltungen';
 
-const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID!;
-const TAB = 'Vorlagen';
-const RANGE = `${TAB}!A:AZ`;
-
-function colLetter(n: number): string {
-  let result = '';
-  while (n > 0) {
-    const rem = (n - 1) % 26;
-    result = String.fromCharCode(65 + rem) + result;
-    n = Math.floor((n - 1) / 26);
-  }
-  return result;
-}
-
-function rowRange(tab: string, row: string[], rowIndex: number): string {
-  return `${tab}!A${rowIndex}:${colLetter(row.length)}${rowIndex}`;
-}
-
-// A Vorlage is a Veranstaltung with an extra alias field `name`.
-// Sheet columns: id | name | ...all Veranstaltung fields (same order as Veranstaltungen tab)
 export type Vorlage = Veranstaltung & { name: string };
 
-const HEADERS = [
-  'id', 'name', 'title', 'subtitle', 'description', 'longDescription',
-  'date', 'time', 'location', 'isOnline', 'onlineLink', 'hosts',
-  'price', 'targetAudience', 'notes', 'reminder1Hours', 'reminder2Hours',
-  'registrationOpen', 'visible', 'isPriority', 'imageUrl', 'auchFuerNichtMeditierende', 'slug', 'endTime',
-];
-
-function rowToVorlage(row: string[]): Vorlage {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function fromRow(row: any): Vorlage {
   return {
-    id: row[0] ?? '',
-    name: row[1] ?? '',
-    title: row[2] ?? '',
-    subtitle: row[3] ?? '',
-    description: row[4] ?? '',
-    longDescription: row[5] ?? '',
-    date: row[6] ?? '',
-    time: row[7] ?? '',
-    location: row[8] ?? '',
-    isOnline: parseBool(row[9] ?? ''),
-    onlineLink: row[10] ?? '',
-    hosts: row[11] ?? '',
-    price: row[12] ?? '',
-    targetAudience: row[13] ?? '',
-    notes: row[14] ?? '',
-    reminder1Hours: parseInt(row[15] ?? '') || 24,
-    reminder2Hours: parseInt(row[16] ?? '') || 0,
-    registrationOpen: parseBool(row[17] ?? 'TRUE'),
-    visible: parseBool(row[18] ?? 'TRUE'),
-    isPriority: parseBool(row[19] ?? ''),
-    imageUrl: row[20] || undefined,
-    auchFuerNichtMeditierende: parseBool(row[21] ?? ''),
-    slug: row[22] || undefined,
-    endTime: row[23] || undefined,
+    id: row.id,
+    name: row.name,
+    title: row.title,
+    subtitle: row.subtitle,
+    description: row.description,
+    longDescription: row.long_description,
+    date: row.date ?? '',
+    time: row.time,
+    location: row.location,
+    isOnline: row.is_online,
+    onlineLink: row.online_link,
+    hosts: row.hosts,
+    price: row.price,
+    targetAudience: row.target_audience,
+    notes: row.notes,
+    reminder1Hours: row.reminder1_hours,
+    reminder2Hours: row.reminder2_hours,
+    registrationOpen: row.registration_open,
+    visible: row.visible,
+    isPriority: row.is_priority,
+    imageUrl: row.image_url ?? undefined,
+    auchFuerNichtMeditierende: row.auch_fuer_nicht_meditierende,
+    slug: row.slug ?? undefined,
+    endTime: row.end_time ?? undefined,
+    reminderSubject1: row.reminder_subject1 ?? undefined,
+    reminderBody1: row.reminder_body1 ?? undefined,
+    reminderSubject2: row.reminder_subject2 ?? undefined,
+    reminderBody2: row.reminder_body2 ?? undefined,
   };
 }
 
-function vorlageToRow(v: Vorlage): string[] {
-  return [
-    v.id,
-    v.name,
-    v.title,
-    v.subtitle,
-    v.description,
-    v.longDescription,
-    v.date,
-    v.time,
-    v.location,
-    v.isOnline ? 'TRUE' : 'FALSE',
-    v.onlineLink,
-    v.hosts,
-    v.price,
-    v.targetAudience,
-    v.notes,
-    String(v.reminder1Hours || 24),
-    v.reminder2Hours ? String(v.reminder2Hours) : '',
-    v.registrationOpen ? 'TRUE' : 'FALSE',
-    v.visible ? 'TRUE' : 'FALSE',
-    v.isPriority ? 'TRUE' : 'FALSE',
-    v.imageUrl ?? '',
-    v.auchFuerNichtMeditierende ? 'TRUE' : 'FALSE',
-    v.slug ?? '',
-    v.endTime ?? '',
-  ];
+function toRow(v: Omit<Vorlage, 'id'>, tenant: string) {
+  return {
+    tenant,
+    name: v.name,
+    title: v.title,
+    subtitle: v.subtitle,
+    description: v.description,
+    long_description: v.longDescription,
+    date: v.date || null,
+    time: v.time,
+    location: v.location,
+    is_online: v.isOnline,
+    online_link: v.onlineLink,
+    hosts: v.hosts,
+    price: v.price,
+    target_audience: v.targetAudience,
+    notes: v.notes,
+    reminder1_hours: v.reminder1Hours,
+    reminder2_hours: v.reminder2Hours,
+    registration_open: v.registrationOpen,
+    visible: v.visible,
+    is_priority: v.isPriority,
+    image_url: v.imageUrl ?? null,
+    auch_fuer_nicht_meditierende: v.auchFuerNichtMeditierende,
+    slug: v.slug ?? null,
+    end_time: v.endTime ?? null,
+    reminder_subject1: v.reminderSubject1 ?? null,
+    reminder_body1: v.reminderBody1 ?? null,
+    reminder_subject2: v.reminderSubject2 ?? null,
+    reminder_body2: v.reminderBody2 ?? null,
+  };
 }
 
-async function ensureTab(sheets: ReturnType<typeof getSheets>): Promise<void> {
-  const meta = await sheets.spreadsheets.get({
-    spreadsheetId: SPREADSHEET_ID,
-    fields: 'sheets.properties.title',
-  });
-  const exists = meta.data.sheets?.some(s => s.properties?.title === TAB);
-  if (exists) return;
-
-  await sheets.spreadsheets.batchUpdate({
-    spreadsheetId: SPREADSHEET_ID,
-    requestBody: { requests: [{ addSheet: { properties: { title: TAB } } }] },
-  });
-  await sheets.spreadsheets.values.update({
-    spreadsheetId: SPREADSHEET_ID,
-    range: `${TAB}!A1`,
-    valueInputOption: 'RAW',
-    requestBody: { values: [HEADERS] },
-  });
+export async function getAllVorlagen(tenant: string): Promise<Vorlage[]> {
+  const { data } = await getSupabase()
+    .from('vorlagen')
+    .select('*')
+    .eq('tenant', tenant);
+  return (data ?? []).map(fromRow);
 }
 
-function generateId(): string {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+export async function createVorlage(v: Omit<Vorlage, 'id'>, tenant: string): Promise<Vorlage> {
+  const { data, error } = await getSupabase()
+    .from('vorlagen')
+    .insert(toRow(v, tenant))
+    .select()
+    .single();
+  if (error) throw error;
+  return fromRow(data);
 }
 
-export async function getAllVorlagen(): Promise<Vorlage[]> {
-  const sheets = getSheets();
-  await ensureTab(sheets);
-  const res = await sheets.spreadsheets.values.get({
-    spreadsheetId: SPREADSHEET_ID,
-    range: RANGE,
-  });
-  const rows = (res.data.values ?? []) as string[][];
-  return rows
-    .filter((row, i) => i > 0 && row.length >= 2 && row[0])
-    .map(rowToVorlage);
+export async function updateVorlage(v: Vorlage, tenant: string): Promise<void> {
+  const { error } = await getSupabase()
+    .from('vorlagen')
+    .update(toRow(v, tenant))
+    .eq('id', v.id)
+    .eq('tenant', tenant);
+  if (error) throw error;
 }
 
-export async function createVorlage(v: Omit<Vorlage, 'id'>): Promise<Vorlage> {
-  const sheets = getSheets();
-  const full: Vorlage = { ...v, id: generateId() };
-  await sheets.spreadsheets.values.append({
-    spreadsheetId: SPREADSHEET_ID,
-    range: RANGE,
-    valueInputOption: 'USER_ENTERED',
-    requestBody: { values: [vorlageToRow(full)] },
-  });
-  return full;
-}
-
-export async function updateVorlage(v: Vorlage): Promise<void> {
-  const sheets = getSheets();
-  const res = await sheets.spreadsheets.values.get({
-    spreadsheetId: SPREADSHEET_ID,
-    range: `${TAB}!A:A`,
-  });
-  const col = (res.data.values ?? []) as string[][];
-  const idx = col.findIndex((row, i) => i > 0 && row[0] === v.id);
-  if (idx === -1) throw new Error(`Vorlage ${v.id} not found`);
-  const row = vorlageToRow(v);
-  await sheets.spreadsheets.values.update({
-    spreadsheetId: SPREADSHEET_ID,
-    range: rowRange(TAB, row, idx + 1),
-    valueInputOption: 'USER_ENTERED',
-    requestBody: { values: [row] },
-  });
-}
-
-let _sheetId: number | null = null;
-
-async function getVorlagenSheetId(sheets: ReturnType<typeof getSheets>): Promise<number> {
-  if (_sheetId !== null) return _sheetId;
-  const res = await sheets.spreadsheets.get({
-    spreadsheetId: SPREADSHEET_ID,
-    fields: 'sheets.properties',
-  });
-  const sheet = res.data.sheets?.find(s => s.properties?.title === TAB);
-  if (!sheet) throw new Error(`Tab "${TAB}" not found`);
-  _sheetId = sheet.properties?.sheetId ?? 0;
-  return _sheetId;
-}
-
-async function findRowIndex(sheets: ReturnType<typeof getSheets>, id: string): Promise<number> {
-  const res = await sheets.spreadsheets.values.get({
-    spreadsheetId: SPREADSHEET_ID,
-    range: `${TAB}!A:A`,
-  });
-  const col = (res.data.values ?? []) as string[][];
-  return col.findIndex((row, i) => i > 0 && row[0] === id);
-}
-
-export async function deleteVorlage(id: string): Promise<void> {
-  const sheets = getSheets();
-  const [rowIdx, sheetId] = await Promise.all([
-    findRowIndex(sheets, id),
-    getVorlagenSheetId(sheets),
-  ]);
-  if (rowIdx === -1) throw new Error(`Vorlage ${id} not found`);
-  await sheets.spreadsheets.batchUpdate({
-    spreadsheetId: SPREADSHEET_ID,
-    requestBody: {
-      requests: [{
-        deleteDimension: {
-          range: { sheetId, dimension: 'ROWS', startIndex: rowIdx, endIndex: rowIdx + 1 },
-        },
-      }],
-    },
-  });
+export async function deleteVorlage(id: string, tenant: string): Promise<void> {
+  const { error } = await getSupabase()
+    .from('vorlagen')
+    .delete()
+    .eq('id', id)
+    .eq('tenant', tenant);
+  if (error) throw error;
 }

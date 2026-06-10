@@ -32,37 +32,40 @@ async function fetchTeachersForCenter(id: number, token: string): Promise<TMTeac
   }));
 }
 
-export async function getTeachersRaw(): Promise<TMTeacher[]> {
+export async function getTeachersRaw(centerIds: number[]): Promise<TMTeacher[]> {
   const token = process.env.TMW_API_KEY;
-  if (!token) return [];
+  if (!token || centerIds.length === 0) return [];
   try {
-    const [c108, c109] = await Promise.allSettled([
-      fetchTeachersForCenter(108, token),
-      fetchTeachersForCenter(109, token),
-    ]);
-    const from108 = c108.status === "fulfilled" ? c108.value : [];
-    const from109 = c109.status === "fulfilled" ? c109.value : [];
+    const results = await Promise.allSettled(
+      centerIds.map(id => fetchTeachersForCenter(id, token))
+    );
     const seen = new Set<string>();
-    return [...from108, ...from109].filter(t => {
-      if (seen.has(t.name)) return false;
-      seen.add(t.name);
-      return true;
-    });
+    return results
+      .flatMap(r => (r.status === "fulfilled" ? r.value : []))
+      .filter(t => {
+        if (seen.has(t.name)) return false;
+        seen.add(t.name);
+        return true;
+      });
   } catch {
     return [];
   }
 }
 
-export async function getTeachers(locale = "de"): Promise<TMTeacher[]> {
+export async function getTeachers(
+  locale = "de",
+  tenant: { tmw_center_ids: number[]; tenant: string }
+): Promise<TMTeacher[]> {
   try {
-    const deduped = await getTeachersRaw();
+    const deduped = await getTeachersRaw(tenant.tmw_center_ids);
     if (locale === "de") return deduped;
 
     const { getSupabase } = await import("./supabase");
     const { data: entries } = await getSupabase()
       .from("teacher_languages")
       .select("teacher_name, bio_override")
-      .eq("locale", locale);
+      .eq("locale", locale)
+      .eq("tenant", tenant.tenant);
 
     const { getTranslation } = await import("./translate");
     const filtered = applyLocaleFilter(deduped, entries ?? []);

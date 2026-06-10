@@ -89,6 +89,7 @@ Do not:
 - reach for a library when a platform primitive works
 - use client components by default — server-first
 - add visual complexity that doesn't serve conversion
+- jump straight to implementation — understand precisely what is required and have a simple solution in mind before touching code, then write failing tests first (/tdd), then make them pass
 
 ## Agent skills
 

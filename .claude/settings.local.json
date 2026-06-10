@@ -40,7 +40,28 @@
       "Bash(gh issue *)",
       "Skill(to-prd)",
       "Skill(to-issues)",
-      "Skill(grill-with-docs)"
+      "Skill(grill-with-docs)",
+      "Bash(git rebase *)",
+      "Bash(GIT_EDITOR=true git rebase *)",
+      "Bash(git stash *)",
+      "Bash(git merge *)",
+      "Bash(node *)",
+      "Bash(npx playwright *)",
+      "PowerShell(ls \"$env:LOCALAPPDATA\\\\ms-playwright\" -ErrorAction SilentlyContinue | Select-Object Name)",
+      "PowerShell(npx playwright install chromium 2>&1 | Select-Object -Last 5)",
+      "PowerShell(npx playwright install chromium 2>&1 | Select-Object -Last 3)",
+      "PowerShell(ls \"$env:LOCALAPPDATA\\\\ms-playwright\" | Select-Object Name)",
+      "Bash(findstr /i \"supabase\\\\|next\\\\|intl\")",
+      "Bash(xargs grep -l \"middleware\")",
+      "Bash(git mv *)",
+      "Bash(npx vitest *)",
+      "Bash(git commit *)",
+      "Bash(xargs grep -l \"locale\\\\|switcher\\\\|routing\")",
+      "Bash(xargs grep -l -i \"lehrer\\\\|teacher\")",
+      "Bash(xargs grep -l \"lehrer\")",
+      "Skill(update-config)",
+      "Edit",
+      "Bash(npx tsx *)"
     ]
   }
 }

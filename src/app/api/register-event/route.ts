@@ -88,7 +88,8 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Pflichtfelder fehlen.' }, { status: 400 });
   }
 
-  const [event, tenant] = await Promise.all([getVeranstaltungById(eventId), getCurrentTenant()]);
+  const tenant = await getCurrentTenant();
+  const event = await getVeranstaltungById(eventId, tenant.tenant);
   const requiresTmFields = !event?.auchFuerNichtMeditierende;
 
   if (requiresTmFields && (!tmLehrer?.trim() || !datumErlernen?.trim())) {
@@ -143,7 +144,7 @@ export async function POST(request: Request) {
     phone: phone ?? '',
     tmLehrer,
     datumErlernen,
-  }).catch(err => console.error('Sheets logging failed:', err));
+  }, tenant.tenant).catch(err => console.error('Registration logging failed:', err));
 
   notifyLeiter({
     hosts,

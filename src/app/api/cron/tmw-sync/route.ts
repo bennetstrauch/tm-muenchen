@@ -1,4 +1,5 @@
 import { syncTmw } from '@/lib/tmw-sync';
+import { getCurrentTenant } from '@/lib/tenant';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,7 +9,8 @@ export async function GET(request: Request) {
     return new Response('Unauthorized', { status: 401 });
   }
   try {
-    const result = await syncTmw();
+    const { tenant } = await getCurrentTenant();
+    const result = await syncTmw(tenant);
     console.log('[tmw-sync cron]', JSON.stringify(result));
     return Response.json(result);
   } catch (e) {

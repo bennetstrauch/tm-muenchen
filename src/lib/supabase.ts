@@ -9,11 +9,92 @@ type TranslationCacheRow = {
 };
 
 type TeacherLanguagesRow = {
+  tenant: string;
   teacher_name: string;
   locale: string;
   bio_override: string | null;
   created_at: string;
   updated_at: string;
+};
+
+type VeranstaltungRow = {
+  id: string;
+  tenant: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  long_description: string;
+  date: string;
+  time: string;
+  location: string;
+  is_online: boolean;
+  online_link: string;
+  hosts: string;
+  price: string;
+  target_audience: string;
+  notes: string;
+  reminder1_hours: number;
+  reminder2_hours: number;
+  registration_open: boolean;
+  visible: boolean;
+  is_priority: boolean;
+  image_url: string | null;
+  auch_fuer_nicht_meditierende: boolean;
+  slug: string | null;
+  vorlage_id: string | null;
+  end_time: string | null;
+  reminder_subject1: string | null;
+  reminder_body1: string | null;
+  reminder_subject2: string | null;
+  reminder_body2: string | null;
+  whatsapp_posted_at: string | null;
+};
+
+type VorlageRow = {
+  id: string;
+  tenant: string;
+  name: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  long_description: string;
+  date: string | null;
+  time: string;
+  location: string;
+  is_online: boolean;
+  online_link: string;
+  hosts: string;
+  price: string;
+  target_audience: string;
+  notes: string;
+  reminder1_hours: number;
+  reminder2_hours: number;
+  registration_open: boolean;
+  visible: boolean;
+  is_priority: boolean;
+  image_url: string | null;
+  auch_fuer_nicht_meditierende: boolean;
+  slug: string | null;
+  end_time: string | null;
+  reminder_subject1: string | null;
+  reminder_body1: string | null;
+  reminder_subject2: string | null;
+  reminder_body2: string | null;
+};
+
+type AnmeldungRow = {
+  id: string;
+  tenant: string;
+  veranstaltung_id: string | null;
+  timestamp: string;
+  event_id: string;
+  event_title: string;
+  event_date: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  tm_lehrer: string | null;
+  datum_erlernen: string | null;
 };
 
 type TenantRow = {
@@ -52,6 +133,24 @@ export type Database = {
         Row: TenantRow;
         Insert: TenantRow;
         Update: Partial<TenantRow>;
+        Relationships: [];
+      };
+      veranstaltungen: {
+        Row: VeranstaltungRow;
+        Insert: Omit<VeranstaltungRow, "id">;
+        Update: Partial<Omit<VeranstaltungRow, "id">>;
+        Relationships: [];
+      };
+      vorlagen: {
+        Row: VorlageRow;
+        Insert: Omit<VorlageRow, "id">;
+        Update: Partial<Omit<VorlageRow, "id">>;
+        Relationships: [];
+      };
+      anmeldungen: {
+        Row: AnmeldungRow;
+        Insert: Omit<AnmeldungRow, "id" | "timestamp" | "veranstaltung_id"> & { timestamp?: string; veranstaltung_id?: string | null };
+        Update: Partial<Omit<AnmeldungRow, "id">>;
         Relationships: [];
       };
     };

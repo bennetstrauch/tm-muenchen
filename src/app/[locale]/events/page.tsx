@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getVeranstaltungen } from '@/lib/veranstaltungen';
 import MeditierendenEvents from '@/components/meditierenden-events';
 import { content } from '@/content';
+import { getCurrentTenant } from '@/lib/tenant';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,7 +12,8 @@ export const metadata: Metadata = {
 };
 
 export default async function EventsPage() {
-  let events = await getVeranstaltungen().catch(() => []);
+  const { tenant } = await getCurrentTenant();
+  let events = await getVeranstaltungen(tenant).catch(() => []);
 
   return (
     <main className="min-h-screen bg-white pt-16 pb-20">

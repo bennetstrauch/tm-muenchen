@@ -91,8 +91,8 @@ async function getExistingTmwEvents(
   return result;
 }
 
-async function buildCollisionDates(): Promise<Set<string>> {
-  const events = await getAllVeranstaltungen();
+async function buildCollisionDates(tenant: string): Promise<Set<string>> {
+  const events = await getAllVeranstaltungen(tenant);
   const dates = new Set<string>();
   for (const e of events) {
     if (COLLISION_RE.test(e.title)) dates.add(e.date);
@@ -189,7 +189,7 @@ async function buildDesiredEntries(token: string): Promise<Map<string, CalEntry>
   return desired;
 }
 
-export async function syncTmw(): Promise<SyncResult> {
+export async function syncTmw(tenant: string): Promise<SyncResult> {
   const token = process.env.TMW_API_KEY;
   const calendarId = process.env.GOOGLE_CALENDAR_ID;
   if (!token) throw new Error('TMW_API_KEY not configured');
@@ -201,7 +201,7 @@ export async function syncTmw(): Promise<SyncResult> {
   const [desired, existing, collisionDates] = await Promise.all([
     buildDesiredEntries(token),
     getExistingTmwEvents(cal, calendarId),
-    buildCollisionDates(),
+    buildCollisionDates(tenant),
   ]);
 
   // Upsert

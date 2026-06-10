@@ -22,7 +22,7 @@ export default async function Home() {
   const [events, trustpilot, teachersRaw] = await Promise.all([
     getEvents(tenant.tmw_center_ids),
     getTrustpilotStats(),
-    getTeachers(locale),
+    getTeachers(locale, tenant),
   ]);
   const teachers = [...teachersRaw].sort(() => Math.random() - 0.5);
 

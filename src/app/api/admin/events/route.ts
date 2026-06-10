@@ -1,12 +1,14 @@
 import { getAllVeranstaltungen, createVeranstaltung } from '@/lib/veranstaltungen';
 import type { Veranstaltung } from '@/lib/veranstaltungen';
 import { createCalendarEvent, isGuldeinEvent } from '@/lib/calendar';
+import { getCurrentTenant } from '@/lib/tenant';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const events = await getAllVeranstaltungen();
+    const { tenant } = await getCurrentTenant();
+    const events = await getAllVeranstaltungen(tenant);
     return Response.json(events);
   } catch (err) {
     console.error('Admin events GET failed:', err);
@@ -16,8 +18,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const { tenant } = await getCurrentTenant();
     const body: Omit<Veranstaltung, 'id'> = await request.json();
-    const event = await createVeranstaltung(body);
+    const event = await createVeranstaltung(body, tenant);
 
     let calendarStatus: string | null = null;
     if (isGuldeinEvent(event)) {

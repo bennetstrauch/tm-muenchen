@@ -1,5 +1,6 @@
 import { updateVorlage, deleteVorlage } from '@/lib/vorlagen';
 import type { Vorlage } from '@/lib/vorlagen';
+import { getCurrentTenant } from '@/lib/tenant';
 
 export async function PUT(
   request: Request,
@@ -7,8 +8,9 @@ export async function PUT(
 ) {
   try {
     const { id } = await context.params;
+    const { tenant } = await getCurrentTenant();
     const body: Vorlage = await request.json();
-    await updateVorlage({ ...body, id });
+    await updateVorlage({ ...body, id }, tenant);
     return Response.json({ success: true });
   } catch (err) {
     console.error('Admin vorlagen PUT failed:', err);
@@ -22,7 +24,8 @@ export async function DELETE(
 ) {
   try {
     const { id } = await context.params;
-    await deleteVorlage(id);
+    const { tenant } = await getCurrentTenant();
+    await deleteVorlage(id, tenant);
     return Response.json({ success: true });
   } catch (err) {
     console.error('Admin vorlagen DELETE failed:', err);
