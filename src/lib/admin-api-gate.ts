@@ -1,4 +1,4 @@
-import { verifySessionToken } from "./admin-session";
+import { verifySession } from "./admin-session";
 import { verifyToken } from "./admin-token";
 
 // API paths a magic-link (Leiter) token may reach. A full-admin session cookie
@@ -34,7 +34,7 @@ export async function isAuthorizedAdminApi(
 ): Promise<boolean> {
   if (pathname === "/api/admin/login") return true;
 
-  if (sessionToken && await verifySessionToken(sessionToken, tenant)) return true;
+  if (sessionToken && await verifySession(sessionToken, tenant)) return true;
 
   if (tokenHeader && tokenEvent && isLeiterPath(pathname)) {
     return (await verifyToken(tokenHeader, tokenEvent)).valid;

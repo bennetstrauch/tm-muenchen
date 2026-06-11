@@ -1,0 +1,261 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import type { TenantConfig } from '@/lib/tenant';
+
+const LOCALES = ['de', 'en', 'fr', 'es'] as const;
+
+type TmwResult =
+  | { lectureCount: number; teachers: string[] }
+  | { error: string };
+
+type Props = {
+  tenant?: TenantConfig;
+};
+
+export default function TenantForm({ tenant }: Props) {
+  const router = useRouter();
+  const isEdit = !!tenant;
+
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [tmwResults, setTmwResults] = useState<Record<number, TmwResult> | null>(null);
+  const [testing, setTesting] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSaving(true);
+    setError('');
+
+    const fd = new FormData(e.currentTarget);
+    const active_locales = LOCALES.filter(l => fd.get(`locale_${l}`) === 'on');
+
+    const body = {
+      tenant: fd.get('tenant'),
+      hostname: fd.get('hostname'),
+      city: fd.get('city'),
+      password: fd.get('password'),
+      active_locales,
+      tmw_center_ids: fd.get('tmw_center_ids'),
+      contact_email: fd.get('contact_email'),
+      contact_phone: fd.get('contact_phone'),
+      from_email: fd.get('from_email'),
+      instagram_link: fd.get('instagram_link'),
+      whatsapp_enabled: fd.get('whatsapp_enabled') === 'on',
+      whatsapp_link: fd.get('whatsapp_link'),
+      center_image_url: fd.get('center_image_url'),
+      impressum_content: fd.get('impressum_content'),
+    };
+
+    const url = isEdit
+      ? `/api/super-admin/tenants/${tenant.tenant}`
+      : '/api/super-admin/tenants';
+    const method = isEdit ? 'PUT' : 'POST';
+
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (res.ok) {
+      router.push('/super-admin');
+    } else {
+      const data = await res.json();
+      setError(data.error ?? 'Fehler beim Speichern.');
+      setSaving(false);
+    }
+  }
+
+  async function handleTmwTest(e: React.MouseEvent) {
+    e.preventDefault();
+    const input = (document.getElementById('tmw_center_ids') as HTMLInputElement)?.value ?? '';
+    const centerIds = input
+      .split(',')
+      .map(s => parseInt(s.trim(), 10))
+      .filter(n => !isNaN(n));
+    if (!centerIds.length) return;
+
+    setTesting(true);
+    setTmwResults(null);
+    const res = await fetch('/api/super-admin/tmw-test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ centerIds }),
+    });
+    const data = await res.json();
+    setTmwResults(data);
+    setTesting(false);
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-2xl mx-auto">
+        <div className="mb-6">
+          <a href="/super-admin" className="text-xs text-gray-400 hover:text-gray-600 mb-3 inline-block">
+            ← Zurück zur Übersicht
+          </a>
+          <p className="text-xs tracking-widest uppercase text-[#BCA075] mb-1">Super-Admin</p>
+          <h1 className="text-2xl font-semibold text-gray-800">
+            {isEdit ? `Tenant: ${tenant.tenant}` : 'Neuer Tenant'}
+          </h1>
+        </div>
+
+        <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-gray-200 p-6 space-y-5">
+
+          <Section title="Identität">
+            <Field label="Slug (z.B. muenchen)" required>
+              <input name="tenant" defaultValue={tenant?.tenant} readOnly={isEdit}
+                className={inputCls(isEdit)} required />
+            </Field>
+            <Field label="Hostname (z.B. tm-muenchen.de)" required>
+              <input name="hostname" defaultValue={tenant?.hostname} className={inputCls()} required />
+            </Field>
+            <Field label="Stadt (Anzeigename)" required>
+              <input name="city" defaultValue={tenant?.city} className={inputCls()} required />
+            </Field>
+          </Section>
+
+          <Section title="Admin-Passwort">
+            <Field label={isEdit ? 'Neues Passwort (leer lassen = unverändert)' : 'Passwort'} required={!isEdit}>
+              <input name="password" type="password" autoComplete="new-password"
+                required={!isEdit} className={inputCls()} />
+            </Field>
+          </Section>
+
+          <Section title="Sprachen">
+            <div className="flex gap-4 flex-wrap">
+              {LOCALES.map(l => (
+                <label key={l} className="flex items-center gap-1.5 text-sm text-gray-700 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name={`locale_${l}`}
+                    defaultChecked={tenant?.active_locales?.includes(l) ?? l === 'de'}
+                    className="rounded border-gray-300 text-[#BCA075]"
+                  />
+                  {l.toUpperCase()}
+                </label>
+              ))}
+            </div>
+          </Section>
+
+          <Section title="TMW API">
+            <Field label="Center IDs (kommagetrennt, z.B. 108, 109)" required>
+              <div className="flex gap-2">
+                <input
+                  id="tmw_center_ids"
+                  name="tmw_center_ids"
+                  defaultValue={tenant?.tmw_center_ids?.join(', ')}
+                  className={`${inputCls()} flex-1`}
+                  required
+                />
+                <button
+                  onClick={handleTmwTest}
+                  disabled={testing}
+                  className="px-3 py-2 border border-gray-200 rounded text-xs text-gray-600 hover:bg-gray-50 disabled:opacity-50 whitespace-nowrap"
+                >
+                  {testing ? 'Teste…' : 'Verbindung testen'}
+                </button>
+              </div>
+            </Field>
+            {tmwResults && (
+              <div className="mt-2 rounded border border-gray-100 bg-gray-50 p-3 text-xs space-y-1">
+                {Object.entries(tmwResults).map(([id, result]) => (
+                  <div key={id}>
+                    <span className="font-mono text-gray-500">ID {id}:</span>{' '}
+                    {'error' in result
+                      ? <span className="text-red-500">{result.error}</span>
+                      : <span className="text-green-700">✓ {result.lectureCount} Vorträge · {result.teachers.join(', ')}</span>
+                    }
+                  </div>
+                ))}
+              </div>
+            )}
+          </Section>
+
+          <Section title="Kontakt & E-Mail">
+            <Field label="Kontakt-E-Mail" required>
+              <input name="contact_email" type="email" defaultValue={tenant?.contact_email} className={inputCls()} required />
+            </Field>
+            <Field label="Kontakt-Telefon" required>
+              <input name="contact_phone" defaultValue={tenant?.contact_phone} className={inputCls()} required />
+            </Field>
+            <Field label="Absender-E-Mail (Resend)" required>
+              <input name="from_email" type="email" defaultValue={tenant?.from_email} className={inputCls()} required />
+            </Field>
+          </Section>
+
+          <Section title="Social Media">
+            <Field label="Instagram-Link">
+              <input name="instagram_link"
+                defaultValue={tenant?.instagram_link ?? 'https://www.instagram.com/tmdeutschland'}
+                className={inputCls()} />
+            </Field>
+            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                name="whatsapp_enabled"
+                defaultChecked={tenant?.whatsapp_enabled ?? false}
+                className="rounded border-gray-300 text-[#BCA075]"
+              />
+              WhatsApp aktiviert
+            </label>
+            <Field label="WhatsApp-Link">
+              <input name="whatsapp_link" defaultValue={tenant?.whatsapp_link ?? ''} className={inputCls()} />
+            </Field>
+          </Section>
+
+          <Section title="Weitere Einstellungen">
+            <Field label="Center-Bild URL">
+              <input name="center_image_url" defaultValue={tenant?.center_image_url ?? ''} className={inputCls()} />
+            </Field>
+            <Field label="Impressum-Inhalt">
+              <textarea name="impressum_content" defaultValue={tenant?.impressum_content ?? ''}
+                rows={4} className={`${inputCls()} resize-y`} />
+            </Field>
+          </Section>
+
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="submit"
+              disabled={saving}
+              className="px-5 py-2 bg-[#BCA075] text-white rounded text-sm font-medium hover:bg-[#a88d65] disabled:opacity-50"
+            >
+              {saving ? 'Wird gespeichert…' : 'Speichern'}
+            </button>
+            <a href="/super-admin" className="px-5 py-2 border border-gray-200 rounded text-sm text-gray-600 hover:bg-gray-50">
+              Abbrechen
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="border-t border-gray-100 pt-4 first:border-t-0 first:pt-0">
+      <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{title}</h2>
+      <div className="space-y-3">{children}</div>
+    </div>
+  );
+}
+
+function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="block text-xs font-medium text-gray-500 mb-1">
+        {label}{required && <span className="text-red-400 ml-0.5">*</span>}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+function inputCls(readOnly = false) {
+  return `w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#BCA075] ${readOnly ? 'bg-gray-50 text-gray-400' : ''}`;
+}

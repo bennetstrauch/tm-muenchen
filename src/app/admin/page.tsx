@@ -6,7 +6,7 @@ import { getRegistrations } from '@/lib/sheets';
 import { getAllVeranstaltungen, getEventRegistrations } from '@/lib/veranstaltungen';
 import { getAllVorlagen } from '@/lib/vorlagen';
 import { verifyToken } from '@/lib/admin-token';
-import { verifySessionToken } from '@/lib/admin-session';
+import { verifySession } from '@/lib/admin-session';
 import { getCurrentTenant } from '@/lib/tenant';
 import { getEmailActions } from '@/lib/email-actions';
 import AdminClient from './admin-client';
@@ -77,7 +77,7 @@ export default async function AdminPage({
   const sessionToken = cookieStore.get('admin-session')?.value;
   const { tenant } = await getCurrentTenant();
 
-  if (!sessionToken || !await verifySessionToken(sessionToken, tenant)) {
+  if (!sessionToken || !await verifySession(sessionToken, tenant)) {
     redirect('/admin/login');
   }
 

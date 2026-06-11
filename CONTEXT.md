@@ -313,7 +313,7 @@ Affected tables: `veranstaltungen`, `anmeldungen`, `vorlagen`, `teacher_language
 
 ### TMW center ID discovery
 
-Deferred. When onboarding a new center, Bennet enters `tmw_center_ids` manually in the super-admin UI. A "Test" button verifies the IDs by hitting the TMW API and showing center name + lecture count. A discovery/search endpoint in the TMW API (if it exists) can be added later.
+When onboarding a new center, Bennet enters `tmw_center_ids` manually in the super-admin UI. A "Test" button verifies the IDs by hitting `https://tmw.meditation.de/api/center/{id}` and showing **upcoming lecture count + teacher names** per ID, or an error if the ID is invalid. Discovery (city name → ID lookup) is a separate script (`scripts/find-tmw-center.ts`), not part of the UI.
 
 ### Landing page content
 
@@ -321,7 +321,15 @@ Shared across all tenants — hero copy, section text, and testimonials are not 
 
 ### Super-admin
 
-Route: `/super-admin`. Protected by `SUPER_ADMIN_PASSWORD_HASH` env var (not in the `tenants` table). Allows Bennet to create and edit tenants (all `tenants` fields), see cross-tenant data, and onboard new centers without code changes.
+Route: `/super-admin`. Protected by `SUPER_ADMIN_PASSWORD_HASH` env var (not in the `tenants` table — super-admin manages the tenants table, so storing the hash there would be circular). Allows Bennet to create and edit tenants (all `tenants` fields) and onboard new centers without code changes.
+
+UI: login → tenant list → single create/edit form (all fields, required fields marked). After save: redirect to tenant list. `active_locales` shown as checkboxes; `tmw_center_ids` as comma-separated text input. Blank password on edit preserves the existing hash.
+
+Hash generation: `npm run hash-password <password>` (uses `bcryptjs`; output is pasted into Vercel env vars).
+
+### Session auth
+
+`lib/admin-session.ts` uses a generic `subject: string` — either a tenant slug (center admin) or `'super-admin'`. Functions: `createSession(subject)` / `verifySession(token, subject)`. Cookie names: `admin-session` (center) and `super-admin-session` (super-admin). Both protected in the proxy middleware.
 
 ### Email sending (multi-tenant)
 

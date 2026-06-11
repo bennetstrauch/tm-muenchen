@@ -2,7 +2,7 @@ import createLocaleMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
 import { resolveTenantSlug } from "./lib/tenant-edge";
-import { verifySessionToken } from "./lib/admin-session";
+import { verifySession } from "./lib/admin-session";
 import { isAuthorizedAdminApi } from "./lib/admin-api-gate";
 
 const handleLocale = createLocaleMiddleware(routing);
@@ -29,8 +29,28 @@ export async function proxy(request: NextRequest) {
     if (hasMagicLink) return NextResponse.next(withTenant);
 
     const token = request.cookies.get("admin-session")?.value;
-    if (!token || !await verifySessionToken(token, slug)) {
+    if (!token || !await verifySession(token, slug)) {
       return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+    return NextResponse.next(withTenant);
+  }
+
+  // Super-admin UI: separate session cookie, no tenant scoping.
+  if (pathname.startsWith("/super-admin")) {
+    if (pathname === "/super-admin/login") return NextResponse.next(withTenant);
+    const token = request.cookies.get("super-admin-session")?.value;
+    if (!token || !await verifySession(token, "super-admin")) {
+      return NextResponse.redirect(new URL("/super-admin/login", request.url));
+    }
+    return NextResponse.next(withTenant);
+  }
+
+  // Super-admin API: same session check.
+  if (pathname.startsWith("/api/super-admin")) {
+    if (pathname === "/api/super-admin/login") return NextResponse.next(withTenant);
+    const token = request.cookies.get("super-admin-session")?.value;
+    if (!token || !await verifySession(token, "super-admin")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     return NextResponse.next(withTenant);
   }

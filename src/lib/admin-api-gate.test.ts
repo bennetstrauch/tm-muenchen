@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { isAuthorizedAdminApi } from "./admin-api-gate";
-import { createSessionToken } from "./admin-session";
+import { createSession } from "./admin-session";
 import { generateToken } from "./admin-token";
 
 beforeEach(() => {
@@ -19,13 +19,13 @@ describe("admin API gate", () => {
   });
 
   it("admits a full-admin session cookie to any admin route", async () => {
-    const sessionToken = await createSessionToken("muenchen");
+    const sessionToken = await createSession("muenchen");
     expect(await isAuthorizedAdminApi("/api/admin/einstellungen", "muenchen", { sessionToken })).toBe(true);
     expect(await isAuthorizedAdminApi("/api/admin/lehrer", "muenchen", { sessionToken })).toBe(true);
   });
 
   it("rejects a session cookie issued for a different tenant", async () => {
-    const sessionToken = await createSessionToken("berlin");
+    const sessionToken = await createSession("berlin");
     expect(await isAuthorizedAdminApi("/api/admin/einstellungen", "muenchen", { sessionToken })).toBe(false);
   });
 

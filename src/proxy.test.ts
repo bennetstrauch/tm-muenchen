@@ -4,14 +4,14 @@ import { NextRequest } from "next/server";
 // ── Dependency mocks ──────────────────────────────────────────────────────────
 
 const mockResolveTenantSlug = vi.fn();
-const mockVerifySessionToken = vi.fn();
+const mockVerifySession = vi.fn();
 const mockIsAuthorizedAdminApi = vi.fn();
 
 vi.mock("./lib/tenant-edge", () => ({
   resolveTenantSlug: mockResolveTenantSlug,
 }));
 vi.mock("./lib/admin-session", () => ({
-  verifySessionToken: mockVerifySessionToken,
+  verifySession: mockVerifySession,
 }));
 vi.mock("./lib/admin-api-gate", () => ({
   isAuthorizedAdminApi: mockIsAuthorizedAdminApi,
@@ -30,7 +30,7 @@ vi.mock("next-intl/middleware", () => ({
 beforeEach(() => {
   vi.resetModules();
   mockResolveTenantSlug.mockReset();
-  mockVerifySessionToken.mockReset();
+  mockVerifySession.mockReset();
   mockIsAuthorizedAdminApi.mockReset();
 });
 
@@ -67,7 +67,7 @@ describe("admin UI routes", () => {
     const middleware = await load();
     const res = await middleware(makeRequest("https://tm-muenchen.de/admin/login"));
     expect(res.status).not.toBeGreaterThanOrEqual(300);
-    expect(mockVerifySessionToken).not.toHaveBeenCalled();
+    expect(mockVerifySession).not.toHaveBeenCalled();
   });
 
   it("redirects /admin to /admin/login when there is no session cookie", async () => {
@@ -79,7 +79,7 @@ describe("admin UI routes", () => {
   });
 
   it("redirects /admin to /admin/login when the session token is invalid", async () => {
-    mockVerifySessionToken.mockReturnValue(false);
+    mockVerifySession.mockReturnValue(false);
     const middleware = await load();
     const res = await middleware(
       makeRequest("https://tm-muenchen.de/admin", { cookie: "admin-session=bad-token" }),
@@ -89,7 +89,7 @@ describe("admin UI routes", () => {
   });
 
   it("passes /admin through with a valid session cookie", async () => {
-    mockVerifySessionToken.mockReturnValue(true);
+    mockVerifySession.mockReturnValue(true);
     const middleware = await load();
     const res = await middleware(
       makeRequest("https://tm-muenchen.de/admin", { cookie: "admin-session=good-token" }),
@@ -103,7 +103,7 @@ describe("admin UI routes", () => {
       makeRequest("https://tm-muenchen.de/admin?token=abc&event=evt-1"),
     );
     expect(res.status).not.toBeGreaterThanOrEqual(300);
-    expect(mockVerifySessionToken).not.toHaveBeenCalled();
+    expect(mockVerifySession).not.toHaveBeenCalled();
   });
 });
 
@@ -125,6 +125,83 @@ describe("admin API routes", () => {
     const res = await middleware(makeRequest("https://tm-muenchen.de/api/admin/events"));
     expect(res.status).not.toBe(401);
     expect(res.status).not.toBeGreaterThanOrEqual(300);
+  });
+});
+
+// ── Super-admin UI (/super-admin/*) ──────────────────────────────────────────
+
+describe("super-admin UI routes", () => {
+  beforeEach(() => mockResolveTenantSlug.mockResolvedValue("muenchen"));
+
+  it("passes /super-admin/login through without checking the session", async () => {
+    const middleware = await load();
+    const res = await middleware(makeRequest("https://tm-muenchen.de/super-admin/login"));
+    expect(res.status).not.toBeGreaterThanOrEqual(300);
+    expect(mockVerifySession).not.toHaveBeenCalled();
+  });
+
+  it("redirects /super-admin to /super-admin/login when there is no session cookie", async () => {
+    const middleware = await load();
+    const res = await middleware(makeRequest("https://tm-muenchen.de/super-admin"));
+    expect(res.status).toBeGreaterThanOrEqual(300);
+    expect(res.status).toBeLessThan(400);
+    expect(res.headers.get("location")).toContain("/super-admin/login");
+  });
+
+  it("redirects /super-admin to /super-admin/login when the session token is invalid", async () => {
+    mockVerifySession.mockReturnValue(false);
+    const middleware = await load();
+    const res = await middleware(
+      makeRequest("https://tm-muenchen.de/super-admin", { cookie: "super-admin-session=bad-token" }),
+    );
+    expect(res.status).toBeGreaterThanOrEqual(300);
+    expect(res.headers.get("location")).toContain("/super-admin/login");
+  });
+
+  it("passes /super-admin through with a valid session cookie", async () => {
+    mockVerifySession.mockReturnValue(true);
+    const middleware = await load();
+    const res = await middleware(
+      makeRequest("https://tm-muenchen.de/super-admin", { cookie: "super-admin-session=good-token" }),
+    );
+    expect(res.status).not.toBeGreaterThanOrEqual(300);
+  });
+});
+
+// ── Super-admin API (/api/super-admin/*) ─────────────────────────────────────
+
+describe("super-admin API routes", () => {
+  beforeEach(() => mockResolveTenantSlug.mockResolvedValue("muenchen"));
+
+  it("returns 401 when super-admin-session cookie is absent", async () => {
+    const middleware = await load();
+    const res = await middleware(makeRequest("https://tm-muenchen.de/api/super-admin/tenants"));
+    expect(res.status).toBe(401);
+  });
+
+  it("returns 401 when super-admin-session token is invalid", async () => {
+    mockVerifySession.mockReturnValue(false);
+    const middleware = await load();
+    const res = await middleware(
+      makeRequest("https://tm-muenchen.de/api/super-admin/tenants", { cookie: "super-admin-session=bad" }),
+    );
+    expect(res.status).toBe(401);
+  });
+
+  it("passes through with a valid super-admin-session cookie", async () => {
+    mockVerifySession.mockReturnValue(true);
+    const middleware = await load();
+    const res = await middleware(
+      makeRequest("https://tm-muenchen.de/api/super-admin/tenants", { cookie: "super-admin-session=good" }),
+    );
+    expect(res.status).not.toBe(401);
+    expect(res.status).not.toBeGreaterThanOrEqual(300);
+  });
+
+  it("passes /api/super-admin/login through without auth", async () => {
+    const middleware = await load();
+    const res = await middleware(makeRequest("https://tm-muenchen.de/api/super-admin/login"));
+    expect(res.status).not.toBe(401);
   });
 });
 
