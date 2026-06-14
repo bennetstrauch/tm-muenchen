@@ -1450,7 +1450,7 @@ export default function AdminClient({
       {tab === 'info-anmeldungen' && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="font-medium text-gray-700">Infovortrag-Anmeldungen</h2>
+            <h2 className="font-medium text-gray-700">Infoabend-Anmeldungen</h2>
           </div>
           {infoRegistrations.length === 0 ? (
             <p className="p-6 text-gray-400 text-sm">Noch keine Anmeldungen.</p>
