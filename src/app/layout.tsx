@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Lora, Plus_Jakarta_Sans, Cormorant_Garamond } from "next/font/google";
 import { headers } from "next/headers";
 import { Analytics } from "@vercel/analytics/next";
+import { getCurrentTenant } from "@/lib/tenant";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -23,11 +24,14 @@ const cormorant = Cormorant_Garamond({
   style: ["normal", "italic"],
 });
 
-export const metadata: Metadata = {
-  title: "TM München – Transzendentale Meditation",
-  description:
-    "Die einzige Meditationstechnik, die ohne Konzentration funktioniert — wissenschaftlich belegt, in 4 Tagen erlernbar.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const tenant = await getCurrentTenant();
+  return {
+    title: `TM ${tenant.city} – Transzendentale Meditation`,
+    description:
+      "Die einzige Meditationstechnik, die ohne Konzentration funktioniert — wissenschaftlich belegt, in 4 Tagen erlernbar.",
+  };
+}
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const isAdmin = (await headers()).get('x-is-admin') === '1';
