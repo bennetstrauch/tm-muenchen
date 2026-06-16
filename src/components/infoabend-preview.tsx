@@ -1,15 +1,24 @@
 import { getTranslations } from "next-intl/server";
+import { getCurrentTenant } from "@/lib/tenant";
 
 const POINT_COUNT = 3;
-const BOX_COUNT = 2;
 
 export default async function InfoabendPreview() {
-  const t = await getTranslations("InfoabendPreview");
+  const [t, tenant] = await Promise.all([
+    getTranslations("InfoabendPreview"),
+    getCurrentTenant(),
+  ]);
 
-  const infoBoxes = Array.from({ length: BOX_COUNT }, (_, i) => ({
-    label: t(`box${i}Label` as Parameters<typeof t>[0]),
-    value: t(`box${i}Value` as Parameters<typeof t>[0]),
-  }));
+  const infoBoxes = [
+    {
+      label: t("box0Label"),
+      value: `${tenant.infoabend_duration_minutes} Min.\n${t("box0Value")}`,
+    },
+    {
+      label: t("box1Label"),
+      value: t("box1Value"),
+    },
+  ];
 
   const contentPoints = Array.from({ length: POINT_COUNT }, (_, i) =>
     t(`point${i}` as Parameters<typeof t>[0])

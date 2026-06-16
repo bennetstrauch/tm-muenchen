@@ -1,6 +1,7 @@
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { getCurrentTenant } from "@/lib/tenant";
+import { getTranslation } from "@/lib/translate";
 
 function LotusIcon() {
   return (
@@ -26,11 +27,21 @@ function LotusIcon() {
 }
 
 export default async function CenterBanner() {
-  const [t, tenant] = await Promise.all([getTranslations("CenterBanner"), getCurrentTenant()]);
+  const [t, tenant, locale] = await Promise.all([
+    getTranslations("CenterBanner"),
+    getCurrentTenant(),
+    getLocale(),
+  ]);
   const imageSrc = tenant.center_image_url ?? "/center-default.jpg";
 
+  const defaultEyebrow = "TM CENTER " + tenant.city.toUpperCase();
+  const eyebrow =
+    tenant.center_banner_label && tenant.active_locales.length > 1
+      ? await getTranslation(tenant.center_banner_label, locale, "center banner eyebrow")
+      : (tenant.center_banner_label ?? defaultEyebrow);
+
   return (
-    <section className="relative overflow-hidden" aria-label={t("ariaLabel")}>
+    <section className="relative overflow-hidden" aria-label={eyebrow}>
       <div className="relative aspect-[3/2] sm:aspect-[16/7] w-full">
         <Image
           src={imageSrc}
@@ -49,7 +60,7 @@ export default async function CenterBanner() {
           </div>
 
           <p className="text-[0.6rem] tracking-[0.32em] uppercase text-white/65 mb-3">
-            {t("eyebrow")}
+            {eyebrow}
           </p>
 
           <h2 className="font-display font-light text-[1.9rem] sm:text-[2.75rem] text-white leading-tight">

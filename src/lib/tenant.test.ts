@@ -30,6 +30,17 @@ vi.mock("next/headers", () => ({
 
 const muenchen = { tenant: "muenchen", hostname: "tm-muenchen.de", city: "München" };
 
+const freiburg = {
+  tenant: "freiburg",
+  hostname: "tm-freiburg.de",
+  city: "Freiburg",
+  logo_url: null,
+  logo_label: null,
+  infoabend_duration_minutes: 45,
+  show_teachers: false,
+  center_banner_label: "TM CENTER FREIBURG IM BREISGAU",
+};
+
 beforeEach(() => {
   vi.resetModules();
   single.mockReset();
@@ -62,6 +73,18 @@ describe("getCurrentTenant", () => {
     single.mockResolvedValue({ data: null, error: { message: "no rows" } });
     const getCurrentTenant = await load();
     await expect(getCurrentTenant()).rejects.toThrow("Unknown tenant: atlantis");
+  });
+
+  it("exposes ui customisation fields from the tenant row", async () => {
+    xTenant = "freiburg";
+    single.mockResolvedValue({ data: freiburg, error: null });
+    const getCurrentTenant = await load();
+    const config = await getCurrentTenant();
+    expect(config.infoabend_duration_minutes).toBe(45);
+    expect(config.show_teachers).toBe(false);
+    expect(config.center_banner_label).toBe("TM CENTER FREIBURG IM BREISGAU");
+    expect(config.logo_url).toBeNull();
+    expect(config.logo_label).toBeNull();
   });
 
   it("hits Supabase only once when called twice in the same request", async () => {

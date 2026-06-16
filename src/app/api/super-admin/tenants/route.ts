@@ -30,6 +30,11 @@ export async function POST(request: Request) {
     whatsapp_link: body.whatsapp_link || null,
     center_image_url: body.center_image_url || null,
     impressum_content: body.impressum_content || "",
+    logo_url: body.logo_url || null,
+    logo_label: body.logo_label || null,
+    infoabend_duration_minutes: body.infoabend_duration_minutes ?? 30,
+    show_teachers: body.show_teachers ?? true,
+    center_banner_label: body.center_banner_label || null,
   };
 
   const { data, error } = await getSupabase().from("tenants").insert(row).select().single();

@@ -37,7 +37,7 @@ function TeacherCard({
         {teacher.name}
       </p>
 
-      <p className={`text-sm text-[#3D5573] leading-relaxed ${!expanded ? "line-clamp-3 md:line-clamp-1" : ""}`}>
+      <p className={`text-sm text-[#3D5573] leading-relaxed ${!expanded ? "line-clamp-3 md:line-clamp-1" : "text-left"}`}>
         {teacher.bio}
       </p>
 
@@ -142,14 +142,15 @@ export default function Teachers({ teachers }: { teachers: TMTeacher[] }) {
             arrowOffsetPx={48}
           >
             {Array.from({ length: totalDesktop }, (_, i) => (
-              <div key={i} className="grid grid-cols-3 gap-6">
+              <div key={i} className="flex justify-center gap-6">
                 {teachers.slice(i * 3, i * 3 + 3).map(teacher => (
-                  <TeacherCard
-                    key={teacher.name}
-                    teacher={teacher}
-                    expanded={expandedName === teacher.name}
-                    onToggle={() => handleToggle(teacher.name)}
-                  />
+                  <div key={teacher.name} className="w-full max-w-xs">
+                    <TeacherCard
+                      teacher={teacher}
+                      expanded={expandedName === teacher.name}
+                      onToggle={() => handleToggle(teacher.name)}
+                    />
+                  </div>
                 ))}
               </div>
             ))}

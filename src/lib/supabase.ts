@@ -112,6 +112,11 @@ type TenantRow = {
   center_image_url: string | null;
   tmw_center_ids: number[];
   impressum_content: string;
+  logo_url: string | null;
+  logo_label: string | null;
+  infoabend_duration_minutes: number;
+  show_teachers: boolean;
+  center_banner_label: string | null;
 };
 
 export type Database = {

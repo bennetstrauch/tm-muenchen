@@ -275,20 +275,25 @@ A TM center running on this platform. Identified by a short text slug (e.g. `mue
 Replaces the Phase 1 `settings` table. One row per center:
 
 ```
-tenant               text  PK  (slug, e.g. 'muenchen')
-hostname             text      (e.g. 'tm-muenchen.de')
-admin_password_hash  text
-active_locales       text[]
-whatsapp_enabled     bool
-whatsapp_link        text
-contact_email        text
-contact_phone        text
-from_email           text      (Resend sender address, e.g. 'info@tm-muenchen.de')
-instagram_link       text      (default: https://www.instagram.com/tmdeutschland)
-city                 text      (display name, e.g. 'München')
-center_image_url     text      (nullable; falls back to München default)
-tmw_center_ids       int[]     (TMW API center IDs for this tenant)
-impressum_content    text      (free text; legal entity varies — Verein, individual, etc.)
+tenant                       text  PK  (slug, e.g. 'muenchen')
+hostname                     text      (e.g. 'tm-muenchen.de')
+admin_password_hash          text
+active_locales               text[]
+whatsapp_enabled             bool
+whatsapp_link                text
+contact_email                text
+contact_phone                text
+from_email                   text      (Resend sender address for Veranstaltungen emails only)
+instagram_link               text      (default: https://www.instagram.com/tmdeutschland)
+city                         text      (display name, e.g. 'München')
+center_image_url             text      (nullable; falls back to München default)
+tmw_center_ids               int[]     (TMW API center IDs for this tenant)
+impressum_content            text      (free text; legal entity varies — Verein, individual, etc.)
+logo_url                     text      (nullable; overrides /tm-logo.svg in TopBar)
+logo_label                   text      (nullable; overrides "map pin + city" in TopBar — if set, map pin is hidden)
+infoabend_duration_minutes   int       (default 30; InfoabendPreview formats as "X Min.")
+show_teachers                bool      (default true; if false, Teachers section is not rendered)
+center_banner_label          text      (nullable; overrides "TM CENTER {city}" eyebrow in CenterBanner)
 ```
 
 Unknown hostnames redirect to `tm-muenchen.de`. Local dev resolves tenant via `DEV_TENANT` env var.
@@ -305,7 +310,26 @@ One hashed password per tenant row. Admin logs in at their own domain's `/admin`
 
 All operational data tables include a `tenant` column. Queries always filter `WHERE tenant = current_tenant`. Center admins see only their own data. Super-admin sees across all tenants via a tenant filter.
 
-Affected tables: `veranstaltungen`, `anmeldungen`, `vorlagen`, `teacher_languages`. See ADR 0005 for the migration of Veranstaltungen and Anmeldungen from Google Sheets.
+Affected tables: `veranstaltungen`, `anmeldungen`, `info_anmeldungen`, `vorlagen`, `teacher_languages`. See ADR 0005 for the migration of Veranstaltungen and Anmeldungen from Google Sheets.
+
+### Registration data model
+
+Two distinct registration types with separate storage:
+
+| Type | Route | Primary | Secondary |
+|---|---|---|---|
+| **Infoabend** | `/api/register` | TMW API (system of record) | Supabase `info_anmeldungen` (platform metadata) |
+| **Veranstaltungen** | `/api/register-event` | Supabase `anmeldungen` | — |
+
+**`info_anmeldungen`** stores platform-specific metadata not held by TMW: `tenant`, `locale`, `has_consent`, `meta_pixel_event_id`, `tmw_registration_id` (FK to TMW). Write to TMW is primary and fatal; Supabase write is secondary and non-fatal.
+
+**`anmeldungen`** is the system of record for Veranstaltungen registrations (internal center events not managed in TMW). Fields: `tenant`, `event_id`, `event_title`, `event_date`, `name`, `email`, `phone`, `tm_lehrer`, `datum_erlernen`.
+
+**Migration status (as of 2026-06-15):**
+- `veranstaltungen` → ✅ Supabase
+- `vorlagen` → ✅ Supabase
+- Veranstaltungen `anmeldungen` → ✅ Supabase
+- Infoabend registrations → ❌ still Google Sheets (pending TMW Write-Access + `info_anmeldungen` table)
 
 ### Teachers (multi-tenant)
 
@@ -333,9 +357,28 @@ Hash generation: `npm run hash-password <password>` (uses `bcryptjs`; output is 
 
 ### Email sending (multi-tenant)
 
-One shared Resend account managed by Bennet. Each tenant has its own verified sender domain (`tenants.from_email`). Bennet adds DNS verification records in the shared Resend account during center onboarding. Volume per center is low (registrations × ~3 emails each) — well within Resend free tier across all centers.
+One shared Resend account managed by Bennet. Resend Free Tier allows only 1 verified sender domain — per-center domains are not viable without a paid plan.
 
-Centers keep their own domains (e.g. `tm-berlin.de`). No shared platform domain.
+**Decided strategy:** minimal Resend usage — only for emails TMW does not cover.
+
+Email responsibilities after TMW Write-Access integration:
+
+**Clean split:** TMW owns all Infoabend email communication; Resend owns all Veranstaltungen email communication.
+
+| Email type | Sender |
+|---|---|
+| Infoabend Bestätigung | TMW (automatic on registration write) |
+| Infoabend Erinnerung | TMW (automatic on registration write) |
+| Infoabend Leiter-Benachrichtigung | TMW (automatic on registration write) |
+| Veranstaltungen Bestätigung | Resend (us) |
+| Veranstaltungen Erinnerung | Resend (us) |
+| Veranstaltungen Leiter-Benachrichtigung | Resend (us) — Magic Link email |
+
+Once TMW Write-Access is live, `/api/register` drops all Resend calls entirely.
+
+For Resend (Veranstaltungen emails only): single shared sender domain for all tenants — volume is too low to justify per-tenant domains. Candidate: `meditation.de` subdomain (pending admin approval) or a neutral platform domain (~10 €/year).
+
+`tenants.from_email` stores the Resend sender address per tenant, used only for Veranstaltungen emails.
 
 ## Footer
 
@@ -363,7 +406,7 @@ In Phase 2 (multi-tenancy), these fields move to Supabase `tenants` table.
 ## Datenschutz
 
 Static German-language page at `/datenschutz`. Same locale-notice behaviour as Impressum. Covers:
-- Anmeldeformular (Infoabend registration) — data stored in Google Sheets (transitioning to Supabase) + emails via Resend
+- Anmeldeformular (Infoabend registration) — currently stored in Google Sheets; will migrate to TMW API (primary) + Supabase `info_anmeldungen` (secondary) once TMW Write-Access is granted
 - Supabase (teacher data, settings, translation cache)
 - Vercel (hosting)
 - Meta Pixel (only after cookie consent)

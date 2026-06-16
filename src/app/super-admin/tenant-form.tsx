@@ -44,7 +44,12 @@ export default function TenantForm({ tenant }: Props) {
       instagram_link: fd.get('instagram_link'),
       whatsapp_enabled: fd.get('whatsapp_enabled') === 'on',
       whatsapp_link: fd.get('whatsapp_link'),
+      show_teachers: fd.get('show_teachers') === 'on',
       center_image_url: fd.get('center_image_url'),
+      logo_url: fd.get('logo_url'),
+      logo_label: fd.get('logo_label'),
+      infoabend_duration_minutes: Number(fd.get('infoabend_duration_minutes') ?? 30),
+      center_banner_label: fd.get('center_banner_label'),
       impressum_content: fd.get('impressum_content'),
     };
 
@@ -207,8 +212,40 @@ export default function TenantForm({ tenant }: Props) {
           </Section>
 
           <Section title="Weitere Einstellungen">
+            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                name="show_teachers"
+                defaultChecked={tenant?.show_teachers ?? true}
+                className="rounded border-gray-300 text-[#BCA075]"
+              />
+              Lehrer-Section anzeigen
+            </label>
+            <Field label="Infoabend-Dauer (Minuten)">
+              <input
+                name="infoabend_duration_minutes"
+                type="number"
+                min={1}
+                defaultValue={tenant?.infoabend_duration_minutes ?? 30}
+                className={inputCls()}
+              />
+            </Field>
             <Field label="Center-Bild URL">
               <input name="center_image_url" defaultValue={tenant?.center_image_url ?? ''} className={inputCls()} />
+            </Field>
+            <Field label="Logo-Bild URL">
+              <input name="logo_url" defaultValue={tenant?.logo_url ?? ''} placeholder="https://..." className={inputCls()} />
+            </Field>
+            <Field label="Logo-Bezeichnung">
+              <input name="logo_label" defaultValue={tenant?.logo_label ?? ''} placeholder="z. B. TRANSZENDENTALE MEDITATION" className={inputCls()} />
+            </Field>
+            <Field label="CenterBanner-Bezeichnung">
+              <input
+                name="center_banner_label"
+                defaultValue={tenant?.center_banner_label ?? ''}
+                placeholder={`TM CENTER ${tenant?.city?.toUpperCase() ?? 'MÜNCHEN'} (Standard)`}
+                className={inputCls()}
+              />
             </Field>
             <Field label="Impressum-Inhalt">
               <textarea name="impressum_content" defaultValue={tenant?.impressum_content ?? ''}
