@@ -84,11 +84,11 @@ export default function Hero({
             className="
               inline-flex items-center gap-2.5
               px-8 py-4 rounded-full
-              bg-[#E08D0E] text-[#1A3352]
+              bg-[#E8920A] text-[#1A3352]
               text-[0.72rem] tracking-[0.18em] uppercase font-medium
-              whitespace-nowrap shadow-[0_4px_22px_rgba(220,140,15,0.36)]
+              whitespace-nowrap shadow-[0_4px_22px_rgba(232,146,10,0.4)]
               transition-all duration-300
-              hover:bg-[#CC7D09] hover:shadow-[0_6px_26px_rgba(220,140,15,0.46)]
+              hover:bg-[#D47F08] hover:shadow-[0_6px_26px_rgba(232,146,10,0.5)]
             "
           >
             {t("cta")}
