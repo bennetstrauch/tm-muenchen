@@ -96,6 +96,7 @@ type InfoAnmeldungRow = {
   event_time: string;
   event_type: string;
   source: string;
+  city: string | null;
   news_subscribed: boolean;
   created_at: string;
 };

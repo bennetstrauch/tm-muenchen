@@ -14,13 +14,14 @@ type InfoAnmeldungInsert = {
   event_time: string;
   event_type: string;
   source: string;
+  city: string | null;
   news_subscribed: boolean;
 };
 
 export async function getInfoAnmeldungen(tenant: string): Promise<Registration[]> {
   const { data, error } = await getSupabase()
     .from('info_anmeldungen')
-    .select('created_at, name, email, phone, event_date, event_time, event_type')
+    .select('created_at, name, email, phone, event_date, event_time, event_type, city, news_subscribed')
     .eq('tenant', tenant)
     .order('created_at', { ascending: false });
 
@@ -37,6 +38,8 @@ export async function getInfoAnmeldungen(tenant: string): Promise<Registration[]
     eventDate: r.event_date,
     eventTime: r.event_time,
     eventType: r.event_type,
+    city: r.city ?? '',
+    newsSubscribed: r.news_subscribed,
   }));
 }
 

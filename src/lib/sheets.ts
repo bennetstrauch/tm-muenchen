@@ -21,6 +21,8 @@ export type Registration = {
   eventDate: string;
   eventTime: string;
   eventType: string;
+  city?: string;
+  newsSubscribed?: boolean;
 };
 
 export function buildRegistrationRow(r: Omit<Registration, 'timestamp'>, locale = 'de'): string[] {

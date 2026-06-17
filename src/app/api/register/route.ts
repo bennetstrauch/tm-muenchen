@@ -19,6 +19,11 @@ type RequestBody = {
   newsSubscribed?: boolean;
 };
 
+function normalizePhone(phone: string): string {
+  const stripped = phone.replace(/[\s().\/\-]/g, "");
+  return stripped.startsWith("+") ? "00" + stripped.slice(1) : stripped;
+}
+
 export async function POST(request: Request) {
   const body: RequestBody = await request.json();
   const {
@@ -36,7 +41,9 @@ export async function POST(request: Request) {
   const eventSourceUrl = request.headers.get("referer") ?? "https://tm-muenchen.de";
   const source = request.headers.get("host") ?? "tm-muenchen.de";
   const rawCity = request.headers.get("x-vercel-ip-city") ?? "";
+  const city = decodeURIComponent(rawCity);
   const zip_code = cityToPlz(rawCity);
+  const normalizedPhone = phone ? normalizePhone(phone) : undefined;
 
   const { first_name, last_name: rawLastName } = splitName(name);
   const last_name = rawLastName || "'";
@@ -50,7 +57,7 @@ export async function POST(request: Request) {
       first_name,
       last_name,
       email,
-      phone,
+      phone: normalizedPhone,
       seats: 1,
       source,
       zip_code,
@@ -71,11 +78,12 @@ export async function POST(request: Request) {
     tmw_registration_id: tmwId,
     name,
     email,
-    phone: phone ?? null,
+    phone: normalizedPhone ?? null,
     event_date: eventDate,
     event_time: eventTime,
     event_type: eventType,
     source,
+    city: city || null,
     news_subscribed: newsSubscribed,
   }).catch(err => console.error("[register] Supabase write failed:", err));
 
@@ -88,7 +96,7 @@ export async function POST(request: Request) {
       clientUserAgent,
       email: hasConsent ? email : undefined,
       name: hasConsent ? name : undefined,
-      phone: hasConsent ? phone : undefined,
+      phone: hasConsent ? normalizedPhone : undefined,
     }).catch(err => console.error("CAPI failed:", err));
   }
 

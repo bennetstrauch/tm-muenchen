@@ -38,8 +38,10 @@ export default function RegistrationsTable({ registrations }: { registrations: R
                 <th className="px-6 py-3">Name</th>
                 <th className="px-6 py-3">E-Mail</th>
                 <th className="px-6 py-3">Telefon</th>
+                <th className="px-6 py-3">Stadt</th>
                 <th className="px-6 py-3">Event</th>
                 <th className="px-6 py-3">Typ</th>
+                <th className="px-6 py-3">NL</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -51,6 +53,7 @@ export default function RegistrationsTable({ registrations }: { registrations: R
                     <a href={`mailto:${r.email}`} className="hover:text-[#BCA075]">{r.email}</a>
                   </td>
                   <td className="px-6 py-4 text-gray-600 whitespace-nowrap">{r.phone || '—'}</td>
+                  <td className="px-6 py-4 text-gray-600 whitespace-nowrap">{r.city || '—'}</td>
                   <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
                     {r.eventDate}{r.eventTime ? ` · ${r.eventTime} Uhr` : ''}
                   </td>
@@ -60,6 +63,9 @@ export default function RegistrationsTable({ registrations }: { registrations: R
                     }`}>
                       {r.eventType || '—'}
                     </span>
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    {r.newsSubscribed ? '✓' : '—'}
                   </td>
                 </tr>
               ))}
