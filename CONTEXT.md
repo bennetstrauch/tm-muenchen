@@ -321,15 +321,29 @@ Two distinct registration types with separate storage:
 | **Infoabend** | `/api/register` | TMW API (system of record) | Supabase `info_anmeldungen` (platform metadata) |
 | **Veranstaltungen** | `/api/register-event` | Supabase `anmeldungen` | — |
 
-**`info_anmeldungen`** stores platform-specific metadata not held by TMW: `tenant`, `locale`, `has_consent`, `meta_pixel_event_id`, `tmw_registration_id` (FK to TMW). Write to TMW is primary and fatal; Supabase write is secondary and non-fatal.
+**`info_anmeldungen`** is a full backup of each Infoabend registration plus platform metadata. Write to TMW is primary and fatal; Supabase write is secondary and non-fatal. Google Sheets logging is removed once this table is live. Fields: `tenant`, `locale`, `has_consent`, `meta_pixel_event_id`, `tmw_registration_id` (returned by TMW on booking), `name`, `email`, `phone`, `event_date`, `event_time`, `event_type`, `source` (hostname), `news_subscribed`, `created_at`.
 
 **`anmeldungen`** is the system of record for Veranstaltungen registrations (internal center events not managed in TMW). Fields: `tenant`, `event_id`, `event_title`, `event_date`, `name`, `email`, `phone`, `tm_lehrer`, `datum_erlernen`.
 
-**Migration status (as of 2026-06-15):**
+**Migration status (as of 2026-06-17):**
 - `veranstaltungen` → ✅ Supabase
 - `vorlagen` → ✅ Supabase
 - Veranstaltungen `anmeldungen` → ✅ Supabase
-- Infoabend registrations → ❌ still Google Sheets (pending TMW Write-Access + `info_anmeldungen` table)
+- Infoabend registrations → 🔄 in progress (TMW Write-Access granted; `info_anmeldungen` table + form wiring pending)
+
+## Infoabend Registration Flow
+
+Registration form fields (single step): **Name** (single field), **E-Mail**, **Telefon** (optional), **Newsletter-Checkbox** (unchecked by default).
+
+On submit, `/api/register`:
+1. Splits Name on first space → `first_name` + `last_name` (empty string if no space; fallback `"-"` if TMW rejects empty)
+2. Derives `zip_code` from Vercel `x-vercel-ip-city` header via hardcoded city→PLZ map; `""` for unknown cities
+3. Reads `source` from `host` request header (e.g. `"tm-muenchen.de"`)
+4. Calls TMW `POST /api/booking` with `lecture` PK, `seats: 1`, `first_name`, `last_name`, `email`, `phone`, `zip_code`, `source`, `news_subscribed` — **fatal if this fails**
+5. Writes full snapshot to Supabase `info_anmeldungen` — non-fatal
+6. Fires CAPI Lead event — non-fatal
+
+TMW handles all Infoabend confirmation, reminder, and Leiter-Benachrichtigung emails automatically. Resend is not used for Infoabend registrations.
 
 ### Teachers (multi-tenant)
 

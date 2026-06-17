@@ -84,9 +84,9 @@ export default async function DatenschutzPage() {
               <div>
                 <p className="font-medium text-[#1A3352]/85 mb-1">Resend Inc. (E-Mail-Versand)</p>
                 <p>
-                  Bestätigungs- und Erinnerungsmails werden über Resend (2261 Market Street
-                  STE 5685, San Francisco, CA 94114, USA) versandt. Ihre E-Mail-Adresse wird
-                  hierfür an Resend übermittelt.
+                  Bestätigungs- und Erinnerungsmails für Veranstaltungen werden über Resend
+                  (2261 Market Street STE 5685, San Francisco, CA 94114, USA) versandt.
+                  Ihre E-Mail-Adresse wird hierfür an Resend übermittelt.
                   Weitere Informationen:{" "}
                   <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-[#1A3352] transition-colors">
                     resend.com/legal/privacy-policy
@@ -97,11 +97,8 @@ export default async function DatenschutzPage() {
               <div>
                 <p className="font-medium text-[#1A3352]/85 mb-1">Supabase Inc. (Datenspeicherung)</p>
                 <p>
-                  Lehrerprofil-, Einstellungs- und Übersetzungsdaten werden bei Supabase
-                  (970 Toa Payoh North, Singapore) gespeichert. Anmeldedaten werden derzeit
-                  zusätzlich in Google Sheets (Google Ireland Ltd., Gordon House, Barrow Street,
-                  Dublin 4, Irland) gespeichert und schrittweise vollständig auf Supabase
-                  migriert.
+                  Lehrerprofil-, Einstellungs-, Übersetzungs- und Anmeldedaten werden bei
+                  Supabase (970 Toa Payoh North, Singapore) gespeichert.
                   Weitere Informationen:{" "}
                   <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" className="hover:text-[#1A3352] transition-colors">
                     supabase.com/privacy

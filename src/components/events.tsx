@@ -66,15 +66,14 @@ function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => v
           name: fd.get("name"),
           email: fd.get("email"),
           phone: fd.get("phone") || undefined,
-          isoDate: event.date,
+          lectureId: event.lectureId,
           eventDate: `${weekday}, ${date}`,
           eventTime: event.time,
           eventType: event.type,
-          meetLink: event.type === "Online" ? event.registrationUrl : undefined,
-          teacherName: event.teacherName,
           locale,
           eventId,
           hasConsent,
+          newsSubscribed: fd.get("newsSubscribed") === "on",
         }),
       });
 
@@ -105,10 +104,21 @@ function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => v
       <div className="mb-3">
         <input name="name" type="text" placeholder={t("formName")} required className={INPUT_CLS} />
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
         <input name="email" type="email" placeholder={t("formEmail")} required className={INPUT_CLS} />
         <input name="phone" type="tel" placeholder={t("formPhone")} className={INPUT_CLS} />
       </div>
+
+      <label className="flex items-center gap-2 mb-4 cursor-pointer group">
+        <input
+          name="newsSubscribed"
+          type="checkbox"
+          className="w-4 h-4 rounded border-[#DBEAFE] accent-[#A5C3D7] cursor-pointer"
+        />
+        <span className="text-xs text-[#3D5573] group-hover:text-[#1A3352] transition-colors">
+          {t("formNewsSubscribed")}
+        </span>
+      </label>
 
       {formState === "error" && (
         <p className="text-red-600 text-xs mb-3">{errorMsg}</p>

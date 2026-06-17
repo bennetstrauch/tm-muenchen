@@ -5,6 +5,7 @@ export type TMEvent = {
   location: string;
   registrationUrl: string;
   teacherName?: string;
+  lectureId: number;  // TMW API pk — required for POST /api/booking
 };
 
 // ── Demo fallback ─────────────────────────────────────────
@@ -15,6 +16,7 @@ const DEMO_EVENTS: TMEvent[] = [
     type: "Online",
     location: "Online",
     registrationUrl: "#",
+    lectureId: 0,
   },
   {
     date: "2026-04-29",
@@ -22,6 +24,7 @@ const DEMO_EVENTS: TMEvent[] = [
     type: "Präsenz",
     location: "Guldeinstr. 47, 80339 München",
     registrationUrl: "#",
+    lectureId: 0,
   },
 ];
 
@@ -57,7 +60,7 @@ async function fetchCenter(
   const data = await res.json();
   const address = `${data.address1}, ${data.zip_code} ${data.city}`;
 
-  return (data.lectures as { date: string; webinar_link: string; teacher_name: string }[])
+  return (data.lectures as { pk: number; date: string; webinar_link: string; teacher_name: string }[])
     .map((l) => {
       const { date, time } = parseTMWDate(l.date);
       const isOnline = !!l.webinar_link;
@@ -68,6 +71,7 @@ async function fetchCenter(
         location: isOnline ? "Online" : address,
         registrationUrl: l.webinar_link || "#",
         teacherName: l.teacher_name?.trim() || undefined,
+        lectureId: l.pk,
       } as TMEvent;
     });
 }
