@@ -31,7 +31,7 @@ export default async function Testimonials({ testimonials }: { testimonials: Tes
 
       <div className="relative z-10 flex flex-col justify-end h-full px-8 pb-8 pt-24 sm:px-16 sm:pb-12 max-w-3xl mx-auto">
         <span
-          className="font-display text-[3rem] leading-none text-[#F0C814]/80 select-none -mb-2"
+          className="font-display text-[3rem] leading-none text-[#F0C814]/80 select-none -translate-x-5 translate-y-1"
           aria-hidden="true"
         >
           „

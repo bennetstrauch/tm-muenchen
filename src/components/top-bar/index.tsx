@@ -1,7 +1,6 @@
 import NavMenu from "./nav-menu";
 import TopBarLogo from "./logo";
 import ContactButtons from "./contact-buttons";
-import LocaleSwitcher from "./locale-switcher";
 
 export default function TopBar({
   whatsappEnabled,
@@ -22,7 +21,6 @@ export default function TopBar({
         <TopBarLogo />
       </div>
       <div className="ml-auto flex items-center gap-1">
-        <LocaleSwitcher activeLocales={activeLocales} />
         <ContactButtons showWhatsApp={whatsappEnabled} whatsappLink={whatsappLink} instagramLink={instagramLink} />
       </div>
     </header>
