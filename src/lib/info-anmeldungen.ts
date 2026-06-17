@@ -1,4 +1,5 @@
 import { getSupabase } from './supabase';
+import type { Registration } from './sheets';
 
 type InfoAnmeldungInsert = {
   tenant: string;
@@ -15,6 +16,29 @@ type InfoAnmeldungInsert = {
   source: string;
   news_subscribed: boolean;
 };
+
+export async function getInfoAnmeldungen(tenant: string): Promise<Registration[]> {
+  const { data, error } = await getSupabase()
+    .from('info_anmeldungen')
+    .select('created_at, name, email, phone, event_date, event_time, event_type')
+    .eq('tenant', tenant)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('[info_anmeldungen] read failed:', error.message);
+    return [];
+  }
+
+  return (data ?? []).map(r => ({
+    timestamp: new Date(r.created_at).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' }),
+    name: r.name,
+    email: r.email,
+    phone: r.phone ?? '',
+    eventDate: r.event_date,
+    eventTime: r.event_time,
+    eventType: r.event_type,
+  }));
+}
 
 export async function insertInfoAnmeldung(data: InfoAnmeldungInsert): Promise<void> {
   const { error } = await getSupabase().from('info_anmeldungen').insert(data);

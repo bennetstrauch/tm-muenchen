@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { getRegistrations } from '@/lib/sheets';
+import { getInfoAnmeldungen } from '@/lib/info-anmeldungen';
 import { getAllVeranstaltungen, getEventRegistrations } from '@/lib/veranstaltungen';
 import { getAllVorlagen } from '@/lib/vorlagen';
 import { verifyToken } from '@/lib/admin-token';
@@ -37,7 +37,7 @@ export default async function AdminPage({
     // Valid token: load data and render in token-scoped mode
     const { tenant: tenantSlug } = await getCurrentTenant();
     const [infoRegistrations, events, eventRegistrations, vorlagen, emailActions] = await Promise.all([
-      getRegistrations().catch(() => []),
+      getInfoAnmeldungen(tenantSlug).catch(() => []),
       getAllVeranstaltungen(tenantSlug).catch(() => []),
       getEventRegistrations(tenantSlug).catch(() => []),
       getAllVorlagen(tenantSlug).catch(() => []),
@@ -82,7 +82,7 @@ export default async function AdminPage({
   }
 
   const [infoRegistrations, events, eventRegistrations, vorlagen, emailActions] = await Promise.all([
-    getRegistrations().catch(() => []),
+    getInfoAnmeldungen(tenant).catch(() => []),
     getAllVeranstaltungen(tenant).catch(() => []),
     getEventRegistrations(tenant).catch(() => []),
     getAllVorlagen(tenant).catch(() => []),
