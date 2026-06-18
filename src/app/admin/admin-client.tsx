@@ -1258,13 +1258,40 @@ export default function AdminClient({
     }
   }
 
-  const sortedEvents = useMemo(
-    () => [...events].sort((a, b) => {
-      if (a.isPriority !== b.isPriority) return a.isPriority ? -1 : 1;
-      return a.date.localeCompare(b.date);
-    }),
-    [events]
+  const today = useMemo(() => new Date().toISOString().slice(0, 10), []);
+
+  const upcomingEvents = useMemo(
+    () => [...events]
+      .filter(e => e.date >= today)
+      .sort((a, b) => {
+        if (a.isPriority !== b.isPriority) return a.isPriority ? -1 : 1;
+        return a.date.localeCompare(b.date);
+      }),
+    [events, today]
   );
+
+  const pastEvents = useMemo(
+    () => [...events]
+      .filter(e => e.date < today)
+      .sort((a, b) => b.date.localeCompare(a.date)),
+    [events, today]
+  );
+
+  const [showPast, setShowPast] = useState(false);
+
+  const registrationCountByEvent = useMemo(
+    () => eventRegistrations.reduce((acc, r) => {
+      if (r.eventId) acc.set(r.eventId, (acc.get(r.eventId) ?? 0) + 1);
+      return acc;
+    }, new Map<string, number>()),
+    [eventRegistrations]
+  );
+
+  function deleteConfirmLabel(eventId: string, short = false) {
+    const n = registrationCountByEvent.get(eventId) ?? 0;
+    if (n === 0) return 'Sicher?';
+    return short ? `${n} Anmeldungen. Trotzdem?` : `${n} Anmeldungen. Trotzdem löschen?`;
+  }
 
   async function handleCreate(form: Omit<Veranstaltung, 'id'>) {
     setSaving(true);
@@ -1416,8 +1443,8 @@ export default function AdminClient({
               <span className="hidden sm:inline">Info-Anmeldungen ({infoRegistrations.length})</span>
             </button>
             <button className={TAB_CLS(tab === 'veranstaltungen')} onClick={() => setTab('veranstaltungen')}>
-              <span className="sm:hidden">Events ({events.length})</span>
-              <span className="hidden sm:inline">Veranstaltungen ({events.length})</span>
+              <span className="sm:hidden">Events ({upcomingEvents.length})</span>
+              <span className="hidden sm:inline">Veranstaltungen ({upcomingEvents.length})</span>
             </button>
           </>
         )}
@@ -1485,7 +1512,7 @@ export default function AdminClient({
                 </button>
               </div>
 
-              {sortedEvents.length === 0 ? (
+              {upcomingEvents.length === 0 && pastEvents.length === 0 ? (
                 <p className="text-gray-400 text-sm py-8 text-center">
                   Noch keine Veranstaltungen. Erstelle die erste!
                 </p>
@@ -1493,7 +1520,12 @@ export default function AdminClient({
                 <>
                   {/* Mobile cards */}
                   <div className="sm:hidden space-y-2">
-                    {sortedEvents.map(event => (
+                    {upcomingEvents.length === 0 && (
+                      <p className="text-gray-400 text-sm py-4 text-center">
+                        Keine kommenden Veranstaltungen.{pastEvents.length > 0 ? ' Vergangene Veranstaltungen siehe unten.' : ''}
+                      </p>
+                    )}
+                    {upcomingEvents.map(event => (
                       <div key={event.id} className={`bg-white rounded-lg border border-gray-200 px-4 py-3 ${!event.visible ? 'opacity-50' : ''}`}>
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
@@ -1530,7 +1562,7 @@ export default function AdminClient({
                           </button>
                           {confirmDelete === event.id ? (
                             <>
-                              <span className="text-gray-500">Sicher?</span>
+                              <span className="text-gray-500">{deleteConfirmLabel(event.id, true)}</span>
                               <button onClick={() => handleDelete(event.id)} className="text-red-500 hover:underline">Ja</button>
                               <button onClick={() => setConfirmDelete(null)} className="text-gray-400 hover:underline">Nein</button>
                             </>
@@ -1557,6 +1589,58 @@ export default function AdminClient({
                         )}
                       </div>
                     ))}
+                    {/* Mobile — past events */}
+                    {pastEvents.length > 0 && (
+                      <div className="mt-4">
+                        <button
+                          onClick={() => setShowPast(p => !p)}
+                          className="text-sm text-gray-400 hover:text-gray-600 flex items-center gap-1"
+                        >
+                          Vergangene Veranstaltungen ({pastEvents.length}) {showPast ? '▲' : '▼'}
+                        </button>
+                        {showPast && (
+                          <div className="mt-2 space-y-2">
+                            {pastEvents.map(event => (
+                              <div key={event.id} className="bg-white rounded-lg border border-gray-200 px-4 py-3 opacity-60">
+                                <div className="flex items-start justify-between gap-2">
+                                  <div className="min-w-0">
+                                    <p className="font-medium text-gray-800 text-sm truncate">{event.title}</p>
+                                    {event.subtitle && (
+                                      <p className="text-xs text-gray-400 mt-0.5 truncate">{event.subtitle}</p>
+                                    )}
+                                    <p className="text-xs text-gray-500 mt-1">
+                                      {event.date}{event.time ? ` · ${event.time} Uhr` : ''}
+                                    </p>
+                                  </div>
+                                  <div className="shrink-0">
+                                    <EventStatusBadges event={event} />
+                                  </div>
+                                </div>
+                                <div className="mt-2 pt-2 border-t border-gray-100 flex items-center gap-4 text-xs">
+                                  <button
+                                    onClick={() => setMode({ view: 'edit', event })}
+                                    className="text-[#BCA075] hover:underline"
+                                  >
+                                    Bearbeiten
+                                  </button>
+                                  {confirmDelete === event.id ? (
+                                    <>
+                                      <span className="text-gray-500">{deleteConfirmLabel(event.id, true)}</span>
+                                      <button onClick={() => handleDelete(event.id)} className="text-red-500 hover:underline">Ja</button>
+                                      <button onClick={() => setConfirmDelete(null)} className="text-gray-400 hover:underline">Nein</button>
+                                    </>
+                                  ) : (
+                                    <button onClick={() => setConfirmDelete(event.id)} className="text-gray-400 hover:text-red-500 ml-auto">
+                                      Löschen
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   {/* Desktop table */}
@@ -1571,7 +1655,14 @@ export default function AdminClient({
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-50">
-                        {sortedEvents.map(event => (
+                        {upcomingEvents.length === 0 && (
+                          <tr>
+                            <td colSpan={4} className="px-6 py-6 text-gray-400 text-sm text-center">
+                              Keine kommenden Veranstaltungen.{pastEvents.length > 0 ? ' Vergangene Veranstaltungen siehe unten.' : ''}
+                            </td>
+                          </tr>
+                        )}
+                        {upcomingEvents.map(event => (
                           <Fragment key={event.id}>
                           <tr className={`hover:bg-gray-50 ${!event.visible ? 'opacity-50' : ''}`}>
                             <td className="px-6 py-4">
@@ -1608,7 +1699,7 @@ export default function AdminClient({
                               </button>
                               {confirmDelete === event.id ? (
                                 <>
-                                  <span className="text-xs text-gray-500 mr-2">Sicher?</span>
+                                  <span className="text-xs text-gray-500 mr-2">{deleteConfirmLabel(event.id)}</span>
                                   <button
                                     onClick={() => handleDelete(event.id)}
                                     className="text-xs text-red-500 hover:underline mr-2"
@@ -1656,6 +1747,76 @@ export default function AdminClient({
                       </tbody>
                     </table>
                   </div>
+
+                  {/* Desktop — past events */}
+                  {pastEvents.length > 0 && (
+                    <div className="hidden sm:block mt-4">
+                      <button
+                        onClick={() => setShowPast(p => !p)}
+                        className="text-sm text-gray-400 hover:text-gray-600 flex items-center gap-1"
+                      >
+                        Vergangene Veranstaltungen ({pastEvents.length}) {showPast ? '▲' : '▼'}
+                      </button>
+                      {showPast && (
+                        <div className="mt-2 bg-white rounded-lg border border-gray-200 overflow-hidden">
+                          <table className="w-full text-sm">
+                            <tbody className="divide-y divide-gray-50">
+                              {pastEvents.map(event => (
+                                <Fragment key={event.id}>
+                                <tr className="hover:bg-gray-50 opacity-60">
+                                  <td className="px-6 py-4">
+                                    <p className="font-medium text-gray-800">{event.title}</p>
+                                    {event.subtitle && (
+                                      <p className="text-xs text-gray-400 mt-0.5">{event.subtitle}</p>
+                                    )}
+                                  </td>
+                                  <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                    {event.date}{event.time ? ` · ${event.time} Uhr` : ''}
+                                  </td>
+                                  <td className="px-6 py-4">
+                                    <EventStatusBadges event={event} />
+                                  </td>
+                                  <td className="px-6 py-4 text-right whitespace-nowrap">
+                                    <button
+                                      onClick={() => setMode({ view: 'edit', event })}
+                                      className="text-xs text-[#BCA075] hover:underline mr-4"
+                                    >
+                                      Bearbeiten
+                                    </button>
+                                    {confirmDelete === event.id ? (
+                                      <>
+                                        <span className="text-xs text-gray-500 mr-2">{deleteConfirmLabel(event.id)}</span>
+                                        <button
+                                          onClick={() => handleDelete(event.id)}
+                                          className="text-xs text-red-500 hover:underline mr-2"
+                                        >
+                                          Ja, löschen
+                                        </button>
+                                        <button
+                                          onClick={() => setConfirmDelete(null)}
+                                          className="text-xs text-gray-400 hover:underline"
+                                        >
+                                          Abbrechen
+                                        </button>
+                                      </>
+                                    ) : (
+                                      <button
+                                        onClick={() => setConfirmDelete(event.id)}
+                                        className="text-xs text-gray-400 hover:text-red-500"
+                                      >
+                                        Löschen
+                                      </button>
+                                    )}
+                                  </td>
+                                </tr>
+                                </Fragment>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </>
               )}
             </>
