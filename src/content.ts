@@ -141,7 +141,7 @@ export const ownTestimonials: OwnTestimonial[] = [
     name: "Hugh Jackman",
     role: "Schauspieler",
     photoUrl: "/testimonials/hugh-jackman.jpg",
-    photoPosition: "center 20%",
+    photoPosition: "center 5%",
   },
   {
     name: "Dr. Wolfgang Schachinger",
