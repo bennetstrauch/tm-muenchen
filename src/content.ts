@@ -124,16 +124,16 @@ export type OwnTestimonial = {
 
 export const ownTestimonials: OwnTestimonial[] = [
   {
-    name: "Gottfried Vollmer",
-    role: "Schauspieler",
-    photoUrl: "/testimonials/gottfried-vollmer.jpg",
-    sourceUrl: "https://www.youtube.com/watch?v=hEqxerg6AAo",
-  },
-  {
     name: "Dr. Karin Pirc",
     role: "Ärztin",
     photoUrl: "/testimonials/karin-pirc.jpg",
     hasExtendedQuote: true,
+  },
+  {
+    name: "Gottfried Vollmer",
+    role: "Schauspieler",
+    photoUrl: "/testimonials/gottfried-vollmer.jpg",
+    sourceUrl: "https://www.youtube.com/watch?v=hEqxerg6AAo",
   },
   {
     name: "Hugh Jackman",
