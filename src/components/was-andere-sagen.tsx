@@ -46,7 +46,7 @@ function TestimonialCard({
           „{quote}
           {expanded && extended && (
             <> {extended}</>
-          )}„
+          )}
         </p>
 
         {extended && (
