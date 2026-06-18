@@ -111,23 +111,53 @@ export function getTestimonials(themeKey: ThemeKey): Testimonial[] {
 }
 
 // ─────────────────────────────────────────────────
-//  TRUSTPILOT BEWERTUNGEN — nur Name und URL.
-//  Title und Quote → messages/{locale}.json → Trustpilot.review*
+//  WAS ANDERE SAGEN — Bild, Name, Rolle, Quelle.
+//  Quote + extendedQuote → messages/{locale}.json → WasAndereSagen.*
 // ─────────────────────────────────────────────────
-export type TrustpilotReview = {
+export type OwnTestimonial = {
   name: string;
-  url: string;
+  role: string;
+  photoUrl: string;
+  sourceUrl?: string;
+  hasExtendedQuote?: true;
 };
 
-export const trustpilotReviews: TrustpilotReview[] = [
-  { name: "Kris",             url: "https://de.trustpilot.com/reviews/69cbc00aa823019958117ffc" },
-  { name: "Mark",             url: "https://de.trustpilot.com/reviews/69bb316f05dc66d0dbc0bc09" },
-  { name: "Olga Villa",       url: "https://de.trustpilot.com/reviews/69e8c913475b979018f0b860" },
-  { name: "Jay",              url: "https://de.trustpilot.com/reviews/69d4f73f29953d97224d45cb" },
-  { name: "Iceiz'sene Rivera",url: "https://de.trustpilot.com/reviews/69d24ca775490351d1f47849" },
-  { name: "Ted",              url: "https://de.trustpilot.com/reviews/69d3b9cc65f2076825f472c0" },
-  { name: "Patrick",          url: "https://de.trustpilot.com/reviews/69cd2109c0475f6e8506a669" },
-  { name: "Samantha",         url: "https://de.trustpilot.com/reviews/6982574f63e639b34ce65664" },
+export const ownTestimonials: OwnTestimonial[] = [
+  {
+    name: "Gottfried Vollmer",
+    role: "Schauspieler",
+    photoUrl: "/testimonials/gottfried-vollmer.jpg",
+    sourceUrl: "https://www.youtube.com/watch?v=hEqxerg6AAo",
+  },
+  {
+    name: "Dr. Karin Pirc",
+    role: "Ärztin",
+    photoUrl: "/testimonials/karin-pirc.jpg",
+    hasExtendedQuote: true,
+  },
+  {
+    name: "Hugh Jackman",
+    role: "Schauspieler",
+    photoUrl: "/testimonials/hugh-jackman.jpg",
+  },
+  {
+    name: "Dr. Wolfgang Schachinger",
+    role: "Arzt",
+    photoUrl: "/testimonials/wolfgang-schachinger.jpg",
+  },
+  {
+    name: "Michel Hubert",
+    role: "Bankdirektor i.R.",
+    photoUrl: "/testimonials/michel-hubert.jpg",
+    hasExtendedQuote: true,
+  },
+  {
+    name: "Paul McCartney",
+    role: "Musiker",
+    photoUrl: "/testimonials/paul-mccartney.jpg",
+    sourceUrl: "https://meditationlifestyle.com/sir-paul-mccartney-on-meditation/",
+    hasExtendedQuote: true,
+  },
 ];
 
 // ─────────────────────────────────────────────────

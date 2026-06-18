@@ -2,7 +2,7 @@ import PageClient from "@/components/page-client";
 import Testimonials from "@/components/testimonials";
 import WhyTm from "@/components/why-tm";
 import HowItWorks from "@/components/how-it-works";
-import Trustpilot from "@/components/trustpilot";
+import WasAndereSagen from "@/components/was-andere-sagen";
 import CenterBanner from "@/components/center-banner";
 import Events from "@/components/events";
 import InfoabendPreview from "@/components/infoabend-preview";
@@ -11,7 +11,6 @@ import WissenschaftSection from "@/components/wissenschaft";
 import AbschlussCta from "@/components/abschluss-cta";
 import { getEvents, formatNextDates } from "@/lib/events";
 import { getLocale } from "next-intl/server";
-import { getTrustpilotStats } from "@/lib/trustpilot";
 import { getTeachers } from "@/lib/teachers";
 import { getTestimonials } from "@/content";
 import { getCurrentTenant } from "@/lib/tenant";
@@ -19,9 +18,8 @@ import { getCurrentTenant } from "@/lib/tenant";
 export default async function Home() {
   const locale = await getLocale();
   const tenant = await getCurrentTenant();
-  const [events, trustpilot, teachersRaw] = await Promise.all([
+  const [events, teachersRaw] = await Promise.all([
     getEvents(tenant.tmw_center_ids),
-    getTrustpilotStats(),
     tenant.show_teachers ? getTeachers(locale, tenant) : Promise.resolve([]),
   ]);
   const teachers = [...teachersRaw].sort(() => Math.random() - 0.5);
@@ -37,7 +35,7 @@ export default async function Home() {
       />
       <Testimonials testimonials={getTestimonials("stress")} />
       <WhyTm />
-      <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />
+      <WasAndereSagen />
       <CenterBanner />
       <WissenschaftSection />
       {tenant.show_teachers && <Teachers teachers={teachers} />}

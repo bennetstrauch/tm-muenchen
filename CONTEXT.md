@@ -13,11 +13,11 @@ Rationale: convince early → remove friction + sign up in the middle → deepen
 3. **So läuft der Infoabend ab** (id="infoabend") — directly before Termine; structure: heading → 2 info cards → bullet points. Cards: "Format" (30 Min. · Online) + "Kosten" (Kostenlos & unverbindlich). "vor Ort in München" omitted from card (visible in event listings). Orange subtitle line ("Kostenlos · Unverbindlich · ca. 60 Minuten") removed — redundant with cards. Duration updated from 60 to 30 min.
 4. **Nächste Infoabende** — signup section (id="anmeldung")
 5. **Für wen?** — pain-point tabs with symptom language + bullets (all except Innere Freude rewritten). Intentionally placed *after* signup so hesitant visitors who skip the form can self-identify and return.
-6. **Testimonials** — real quotes
+6. **Testimonials** — single featured quote with background image (Jerry Seinfeld placeholder; keep as-is)
 7. **Was TM einzigartig macht** — WhyTm section
-8. **Trustpilot** — rating widget
+8. **Was andere sagen** — 6 curated testimonial cards with photo-header design. Sources: nationally known figures from meditation.de (Eckart Stein approval; photos + quotes + translations approved). Cards: portrait photo header, quote, expandable "Mehr lesen" for long quotes, small source link where available. Carousel: 1 per slide mobile, 2 per slide desktop. Trustpilot badge removed entirely. Content hardcoded in `content.ts` + `messages/{locale}.json`. People: Gottfried Vollmer, Karin Pirc (Ärztin), Hugh Jackman (Schauspieler), Dr. Wolfgang Schachinger (Arzt), Michel Hubert (Bankdirektor i.R.), Paul McCartney (Musiker). Future: München community quotes; admin request flow for new testimonials.
 9. **CenterBanner** — center info
-10. **Wissenschaft & Forschung** (id="wissenschaft") — static teaser; ChatGPT copy basis; CTA → Infoabend. Future: AI study search (deferred).
+10. **Wissenschaft & Forschung** (id="wissenschaft") — CountUp animated stats (700+ Studien, 10 Mio+ Praktizierende, 50 Jahre Forschung) + institution logo strip (Stanford Medicine, Yale School of Medicine, Harvard Medical School, NIH) each linking to a representative study. Deferred: animated bar charts (anxiety 2×, cortisol −30%, hospital −56%); interactive study cards grid.
 11. **Teachers** (id="lehrer") — personal trust
 12. **So funktioniert es** (id="wie-es-funktioniert") — "what happens after the Infoabend"; for hesitant visitors who scroll past signup
 13. **Abschluss-CTA** (id="abschluss-cta") — "Finde heraus, ob TM zu dir passt"

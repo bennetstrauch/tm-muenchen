@@ -1,14 +1,13 @@
 import PageClient from "@/components/page-client";
 import WhyTm from "@/components/why-tm";
 import HowItWorks from "@/components/how-it-works";
-import Trustpilot from "@/components/trustpilot";
+import WasAndereSagen from "@/components/was-andere-sagen";
 import Testimonials from "@/components/testimonials";
 import Events from "@/components/events";
 import InfoabendPreview from "@/components/infoabend-preview";
 import WissenschaftSection from "@/components/wissenschaft";
 import AbschlussCta from "@/components/abschluss-cta";
 import { getEvents, formatNextDates } from "@/lib/events";
-import { getTrustpilotStats } from "@/lib/trustpilot";
 import { getTestimonials } from "@/content";
 
 export const metadata = {
@@ -18,7 +17,7 @@ export const metadata = {
 };
 
 export default async function SchlafPage() {
-  const [events, trustpilot] = await Promise.all([getEvents(), getTrustpilotStats()]);
+  const events = await getEvents();
 
   const nextDates = formatNextDates(events);
 
@@ -31,7 +30,7 @@ export default async function SchlafPage() {
       />
       <Testimonials testimonials={getTestimonials("schlaf")} />
       <WhyTm />
-      <Trustpilot rating={trustpilot.rating} reviewCount={trustpilot.reviewCount} />
+      <WasAndereSagen />
       <WissenschaftSection />
       <HowItWorks />
       <AbschlussCta />
