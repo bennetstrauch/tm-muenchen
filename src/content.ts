@@ -120,6 +120,7 @@ export type OwnTestimonial = {
   photoUrl: string;
   sourceUrl?: string;
   hasExtendedQuote?: true;
+  photoPosition?: string;
 };
 
 export const ownTestimonials: OwnTestimonial[] = [
@@ -134,11 +135,13 @@ export const ownTestimonials: OwnTestimonial[] = [
     role: "Schauspieler",
     photoUrl: "/testimonials/gottfried-vollmer.jpg",
     sourceUrl: "https://www.youtube.com/watch?v=hEqxerg6AAo",
+    photoPosition: "center 20%",
   },
   {
     name: "Hugh Jackman",
     role: "Schauspieler",
     photoUrl: "/testimonials/hugh-jackman.jpg",
+    photoPosition: "center 20%",
   },
   {
     name: "Dr. Wolfgang Schachinger",
@@ -157,6 +160,7 @@ export const ownTestimonials: OwnTestimonial[] = [
     photoUrl: "/testimonials/paul-mccartney.jpg",
     sourceUrl: "https://meditationlifestyle.com/sir-paul-mccartney-on-meditation/",
     hasExtendedQuote: true,
+    photoPosition: "center 20%",
   },
 ];
 

@@ -31,22 +31,38 @@ function TestimonialCard({
 
   return (
     <div className="bg-white rounded-2xl overflow-hidden flex flex-col">
+
+      {/* Photo with name/role overlay */}
       <div className="relative w-full h-52 flex-shrink-0">
         <Image
           src={testimonial.photoUrl}
           alt={testimonial.name}
           fill
-          className="object-cover object-top"
+          className="object-cover"
+          style={{ objectPosition: testimonial.photoPosition ?? "top" }}
           sizes="(min-width: 768px) 50vw, 100vw"
         />
+        {/* Bottom gradient + name/role */}
+        <div className="absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-black/65 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 px-5 pb-3">
+          <p className="text-white font-semibold text-sm leading-tight">{testimonial.name}</p>
+          <p className="text-white/70 text-xs mt-0.5">{testimonial.role}</p>
+        </div>
       </div>
 
-      <div className="px-6 py-5 flex flex-col flex-1">
-        <p className="text-base text-[#3D5573] leading-relaxed flex-1">
+      {/* Quote area */}
+      <div className="px-6 pt-4 pb-5 flex flex-col flex-1 relative">
+        {/* Decorative closing quote — top right */}
+        <span
+          className="absolute top-1 right-4 font-display text-[4.5rem] leading-none text-[#1A3352]/10 select-none pointer-events-none"
+          aria-hidden="true"
+        >
+          "
+        </span>
+
+        <p className="text-base text-[#3D5573] leading-relaxed flex-1 relative z-10">
           „{quote}
-          {expanded && extended && (
-            <> {extended}</>
-          )}
+          {expanded && extended && <> {extended}</>}
         </p>
 
         {extended && (
@@ -58,23 +74,18 @@ function TestimonialCard({
           </button>
         )}
 
-        <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between gap-2">
-          <span className="text-sm font-semibold text-[#1A3352]">
-            {testimonial.name}
-            <span className="font-normal text-[#6B7A8D]"> · {testimonial.role}</span>
-          </span>
-          {testimonial.sourceUrl && (
-            <a
-              href={testimonial.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-[0.7rem] text-[#1A3352]/40 hover:text-[#1A3352]/70 transition-colors whitespace-nowrap"
-            >
-              {t("sourceLabel")} <ExternalLinkIcon />
-            </a>
-          )}
-        </div>
+        {testimonial.sourceUrl && (
+          <a
+            href={testimonial.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-flex items-center gap-1 text-[0.7rem] text-[#1A3352]/40 hover:text-[#1A3352]/70 transition-colors self-start"
+          >
+            {t("sourceLabel")} <ExternalLinkIcon />
+          </a>
+        )}
       </div>
+
     </div>
   );
 }
