@@ -14,6 +14,7 @@ export default async function EventsPage() {
   const tenant = await getCurrentTenant();
   let events = await getVeranstaltungen(tenant.tenant).catch(() => []);
   const whatsappLink = tenant.whatsapp_link;
+  const contactEmail = tenant.contact_email;
 
   return (
     <main className="min-h-screen bg-white pt-16 pb-20">
@@ -31,7 +32,7 @@ export default async function EventsPage() {
           </p>
         </div>
 
-        <MeditierendenEvents events={events} whatsappLink={whatsappLink} />
+        <MeditierendenEvents events={events} whatsappLink={whatsappLink} contactEmail={contactEmail} />
 
         {whatsappLink && (
           <div className="mt-16 border-t border-[#DBEAFE] pt-10 text-center">

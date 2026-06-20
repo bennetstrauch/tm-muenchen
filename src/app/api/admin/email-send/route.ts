@@ -83,6 +83,7 @@ export async function POST(request: Request) {
     for (const r of recipients) {
       const result = await resend.emails.send({
         from: tenant.from_email,
+        replyTo: tenant.contact_email || undefined,
         to: r.email,
         subject,
         html: buildCustomEmailHtml(r.name || 'liebe/r Teilnehmer/in', body),

@@ -31,6 +31,7 @@ export async function POST(request: Request) {
     leiter.map(l =>
       resend.emails.send({
         from: tenant.from_email,
+        replyTo: tenant.contact_email || undefined,
         to: l.email,
         subject: `WhatsApp-Post: ${eventTitle}`,
         text,

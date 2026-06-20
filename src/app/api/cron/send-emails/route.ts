@@ -17,12 +17,14 @@ async function sendBulk(
   subject: string,
   buildHtml: (name: string) => string,
   from: string,
+  replyTo?: string,
 ): Promise<{ sent: number; errors: string[] }> {
   let sent = 0;
   const errors: string[] = [];
   for (const r of recipients) {
     const result = await resend.emails.send({
       from,
+      replyTo: replyTo,
       to: r.email,
       subject,
       html: buildHtml(r.name || 'liebe/r Teilnehmer/in'),
@@ -70,6 +72,7 @@ export async function GET(request: Request) {
         action.subject,
         name => buildCustomEmailHtml(name, action.body),
         tenant.from_email,
+        tenant.contact_email || undefined,
       );
       if (sent > 0) {
         await markEmailActionSent(action.id, sent);
@@ -126,6 +129,7 @@ export async function GET(request: Request) {
             slot.body,
           ),
           tenant.from_email,
+          tenant.contact_email || undefined,
         );
 
         const action = await createEmailAction({

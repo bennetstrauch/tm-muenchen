@@ -516,9 +516,11 @@ function EventCard({
 export default function MeditierendenEvents({
   events,
   whatsappLink,
+  contactEmail,
 }: {
   events: Veranstaltung[];
   whatsappLink?: string | null;
+  contactEmail?: string | null;
 }) {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
 
@@ -558,12 +560,14 @@ export default function MeditierendenEvents({
         <p className="text-[#3D5573] text-sm">
           Aktuell sind keine Termine eingetragen. Schreib uns gerne:
         </p>
-        <a
-          href="mailto:newsletter@tm-muenchen.de"
-          className="mt-3 inline-block text-[#BCA075] text-sm hover:underline"
-        >
-          newsletter@tm-muenchen.de
-        </a>
+        {contactEmail && (
+          <a
+            href={`mailto:${contactEmail}`}
+            className="mt-3 inline-block text-[#BCA075] text-sm hover:underline"
+          >
+            {contactEmail}
+          </a>
+        )}
       </div>
     );
   }

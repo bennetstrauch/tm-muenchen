@@ -43,6 +43,7 @@ async function notifyLeiter(params: {
   tmLehrer?: string;
   baseUrl: string;
   fromEmail: string;
+  replyTo?: string;
 }): Promise<void> {
   const firstNames = params.hosts.split(',').map(s => s.trim()).filter(Boolean);
   const leaders = await lookupTeachersByFirstNames(firstNames);
@@ -55,6 +56,7 @@ async function notifyLeiter(params: {
     leaders.map(leader =>
       resend.emails.send({
         from: params.fromEmail,
+        replyTo: params.replyTo,
         to: leader.email,
         subject: `Neue Anmeldung: ${params.eventTitle} – ${params.eventDate}`,
         html: buildLeiterNotificationHtml({
@@ -106,9 +108,12 @@ export async function POST(request: Request) {
   const r1 = reminder1Hours > 0 ? calcReminderTime(isoDate, reminderTime, reminder1Hours) : null;
   const r2 = reminder2Hours > 0 ? calcReminderTime(isoDate, reminderTime, reminder2Hours) : null;
 
+  const replyTo = tenant.contact_email || undefined;
+
   await Promise.all([
     resend.emails.send({
       from: tenant.from_email,
+      replyTo: replyTo,
       to: email,
       subject: `Bestätigung: ${eventTitle} – ${eventDate}`,
       html: buildEventConfirmationHtml(params),
@@ -117,6 +122,7 @@ export async function POST(request: Request) {
     r1
       ? resend.emails.send({
           from: tenant.from_email,
+          replyTo: replyTo,
           to: email,
           subject: event?.reminderSubject1 || `Erinnerung: ${eventTitle} – ${eventDate}`,
           html: buildEventReminderHtml(params, event?.reminderBody1),
@@ -127,6 +133,7 @@ export async function POST(request: Request) {
     r2
       ? resend.emails.send({
           from: tenant.from_email,
+          replyTo: replyTo,
           to: email,
           subject: event?.reminderSubject2 || `Erinnerung: ${eventTitle} – ${eventDate}`,
           html: buildEventReminderHtml(params, event?.reminderBody2),
@@ -160,6 +167,7 @@ export async function POST(request: Request) {
     tmLehrer,
     baseUrl: new URL(request.url).origin,
     fromEmail: tenant.from_email,
+    replyTo: tenant.contact_email || undefined,
   }).catch(err => console.error('Leiter notification failed:', err));
 
   return Response.json({ success: true });
