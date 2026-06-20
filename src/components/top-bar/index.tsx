@@ -1,24 +1,27 @@
 import NavMenu from "./nav-menu";
 import TopBarLogo from "./logo";
 import ContactButtons from "./contact-buttons";
+import { resolveContactLinks } from "@/lib/contact";
+import type { TenantConfig } from "@/lib/tenant";
+
+type TopBarTenantSlice = Pick<
+  TenantConfig,
+  | "whatsapp_enabled"
+  | "whatsapp_number"
+  | "whatsapp_link"
+  | "contact_phone"
+  | "contact_email"
+  | "instagram_link"
+>;
 
 export default function TopBar({
-  whatsappEnabled,
-  whatsappLink,
-  whatsappNumber,
-  contactPhone,
-  contactEmail,
-  instagramLink,
+  tenant,
   activeLocales = [],
 }: {
-  whatsappEnabled?: boolean;
-  whatsappLink?: string | null;
-  whatsappNumber?: string | null;
-  contactPhone?: string | null;
-  contactEmail?: string | null;
-  instagramLink?: string;
+  tenant: TopBarTenantSlice;
   activeLocales?: string[];
 }) {
+  const contact = resolveContactLinks(tenant);
   return (
     <header className="fixed top-0 left-0 right-0 z-[9998] h-14 flex items-center px-5 bg-white/10 backdrop-blur-md border-b border-white/15">
       <NavMenu />
@@ -27,14 +30,7 @@ export default function TopBar({
         <TopBarLogo />
       </div>
       <div className="ml-auto flex items-center gap-1">
-        <ContactButtons
-          showWhatsApp={whatsappEnabled}
-          whatsappLink={whatsappLink}
-          whatsappNumber={whatsappNumber}
-          contactPhone={contactPhone}
-          contactEmail={contactEmail}
-          instagramLink={instagramLink}
-        />
+        <ContactButtons {...contact} />
       </div>
     </header>
   );

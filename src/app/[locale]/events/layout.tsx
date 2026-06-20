@@ -8,7 +8,7 @@ export default async function EventsLayout({ children }: { children: React.React
   const tenant = await getCurrentTenant();
   return (
     <NavProvider>
-      <TopBar whatsappEnabled instagramLink={tenant.instagram_link} activeLocales={tenant.active_locales} />
+      <TopBar tenant={tenant} activeLocales={tenant.active_locales} />
       <NavPanel activeLocales={tenant.active_locales} />
       <MainOffset>
         {children}
