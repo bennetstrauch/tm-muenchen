@@ -35,7 +35,7 @@ export default async function AdminPage({
     }
 
     // Valid token: load data and render in token-scoped mode
-    const { tenant: tenantSlug } = await getCurrentTenant();
+    const { tenant: tenantSlug, city } = await getCurrentTenant();
     const [infoRegistrations, events, eventRegistrations, vorlagen, emailActions] = await Promise.all([
       getInfoAnmeldungen(tenantSlug).catch(() => []),
       getAllVeranstaltungen(tenantSlug).catch(() => []),
@@ -50,7 +50,7 @@ export default async function AdminPage({
           <div className="mb-8 flex items-start justify-between">
             <div>
               <p className="text-xs tracking-widest uppercase text-[#BCA075] mb-1">
-                Transzendentale Meditation · München
+                Transzendentale Meditation · {city}
               </p>
               <h1 className="text-2xl font-semibold text-gray-800">Anmeldungen</h1>
             </div>
@@ -75,7 +75,7 @@ export default async function AdminPage({
   // --- Normal session-based access ---
   const cookieStore = await cookies();
   const sessionToken = cookieStore.get('admin-session')?.value;
-  const { tenant } = await getCurrentTenant();
+  const { tenant, city } = await getCurrentTenant();
 
   if (!sessionToken || !await verifySession(sessionToken, tenant)) {
     redirect('/admin/login');
@@ -99,7 +99,7 @@ export default async function AdminPage({
               ← Zur Website
             </a>
             <p className="text-xs tracking-widest uppercase text-[#BCA075] mb-1">
-              Transzendentale Meditation · München
+              Transzendentale Meditation · {city}
             </p>
             <h1 className="text-2xl font-semibold text-gray-800">Admin</h1>
           </div>
