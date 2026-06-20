@@ -5,6 +5,44 @@ A free, non-binding introductory session (~60 min) where people learn what TM is
 
 > Canonical term: **Infoabend** (not "Infovortrag", not "Info-Termin", not "Infovortrag")
 
+## Baum des Lebens
+An interactive tree visualization of TM benefits, planned as a separate page (`/lebensbaum`). The tree is the main navigation metaphor: trunk = TM technique, roots = tradition/teaching, earth = pure consciousness (spirituality), 4 main branches = benefit domains (Geistiges Potenzial, Gesundheit, Beziehung/Sozialverhalten, Gesellschaft/Weltfrieden), leaves = specific subtopics (e.g. Herz-Kreislauf, Angst, Burnout).
+
+**Narrative entry sequence (Phase 1):**
+1. Withered tree on screen with question: *„Was braucht dieser Baum, um wieder aufzublühen?"*
+2. User chooses from 3 options — only **„Wurzeln wässern"** (alt: „Wurzeln gießen") works; the two distractors **„Äste reparieren"** and **„Blätter besprühen"** yield no result
+3. Bloom animation plays — tree comes alive
+4. Short text line lands the message (e.g. „TM versorgt die Wurzel deines Lebens")
+5. Two paths: primary CTA „Infoabend entdecken" + secondary „Entdecke die 4 Lebensbereiche ↓"
+
+**Phase 2:** Clickable branches (4 Lebensbereiche) + subtopic leaves become explorable after bloom.
+
+**Phase 3 (Vision):** Detail pop-ups per topic with scientific studies; life-energy slider; flowing sap animation.
+
+**Animation approach:** Sequential bottom-up — roots → trunk → branches → leaves, ~1–2s per layer. The sequence *is* the metaphor (user literally sees the root supplying everything).
+
+**SVG asset spec (for artist):** One Illustrator file, separate layers/groups: Erde/Boden · Wurzeln · Stamm · Ast 1 (Geistiges Potenzial) · Ast 2 (Gesundheit) · Ast 3 (Soziale Beziehungen) · Ast 4 (Gesellschaft/Weltfrieden) · Blätter · Früchte. Two colour states per layer: withered (brown/grey) and bloomed (green/warm) — as separate layers or named swatches. Art direction: organic/illustrative (not icon-style). Draw directly in Illustrator on Lenovo touchscreen.
+
+**Tech approach:** Illustrative SVG — looks like art, technically interactive. Two SVG states (withered + bloomed) animated with CSS/JS per layer group.
+
+**i18n:** All text on `/lebensbaum` (question, 3 choice labels, post-bloom message, CTAs) uses the standard i18n system (DE source, auto-translated to EN/FR/ES by GitHub Action). The SVG artwork is language-neutral — no text embedded in the SVG itself.
+
+MVP scope: Phase 1 narrative sequence only. Branches, leaves, and everything beyond are deferred.
+
+> Canonical term: **Baum des Lebens** (not "Tree of Life", not "Lebensbaum" as a term — the route is `/lebensbaum` but the concept is "Baum des Lebens")
+
+## /entdecken
+A new route that duplicates the existing landing page (`/`) with a redesigned hero. Purpose: test the new hero concept without touching the primary conversion page. Strategy: validate on `/entdecken`, then switch `/` if it outperforms.
+
+**Hero differences vs. `/`:**
+- Background: `tm-waves.mp4` looping video (wavy water animation, from Lorenzo project) with dark gradient overlay
+- TopBar: starts fully transparent (white logo/text) over the video; transitions to current blue + opaque on scroll (`window.scrollY > 10`, 250ms transition)
+- Headline (i18n-aware): DE — *"Entdecke, wie eine einfache Entspannungstechnik alle Bereiche deines Lebens verbessern kann."*
+- CTA (MVP): single button — **"Infoabend entdecken"** → scrolls to Anmeldeformular
+- "Interaktive Tour starten" button: hidden until `/lebensbaum` is live
+
+**Everything below the hero**: identical to `/`.
+
 ## Page structure (confirmed)
 Rationale: convince early → remove friction + sign up in the middle → deepen for hesitant visitors late → second-chance CTA at end.
 
@@ -254,8 +292,8 @@ Visitor registers for Infoabend
   → reminder scheduled via Resend for 9:00 AM Munich time the day before
 
 WhatsApp button (TopBar)
-  → visibility controlled by Supabase settings row (tenant = "muenchen") → whatsapp_enabled
-  → link URL: whatsapp_link from settings, falling back to content.ts default
+  → hidden if show_meditators_section = false OR whatsapp_link is blank
+  → link URL: whatsapp_link from tenants row (no fallback — blank = hidden)
 
 ⚠️  active_locales is stored in Supabase settings but NOT yet wired to the locale switcher
     or middleware. The switcher still shows all locales from routing.ts. Wiring requires
@@ -279,8 +317,9 @@ tenant                       text  PK  (slug, e.g. 'muenchen')
 hostname                     text      (e.g. 'tm-muenchen.de')
 admin_password_hash          text
 active_locales               text[]
-whatsapp_enabled             bool
-whatsapp_link                text
+whatsapp_enabled             bool      (shows WhatsApp icon in top-bar contact buttons)
+whatsapp_link                text      (community/group join URL; null = hide WhatsApp sections entirely)
+whatsapp_number              text      (nullable; wa.me link target — falls back to contact_phone when null)
 contact_email                text
 contact_phone                text
 from_email                   text      (Resend sender address for Veranstaltungen emails only)
@@ -294,6 +333,7 @@ logo_label                   text      (nullable; overrides "map pin + city" in 
 infoabend_duration_minutes   int       (default 30; InfoabendPreview formats as "X Min.")
 show_teachers                bool      (default true; if false, Teachers section is not rendered)
 center_banner_label          text      (nullable; overrides "TM CENTER {city}" eyebrow in CenterBanner)
+show_meditators_section      bool      (default true; if false, Veranstaltungen section hidden, /events redirects to /, WhatsApp CTA hidden)
 ```
 
 Unknown hostnames redirect to `tm-muenchen.de`. Local dev resolves tenant via `DEV_TENANT` env var.
@@ -390,9 +430,27 @@ Email responsibilities after TMW Write-Access integration:
 
 Once TMW Write-Access is live, `/api/register` drops all Resend calls entirely.
 
-For Resend (Veranstaltungen emails only): single shared sender domain for all tenants — volume is too low to justify per-tenant domains. Candidate: `meditation.de` subdomain (pending admin approval) or a neutral platform domain (~10 €/year).
+For Resend (Veranstaltungen emails only): single verified sender domain **`post.meditation.de`** shared across all tenants. **Status: verified ✓ (2026-06-19)**. Resend domain id: `8d9af522-05f2-4f53-9e25-e840043d2cba`, region eu-west-1.
 
-`tenants.from_email` stores the Resend sender address per tenant, used only for Veranstaltungen emails.
+DNS records at Alfahosting (all verified):
+| Typ | Name | Wert | Priorität |
+|-----|------|------|-----------|
+| TXT | `resend._domainkey.post` | `p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZmc3oMJG+cuz64AWnM1d+qIYBpakG973NeXIsmzet+jBeQiS3u45nbfmS+bNiYszCIJIjoTdDvVEb8BwVcSK4kjJJVeGCf8z9325blCmyjnwcMCi7O9+frF5SpsJhFSRIdBitGjpJ41IMxHo4FKShBZkc2YevQJ4iljYfkk9Y+QIDAQAB` | — |
+| MX | `send.post` | `feedback-smtp.eu-west-1.amazonses.com` | 10 |
+| TXT | `send.post` | `v=spf1 include:amazonses.com ~all` | — |
+
+Tenant `from_email` values (set 2026-06-19):
+- `muenchen` → `TM München <muenchen@post.meditation.de>`
+- `freiburg` → `TM Freiburg <freiburg@post.meditation.de>`
+- `deutschland` → `TM Deutschland <deutschland@post.meditation.de>`
+
+All Resend `emails.send()` calls include `replyTo: tenant.contact_email` (camelCase — the Resend v6 SDK maps this to the `Reply-To` header; snake_case `reply_to` is silently ignored). Affected files: `register-event/route.ts`, `admin/email-send/route.ts`, `cron/send-emails/route.ts`, `admin/whatsapp-email/route.ts`.
+
+**Forwarding safeguard (planned, not yet implemented):** Replies to `{slug}@post.meditation.de` that bypass Reply-To (e.g. from email clients that ignore it) currently go nowhere — the `send.post.meditation.de` MX record is for SES bounce feedback, not a real inbox. Future: add MX for `post.meditation.de` → ImprovMX, automate alias creation (`{slug}@post.meditation.de → contact_email`) via ImprovMX API when a tenant is created or their `contact_email` changes. Blocked on ImprovMX account setup. See issue #87.
+
+Why `post.meditation.de` and not `info.meditation.de`: `info.meditation.de` is the national tenant's Vercel hostname (CNAME), which conflicts with MX records in DNS. `post.meditation.de` is a dedicated mail subdomain with no CNAME. Both `info.meditation.de` and `tm-muenchen.de` removed from Resend.
+
+`tenants.from_email` stores the Resend sender address per tenant, used only for Veranstaltungen emails. Format: `"TM {City} <{slug}@post.meditation.de>"` (Resend supports display-name format). Example: `TM München <muenchen@post.meditation.de>`. Tenants without a meditators section (e.g. `deutschland`) leave `from_email` blank.
 
 ## Footer
 
@@ -426,3 +484,34 @@ Static German-language page at `/datenschutz`. Same locale-notice behaviour as I
 - Meta Pixel (only after cookie consent)
 
 Google Sheets section can be removed once registration data is fully migrated to Supabase.
+
+## Baum des Lebens — Team & Rollen
+
+### Rollenverteilung
+
+| Person | Hauptverantwortung |
+|---|---|
+| Bennet | Vision, Nutzerreise, Strategie, Entwicklung |
+| Sebastian | Baumlogik, Themenstruktur, Hüter der Metapher |
+| Maike | Content-System, Texte, Redaktion (Phase 2+) |
+| Schwester | Illustration, Look & Feel — SVG-Artwork |
+
+**Sebastian als "Hüter der Metapher":** Bei jeder neuen Idee die Kontrollfrage: *Unterstützt das noch die Baum-Idee, oder macht es die Geschichte komplexer?* Die ursprüngliche Eleganz (Wurzel = Quelle, Äste = Lebensbereiche) muss durch alle Phasen erhalten bleiben.
+
+**Maike als Content-Architektin (Phase 2):** Aufbau einer strukturierten Content-Datenbank (Google Sheets o.ä.) für alle Blatt-Inhalte:
+
+| Ast | Unterthema | Kurztext | Langtext | Studien | Video |
+|---|---|---|---|---|---|
+| Gesundheit | Schlaf | … | … | Studie XY | … |
+
+Diese Datenbank speist später die Detailseiten / Pop-ups automatisch.
+
+### Parallelspuren (Phase 1)
+
+Phase 1 (Narrative-Sequenz) braucht **keinen Content-Workshop** — sie ist vollständig spezifiziert. Alles läuft parallel:
+
+- **Schwester**: SVG zeichnen (Brief: organic/illustrative, Ebenen per `layer-*` ID, kein Text eingebettet, zwei Farbzustände — vertrocknet + aufgeblüht). Referenz: `treeOfLife/treeOfLifeDraft.jpg`
+- **Agent/Entwickler**: Issues #80 → #81 → #82 sofort umsetzbar
+- **Sebastian + Maike**: Workshop für Phase 2 — Inhalte der Äste, Blätter, Studien
+
+Phase 2 benötigt den Workshop **bevor** die Branch-Navigation gebaut wird.
