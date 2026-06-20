@@ -21,6 +21,8 @@ const DEFAULTS: TenantSettings = {
   contact_email: '',
   contact_phone: '',
   center_image_url: null,
+  infoabend_duration_minutes: 30,
+  show_meditators_section: true,
 };
 
 export default function EinstellungenTab() {
@@ -171,6 +173,34 @@ export default function EinstellungenTab() {
               {fieldErrors.contact_phone && <p className="text-xs text-red-500 mt-1">{fieldErrors.contact_phone}</p>}
             </div>
           </div>
+        </div>
+
+        <div>
+          <p className="text-xs font-medium text-gray-500 mb-2">Infoabend</p>
+          <div className="flex items-center gap-3">
+            <input
+              type="number"
+              min={1}
+              className={`${INPUT_CLS} w-24`}
+              value={settings.infoabend_duration_minutes}
+              onChange={e => setSettings(prev => ({ ...prev, infoabend_duration_minutes: Number(e.target.value) || 30 }))}
+            />
+            <span className="text-sm text-gray-500">Minuten Dauer</span>
+          </div>
+        </div>
+
+        <div>
+          <p className="text-xs font-medium text-gray-500 mb-2">Für bereits Meditierende</p>
+          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <input
+              type="checkbox"
+              className={CHECK_CLS}
+              checked={settings.show_meditators_section}
+              onChange={e => setSettings(prev => ({ ...prev, show_meditators_section: e.target.checked }))}
+            />
+            Veranstaltungen-Bereich und /events anzeigen
+          </label>
+          <p className="text-xs text-gray-400 mt-1">Deaktivieren für die nationale Seite (Deutschland).</p>
         </div>
 
         <div>

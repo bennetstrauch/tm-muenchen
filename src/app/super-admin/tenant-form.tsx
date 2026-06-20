@@ -64,6 +64,7 @@ export default function TenantForm({ tenant }: Props) {
       whatsapp_link: fd.get('whatsapp_link'),
       whatsapp_number: fd.get('whatsapp_number') || null,
       show_teachers: fd.get('show_teachers') === 'on',
+      show_meditators_section: fd.get('show_meditators_section') === 'on',
       center_image_url: fd.get('center_image_url'),
       logo_url: fd.get('logo_url'),
       logo_label: fd.get('logo_label'),
@@ -266,6 +267,15 @@ export default function TenantForm({ tenant }: Props) {
                 className="rounded border-gray-300 text-[#BCA075]"
               />
               Lehrer-Section anzeigen
+            </label>
+            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                name="show_meditators_section"
+                defaultChecked={tenant?.show_meditators_section ?? true}
+                className="rounded border-gray-300 text-[#BCA075]"
+              />
+              Für bereits Meditierende (Veranstaltungen / /events) anzeigen
             </label>
             <Field label="Infoabend-Dauer (Minuten)">
               <input

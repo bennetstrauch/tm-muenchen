@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import { getVeranstaltungen } from '@/lib/veranstaltungen';
 import MeditierendenEvents from '@/components/meditierenden-events';
 import { getCurrentTenant } from '@/lib/tenant';
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 
 export default async function EventsPage() {
   const tenant = await getCurrentTenant();
+  if (!tenant.show_meditators_section) redirect('/');
   let events = await getVeranstaltungen(tenant.tenant).catch(() => []);
   const whatsappLink = tenant.whatsapp_link;
   const contactEmail = tenant.contact_email;

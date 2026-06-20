@@ -48,7 +48,7 @@ const chevron = (
 
 const LOCALE_LABELS: Record<Locale, string> = { de: "DE", en: "EN", fr: "FR", es: "ES" };
 
-export default function NavPanel({ activeLocales }: { activeLocales: string[] }) {
+export default function NavPanel({ activeLocales, showMeditatorsSection = true }: { activeLocales: string[]; showMeditatorsSection?: boolean }) {
   const t = useTranslations("Nav");
   const { isOpen, setIsOpen, setPanelHeight } = useNavContext();
   const locales = routing.locales.filter((l) => activeLocales.includes(l));
@@ -99,7 +99,7 @@ export default function NavPanel({ activeLocales }: { activeLocales: string[] })
       >
         <div ref={innerRef} className="min-h-0">
           <div className="bg-white/95 backdrop-blur-md border-b border-[#1A3352]/10 shadow-[0_8px_24px_rgba(26,51,82,0.07)]">
-            {NAV_LINKS.map((link, i) => {
+            {NAV_LINKS.filter(l => l.href !== '/events' || showMeditatorsSection).map((link, i) => {
               const label = t(link.labelKey as Parameters<typeof t>[0]);
               const cls = `${ITEM_BASE_CLS}${i > 0 ? " border-t border-[#1A3352]/8" : ""}`;
               if (link.type === "page") {
