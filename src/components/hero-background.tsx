@@ -1,15 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { type HeroImage } from "../content";
 
 export default function HeroBackground({ images }: { images: HeroImage[] }) {
   const [current, setCurrent] = useState<HeroImage | null>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     setCurrent(images[Math.floor(Math.random() * images.length)]);
   }, [images]);
+
+  // If the image was already cached, onLoad won't fire — reveal it directly.
+  useEffect(() => {
+    if (imgRef.current?.complete) {
+      imgRef.current.style.opacity = "1";
+    }
+  }, [current]);
 
   return (
     <div
@@ -18,6 +26,7 @@ export default function HeroBackground({ images }: { images: HeroImage[] }) {
     >
       {current && (
         <Image
+          ref={imgRef}
           src={current.src}
           alt=""
           fill
