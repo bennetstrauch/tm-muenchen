@@ -21,16 +21,32 @@ export default function TenantForm({ tenant }: Props) {
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [tmwResults, setTmwResults] = useState<Record<number, TmwResult> | null>(null);
   const [testing, setTesting] = useState(false);
   const [whatsappEnabled, setWhatsappEnabled] = useState(tenant?.whatsapp_enabled ?? false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSaving(true);
     setError('');
 
     const fd = new FormData(e.currentTarget);
+    const errs: Record<string, string> = {};
+    if (!isEdit && !fd.get('tenant')) errs.tenant = 'Pflichtfeld';
+    if (!fd.get('hostname')) errs.hostname = 'Pflichtfeld';
+    if (!fd.get('city')) errs.city = 'Pflichtfeld';
+    if (!isEdit && !fd.get('password')) errs.password = 'Pflichtfeld';
+    if (!fd.get('tmw_center_ids')) errs.tmw_center_ids = 'Pflichtfeld';
+    if (!fd.get('contact_email')) errs.contact_email = 'Pflichtfeld';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(fd.get('contact_email')))) errs.contact_email = 'Ungültige E-Mail-Adresse';
+    if (!fd.get('contact_phone')) errs.contact_phone = 'Pflichtfeld';
+    if (!fd.get('from_email')) errs.from_email = 'Pflichtfeld';
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    setFieldErrors({});
     const active_locales = LOCALES.filter(l => fd.get(`locale_${l}`) === 'on');
 
     const body = {
@@ -124,25 +140,29 @@ export default function TenantForm({ tenant }: Props) {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-gray-200 p-6 space-y-5">
+        <form onSubmit={handleSubmit} noValidate className="bg-white rounded-lg border border-gray-200 p-6 space-y-5">
 
           <Section title="Identität">
             <Field label="Slug (z.B. muenchen)" required>
               <input name="tenant" defaultValue={tenant?.tenant} readOnly={isEdit}
-                className={inputCls(isEdit)} required />
+                className={inputCls(isEdit, !!fieldErrors.tenant)} />
+              <FieldError msg={fieldErrors.tenant} />
             </Field>
             <Field label="Hostname (z.B. tm-muenchen.de)" required>
-              <input name="hostname" defaultValue={tenant?.hostname} className={inputCls()} required />
+              <input name="hostname" defaultValue={tenant?.hostname} className={inputCls(false, !!fieldErrors.hostname)} />
+              <FieldError msg={fieldErrors.hostname} />
             </Field>
             <Field label="Stadt (Anzeigename)" required>
-              <input name="city" defaultValue={tenant?.city} className={inputCls()} required />
+              <input name="city" defaultValue={tenant?.city} className={inputCls(false, !!fieldErrors.city)} />
+              <FieldError msg={fieldErrors.city} />
             </Field>
           </Section>
 
           <Section title="Admin-Passwort">
             <Field label={isEdit ? 'Neues Passwort (leer lassen = unverändert)' : 'Passwort'} required={!isEdit}>
               <input name="password" type="password" autoComplete="new-password"
-                required={!isEdit} className={inputCls()} />
+                className={inputCls(false, !!fieldErrors.password)} />
+              <FieldError msg={fieldErrors.password} />
             </Field>
           </Section>
 
@@ -169,8 +189,7 @@ export default function TenantForm({ tenant }: Props) {
                   id="tmw_center_ids"
                   name="tmw_center_ids"
                   defaultValue={tenant?.tmw_center_ids?.join(', ')}
-                  className={`${inputCls()} flex-1`}
-                  required
+                  className={`${inputCls(false, !!fieldErrors.tmw_center_ids)} flex-1`}
                 />
                 <button
                   onClick={handleTmwTest}
@@ -181,6 +200,7 @@ export default function TenantForm({ tenant }: Props) {
                 </button>
               </div>
             </Field>
+            <FieldError msg={fieldErrors.tmw_center_ids} />
             {tmwResults && (
               <div className="mt-2 rounded border border-gray-100 bg-gray-50 p-3 text-xs space-y-1">
                 {Object.entries(tmwResults).map(([id, result]) => (
@@ -198,13 +218,16 @@ export default function TenantForm({ tenant }: Props) {
 
           <Section title="Kontakt & E-Mail">
             <Field label="Kontakt-E-Mail" required>
-              <input name="contact_email" type="email" defaultValue={tenant?.contact_email} className={inputCls()} required />
+              <input name="contact_email" type="email" defaultValue={tenant?.contact_email} className={inputCls(false, !!fieldErrors.contact_email)} />
+              <FieldError msg={fieldErrors.contact_email} />
             </Field>
             <Field label="Kontakt-Telefon" required>
-              <input name="contact_phone" defaultValue={tenant?.contact_phone} className={inputCls()} required />
+              <input name="contact_phone" defaultValue={tenant?.contact_phone} className={inputCls(false, !!fieldErrors.contact_phone)} />
+              <FieldError msg={fieldErrors.contact_phone} />
             </Field>
             <Field label="Absender-E-Mail (Resend) — Format: TM Stadt <slug@post.meditation.de>" required>
-              <input name="from_email" type="text" defaultValue={tenant?.from_email} className={inputCls()} required />
+              <input name="from_email" type="text" defaultValue={tenant?.from_email} className={inputCls(false, !!fieldErrors.from_email)} />
+              <FieldError msg={fieldErrors.from_email} />
             </Field>
           </Section>
 
@@ -314,6 +337,13 @@ function Field({ label, required, children }: { label: string; required?: boolea
   );
 }
 
-function inputCls(readOnly = false) {
-  return `w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#BCA075] ${readOnly ? 'bg-gray-50 text-gray-400' : ''}`;
+function FieldError({ msg }: { msg?: string }) {
+  if (!msg) return null;
+  return <p className="text-xs text-red-500 mt-1">{msg}</p>;
+}
+
+function inputCls(readOnly = false, hasError = false) {
+  return `w-full border rounded px-3 py-2 text-sm text-gray-800 focus:outline-none ${
+    hasError ? 'border-red-400 focus:border-red-400' : 'border-gray-200 focus:border-[#BCA075]'
+  } ${readOnly ? 'bg-gray-50 text-gray-400' : ''}`;
 }

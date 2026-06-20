@@ -29,6 +29,7 @@ export default function EinstellungenTab() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [result, setResult] = useState<{ ok: boolean; msg: string } | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     fetch('/api/admin/einstellungen')
@@ -68,6 +69,13 @@ export default function EinstellungenTab() {
   }
 
   async function handleSave() {
+    const errors: Record<string, string> = {};
+    if (!settings.contact_email.trim()) errors.contact_email = 'Pflichtfeld';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(settings.contact_email)) errors.contact_email = 'Ungültige E-Mail-Adresse';
+    if (!settings.contact_phone.trim()) errors.contact_phone = 'Pflichtfeld';
+    if (Object.keys(errors).length > 0) { setFieldErrors(errors); return; }
+    setFieldErrors({});
+
     setSaving(true);
     setResult(null);
     try {
@@ -144,18 +152,24 @@ export default function EinstellungenTab() {
         <div>
           <p className="text-xs font-medium text-gray-500 mb-2">Kontakt</p>
           <div className="space-y-2">
-            <input
-              className={INPUT_CLS}
-              placeholder="E-Mail"
-              value={settings.contact_email}
-              onChange={e => setSettings(prev => ({ ...prev, contact_email: e.target.value }))}
-            />
-            <input
-              className={INPUT_CLS}
-              placeholder="Telefon"
-              value={settings.contact_phone}
-              onChange={e => setSettings(prev => ({ ...prev, contact_phone: e.target.value }))}
-            />
+            <div>
+              <input
+                className={`${INPUT_CLS} ${fieldErrors.contact_email ? 'border-red-400' : ''}`}
+                placeholder="E-Mail"
+                value={settings.contact_email}
+                onChange={e => { setSettings(prev => ({ ...prev, contact_email: e.target.value })); setFieldErrors(prev => ({ ...prev, contact_email: '' })); }}
+              />
+              {fieldErrors.contact_email && <p className="text-xs text-red-500 mt-1">{fieldErrors.contact_email}</p>}
+            </div>
+            <div>
+              <input
+                className={`${INPUT_CLS} ${fieldErrors.contact_phone ? 'border-red-400' : ''}`}
+                placeholder="Telefon"
+                value={settings.contact_phone}
+                onChange={e => { setSettings(prev => ({ ...prev, contact_phone: e.target.value })); setFieldErrors(prev => ({ ...prev, contact_phone: '' })); }}
+              />
+              {fieldErrors.contact_phone && <p className="text-xs text-red-500 mt-1">{fieldErrors.contact_phone}</p>}
+            </div>
           </div>
         </div>
 
