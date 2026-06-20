@@ -8,6 +8,7 @@ function pickSettings(source: Partial<TenantSettings>): TenantSettings {
     active_locales: source.active_locales ?? [],
     whatsapp_enabled: source.whatsapp_enabled ?? false,
     whatsapp_link: source.whatsapp_link ?? null,
+    whatsapp_number: source.whatsapp_number ?? null,
     contact_email: source.contact_email ?? '',
     contact_phone: source.contact_phone ?? '',
     center_image_url: source.center_image_url ?? null,

@@ -17,6 +17,7 @@ const DEFAULTS: TenantSettings = {
   active_locales: ['de', 'en', 'fr', 'es'],
   whatsapp_enabled: true,
   whatsapp_link: '',
+  whatsapp_number: null,
   contact_email: '',
   contact_phone: '',
   center_image_url: null,
@@ -117,15 +118,26 @@ export default function EinstellungenTab() {
               checked={settings.whatsapp_enabled}
               onChange={e => setSettings(prev => ({ ...prev, whatsapp_enabled: e.target.checked }))}
             />
-            WhatsApp-Button anzeigen
+            WhatsApp-Symbol im Kontaktbalken anzeigen
           </label>
           {settings.whatsapp_enabled && (
-            <input
-              className={INPUT_CLS}
-              placeholder="https://chat.whatsapp.com/…"
-              value={settings.whatsapp_link ?? ''}
-              onChange={e => setSettings(prev => ({ ...prev, whatsapp_link: e.target.value || null }))}
-            />
+            <div className="space-y-2">
+              <input
+                className={INPUT_CLS}
+                placeholder="https://chat.whatsapp.com/…"
+                value={settings.whatsapp_link ?? ''}
+                onChange={e => setSettings(prev => ({ ...prev, whatsapp_link: e.target.value || null }))}
+              />
+              <div>
+                <input
+                  className={INPUT_CLS}
+                  placeholder="WhatsApp-Nummer (z. B. +49163…)"
+                  value={settings.whatsapp_number ?? ''}
+                  onChange={e => setSettings(prev => ({ ...prev, whatsapp_number: e.target.value || null }))}
+                />
+                <p className="text-xs text-gray-400 mt-1">Nur ausfüllen, falls abweichend von der Kontakttelefonnummer</p>
+              </div>
+            </div>
           )}
         </div>
 

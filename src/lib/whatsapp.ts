@@ -9,6 +9,21 @@ type Options = {
   signoff?: string;
 };
 
+/**
+ * Build a wa.me direct-chat link from a phone number.
+ * Prefers whatsapp_number; falls back to contact_phone.
+ * Returns null when neither is set.
+ */
+export function buildWhatsappDirectLink(
+  whatsappNumber: string | null | undefined,
+  contactPhone: string | null | undefined,
+): string | null {
+  const raw = whatsappNumber?.trim() || contactPhone?.trim() || '';
+  if (!raw) return null;
+  const digits = raw.replace(/\D/g, '');
+  return `https://wa.me/${digits}`;
+}
+
 export function buildWhatsappUrl(text: string): string {
   // web.whatsapp.com/send stays in the browser, which handles Unicode encoding correctly.
   // wa.me on Windows routes through Shell → WhatsApp Desktop and mangles emoji to "?".

@@ -7,6 +7,7 @@ const tenantRow = {
   active_locales: ["de", "en"],
   whatsapp_enabled: true,
   whatsapp_link: "https://chat.whatsapp.com/x",
+  whatsapp_number: "+49123456789",
   contact_email: "a@b.de",
   contact_phone: "123",
   from_email: "x",
@@ -33,13 +34,14 @@ beforeEach(() => {
 });
 
 describe("admin Einstellungen", () => {
-  it("GET returns only the editable settings, including center_image_url, never the password hash", async () => {
+  it("GET returns only the editable settings, including center_image_url and whatsapp_number, never the password hash", async () => {
     const { GET } = await import("./route");
     const data = await (await GET()).json();
     expect(data).toEqual({
       active_locales: ["de", "en"],
       whatsapp_enabled: true,
       whatsapp_link: "https://chat.whatsapp.com/x",
+      whatsapp_number: "+49123456789",
       contact_email: "a@b.de",
       contact_phone: "123",
       center_image_url: "https://blob.example.com/center/muenchen/photo.webp",
@@ -48,15 +50,16 @@ describe("admin Einstellungen", () => {
     expect(data).not.toHaveProperty("hostname");
   });
 
-  it("PUT writes center_image_url along with other editable columns", async () => {
+  it("PUT writes center_image_url and whatsapp_number along with other editable columns", async () => {
     const { PUT } = await import("./route");
     const req = new Request("http://localhost/api/admin/einstellungen", {
       method: "PUT",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         active_locales: ["de"],
-        whatsapp_enabled: false,
-        whatsapp_link: null,
+        whatsapp_enabled: true,
+        whatsapp_link: "https://chat.whatsapp.com/x",
+        whatsapp_number: "+49123456789",
         contact_email: "new@b.de",
         contact_phone: "999",
         center_image_url: "https://blob.example.com/center/muenchen/new.webp",
@@ -68,8 +71,9 @@ describe("admin Einstellungen", () => {
     expect(res.ok).toBe(true);
     expect(update).toHaveBeenCalledWith({
       active_locales: ["de"],
-      whatsapp_enabled: false,
-      whatsapp_link: null,
+      whatsapp_enabled: true,
+      whatsapp_link: "https://chat.whatsapp.com/x",
+      whatsapp_number: "+49123456789",
       contact_email: "new@b.de",
       contact_phone: "999",
       center_image_url: "https://blob.example.com/center/muenchen/new.webp",
