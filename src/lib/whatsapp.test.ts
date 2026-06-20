@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateWhatsAppText, buildWhatsappUrl } from './whatsapp';
+import { generateWhatsAppText, buildWhatsappUrl, buildWhatsappDirectLink } from './whatsapp';
 import type { Veranstaltung } from './veranstaltungen';
 
 const BASE: Veranstaltung = {
@@ -116,5 +116,31 @@ describe('buildWhatsappUrl', () => {
     expect(url).toContain('https://web.whatsapp.com/send?text=');
     expect(url).toContain('%0A'); // newline encoded
     expect(url).toContain('Zeile%201');
+  });
+});
+
+describe('buildWhatsappDirectLink', () => {
+  it('uses whatsapp_number when set, stripping non-digits and leading +', () => {
+    expect(buildWhatsappDirectLink('+49 163 7354 836', null)).toBe(
+      'https://wa.me/491637354836'
+    );
+  });
+
+  it('falls back to contact_phone when whatsapp_number is null', () => {
+    expect(buildWhatsappDirectLink(null, '+49 89 123456')).toBe(
+      'https://wa.me/4989123456'
+    );
+  });
+
+  it('falls back to contact_phone when whatsapp_number is empty string', () => {
+    expect(buildWhatsappDirectLink('', '+49 89 123456')).toBe(
+      'https://wa.me/4989123456'
+    );
+  });
+
+  it('returns null when both are null or empty', () => {
+    expect(buildWhatsappDirectLink(null, '')).toBeNull();
+    expect(buildWhatsappDirectLink('', '')).toBeNull();
+    expect(buildWhatsappDirectLink(null, null)).toBeNull();
   });
 });

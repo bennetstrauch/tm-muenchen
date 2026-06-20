@@ -5,11 +5,15 @@ import ContactButtons from "./contact-buttons";
 export default function TopBar({
   whatsappEnabled,
   whatsappLink,
+  whatsappNumber,
+  contactPhone,
   instagramLink,
   activeLocales = [],
 }: {
   whatsappEnabled?: boolean;
   whatsappLink?: string | null;
+  whatsappNumber?: string | null;
+  contactPhone?: string | null;
   instagramLink?: string;
   activeLocales?: string[];
 }) {
@@ -21,7 +25,13 @@ export default function TopBar({
         <TopBarLogo />
       </div>
       <div className="ml-auto flex items-center gap-1">
-        <ContactButtons showWhatsApp={whatsappEnabled} whatsappLink={whatsappLink} instagramLink={instagramLink} />
+        <ContactButtons
+          showWhatsApp={whatsappEnabled}
+          whatsappLink={whatsappLink}
+          whatsappNumber={whatsappNumber}
+          contactPhone={contactPhone}
+          instagramLink={instagramLink}
+        />
       </div>
     </header>
   );

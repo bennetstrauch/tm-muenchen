@@ -2,10 +2,26 @@
 
 import { useState, useRef, useEffect } from "react";
 import { content } from "../../content";
+import { buildWhatsappDirectLink } from "@/lib/whatsapp";
 
-export default function ContactButtons({ showWhatsApp, whatsappLink, instagramLink }: { showWhatsApp?: boolean; whatsappLink?: string | null; instagramLink?: string }) {
+export default function ContactButtons({
+  showWhatsApp,
+  whatsappLink,
+  whatsappNumber,
+  contactPhone,
+  instagramLink,
+}: {
+  showWhatsApp?: boolean;
+  whatsappLink?: string | null;
+  whatsappNumber?: string | null;
+  contactPhone?: string | null;
+  instagramLink?: string;
+}) {
   const { contact } = content;
-  const resolvedWhatsappLink = whatsappLink ?? contact.whatsappCommunity;
+  const resolvedWhatsappLink =
+    buildWhatsappDirectLink(whatsappNumber, contactPhone) ??
+    whatsappLink ??
+    contact.whatsappCommunity;
   const resolvedInstagramLink = instagramLink ?? contact.instagram;
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);

@@ -123,6 +123,7 @@ type TenantRow = {
   active_locales: string[];
   whatsapp_enabled: boolean;
   whatsapp_link: string | null;
+  whatsapp_number: string | null;
   contact_email: string;
   contact_phone: string;
   from_email: string;
