@@ -203,8 +203,8 @@ export default function TenantForm({ tenant }: Props) {
             <Field label="Kontakt-Telefon" required>
               <input name="contact_phone" defaultValue={tenant?.contact_phone} className={inputCls()} required />
             </Field>
-            <Field label="Absender-E-Mail (Resend)" required>
-              <input name="from_email" type="email" defaultValue={tenant?.from_email} className={inputCls()} required />
+            <Field label="Absender-E-Mail (Resend) — Format: TM Stadt <slug@post.meditation.de>" required>
+              <input name="from_email" type="text" defaultValue={tenant?.from_email} className={inputCls()} required />
             </Field>
           </Section>
 
