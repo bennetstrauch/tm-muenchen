@@ -1,8 +1,12 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { getCurrentTenant } from "@/lib/tenant";
 
 export default async function Footer() {
-  const t = await getTranslations("Footer");
+  const [t, tenant] = await Promise.all([
+    getTranslations("Footer"),
+    getCurrentTenant(),
+  ]);
 
   return (
     <footer className="bg-[#1A3352] border-t border-white/10 py-12 px-6">
@@ -24,7 +28,7 @@ export default async function Footer() {
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[0.68rem] tracking-wide text-white/30">
-          <span>Transzendentale Meditation München e.V.</span>
+          <span>Transzendentale Meditation {tenant.city} e.V.</span>
           <span aria-hidden="true" className="hidden sm:inline">·</span>
           <Link href="/impressum" className="hover:text-white/55 transition-colors">
             Impressum

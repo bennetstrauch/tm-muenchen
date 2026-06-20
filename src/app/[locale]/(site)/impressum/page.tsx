@@ -27,14 +27,21 @@ export default async function ImpressumPage() {
           Impressum
         </h1>
 
-        {tenant.impressum_content?.trimStart().startsWith('<') ? (
-          <div
-            className="text-sm text-[#1A3352]/75 leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: tenant.impressum_content }}
-          />
-        ) : (
-          <MuenchenImpressum contactEmail={tenant.contact_email} />
-        )}
+        {(() => {
+          const content = tenant.impressum_content?.trim();
+          if (!content) return <MuenchenImpressum contactEmail={tenant.contact_email} />;
+          if (content.startsWith('<')) return (
+            <div
+              className="text-sm text-[#1A3352]/75 leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: content }}
+            />
+          );
+          return (
+            <p className="text-sm text-[#1A3352]/75 leading-relaxed whitespace-pre-wrap">
+              {content}
+            </p>
+          );
+        })()}
 
       </div>
     </main>
