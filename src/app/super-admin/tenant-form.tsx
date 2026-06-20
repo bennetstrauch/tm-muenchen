@@ -20,8 +20,10 @@ export default function TenantForm({ tenant }: Props) {
 
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [tmwResults, setTmwResults] = useState<Record<number, TmwResult> | null>(null);
   const [testing, setTesting] = useState(false);
+  const [whatsappEnabled, setWhatsappEnabled] = useState(tenant?.whatsapp_enabled ?? false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -44,6 +46,7 @@ export default function TenantForm({ tenant }: Props) {
       instagram_link: fd.get('instagram_link'),
       whatsapp_enabled: fd.get('whatsapp_enabled') === 'on',
       whatsapp_link: fd.get('whatsapp_link'),
+      whatsapp_number: fd.get('whatsapp_number') || null,
       show_teachers: fd.get('show_teachers') === 'on',
       center_image_url: fd.get('center_image_url'),
       logo_url: fd.get('logo_url'),
@@ -65,11 +68,13 @@ export default function TenantForm({ tenant }: Props) {
     });
 
     if (res.ok) {
-      router.push('/super-admin');
+      setSaved(true);
+      setTimeout(() => router.push('/super-admin'), 900);
     } else {
       const data = await res.json();
       setError(data.error ?? 'Fehler beim Speichern.');
       setSaving(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
@@ -106,6 +111,18 @@ export default function TenantForm({ tenant }: Props) {
             {isEdit ? `Tenant: ${tenant.tenant}` : 'Neuer Tenant'}
           </h1>
         </div>
+
+        {error && (
+          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <span className="font-medium">Fehler:</span> {error}
+          </div>
+        )}
+
+        {saved && (
+          <div className="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 font-medium">
+            ✓ Gespeichert — wird weitergeleitet…
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-gray-200 p-6 space-y-5">
 
@@ -201,12 +218,18 @@ export default function TenantForm({ tenant }: Props) {
               <input
                 type="checkbox"
                 name="whatsapp_enabled"
-                defaultChecked={tenant?.whatsapp_enabled ?? false}
+                checked={whatsappEnabled}
+                onChange={e => setWhatsappEnabled(e.target.checked)}
                 className="rounded border-gray-300 text-[#BCA075]"
               />
-              WhatsApp aktiviert
+              WhatsApp-Symbol im Kontaktbalken anzeigen
             </label>
-            <Field label="WhatsApp-Link">
+            {whatsappEnabled && (
+              <Field label="WhatsApp-Nummer (falls abweichend von Kontakttelefon)">
+                <input name="whatsapp_number" defaultValue={tenant?.whatsapp_number ?? ''} className={inputCls()} />
+              </Field>
+            )}
+            <Field label="WhatsApp-Community-Link">
               <input name="whatsapp_link" defaultValue={tenant?.whatsapp_link ?? ''} className={inputCls()} />
             </Field>
           </Section>
@@ -253,15 +276,13 @@ export default function TenantForm({ tenant }: Props) {
             </Field>
           </Section>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-
           <div className="flex gap-3 pt-2">
             <button
               type="submit"
-              disabled={saving}
+              disabled={saving || saved}
               className="px-5 py-2 bg-[#BCA075] text-white rounded text-sm font-medium hover:bg-[#a88d65] disabled:opacity-50"
             >
-              {saving ? 'Wird gespeichert…' : 'Speichern'}
+              {saved ? '✓ Gespeichert' : saving ? 'Wird gespeichert…' : 'Speichern'}
             </button>
             <a href="/super-admin" className="px-5 py-2 border border-gray-200 rounded text-sm text-gray-600 hover:bg-gray-50">
               Abbrechen

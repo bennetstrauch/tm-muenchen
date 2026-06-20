@@ -34,6 +34,7 @@ export async function PUT(
     instagram_link: body.instagram_link || "https://www.instagram.com/tmdeutschland",
     whatsapp_enabled: body.whatsapp_enabled ?? false,
     whatsapp_link: body.whatsapp_link || null,
+    whatsapp_number: body.whatsapp_number || null,
     center_image_url: body.center_image_url || null,
     impressum_content: body.impressum_content || "",
     logo_url: body.logo_url || null,
