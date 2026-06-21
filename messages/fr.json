@@ -3,7 +3,8 @@
     "badge": "La seule technique de ce genre",
     "cta": "Découvrir la soirée d'introduction gratuite",
     "learnMore": "En savoir plus sur la MT",
-    "nextDatesPrefix": "Prochaines dates :"
+    "nextDatesPrefix": "Prochaines dates :",
+    "nextDatePrefix": "Prochaine date :"
   },
   "TrustBadges": {
     "badge0": "Enseignement personnalisé",

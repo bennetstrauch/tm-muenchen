@@ -38,7 +38,7 @@ export default async function Home() {
       <WasAndereSagen />
       <CenterBanner />
       <WissenschaftSection />
-      {tenant.show_teachers && <Teachers teachers={teachers} />}
+      {tenant.show_teachers && <Teachers teachers={teachers} centerName={tenant.center_banner_label ?? `TM Center ${tenant.city}`} />}
       <HowItWorks />
       <AbschlussCta />
     </main>

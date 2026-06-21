@@ -28,10 +28,11 @@
     "badge": "The only technique of its kind.",
     "cta": "Find a free info session",
     "learnMore": "Learn more about TM",
-    "nextDatesPrefix": "Upcoming dates:"
+    "nextDatesPrefix": "Upcoming dates:",
+    "nextDatePrefix": "Next date:"
   },
   "TrustBadges": {
-    "badge0": "Personally taught",
+    "badge0": "Personal instruction",
     "badge1": "Simple and effortless",
     "badge2": "Practiced by millions worldwide",
     "badge3": "No concentration required",

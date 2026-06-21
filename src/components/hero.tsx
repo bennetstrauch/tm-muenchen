@@ -102,7 +102,7 @@ export default function Hero({
                 <path d="M4 0.6v2M9 0.6v2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
               </svg>
               <span>
-                {t("nextDatesPrefix")}{" "}
+                {nextDates.length === 1 ? t("nextDatePrefix") : t("nextDatesPrefix")}{" "}
                 {nextDates.map((d, i) => (
                   <span key={d} className={i >= 1 ? "hidden sm:inline" : undefined}>
                     <span className="text-[#1A3352]/75 font-medium">{d}</span>

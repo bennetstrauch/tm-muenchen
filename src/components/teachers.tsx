@@ -52,7 +52,7 @@ function TeacherCard({
   );
 }
 
-export default function Teachers({ teachers }: { teachers: TMTeacher[] }) {
+export default function Teachers({ teachers, centerName }: { teachers: TMTeacher[]; centerName?: string }) {
   const t = useTranslations("Teachers");
   const totalMobile  = teachers.length;
   const totalDesktop = Math.ceil(teachers.length / 3);
@@ -111,7 +111,7 @@ export default function Teachers({ teachers }: { teachers: TMTeacher[] }) {
 
         <div className="text-center mb-10">
           <p className="text-[0.65rem] tracking-[0.3em] uppercase text-[#3D5573] mb-4">
-            {t("eyebrow")}
+            {centerName ?? t("eyebrow")}
           </p>
           <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight">
             {t("heading")}
