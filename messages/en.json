@@ -152,7 +152,7 @@
     "cta": "Learn more at the info session"
   },
   "InfoabendPreview": {
-    "heading": "What to expect at the info session",
+    "heading": "Here's what to expect at the info session",
     "box0Label": "Format",
     "box0Value": "Online",
     "box1Label": "Cost",
@@ -231,7 +231,7 @@
     "localeNotice": "This page is only available in German."
   },
   "WasAndereSagen": {
-    "heading": "What doctors and TM practitioners say",
+    "heading": "What doctors & TM practitioners say",
     "readMore": "Read more",
     "collapse": "Show less",
     "sourceLabel": "Source",
