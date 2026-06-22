@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Keine Leiter-E-Mail-Adressen gefunden.' }, { status: 422 });
   }
 
-  await Promise.all(
+  const results = await Promise.all(
     leiter.map(l =>
       resend.emails.send({
         from: tenant.from_email,
@@ -38,6 +38,12 @@ export async function POST(request: Request) {
       })
     )
   );
+
+  const sendErrors = results.flatMap(r => r.error ? [r.error.message] : []);
+  if (sendErrors.length > 0) {
+    console.error('whatsapp-email Resend errors:', sendErrors);
+    return Response.json({ error: `E-Mail-Versand fehlgeschlagen: ${sendErrors.join('; ')}` }, { status: 500 });
+  }
 
   await updateWhatsappPosted(eventId, new Date().toISOString(), tenant.tenant).catch(err =>
     console.error('whatsappPostedAt write failed:', err)

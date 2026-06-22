@@ -95,13 +95,14 @@ export async function POST(request: Request) {
       }
     }
 
-    if (sent === 0) {
-      await markEmailActionFailed(action.id, errors.join('; '));
-      return Response.json({ sent: 0, errors }, { status: 500 });
+    if (errors.length > 0) {
+      const msg = `${errors.length} von ${recipients.length} E-Mails fehlgeschlagen: ${errors.join('; ')}`;
+      await markEmailActionFailed(action.id, msg);
+      return Response.json({ sent, errors }, { status: 500 });
     }
 
     await markEmailActionSent(action.id, sent);
-    return Response.json({ sent, errors: errors.length ? errors : undefined });
+    return Response.json({ sent });
   } catch (err) {
     console.error('email-send failed:', err);
     return Response.json({ error: 'Senden fehlgeschlagen.' }, { status: 500 });

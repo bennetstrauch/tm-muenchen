@@ -47,6 +47,7 @@ export default function TenantForm({ tenant }: Props) {
       return;
     }
     setFieldErrors({});
+    setSaving(true);
     const active_locales = LOCALES.filter(l => fd.get(`locale_${l}`) === 'on');
 
     const body = {
