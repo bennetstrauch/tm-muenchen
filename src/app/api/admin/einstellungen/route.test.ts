@@ -16,6 +16,12 @@ const tenantRow = {
   center_image_url: "https://blob.example.com/center/muenchen/photo.webp",
   tmw_center_ids: [1],
   impressum_content: "z",
+  logo_url: null,
+  logo_label: null,
+  infoabend_duration_minutes: 30,
+  show_teachers: true,
+  show_meditators_section: true,
+  center_banner_label: null,
 };
 
 vi.mock("@/lib/tenant", () => ({
@@ -45,6 +51,8 @@ describe("admin Einstellungen", () => {
       contact_email: "a@b.de",
       contact_phone: "123",
       center_image_url: "https://blob.example.com/center/muenchen/photo.webp",
+      infoabend_duration_minutes: 30,
+      show_meditators_section: true,
     });
     expect(data).not.toHaveProperty("admin_password_hash");
     expect(data).not.toHaveProperty("hostname");
@@ -77,6 +85,8 @@ describe("admin Einstellungen", () => {
       contact_email: "new@b.de",
       contact_phone: "999",
       center_image_url: "https://blob.example.com/center/muenchen/new.webp",
+      infoabend_duration_minutes: 30,
+      show_meditators_section: true,
     });
   });
 
