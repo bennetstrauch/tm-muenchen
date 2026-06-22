@@ -1,19 +1,5 @@
-import PageClient from "@/components/page-client";
-import WhyTm from "@/components/why-tm";
-import HowItWorks from "@/components/how-it-works";
-import WasAndereSagen from "@/components/was-andere-sagen";
-import Testimonials from "@/components/testimonials";
-import Events from "@/components/events";
-import InfoabendPreview from "@/components/infoabend-preview";
-import WissenschaftSection from "@/components/wissenschaft";
-import Teachers from "@/components/teachers";
-import AbschlussCta from "@/components/abschluss-cta";
-import { getEvents, formatNextDates } from "@/lib/events";
-import { getTestimonials } from "@/content";
+import ThemePage from "@/components/theme-page";
 import { getCurrentTenant } from "@/lib/tenant";
-import { resolveContactLinks } from "@/lib/contact";
-import { getTeachers } from "@/lib/teachers";
-import { getLocale } from "next-intl/server";
 
 export async function generateMetadata() {
   const tenant = await getCurrentTenant();
@@ -23,30 +9,6 @@ export async function generateMetadata() {
   };
 }
 
-export default async function AngstPage() {
-  const [tenant, locale] = await Promise.all([getCurrentTenant(), getLocale()]);
-  const { emailHref } = resolveContactLinks(tenant);
-  const [events, teachersRaw] = await Promise.all([
-    getEvents(tenant.tmw_center_ids),
-    tenant.show_teachers ? getTeachers(locale, tenant) : Promise.resolve([]),
-  ]);
-  const teachers = [...teachersRaw].sort(() => Math.random() - 0.5);
-  const nextDates = formatNextDates(events, 2, locale);
-
-  return (
-    <main>
-      <PageClient
-        initialTheme="angst"
-        nextDates={nextDates}
-        conversionSlot={<><InfoabendPreview /><Events events={events} emailHref={emailHref} /></>}
-      />
-      <Testimonials testimonials={getTestimonials("angst")} />
-      <WhyTm />
-      <WasAndereSagen />
-      <WissenschaftSection />
-      {tenant.show_teachers && <Teachers teachers={teachers} centerName={tenant.center_banner_label ?? `TM Center ${tenant.city}`} />}
-      <HowItWorks />
-      <AbschlussCta />
-    </main>
-  );
+export default function AngstPage() {
+  return <ThemePage theme="angst" />;
 }
