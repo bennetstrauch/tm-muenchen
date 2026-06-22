@@ -82,6 +82,21 @@ type VorlageRow = {
   reminder_body2: string | null;
 };
 
+type InfoAnfrageRow = {
+  id: string;
+  tenant: string;
+  locale: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  message: string | null;
+  source: string;
+  tmw_registration_id: string | null;
+  news_subscribed: boolean;
+  city: string | null;
+  created_at: string;
+};
+
 type InfoAnmeldungRow = {
   id: string;
   tenant: string;
@@ -183,6 +198,12 @@ export type Database = {
         Row: InfoAnmeldungRow;
         Insert: Omit<InfoAnmeldungRow, "id" | "created_at">;
         Update: Partial<Omit<InfoAnmeldungRow, "id" | "created_at">>;
+        Relationships: [];
+      };
+      info_anfragen: {
+        Row: InfoAnfrageRow;
+        Insert: Omit<InfoAnfrageRow, "id" | "created_at">;
+        Update: Partial<Omit<InfoAnfrageRow, "id" | "created_at">>;
         Relationships: [];
       };
     };

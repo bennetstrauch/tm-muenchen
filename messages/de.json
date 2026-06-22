@@ -94,7 +94,12 @@
     "typeOnline": "Online",
     "typePraesenz": "Vor Ort",
     "timeDisplay": "{time} Uhr",
-    "showAll": "Alle {count} weiteren Termine zeigen"
+    "showAll": "Alle {count} weiteren Termine zeigen",
+    "infoAnfrageAvailability": "Wann hast du Zeit? (optional)",
+    "infoAnfragePlaceholder": "z.B. Werktags abends, oder am Wochenende …",
+    "infoAnfrageSubmit": "Anfrage senden",
+    "infoAnfrageSuccessTitle": "Danke für deine Anfrage!",
+    "infoAnfrageSuccessBody": "Wir melden uns bald bei dir und finden gemeinsam einen Termin, der zu dir passt."
   },
   "WasAndereSagen": {
     "heading": "Was Ärzte & TM-Praktizierende sagen",

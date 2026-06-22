@@ -94,7 +94,12 @@
     "typeOnline": "En ligne",
     "typePraesenz": "En présentiel",
     "timeDisplay": "{time} h",
-    "showAll": "Afficher les {count} autres dates"
+    "showAll": "Afficher les {count} autres dates",
+    "infoAnfrageAvailability": "Quand es-tu disponible ? (optionnel)",
+    "infoAnfragePlaceholder": "ex. en semaine le soir, ou le week-end …",
+    "infoAnfrageSubmit": "Envoyer la demande",
+    "infoAnfrageSuccessTitle": "Merci pour ta demande !",
+    "infoAnfrageSuccessBody": "Nous te recontacterons bientôt pour trouver un créneau qui te convient."
   },
   "Trustpilot": {
     "heading": "Ce qu'ils en disent",

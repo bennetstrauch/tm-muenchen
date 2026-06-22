@@ -11,14 +11,12 @@ import AbschlussCta from "@/components/abschluss-cta";
 import { getEvents, formatNextDates } from "@/lib/events";
 import { getTestimonials } from "@/content";
 import { getCurrentTenant } from "@/lib/tenant";
-import { resolveContactLinks } from "@/lib/contact";
 import { getTeachers } from "@/lib/teachers";
 import { getLocale } from "next-intl/server";
 import type { ThemeKey } from "@/content";
 
 export default async function ThemePage({ theme }: { theme: ThemeKey }) {
   const [tenant, locale] = await Promise.all([getCurrentTenant(), getLocale()]);
-  const { emailHref } = resolveContactLinks(tenant);
   const [events, teachersRaw] = await Promise.all([
     getEvents(tenant.tmw_center_ids),
     tenant.show_teachers ? getTeachers(locale, tenant) : Promise.resolve([]),
@@ -31,7 +29,7 @@ export default async function ThemePage({ theme }: { theme: ThemeKey }) {
       <PageClient
         initialTheme={theme}
         nextDates={nextDates}
-        conversionSlot={<><InfoabendPreview /><Events events={events} emailHref={emailHref} /></>}
+        conversionSlot={<><InfoabendPreview /><Events events={events} /></>}
       />
       <Testimonials testimonials={getTestimonials(theme)} />
       <WhyTm />

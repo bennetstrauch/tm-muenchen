@@ -14,7 +14,6 @@ import { getLocale } from "next-intl/server";
 import { getTeachers } from "@/lib/teachers";
 import { getTestimonials } from "@/content";
 import { getCurrentTenant } from "@/lib/tenant";
-import { resolveContactLinks } from "@/lib/contact";
 
 export default async function Home() {
   const locale = await getLocale();
@@ -26,14 +25,13 @@ export default async function Home() {
   const teachers = [...teachersRaw].sort(() => Math.random() - 0.5);
 
   const nextDates = formatNextDates(events, 2, locale);
-  const { emailHref } = resolveContactLinks(tenant);
 
   return (
     <main>
       <PageClient
         initialTheme="stress"
         nextDates={nextDates}
-        conversionSlot={<><InfoabendPreview /><Events events={events} emailHref={emailHref} /></>}
+        conversionSlot={<><InfoabendPreview /><Events events={events} /></>}
       />
       <Testimonials testimonials={getTestimonials("stress")} />
       <WhyTm />
