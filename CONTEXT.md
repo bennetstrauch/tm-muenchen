@@ -474,6 +474,20 @@ Why `post.meditation.de` and not `info.meditation.de`: `info.meditation.de` is t
 
 `tenants.from_email` stores the Resend sender address per tenant, used only for Veranstaltungen emails. Format: `"TM {City} <{slug}@post.meditation.de>"` (Resend supports display-name format). Example: `TM München <muenchen@post.meditation.de>`. Tenants without a meditators section (e.g. `deutschland`) leave `from_email` blank.
 
+## Copy-Editor
+
+A tenant admin who reviews and edits global landing page copy. Currently: Jochen (Freiburg center admin, TM teacher). Copy edits are global — they affect all tenants because `de.json` is shared.
+
+The admin "Texte" tab exposes a curated **copy subset** (defined in `copy-subset.ts`) — the sections of `de.json` a copy editor would legitimately change (e.g. ForWhom descriptions, WhyTm benefits, HowItWorks steps). UI chrome, aria labels, and format strings are excluded. Adding a new section to the editable subset requires a deliberate code change.
+
+On save, the admin commits the updated `de.json` via GitHub API → auto-translate Action fires → EN/FR/ES updated automatically. See ADR 0008.
+
+## Copy-Änderungsbenachrichtigung
+
+An automated email sent to the copy editor (Jochen) when `de.json` changes on `main` via a push that was NOT made by the copy editor or the auto-translate bot. Lists changed strings as old → new pairs in German. Sent via Resend. Triggered by a GitHub Action (separate from translate.yml).
+
+Purpose: keeps Jochen informed when Bennet adds new sections or rewrites existing copy, so he can review it for accuracy and tone.
+
 ## Footer
 
 A slim footer shown on the landing page and all theme variants (site layout), but **not** on `/events`. Contains three things:
