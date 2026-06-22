@@ -350,18 +350,21 @@ One hashed password per tenant row. Admin logs in at their own domain's `/admin`
 
 All operational data tables include a `tenant` column. Queries always filter `WHERE tenant = current_tenant`. Center admins see only their own data. Super-admin sees across all tenants via a tenant filter.
 
-Affected tables: `veranstaltungen`, `anmeldungen`, `info_anmeldungen`, `vorlagen`, `teacher_languages`. See ADR 0005 for the migration of Veranstaltungen and Anmeldungen from Google Sheets.
+Affected tables: `veranstaltungen`, `anmeldungen`, `info_anmeldungen`, `info_anfragen`, `vorlagen`, `teacher_languages`. See ADR 0005 for the migration of Veranstaltungen and Anmeldungen from Google Sheets.
 
 ### Registration data model
 
-Two distinct registration types with separate storage:
+Three distinct registration types with separate storage:
 
 | Type | Route | Primary | Secondary |
 |---|---|---|---|
 | **Infoabend** | `/api/register` | TMW API (system of record) | Supabase `info_anmeldungen` (platform metadata) |
+| **Individueller Info-Termin** | `/api/info-anfrage` | TMW API for DE; Supabase for all | Emails via Resend |
 | **Veranstaltungen** | `/api/register-event` | Supabase `anmeldungen` | — |
 
-**`info_anmeldungen`** is a full backup of each Infoabend registration plus platform metadata. Write to TMW is primary and fatal; Supabase write is secondary and non-fatal. Google Sheets logging is removed once this table is live. Fields: `tenant`, `locale`, `has_consent`, `meta_pixel_event_id`, `tmw_registration_id` (returned by TMW on booking), `name`, `email`, `phone`, `event_date`, `event_time`, `event_type`, `source` (hostname), `news_subscribed`, `created_at`.
+**`info_anmeldungen`** is a full backup of each Infoabend registration plus platform metadata. Write to TMW is primary and fatal; Supabase write is secondary and non-fatal. Fields: `tenant`, `locale`, `has_consent`, `meta_pixel_event_id`, `tmw_registration_id` (returned by TMW on booking), `name`, `email`, `phone`, `event_date`, `event_time`, `event_type`, `source` (hostname), `news_subscribed`, `created_at`.
+
+**`info_anfragen`** stores individual appointment requests. Fields: `tenant`, `locale`, `name`, `email`, `phone`, `message` (availability note), `source`, `tmw_registration_id`, `news_subscribed`, `city`, `created_at`. Supabase write is non-fatal.
 
 **`anmeldungen`** is the system of record for Veranstaltungen registrations (internal center events not managed in TMW). Fields: `tenant`, `event_id`, `event_title`, `event_date`, `name`, `email`, `phone`, `tm_lehrer`, `datum_erlernen`.
 
@@ -384,6 +387,22 @@ On submit, `/api/register`:
 6. Fires CAPI Lead event — non-fatal
 
 TMW handles all Infoabend confirmation, reminder, and Leiter-Benachrichtigung emails automatically. Resend is not used for Infoabend registrations.
+
+## Individueller Info-Termin
+
+A flow for visitors who want a personal appointment rather than a group Infoabend. Triggered by "Individuellen Termin anfragen" in the events section — an inline-expanding form (no page navigation) with fields: Name, E-Mail, Telefon (optional), Verfügbarkeit free-text (optional), Newsletter-Checkbox.
+
+On submit, `POST /api/info-anfrage`:
+1. Validates name + email — 400 if missing
+2. Splits name + derives zip_code from Vercel city header
+3. **DE locale only**: calls TMW `POST /api/infobooking` via `requestInfoTermin()` — fatal if fails. TMW sends their own confirmation email to the visitor.
+4. Writes to `info_anfragen` — non-fatal
+5. Sends center notification email (always, German) to `tenant.contact_email` via Resend
+6. **Non-DE locales only**: sends warm user confirmation email in visitor's locale via Resend. DE skipped because TMW already sends one.
+
+`IndividualAppointment` component in `events.tsx` appears in two places: empty-events state and below the event list. State machine: `idle | submitting | success | error`, same pattern as `RegistrationForm`.
+
+Email strings for this flow live in `lib/email-info-anfrage.ts` (inline string map, same pattern as `lib/email.ts`). TMW infobooking client: `lib/tmw-infobooking.ts` → `requestInfoTermin()`. Data layer: `lib/info-anfragen.ts` → `insertInfoAnfrage()`.
 
 ### Teachers (multi-tenant)
 
@@ -424,6 +443,9 @@ Email responsibilities after TMW Write-Access integration:
 | Infoabend Bestätigung | TMW (automatic on registration write) |
 | Infoabend Erinnerung | TMW (automatic on registration write) |
 | Infoabend Leiter-Benachrichtigung | TMW (automatic on registration write) |
+| Info-Anfrage Bestätigung (DE) | TMW (automatic via infobooking API) |
+| Info-Anfrage Bestätigung (EN/FR/ES) | Resend (us) — warm/personal tone |
+| Info-Anfrage Center-Benachrichtigung | Resend (us) — always, German |
 | Veranstaltungen Bestätigung | Resend (us) |
 | Veranstaltungen Erinnerung | Resend (us) |
 | Veranstaltungen Leiter-Benachrichtigung | Resend (us) — Magic Link email |
