@@ -25,8 +25,8 @@
     "collapse": "Show less"
   },
   "Hero": {
-    "badge": "The only technique of its kind.",
-    "cta": "Find a free info session",
+    "badge": "The only technique of its kind",
+    "cta": "Book your free info session",
     "learnMore": "Learn more about TM",
     "nextDatesPrefix": "Upcoming dates:",
     "nextDatePrefix": "Next date:"
@@ -34,7 +34,7 @@
   "TrustBadges": {
     "badge0": "Personal instruction",
     "badge1": "Simple and effortless",
-    "badge2": "Practiced by millions worldwide",
+    "badge2": "Practised by millions worldwide",
     "badge3": "No concentration required",
     "badge4": "No need to stop your thoughts",
     "badge5": "400+ scientific studies",
@@ -51,39 +51,39 @@
     "tab3": "Depression",
     "tab4": "Inner joy",
     "moreThemes": "More topics",
-    "item0Title": "You're keeping it together — but inside you're always wound tight?",
-    "item0Description": "• You sleep badly, even though you're exhausted.\n• You never really switch off — your mind just keeps running.\n• Small things throw you off faster than you'd like.\n• You're craving real rest, not just distraction.\n\nTM gives you 20 minutes of deep stillness every day — and your nervous system starts to genuinely recover.",
+    "item0Title": "You're keeping it together — but inside you're constantly on edge?",
+    "item0Description": "• You sleep badly, even though you're exhausted.\n• You never really switch off — your mind just keeps going.\n• Small things throw you off balance more than you'd like.\n• You're longing for real rest, not just distraction.\n\nTM gives you 20 minutes of deep stillness every day — and your nervous system starts to recover in a lasting way.",
     "item1Title": "You can feel the stress taking a toll on your body?",
-    "item1Description": "• Your blood pressure is too high — or you sense it soon will be.\n• You wake up in the morning already drained.\n• Headaches, tension, poor sleep — it's all connected.\n• You want to make a change, but another health project sounds like more effort.\n\nTM is the opposite of effort: sit for 20 minutes, close your eyes — and your body restores itself.",
-    "item2Title": "You don't want promises — you want evidence?",
-    "item2Description": "• You're sceptical about meditation — and fair enough.\n• You've tried things before that didn't deliver.\n• You want to know: has this actually been studied? With real participants and control groups?\n• Over 400 studies at universities including Harvard and Stanford: blood pressure, cortisol, sleep, heart health.\n\nTM is the most researched meditation technique in the world — its effects are documented, not just claimed.",
-    "item3Title": "Some days you feel empty — even when nothing's wrong?",
-    "item3Description": "• Getting out of bed is hard, even though nothing bad has happened.\n• You function on the outside, but inside you don't have the energy for the things that matter to you.\n• You feel like you're constantly holding yourself together — and you're not sure how much longer you can.\n• Joy comes less often than it should.\n\nTM isn't a substitute for professional support — but many people find: deeper calm, more ease, and a renewed sense of themselves.",
-    "item4Title": "You want a practical path to inner fulfilment.",
-    "item4Description": "The first stage of enlightenment is complete inner contentment and clarity — and it's already within each of us. We just need to know how to get there. TM gives you direct, effortless access. We experience our innermost nature — pure bliss. This happens during TM in deep stillness, both physical and mental. From there, the body can rest and release deeply accumulated stress. The result: we become more and more capable of living the immense joy within us — and unfolding it steadily in everyday life."
+    "item1Description": "• Your blood pressure is too high — or you know it soon will be.\n• You wake up in the morning already drained.\n• Headaches, tension, poor sleep — it's all connected.\n• You want to make a change, but another health project sounds like more effort.\n\n20 minutes sitting comfortably, practising the technique — and your body starts to restore itself.",
+    "item2Title": "You don't want promises — you want proof?",
+    "item2Description": "• You're sceptical about meditation — and rightly so.\n• You've tried things before that didn't deliver.\n• You want to know: has this actually been studied? With real people and control groups?\n• Over 400 studies at universities including Harvard and Stanford — covering blood pressure, cortisol, sleep, and heart health.\n\nTM is the most researched meditation technique in the world. Its effects are documented, not just claimed.",
+    "item3Title": "Some days you feel empty — even when nothing's really wrong?",
+    "item3Description": "• Getting out of bed is hard, even when nothing bad has happened.\n• You function on the outside, but inside you don't have the energy for what matters to you.\n• You feel like you're constantly holding yourself together — and you don't know how much longer you can.\n• Joy comes less often than it should.\n\nTM isn't a substitute for professional support — but many people find that it brings deeper calm, a lighter feeling, and a greater sense of connection to themselves.",
+    "item4Title": "You want a practical path to inner fulfilment",
+    "item4Description": "The first stage of enlightenment — complete inner contentment and clarity — is already dormant within each of us. We just need to know how to get there. TM gives you direct, effortless access. We experience our innermost nature: pure bliss. This happens during TM in deep stillness, both physical and mental. It allows the body to regenerate deeply and release accumulated stress. The result: we gradually become more able to live the immense joy within us in everyday life — and to let it grow."
   },
   "WhyTm": {
     "eyebrow": "Why TM?",
     "heading": "What makes TM unique",
     "subheading": "Transcendental Meditation is fundamentally different from other techniques.",
-    "benefit0Title": "Effortless — no concentration required",
-    "benefit0Short": "Most meditation techniques demand focus or willpower. TM is different: the mind is allowed to settle completely naturally — without effort. That's why so many people find TM surprisingly easy to learn.",
-    "benefit0Expanded": "Because the technique is effortless, the mind moves spontaneously towards quieter levels of thought. Meditation happens on its own — not through discipline. That makes TM accessible even to people who haven't had success with other techniques.",
+    "benefit0Title": "Effortless — no concentration needed",
+    "benefit0Short": "Most meditation techniques require focus or willpower. TM is different: the mind is allowed to settle completely naturally — without any effort. That's why so many people find TM surprisingly easy to learn.",
+    "benefit0Expanded": "Because the technique is effortless, the mind spontaneously moves toward quieter levels of thought. Meditation happens by itself — not through discipline. That's what makes TM accessible even to people who haven't had success with other techniques.",
     "benefit1Title": "Deeper than sleep — real rest for your body",
-    "benefit1Short": "During TM, the body reaches a state of deep rest that studies show is deeper than sleep — while the mind stays awake and clear. In that stillness, the nervous system releases accumulated stress.",
-    "benefit1Expanded": "This state is measurably different from relaxation, sleep, or concentration. Many people notice it directly: deep stillness, clarity, fresh energy — often before they're even aware of the difference it's making in daily life.",
+    "benefit1Short": "During TM, the body reaches a state of deep rest that studies show is more profound than sleep — while the mind stays awake and alert. In this stillness, the nervous system releases accumulated stress.",
+    "benefit1Expanded": "This state is measurably different from relaxation, sleep, or concentration. Many people notice deep stillness, clarity, and fresh energy — even before they consciously feel the difference in daily life.",
     "benefit2Title": "Happy from the inside out",
-    "benefit2Short": "Every person carries a reservoir of deep contentment within — a wellspring of joy that TM makes accessible. More inner satisfaction, less irritability in daily life.",
-    "benefit2Expanded": "What philosophers, mystics, and sages have described for thousands of years becomes something concrete and lasting through TM. And it's not just experiential — it's scientifically measurable.",
-    "benefit3Title": "Think clearer, react calmer",
-    "benefit3Short": "Studies consistently show that regular practitioners respond more calmly under stress, make sharper decisions, and think more creatively. This isn't self-suggestion — it shows up in measurable brain activity.",
-    "benefit3Expanded": "Research shows that TM improves coordination between different areas of the brain. This more integrated way of functioning has been documented in elite athletes, executives, and creatives who practise TM regularly.",
-    "benefit4Title": "Release stress — even the deep-seated kind",
-    "benefit4Short": "TM doesn't just ease acute stress — it helps dissolve pressure that's built up over years. Many people report less anxiety, better sleep, and greater resilience.",
-    "benefit4Expanded": "TM has been studied for stress-related conditions and trauma recovery — including PTSD. The deep physiological rest it produces supports the body's natural self-regulation in ways other relaxation techniques simply can't match.",
+    "benefit2Short": "Every person carries a reservoir of pure contentment within — an ocean of joy that TM makes accessible, bringing more inner satisfaction and less irritability day to day.",
+    "benefit2Expanded": "What philosophers, mystics, and sages have described for thousands of years becomes concrete and lasting through TM. And it's not just experiential — it's scientifically measurable.",
+    "benefit3Title": "Think clearer. React calmer.",
+    "benefit3Short": "Studies show that regular practitioners respond more calmly under stress, make sharper decisions, and think more creatively. This isn't self-suggestion — it shows up in measurable brain activity.",
+    "benefit3Expanded": "Research shows that TM improves coordination between different areas of the brain. This more integrated functioning has been documented in elite athletes, executives, and creatives who practise TM regularly.",
+    "benefit4Title": "Release stress — even the deep-rooted kind",
+    "benefit4Short": "TM doesn't just ease acute stress — it also dissolves pressure that's built up over time. Many people report less anxiety, better sleep, and greater resilience.",
+    "benefit4Expanded": "TM has been studied for stress-related conditions and trauma processing — including PTSD. The deep physiological rest it produces supports the body's natural self-regulation in ways other relaxation techniques simply can't match.",
     "benefit5Title": "400+ studies at leading universities",
     "benefit5Short": "Transcendental Meditation is the most researched meditation technique in the world. Areas of study include stress, heart health, brain function, performance, and resilience.",
-    "benefit5Expanded": "Because TM is taught in a standardised way, it can be studied more rigorously than many other approaches. Research has been published in journals including the American Journal of Cardiology and the International Journal of Neuroscience."
+    "benefit5Expanded": "Because TM is taught in a standardised way, it can be studied more rigorously than many other approaches. Findings have been published in journals including the American Journal of Cardiology and the International Journal of Neuroscience."
   },
   "HowItWorks": {
     "eyebrow": "The path",
@@ -96,38 +96,38 @@
     "step2Title": "Meditate at home every day",
     "step2Description": "20 minutes, sitting comfortably, twice a day. No app, no guidance, no focusing — just effortless, independent practice.",
     "step3Title": "The benefits unfold",
-    "step3Description": "With regular practice, the calm carries over into daily life: more energy, more clarity — even in stressful moments.",
-    "bottomCta": "Attend an info session"
+    "step3Description": "With regular practice, the calm carries into everyday life: more energy, more clarity — even in stressful moments.",
+    "bottomCta": "Book your info session"
   },
   "Events": {
     "heading": "Your info session",
-    "cta": "Save your spot",
-    "empty": "No upcoming dates at the moment. Feel free to reach out to us directly.",
+    "cta": "Reserve your spot",
+    "empty": "No upcoming sessions scheduled. Feel free to reach out to us directly.",
     "close": "Close ×",
     "individualAppointment": "Request a personal appointment",
     "formName": "First and last name *",
     "formEmail": "Email *",
     "formPhone": "Phone (optional)",
-    "formNewsSubscribed": "Yes, I would like to receive the newsletter.",
+    "formNewsSubscribed": "Yes, I'd like to receive the newsletter.",
     "formSubmit": "Sign me up",
     "formSubmitting": "Sending…",
     "formCancel": "Cancel",
     "formSuccessTitle": "You're registered!",
     "formSuccessBody": "We've sent a confirmation to your email address.",
-    "formErrorUnknown": "Unknown error",
+    "formErrorUnknown": "An unknown error occurred",
     "formErrorFailed": "Registration failed.",
     "typeOnline": "Online",
-    "typePraesenz": "In Person",
+    "typePraesenz": "In person",
     "timeDisplay": "{time}",
-    "showAll": "Show all {count} more dates"
+    "showAll": "Show all {count} dates"
   },
   "Testimonials": {
-    "quote0": "Transcendental Meditation allows me to go inward and find a depth of stillness and peace I don't experience anywhere else.",
+    "quote0": "Transcendental Meditation allows me to go inward and find a depth of rest and peace I don't experience anywhere else.",
     "detail0": "Comedian"
   },
   "Teachers": {
     "eyebrow": "TM Center Munich",
-    "heading": "Your teachers",
+    "heading": "Your teacher",
     "readMore": "Read more",
     "collapse": "Show less"
   },
@@ -139,17 +139,17 @@
   },
   "AbschlussCta": {
     "heading": "Find out if TM is right for you",
-    "body": "Join a free info session — no commitment, no pressure.",
+    "body": "Come to a free info session — no commitment.",
     "cta": "Reserve your spot"
   },
   "Wissenschaft": {
     "eyebrow": "Science & Research",
     "heading": "TM is one of the most thoroughly researched meditation techniques in the world",
     "body": "Numerous studies at leading universities have examined how TM affects stress, mental strain, and overall wellbeing.",
-    "bullet0": "Latest findings on stress, heart health, and brain function",
+    "bullet0": "Current research findings on stress, heart health, and brain function",
     "bullet1": "Real-world experiences from teachers and meditators",
     "bullet2": "How TM differs from other techniques — and why that difference is scientifically measurable",
-    "cta": "Learn more at an info session"
+    "cta": "Learn more at the info session"
   },
   "InfoabendPreview": {
     "heading": "What to expect at the info session",
@@ -157,8 +157,8 @@
     "box0Value": "Online",
     "box1Label": "Cost",
     "box1Value": "Free & no obligation",
-    "point0": "What makes TM unique",
-    "point1": "How TM can work for you",
+    "point0": "Why TM is unique",
+    "point1": "Why TM is right for you",
     "point2": "Space for your story and questions"
   },
   "Nav": {
@@ -190,42 +190,42 @@
       "label": "Stress",
       "headline0": "Finally switch off. Really.",
       "headline1": "No effort required.",
-      "subtitle": "rest deeper than sleep"
+      "subtitle": "rests you deeper than sleep"
     },
     "innereFreude": {
       "label": "Inner Joy",
-      "headline0": "Inside you is an ocean of boundless joy.",
-      "headline1": "TM takes you there.",
+      "headline0": "There's an ocean of limitless joy inside you.",
+      "headline1": "TM gives you access.",
       "subtitle": "Dive into your own happiness — simply and reliably"
     },
     "schlaf": {
       "label": "Sleep",
       "headline0": "Are you actually sleeping?",
-      "headline1": "No sleeping pills. No willpower.",
+      "headline1": "No sleep aids. No willpower.",
       "subtitle": "TM gives your nervous system the deep rest that sleep alone often can't deliver."
     },
     "fokus": {
       "label": "Focus",
       "headline0": "Head full, but not clear?",
-      "headline1": "Clarity can't be forced — it just happens.",
-      "subtitle": "TM doesn't tidy up your mind — it lets order emerge on its own: sharper focus, quieter thoughts."
+      "headline1": "Clarity can't be forced — it just appears.",
+      "subtitle": "TM doesn't declutter your mind — it lets clarity emerge on its own: sharper focus, quieter thoughts."
     },
     "erschoepfung": {
       "label": "Exhaustion",
-      "headline0": "Drained — even when you've done nothing?",
+      "headline0": "Drained — even though you barely did a thing?",
       "headline1": "Real energy. From within.",
-      "subtitle": "TM connects you to genuine inner stillness — not as a technique, but as your natural state."
+      "subtitle": "TM gives you access to genuine inner stillness — not as a technique, but as a natural state."
     },
     "angst": {
       "label": "Anxiety",
-      "headline0": "Ready for the restlessness to stop?",
-      "headline1": "No willpower. No concentration.",
+      "headline0": "Ready to quiet the noise inside?",
+      "headline1": "No willpower needed. No concentration required.",
       "subtitle": "TM calms your nervous system from within — no willpower, no concentration needed."
     }
   },
   "Footer": {
-    "tagline": "Learn more about Transcendental Meditation on the national website.",
-    "cta": "Go to national website"
+    "tagline": "Learn more about Transcendental Meditation at",
+    "cta": "meditation.de"
   },
   "LegalPages": {
     "localeNotice": "This page is only available in German."
@@ -235,15 +235,15 @@
     "readMore": "Read more",
     "collapse": "Show less",
     "sourceLabel": "Source",
-    "quote0": "As a child and teenager I was constantly ill — a weak immune system, frequent hospital stays, always exhausted. A year after I started meditating, all of that was gone. My immune system became incredibly strong, and today, in old age, I'm healthier and more capable than I was in my youth.",
+    "quote0": "As a child and teenager I was constantly ill — immune deficiency, frequent hospital stays, always exhausted. A year after I started meditating, that was over. My immune system became remarkably strong, and today, in later life, I'm healthier and more capable than I ever was as a young person.",
     "quote1": "Transcendental Meditation as preparation. Because when the mind comes from a place of complete stillness, it has a different kind of focus.",
     "extendedQuote1": "I notice a growing sense of development in every area of my life. Even in difficult situations I keep a clear head, and I don't feel myself ageing in any way. At 67 I have as much energy as I did at 40, and I can feel my consciousness continuing to expand.",
-    "quote2": "Meditation has changed my life. Nothing has opened my eyes the way Transcendental Meditation has. It makes me calm and happy, and brings quiet and peace to my rather chaotic life!",
-    "quote3": "TM is great for your health and genuinely fits into everyday life. Anyone who cares about their wellbeing and quality of life should meditate. Of all the forms of meditation I've tried, TM stands out for its simplicity and effectiveness.",
-    "quote4": "I haven't found anything more efficient or reliable for beating stress and fatigue — or for more joy, vitality, and creativity — than TM. It's the foundation of a fulfilling personal and professional life.",
-    "extendedQuote4": "As a special bonus, I experienced an opening inward — a discovery of my own self and my spiritual dimension. That kind of enrichment can't be bought. For over 42 years TM has been the quiet, dependable companion of my life, and it will continue to be.",
-    "quote5": "And it was a gift for life. Something you can come back to whenever you need it.",
-    "extendedQuote5": "In my most chaotic moments, meditation helped me find pockets of stillness — and I'd love to see it offer young people in a restless world a quiet place to retreat to.",
-    "extendedQuote0": "I notice steady growth in every area of my life. Even in tough situations I keep a clear head, and I don't feel myself ageing in the slightest. At 67, I have as much energy as I did at 40, and I can feel my consciousness continuing to expand."
+    "quote2": "Meditation has changed my life. Nothing has opened my eyes the way Transcendental Meditation has. It makes me calm and happy, and brings quiet and peace to my pretty chaotic life.",
+    "quote3": "TM is great for your health and fits easily into everyday life. Anyone who cares about their wellbeing and quality of life should meditate. Of all the forms of meditation I've tried, TM stands out for its simplicity and effectiveness.",
+    "quote4": "I haven't found anything more efficient or reliable for dealing with stress and fatigue — or for bringing more joy, vitality, and creativity into life — than TM. It's the foundation of a successful personal and professional life.",
+    "extendedQuote4": "A special bonus was the opening inward — discovering my inner self, my spiritual dimension. That's an enrichment no amount of money can buy. TM has been the quiet, dependable companion of my life for over 42 years, and it will continue to be.",
+    "quote5": "And it was a gift for life. It's something you can always come back to.",
+    "extendedQuote5": "In moments of madness, meditation helped me find moments of stillness — and I'd love for it to offer young people in a restless world a quiet place to retreat to as well.",
+    "extendedQuote0": "I feel a steady growth in every area of my life. Even in difficult situations I keep my perspective, and I don't feel myself aging in any way. At 67 I have as much energy as I did at 40, and I sense a continuous expansion of my consciousness."
   }
 }
