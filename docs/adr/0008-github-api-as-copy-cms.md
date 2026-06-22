@@ -34,5 +34,5 @@ A **second GitHub Action** (separate from translate.yml) fires on `de.json` chan
 
 - A GitHub fine-grained token must be rotated if revoked (low operational burden for infrequent edits)
 - Simultaneous edits by Jochen and Bennet could cause a conflict — acceptable given infrequent use; last write wins, git history preserves both
-- Any tenant admin can reach the Texte tab; the UI notes that edits are global (all centers)
+- The Texte tab is gated by `tenants.can_edit_copy` (boolean, default false) — currently only Freiburg has this enabled. Other center admins never see the tab.
 - Adding a new editable section requires a deliberate code step (add to `copy-subset.ts`) — this is a feature, not a bug

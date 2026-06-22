@@ -480,6 +480,8 @@ A tenant admin who reviews and edits global landing page copy. Currently: Jochen
 
 The admin "Texte" tab exposes a curated **copy subset** (defined in `copy-subset.ts`) — the sections of `de.json` a copy editor would legitimately change (e.g. ForWhom descriptions, WhyTm benefits, HowItWorks steps). UI chrome, aria labels, and format strings are excluded. Adding a new section to the editable subset requires a deliberate code change.
 
+The Texte tab is **only visible to tenants with `can_edit_copy = true`** (a column in the `tenants` table, default false). Currently only Freiburg has this enabled. This prevents other center admins from accidentally editing global copy.
+
 On save, the admin commits the updated `de.json` via GitHub API → auto-translate Action fires → EN/FR/ES updated automatically. See ADR 0008.
 
 ## Copy-Änderungsbenachrichtigung
