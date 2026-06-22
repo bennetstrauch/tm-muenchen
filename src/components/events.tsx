@@ -12,12 +12,11 @@ const INPUT_CLS = `
   bg-white
 `;
 
-function IndividualAppointment() {
+function IndividualAppointment({ emailHref }: { emailHref: string }) {
   const t = useTranslations("Events");
-  const { contact } = content;
   return (
     <a
-      href={contact.emailHref}
+      href={emailHref}
       className="
         group flex items-center justify-between gap-4
         px-5 py-4 mt-4
@@ -223,8 +222,10 @@ function EventRow({
 
 const INITIAL_COUNT = 3;
 
-export default function Events({ events }: { events: TMEvent[] }) {
+export default function Events({ events, emailHref }: { events: TMEvent[]; emailHref?: string }) {
   const t = useTranslations("Events");
+  const { contact } = content;
+  const resolvedEmailHref = emailHref ?? contact.emailHref;
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [showAll, setShowAll] = useState(false);
 
@@ -242,7 +243,7 @@ export default function Events({ events }: { events: TMEvent[] }) {
         </div>
 
         {events.length === 0 ? (
-          <IndividualAppointment />
+          <IndividualAppointment emailHref={resolvedEmailHref} />
         ) : (
           <>
             <ul className="divide-y divide-[#DBEAFE] px-4">
@@ -271,7 +272,7 @@ export default function Events({ events }: { events: TMEvent[] }) {
                   {t("showAll", { count: hiddenCount })}
                 </button>
               )}
-              <IndividualAppointment />
+              <IndividualAppointment emailHref={resolvedEmailHref} />
             </div>
           </>
         )}
