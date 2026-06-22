@@ -7,7 +7,7 @@ import HeroBackground from "./hero-background";
 
 let heroHasAnimated = false;
 
-const STRESS_FALLBACK: HeroImage[] = Array.from({ length: 18 }, (_, i) => ({ src: `/hero/stress/${i + 1}.jpg` }));
+const STRESS_FALLBACK: HeroImage[] = [1,2,3,4,5,7,8,9,11,12,14,15,16,17,18].map(n => ({ src: `/hero/stress/${n}.jpg` }));
 
 export default function Hero({
   headline,
