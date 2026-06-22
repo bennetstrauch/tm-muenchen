@@ -95,11 +95,11 @@
     "typePraesenz": "Presencial",
     "timeDisplay": "{time} h",
     "showAll": "Ver las {count} fechas restantes",
-    "infoAnfrageAvailability": "¿Cuándo tienes tiempo? (opcional)",
-    "infoAnfragePlaceholder": "p.ej. entre semana por la tarde, o los fines de semana …",
+    "infoAnfrageAvailability": "¿Cuándo tienes disponibilidad? (opcional)",
+    "infoAnfragePlaceholder": "p. ej. entre semana por la tarde, o los fines de semana…",
     "infoAnfrageSubmit": "Enviar solicitud",
-    "infoAnfrageSuccessTitle": "¡Gracias por tu solicitud!",
-    "infoAnfrageSuccessBody": "Nos pondremos en contacto contigo pronto para encontrar un momento que te venga bien."
+    "infoAnfrageSuccessTitle": "¡Gracias por tu mensaje!",
+    "infoAnfrageSuccessBody": "Nos pondremos en contacto contigo pronto y encontraremos juntos un horario que te venga bien."
   },
   "Trustpilot": {
     "heading": "Lo que dicen otros",
