@@ -6,11 +6,13 @@ import Testimonials from "@/components/testimonials";
 import Events from "@/components/events";
 import InfoabendPreview from "@/components/infoabend-preview";
 import WissenschaftSection from "@/components/wissenschaft";
+import Teachers from "@/components/teachers";
 import AbschlussCta from "@/components/abschluss-cta";
 import { getEvents, formatNextDates } from "@/lib/events";
 import { getTestimonials } from "@/content";
 import { getCurrentTenant } from "@/lib/tenant";
 import { resolveContactLinks } from "@/lib/contact";
+import { getTeachers } from "@/lib/teachers";
 import { getLocale } from "next-intl/server";
 
 export async function generateMetadata() {
@@ -24,7 +26,11 @@ export async function generateMetadata() {
 export default async function AngstPage() {
   const [tenant, locale] = await Promise.all([getCurrentTenant(), getLocale()]);
   const { emailHref } = resolveContactLinks(tenant);
-  const events = await getEvents(tenant.tmw_center_ids);
+  const [events, teachersRaw] = await Promise.all([
+    getEvents(tenant.tmw_center_ids),
+    tenant.show_teachers ? getTeachers(locale, tenant) : Promise.resolve([]),
+  ]);
+  const teachers = [...teachersRaw].sort(() => Math.random() - 0.5);
   const nextDates = formatNextDates(events, 2, locale);
 
   return (
@@ -38,6 +44,7 @@ export default async function AngstPage() {
       <WhyTm />
       <WasAndereSagen />
       <WissenschaftSection />
+      {tenant.show_teachers && <Teachers teachers={teachers} centerName={tenant.center_banner_label ?? `TM Center ${tenant.city}`} />}
       <HowItWorks />
       <AbschlussCta />
     </main>

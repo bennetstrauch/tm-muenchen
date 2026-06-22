@@ -75,7 +75,7 @@
     "bottomCta": "Jetzt Info-Termin besuchen"
   },
   "Events": {
-    "heading": "Dein Infoabend",
+    "heading": "Dein Infotermin",
     "cta": "Platz sichern",
     "empty": "Aktuell keine Termine geplant. Schreib uns gerne direkt an.",
     "close": "Schließen ×",
@@ -97,7 +97,7 @@
     "showAll": "Alle {count} weiteren Termine zeigen"
   },
   "WasAndereSagen": {
-    "heading": "Was Ärzte und TM-Praktizierende sagen",
+    "heading": "Was Ärzte & TM-Praktizierende sagen",
     "readMore": "Mehr lesen",
     "collapse": "Weniger",
     "sourceLabel": "Quelle",
@@ -142,7 +142,7 @@
     "cta": "Beim Info-Termin mehr erfahren"
   },
   "InfoabendPreview": {
-    "heading": "So läuft der Infoabend ab",
+    "heading": "So läuft das Infoevent ab",
     "box0Label": "Format",
     "box0Value": "Online",
     "box1Label": "Kosten",
