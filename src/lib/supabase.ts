@@ -153,6 +153,7 @@ type TenantRow = {
   show_teachers: boolean;
   show_meditators_section: boolean;
   center_banner_label: string | null;
+  can_edit_copy: boolean;
 };
 
 export type Database = {

@@ -75,7 +75,7 @@ export default async function AdminPage({
   // --- Normal session-based access ---
   const cookieStore = await cookies();
   const sessionToken = cookieStore.get('admin-session')?.value;
-  const { tenant, city } = await getCurrentTenant();
+  const { tenant, city, can_edit_copy } = await getCurrentTenant();
 
   if (!sessionToken || !await verifySession(sessionToken, tenant)) {
     redirect('/admin/login');
@@ -120,6 +120,7 @@ export default async function AdminPage({
             eventRegistrations={eventRegistrations}
             initialVorlagen={vorlagen}
             initialEmailActions={emailActions}
+            canEditCopy={can_edit_copy}
           />
         </Suspense>
 

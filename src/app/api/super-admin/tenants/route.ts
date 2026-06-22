@@ -37,6 +37,7 @@ export async function POST(request: Request) {
     show_teachers: body.show_teachers ?? true,
     show_meditators_section: body.show_meditators_section ?? true,
     center_banner_label: body.center_banner_label || null,
+    can_edit_copy: body.can_edit_copy ?? false,
   };
 
   const { data, error } = await getSupabase().from("tenants").insert(row).select().single();

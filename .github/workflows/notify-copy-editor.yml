@@ -1,0 +1,121 @@
+name: Notify copy editor
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - messages/de.json
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check if notification should be skipped
+        id: check
+        run: |
+          AUTHOR=$(git log -1 --format='%ae')
+          MESSAGE=$(git log -1 --format='%s')
+          echo "author=$AUTHOR"
+          echo "message=$MESSAGE"
+          if [[ "$AUTHOR" == "github-actions[bot]@users.noreply.github.com" ]] || \
+             [[ "$AUTHOR" == *"github-actions"* ]] || \
+             [[ "$MESSAGE" == *"[skip-notify]"* ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.check.outputs.skip == 'false'
+        with:
+          node-version: 20
+
+      - name: Compute diff and send notification
+        if: steps.check.outputs.skip == 'false'
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          COPY_EDITOR_EMAIL: ${{ secrets.COPY_EDITOR_EMAIL }}
+        run: |
+          node -e "
+          const fs = require('fs');
+          const { execSync } = require('child_process');
+
+          // Get old and new versions of de.json
+          const newContent = JSON.parse(fs.readFileSync('messages/de.json', 'utf-8'));
+          let oldContent = {};
+          try {
+            const oldRaw = execSync('git show HEAD~1:messages/de.json', { encoding: 'utf-8' });
+            oldContent = JSON.parse(oldRaw);
+          } catch (e) {
+            // First commit touching this file — skip notification
+            process.exit(0);
+          }
+
+          // Flatten nested JSON to dot-notation key-value map
+          function flatten(obj, prefix = '') {
+            return Object.entries(obj).reduce((acc, [k, v]) => {
+              const key = prefix ? prefix + '.' + k : k;
+              if (v && typeof v === 'object' && !Array.isArray(v)) {
+                Object.assign(acc, flatten(v, key));
+              } else {
+                acc[key] = String(v ?? '');
+              }
+              return acc;
+            }, {});
+          }
+
+          const oldFlat = flatten(oldContent);
+          const newFlat = flatten(newContent);
+
+          // Load subset keys from copy-subset config
+          // We inline the keys here to avoid TS compilation in CI
+          const subsetKeys = $(node -e "
+            const path = require('path');
+            // Simple grep for key: lines in the source file
+            const src = require('fs').readFileSync('src/lib/copy-subset.ts', 'utf-8');
+            const keys = [...src.matchAll(/key:\s*'([^']+)'/g)].map(m => m[1]);
+            process.stdout.write(JSON.stringify(keys));
+          ");
+
+          // Find changed keys that are in the subset
+          const changed = subsetKeys.filter(k => oldFlat[k] !== undefined && newFlat[k] !== undefined && oldFlat[k] !== newFlat[k]);
+
+          if (changed.length === 0) {
+            console.log('No subset keys changed — skipping notification');
+            process.exit(0);
+          }
+
+          // Build email body
+          const lines = changed.map(k => {
+            const label = k.split('.').slice(-1)[0];
+            return '  ' + k + ':\n  Vorher: ' + oldFlat[k] + '\n  Nachher: ' + newFlat[k];
+          });
+          const body = 'Hallo Jochen,\n\nfolgende Texte auf der Website wurden geändert:\n\n' + lines.join('\n\n') + '\n\nBitte prüfe, ob Anpassungen nötig sind.\n\nViele Grüße,\nBennet';
+
+          // Send via Resend
+          const res = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + process.env.RESEND_API_KEY,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              from: 'TM München <muenchen@post.meditation.de>',
+              to: process.env.COPY_EDITOR_EMAIL,
+              subject: 'Seitentext geändert',
+              text: body,
+            }),
+          });
+
+          if (!res.ok) {
+            const err = await res.text();
+            console.error('Resend error:', err);
+            process.exit(1);
+          }
+
+          console.log('Notification sent for', changed.length, 'changed key(s):', changed.join(', '));
+          "

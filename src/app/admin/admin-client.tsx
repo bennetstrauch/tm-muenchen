@@ -12,8 +12,9 @@ import InfoRegistrationsTable from './registrations-table';
 import EmailActionsTab from './email-tab';
 import LehrerTab from './lehrer-tab';
 import EinstellungenTab from './einstellungen-tab';
+import TexteTab from './texte-tab';
 
-type Tab = 'info-anmeldungen' | 'veranstaltungen' | 'anmeldungen' | 'vorlagen' | 'emails' | 'lehrer' | 'einstellungen';
+type Tab = 'info-anmeldungen' | 'veranstaltungen' | 'anmeldungen' | 'vorlagen' | 'emails' | 'lehrer' | 'einstellungen' | 'texte';
 
 type Mode =
   | { view: 'list' }
@@ -56,7 +57,7 @@ const EMPTY_FORM: Omit<Veranstaltung, 'id'> = {
   slug: '',
 };
 
-const VALID_TABS: Tab[] = ['info-anmeldungen', 'veranstaltungen', 'anmeldungen', 'vorlagen', 'emails', 'lehrer', 'einstellungen'];
+const VALID_TABS: Tab[] = ['info-anmeldungen', 'veranstaltungen', 'anmeldungen', 'vorlagen', 'emails', 'lehrer', 'einstellungen', 'texte'];
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -1109,6 +1110,7 @@ export default function AdminClient({
   initialEmailActions,
   tokenEventId,
   tokenHeader,
+  canEditCopy = false,
 }: {
   infoRegistrations: Registration[];
   initialEvents: Veranstaltung[];
@@ -1117,6 +1119,7 @@ export default function AdminClient({
   initialEmailActions: EmailAction[];
   tokenEventId?: string;
   tokenHeader?: string;
+  canEditCopy?: boolean;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -1466,6 +1469,11 @@ export default function AdminClient({
             <button className={TAB_CLS(tab === 'einstellungen')} onClick={() => setTab('einstellungen')}>
               Einstellungen
             </button>
+            {canEditCopy && (
+              <button className={TAB_CLS(tab === 'texte')} onClick={() => setTab('texte')}>
+                Texte
+              </button>
+            )}
           </>
         )}
       </div>
@@ -1896,6 +1904,7 @@ export default function AdminClient({
 
       {tab === 'lehrer' && <LehrerTab />}
       {tab === 'einstellungen' && <EinstellungenTab />}
+      {tab === 'texte' && canEditCopy && <TexteTab />}
     </>
   );
 }
