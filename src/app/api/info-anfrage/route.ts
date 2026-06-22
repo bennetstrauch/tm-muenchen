@@ -88,8 +88,8 @@ export async function POST(request: Request) {
     html: buildInfoAnfrageCenterHtml({ name, email, phone, message }),
   }).catch(err => console.error('[info-anfrage] center email failed:', err));
 
-  // Send user confirmation in their locale
-  resend.emails.send({
+  // Send user confirmation — skip DE because TMW already sends their own email
+  if (locale !== 'de') resend.emails.send({
     from: tenant.from_email,
     replyTo: tenant.contact_email || undefined,
     to: email,
