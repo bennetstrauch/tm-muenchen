@@ -32,7 +32,7 @@ MVP scope: Phase 1 narrative sequence only. Branches, leaves, and everything bey
 > Canonical term: **Baum des Lebens** (not "Tree of Life", not "Lebensbaum" as a term — the route is `/lebensbaum` but the concept is "Baum des Lebens")
 
 ## /entdecken
-A new route that duplicates the existing landing page (`/`) with a redesigned hero. Purpose: test the new hero concept without touching the primary conversion page. Strategy: validate on `/entdecken`, then switch `/` if it outperforms.
+A route that duplicates the existing landing page (`/`) with a redesigned hero. Purpose: test the new hero concept without touching the primary conversion page. Strategy: validate on `/entdecken`, then switch `/` if it outperforms.
 
 **Hero differences vs. `/`:**
 - Background: `tm-waves.mp4` looping video (wavy water animation, from Lorenzo project) with dark gradient overlay
@@ -42,6 +42,14 @@ A new route that duplicates the existing landing page (`/`) with a redesigned he
 - "Interaktive Tour starten" button: hidden until `/lebensbaum` is live
 
 **Everything below the hero**: identical to `/`.
+
+**Implementation (shipped 2026-06-23):**
+- Route: `src/app/[locale]/(entdecken)/entdecken/page.tsx` — own route group so it gets a separate layout without affecting `(site)` pages
+- `components/entdecken-hero.tsx` — client component: looping `<video>`, gradient overlay, i18n headline + CTA
+- Transparent TopBar: `ScrollHeader` (`top-bar/scroll-header.tsx`) is a thin client wrapper around `<header>`; it attaches a scroll listener only when `transparent={true}` and exposes `data-transparent` on the element. Sub-components (NavMenu, TopBarLogo, ContactButtons) use `group-data-[transparent=true]:` Tailwind variants for white colouring — no JS, no props on those components.
+- `SiteShell` (`components/site-shell.tsx`) holds the shared layout (TopBar + NavPanel + Footer + StickyCta + CookieBanner). Both `(site)/layout.tsx` and `(entdecken)/layout.tsx` are one-liners that call it; the only difference is `transparentBar={true}` on the latter.
+- `PageClient` gained an optional `heroSlot` prop — passing `null` suppresses the built-in Hero so `EntdeckenPage` can render `EntdeckenHero` above it and reuse everything else unchanged.
+- Copy: `Entdecken.headline` and `Entdecken.cta` live in `de.json` and are included in the copy-subset → editable by Jochen via the Texte tab.
 
 ## Page structure (confirmed)
 Rationale: convince early → remove friction + sign up in the middle → deepen for hesitant visitors late → second-chance CTA at end.
@@ -478,7 +486,7 @@ Why `post.meditation.de` and not `info.meditation.de`: `info.meditation.de` is t
 
 A tenant admin who reviews and edits global landing page copy. Currently: Jochen (Freiburg center admin, TM teacher). Copy edits are global — they affect all tenants because `de.json` is shared.
 
-The admin "Texte" tab exposes a curated **copy subset** (defined in `copy-subset.ts`) — the sections of `de.json` a copy editor would legitimately change (e.g. ForWhom descriptions, WhyTm benefits, HowItWorks steps). UI chrome, aria labels, and format strings are excluded. Adding a new section to the editable subset requires a deliberate code change.
+The admin "Texte" tab exposes a curated **copy subset** (defined in `copy-subset.ts`) — the sections of `de.json` a copy editor would legitimately change (e.g. ForWhom descriptions, WhyTm benefits, HowItWorks steps, Entdecken hero). UI chrome, aria labels, and format strings are excluded. Adding a new section to the editable subset requires a deliberate code change.
 
 The Texte tab is **only visible to tenants with `can_edit_copy = true`** (a column in the `tenants` table, default false). Currently only Freiburg has this enabled. This prevents other center admins from accidentally editing global copy.
 
