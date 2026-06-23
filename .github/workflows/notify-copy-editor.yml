@@ -38,6 +38,7 @@ jobs:
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           COPY_EDITOR_EMAIL: ${{ secrets.COPY_EDITOR_EMAIL }}
+          COPY_EDITOR_FROM_EMAIL: ${{ secrets.COPY_EDITOR_FROM_EMAIL }}
         run: |
           node -e "
           const fs = require('fs');
@@ -96,7 +97,7 @@ jobs:
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              from: 'TM München <muenchen@post.meditation.de>',
+              from: process.env.COPY_EDITOR_FROM_EMAIL,
               to: process.env.COPY_EDITOR_EMAIL,
               subject: 'Seitentext geändert',
               text: body,
