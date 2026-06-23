@@ -1,25 +1,9 @@
 import { checkAdminRequest } from '@/lib/admin-api-gate';
 import { readDeCopy, commitDeCopy, GitHubConflictError } from '@/lib/github-copy';
 import { allSubsetKeys } from '@/lib/copy-subset';
+import { getNestedValue, setNestedValue } from '@/lib/nested';
 
 export const dynamic = 'force-dynamic';
-
-function getNestedValue(obj: Record<string, unknown>, dotPath: string): unknown {
-  return dotPath.split('.').reduce<unknown>((cur, key) => {
-    if (cur && typeof cur === 'object') return (cur as Record<string, unknown>)[key];
-    return undefined;
-  }, obj);
-}
-
-function setNestedValue(obj: Record<string, unknown>, dotPath: string, value: unknown): void {
-  const keys = dotPath.split('.');
-  let cur: Record<string, unknown> = obj;
-  for (let i = 0; i < keys.length - 1; i++) {
-    if (!cur[keys[i]] || typeof cur[keys[i]] !== 'object') cur[keys[i]] = {};
-    cur = cur[keys[i]] as Record<string, unknown>;
-  }
-  cur[keys[keys.length - 1]] = value;
-}
 
 export async function GET(request: Request) {
   if (!await checkAdminRequest(request)) {

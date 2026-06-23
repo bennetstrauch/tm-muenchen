@@ -13,6 +13,7 @@ import EmailActionsTab from './email-tab';
 import LehrerTab from './lehrer-tab';
 import EinstellungenTab from './einstellungen-tab';
 import TexteTab from './texte-tab';
+import { INPUT_CLS } from '@/lib/admin-styles';
 
 type Tab = 'info-anmeldungen' | 'veranstaltungen' | 'anmeldungen' | 'vorlagen' | 'emails' | 'lehrer' | 'einstellungen' | 'texte';
 
@@ -237,7 +238,6 @@ function ImagePicker({
   );
 }
 
-const INPUT_CLS = 'w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#BCA075]';
 const TEXTAREA_CLS = `${INPUT_CLS} resize-y min-h-[70px]`;
 const CHECK_CLS = 'h-4 w-4 accent-[#BCA075]';
 

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import type { TMTeacher } from '@/lib/teachers';
+import { INPUT_CLS as INPUT_BASE } from '@/lib/admin-styles';
 
 const LOCALES = [
   { code: 'en', label: 'English' },
@@ -16,7 +17,7 @@ type TeacherState = {
   overrides: Record<string, string>;
 };
 
-const INPUT_CLS = 'w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#BCA075] resize-y min-h-[60px]';
+const INPUT_CLS = `${INPUT_BASE} resize-y min-h-[60px]`;
 const CHECK_CLS = 'h-4 w-4 accent-[#BCA075]';
 
 export default function LehrerTab() {

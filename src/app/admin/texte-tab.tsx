@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { copySubset } from '@/lib/copy-subset';
-
-const INPUT_CLS = 'w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#BCA075]';
+import { INPUT_CLS } from '@/lib/admin-styles';
 
 type SaveState = 'idle' | 'saving' | 'success' | 'error';
 

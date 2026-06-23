@@ -3,14 +3,8 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
 import { copySubset, allSubsetKeys } from './copy-subset';
+import { getNestedValue } from './nested';
 import de from '../../messages/de.json';
-
-function getNestedValue(obj: Record<string, unknown>, dotPath: string): unknown {
-  return dotPath.split('.').reduce<unknown>((cur, key) => {
-    if (cur && typeof cur === 'object') return (cur as Record<string, unknown>)[key];
-    return undefined;
-  }, obj);
-}
 
 describe('copy-subset-keys.json', () => {
   it('matches allSubsetKeys() so CI workflow stays in sync with the TS definition', () => {

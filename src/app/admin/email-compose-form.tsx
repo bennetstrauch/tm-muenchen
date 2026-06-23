@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import type { EmailAction } from '@/lib/email-actions';
 import type { Veranstaltung } from '@/lib/veranstaltungen';
 import { formatVeranstaltungDate } from '@/lib/format';
+import { INPUT_CLS, TEXTAREA_CLS } from '@/lib/admin-styles';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -14,8 +15,6 @@ export type ComposeTarget =
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const INPUT_CLS = 'w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#BCA075]';
-const TEXTAREA_CLS = `${INPUT_CLS} resize-y`;
 const BTN_GOLD = 'px-4 py-2 bg-[#BCA075] text-white rounded text-sm font-medium hover:bg-[#a88d65] disabled:opacity-40 disabled:cursor-not-allowed';
 const BTN_OUTLINE = 'px-4 py-2 border border-gray-200 rounded text-sm text-gray-600 hover:bg-gray-50';
 

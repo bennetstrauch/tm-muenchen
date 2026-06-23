@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import type { TenantSettings } from '@/lib/tenant';
+import { INPUT_CLS } from '@/lib/admin-styles';
 
 const ALL_LOCALES = [
   { code: 'de', label: 'Deutsch' },
@@ -10,7 +11,6 @@ const ALL_LOCALES = [
   { code: 'es', label: 'Español' },
 ];
 
-const INPUT_CLS = 'w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#BCA075]';
 const CHECK_CLS = 'h-4 w-4 accent-[#BCA075]';
 
 const DEFAULTS: TenantSettings = {
