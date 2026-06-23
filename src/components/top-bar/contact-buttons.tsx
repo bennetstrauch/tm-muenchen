@@ -32,7 +32,7 @@ export default function ContactButtons({
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Instagram"
-        className="flex items-center justify-center w-9 h-9 rounded-full text-[#1A3352]/60 hover:text-[#1A3352] hover:bg-[#1A3352]/8 transition-all duration-200 focus-visible:outline-none"
+        className="flex items-center justify-center w-9 h-9 rounded-full text-[#1A3352]/60 group-data-[transparent=true]:text-white/70 hover:text-[#1A3352] group-data-[transparent=true]:hover:text-white hover:bg-[#1A3352]/8 group-data-[transparent=true]:hover:bg-white/10 transition-all duration-200 focus-visible:outline-none"
       >
         <svg width="19" height="19" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <rect x="1" y="1" width="14" height="14" rx="4" stroke="currentColor" strokeWidth="1" />
@@ -47,7 +47,7 @@ export default function ContactButtons({
           onClick={() => setOpen(v => !v)}
           aria-label="Kontakt"
           aria-expanded={open}
-          className={`flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 focus-visible:outline-none ${
+          className={`flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 focus-visible:outline-none group-data-[transparent=true]:text-white/70 group-data-[transparent=true]:hover:text-white group-data-[transparent=true]:hover:bg-white/10 ${
             open
               ? "text-[#1A3352] bg-[#1A3352]/8"
               : "text-[#1A3352]/60 hover:text-[#1A3352] hover:bg-[#1A3352]/8"

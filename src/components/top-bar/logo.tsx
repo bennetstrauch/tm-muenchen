@@ -14,18 +14,18 @@ export default async function TopBarLogo() {
         ? await getTranslation(tenant.logo_label, locale, 'logo label')
         : tenant.logo_label;
     cityLabel = (
-      <span className="text-[#1A3352]/75 font-light tracking-[0.18em] text-[0.875rem] uppercase">
+      <span className="text-[#1A3352]/75 group-data-[transparent=true]:text-white/80 font-light tracking-[0.18em] text-[0.875rem] uppercase">
         {label}
       </span>
     );
   } else {
     cityLabel = (
-      <span className="flex items-center gap-1.5">
+      <span className="flex items-center gap-1.5 text-[#1A3352]/75 group-data-[transparent=true]:text-white/80">
         <svg width="13" height="16" viewBox="0 0 10 13" fill="none" aria-hidden="true" className="opacity-60 flex-shrink-0">
-          <path d="M5 0.5C2.515 0.5 0.5 2.515 0.5 5c0 3.375 4.5 7.5 4.5 7.5s4.5-4.125 4.5-7.5C9.5 2.515 7.485 0.5 5 0.5z" stroke="#1A3352" strokeWidth="0.75" fill="none" />
-          <circle cx="5" cy="5" r="1.5" stroke="#1A3352" strokeWidth="0.75" fill="none" />
+          <path d="M5 0.5C2.515 0.5 0.5 2.515 0.5 5c0 3.375 4.5 7.5 4.5 7.5s4.5-4.125 4.5-7.5C9.5 2.515 7.485 0.5 5 0.5z" stroke="currentColor" strokeWidth="0.75" fill="none" />
+          <circle cx="5" cy="5" r="1.5" stroke="currentColor" strokeWidth="0.75" fill="none" />
         </svg>
-        <span className="text-[#1A3352]/75 font-light tracking-[0.18em] text-[0.875rem] uppercase">
+        <span className="font-light tracking-[0.18em] text-[0.875rem] uppercase">
           {tenant.city}
         </span>
       </span>
@@ -38,9 +38,9 @@ export default async function TopBarLogo() {
       aria-label="TM München – Startseite"
       className="flex-1 flex items-center justify-center gap-3"
     >
-      <img src={logoSrc} alt="Transcendental Meditation" className="h-6 opacity-80" />
+      <img src={logoSrc} alt="Transcendental Meditation" className="h-6 opacity-80 group-data-[transparent=true]:brightness-0 group-data-[transparent=true]:invert group-data-[transparent=true]:opacity-90" />
 
-      <span className="w-px h-4 bg-[#1A3352]/20 flex-shrink-0" aria-hidden="true" />
+      <span className="w-px h-4 bg-[#1A3352]/20 group-data-[transparent=true]:bg-white/30 flex-shrink-0" aria-hidden="true" />
 
       {cityLabel}
     </a>

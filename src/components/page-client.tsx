@@ -37,7 +37,17 @@ function HeroArrow({ direction, onClick, label }: { direction: "left" | "right";
   );
 }
 
-export default function PageClient({ initialTheme, nextDates, conversionSlot }: { initialTheme: ThemeKey; nextDates?: string[]; conversionSlot?: React.ReactNode }) {
+export default function PageClient({
+  initialTheme,
+  nextDates,
+  conversionSlot,
+  heroSlot,
+}: {
+  initialTheme: ThemeKey;
+  nextDates?: string[];
+  conversionSlot?: React.ReactNode;
+  heroSlot?: React.ReactNode;
+}) {
   const tNav    = useTranslations("Nav");
   const tThemes = useTranslations("Themes");
   const router  = useRouter();
@@ -60,20 +70,22 @@ export default function PageClient({ initialTheme, nextDates, conversionSlot }: 
 
   return (
     <>
-      <div className="relative">
-        <Hero
-          headline={headline}
-          images={heroTheme.images}
-          nextDates={nextDates}
-          ctaHref="#infoabend"
-        />
-        {heroThemeIndex > 0 && (
-          <HeroArrow direction="left" label={tNav("prevTheme")} onClick={() => navigateToTheme(HERO_THEMES[heroThemeIndex - 1])} />
-        )}
-        {heroThemeIndex < HERO_THEMES.length - 1 && (
-          <HeroArrow direction="right" label={tNav("nextTheme")} onClick={() => navigateToTheme(HERO_THEMES[heroThemeIndex + 1])} />
-        )}
-      </div>
+      {heroSlot === undefined && (
+        <div className="relative">
+          <Hero
+            headline={headline}
+            images={heroTheme.images}
+            nextDates={nextDates}
+            ctaHref="#infoabend"
+          />
+          {heroThemeIndex > 0 && (
+            <HeroArrow direction="left" label={tNav("prevTheme")} onClick={() => navigateToTheme(HERO_THEMES[heroThemeIndex - 1])} />
+          )}
+          {heroThemeIndex < HERO_THEMES.length - 1 && (
+            <HeroArrow direction="right" label={tNav("nextTheme")} onClick={() => navigateToTheme(HERO_THEMES[heroThemeIndex + 1])} />
+          )}
+        </div>
+      )}
 
       <TrustBadges />
 
