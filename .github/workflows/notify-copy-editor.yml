@@ -40,7 +40,7 @@ jobs:
           COPY_EDITOR_EMAIL: ${{ secrets.COPY_EDITOR_EMAIL }}
           COPY_EDITOR_FROM_EMAIL: ${{ secrets.COPY_EDITOR_FROM_EMAIL }}
         run: |
-          node -e "
+          node --input-type=commonjs -e "
           const fs = require('fs');
           const { execSync } = require('child_process');
 
