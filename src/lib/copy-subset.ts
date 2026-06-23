@@ -107,6 +107,13 @@ export const copySubset: CopySection[] = [
       { key: 'AbschlussCta.body',    label: 'Text',        type: 'text' },
     ],
   },
+  {
+    label: 'Entdecken-Seite',
+    fields: [
+      { key: 'Entdecken.headline', label: 'Headline', type: 'textarea' },
+      { key: 'Entdecken.cta',      label: 'CTA-Button', type: 'text' },
+    ],
+  },
 ];
 
 export function allSubsetKeys(): string[] {

@@ -21,8 +21,7 @@ jobs:
           MESSAGE=$(git log -1 --format='%s')
           echo "author=$AUTHOR"
           echo "message=$MESSAGE"
-          if [[ "$AUTHOR" == "github-actions[bot]@users.noreply.github.com" ]] || \
-             [[ "$AUTHOR" == *"github-actions"* ]] || \
+          if [[ "$AUTHOR" == *"github-actions"* ]] || \
              [[ "$MESSAGE" == *"[skip-notify]"* ]]; then
             echo "skip=true" >> $GITHUB_OUTPUT
           else
@@ -71,15 +70,8 @@ jobs:
           const oldFlat = flatten(oldContent);
           const newFlat = flatten(newContent);
 
-          // Load subset keys from copy-subset config
-          // We inline the keys here to avoid TS compilation in CI
-          const subsetKeys = $(node -e "
-            const path = require('path');
-            // Simple grep for key: lines in the source file
-            const src = require('fs').readFileSync('src/lib/copy-subset.ts', 'utf-8');
-            const keys = [...src.matchAll(/key:\s*'([^']+)'/g)].map(m => m[1]);
-            process.stdout.write(JSON.stringify(keys));
-          ");
+          // Load subset keys from the committed JSON (mirrors copy-subset.ts, verified by tests)
+          const subsetKeys = JSON.parse(fs.readFileSync('src/lib/copy-subset-keys.json', 'utf-8'));
 
           // Find changed keys that are in the subset
           const changed = subsetKeys.filter(k => oldFlat[k] !== undefined && newFlat[k] !== undefined && oldFlat[k] !== newFlat[k]);

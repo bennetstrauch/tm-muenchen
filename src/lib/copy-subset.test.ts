@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { copySubset } from './copy-subset';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { join, dirname } from 'node:path';
+import { copySubset, allSubsetKeys } from './copy-subset';
 import de from '../../messages/de.json';
 
 function getNestedValue(obj: Record<string, unknown>, dotPath: string): unknown {
@@ -8,6 +11,15 @@ function getNestedValue(obj: Record<string, unknown>, dotPath: string): unknown 
     return undefined;
   }, obj);
 }
+
+describe('copy-subset-keys.json', () => {
+  it('matches allSubsetKeys() so CI workflow stays in sync with the TS definition', () => {
+    const dir = dirname(fileURLToPath(import.meta.url));
+    const raw = readFileSync(join(dir, 'copy-subset-keys.json'), 'utf-8');
+    const jsonKeys: string[] = JSON.parse(raw) as string[];
+    expect(jsonKeys).toEqual(allSubsetKeys());
+  });
+});
 
 describe('copySubset', () => {
   it('every field key exists in de.json', () => {
