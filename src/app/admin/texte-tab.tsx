@@ -10,13 +10,18 @@ type SaveState = 'idle' | 'saving' | 'success' | 'error';
 export default function TexteTab() {
   const [values, setValues] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     fetch('/api/admin/texte')
-      .then(r => r.json())
-      .then((data: Record<string, string>) => setValues(data))
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json() as Promise<Record<string, string>>;
+      })
+      .then(data => setValues(data))
+      .catch(() => setLoadError(true))
       .finally(() => setLoading(false));
   }, []);
 
@@ -43,6 +48,10 @@ export default function TexteTab() {
 
   if (loading) {
     return <p className="text-sm text-gray-400 p-4">Texte werden geladen…</p>;
+  }
+
+  if (loadError) {
+    return <p className="text-sm text-red-600 p-4">Texte konnten nicht geladen werden. Bitte Seite neu laden.</p>;
   }
 
   return (

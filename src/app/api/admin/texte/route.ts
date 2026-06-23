@@ -1,6 +1,6 @@
 import { getCurrentTenant } from '@/lib/tenant';
 import { isAuthorizedAdminApi } from '@/lib/admin-api-gate';
-import { readDeCopy, commitDeCopy } from '@/lib/github-copy';
+import { readDeCopy, commitDeCopy, GitHubConflictError } from '@/lib/github-copy';
 import { allSubsetKeys } from '@/lib/copy-subset';
 
 export const dynamic = 'force-dynamic';
@@ -70,6 +70,9 @@ export async function PUT(request: Request) {
     await commitDeCopy(content, sha);
     return Response.json({ ok: true });
   } catch (err) {
+    if (err instanceof GitHubConflictError) {
+      return Response.json({ error: 'Jemand hat die Datei gleichzeitig bearbeitet. Bitte Seite neu laden.' }, { status: 409 });
+    }
     console.error('[texte] PUT failed:', err);
     return Response.json({ error: 'Fehler beim Speichern.' }, { status: 500 });
   }

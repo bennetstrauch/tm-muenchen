@@ -1,3 +1,7 @@
+export class GitHubConflictError extends Error {
+  constructor() { super('GitHub commit conflict: stale SHA'); this.name = 'GitHubConflictError'; }
+}
+
 const REPO = 'bennetstrauch/tm-muenchen';
 const FILE_PATH = 'messages/de.json';
 const API_URL = `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`;
@@ -47,6 +51,7 @@ export async function commitDeCopy(updated: Record<string, unknown>, sha: string
 
   if (!res.ok) {
     const text = await res.text();
+    if (res.status === 409) throw new GitHubConflictError();
     throw new Error(`GitHub commit failed ${res.status}: ${text}`);
   }
 }

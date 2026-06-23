@@ -10,10 +10,12 @@ const FAKE_DE = {
 const mockRead = vi.fn(async () => ({ content: FAKE_DE, sha: FAKE_SHA }));
 const mockCommit = vi.fn(async () => {});
 
-vi.mock('@/lib/github-copy', () => ({
-  readDeCopy: mockRead,
-  commitDeCopy: mockCommit,
-}));
+vi.mock('@/lib/github-copy', () => {
+  class GitHubConflictError extends Error {
+    constructor() { super('GitHub commit conflict: stale SHA'); this.name = 'GitHubConflictError'; }
+  }
+  return { readDeCopy: mockRead, commitDeCopy: mockCommit, GitHubConflictError };
+});
 
 // Mock admin session gate — allow by default
 vi.mock('@/lib/admin-api-gate', () => ({
@@ -89,5 +91,15 @@ describe('PUT /api/admin/texte', () => {
     const { PUT } = await import('./route');
     const res = await PUT(makeRequest('PUT', {}));
     expect(res.status).toBe(401);
+  });
+
+  it('returns 409 with conflict message when commitDeCopy encounters stale SHA', async () => {
+    const { GitHubConflictError } = await import('@/lib/github-copy');
+    mockCommit.mockRejectedValueOnce(new GitHubConflictError());
+    const { PUT } = await import('./route');
+    const res = await PUT(makeRequest('PUT', { 'Themes.stress.headline0': 'X' }));
+    expect(res.status).toBe(409);
+    const data = await res.json() as { error: string };
+    expect(data.error).toBe('Jemand hat die Datei gleichzeitig bearbeitet. Bitte Seite neu laden.');
   });
 });

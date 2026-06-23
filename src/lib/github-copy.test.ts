@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { readDeCopy, commitDeCopy } from './github-copy';
+import { readDeCopy, commitDeCopy, GitHubConflictError } from './github-copy';
 
 const mockFetch = vi.fn();
 vi.stubGlobal('fetch', mockFetch);
@@ -70,5 +70,10 @@ describe('commitDeCopy', () => {
   it('throws on non-2xx response', async () => {
     mockFetch.mockResolvedValueOnce({ ok: false, status: 422, text: async () => 'Unprocessable' });
     await expect(commitDeCopy(FAKE_CONTENT, FAKE_SHA)).rejects.toThrow('422');
+  });
+
+  it('throws GitHubConflictError on 409 (stale SHA conflict)', async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 409, text: async () => 'Conflict' });
+    await expect(commitDeCopy(FAKE_CONTENT, FAKE_SHA)).rejects.toBeInstanceOf(GitHubConflictError);
   });
 });
