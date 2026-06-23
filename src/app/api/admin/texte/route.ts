@@ -1,23 +1,8 @@
-import { getCurrentTenant } from '@/lib/tenant';
-import { isAuthorizedAdminApi } from '@/lib/admin-api-gate';
+import { checkAdminRequest } from '@/lib/admin-api-gate';
 import { readDeCopy, commitDeCopy, GitHubConflictError } from '@/lib/github-copy';
 import { allSubsetKeys } from '@/lib/copy-subset';
 
 export const dynamic = 'force-dynamic';
-
-function parseCookieHeader(header: string | null, name: string): string | undefined {
-  if (!header) return undefined;
-  const match = header.split(';').map(s => s.trim()).find(s => s.startsWith(`${name}=`));
-  return match ? match.slice(name.length + 1) : undefined;
-}
-
-async function authorize(request: Request): Promise<boolean> {
-  const sessionToken = parseCookieHeader(request.headers.get('cookie'), 'admin-session');
-  const tokenHeader = request.headers.get('x-admin-token') ?? undefined;
-  const tokenEvent = request.headers.get('x-admin-token-event') ?? undefined;
-  const { tenant } = await getCurrentTenant();
-  return isAuthorizedAdminApi('/api/admin/texte', tenant, { sessionToken, tokenHeader, tokenEvent });
-}
 
 function getNestedValue(obj: Record<string, unknown>, dotPath: string): unknown {
   return dotPath.split('.').reduce<unknown>((cur, key) => {
@@ -37,7 +22,7 @@ function setNestedValue(obj: Record<string, unknown>, dotPath: string, value: un
 }
 
 export async function GET(request: Request) {
-  if (!await authorize(request)) {
+  if (!await checkAdminRequest(request)) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -54,7 +39,7 @@ export async function GET(request: Request) {
 }
 
 export async function PUT(request: Request) {
-  if (!await authorize(request)) {
+  if (!await checkAdminRequest(request)) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

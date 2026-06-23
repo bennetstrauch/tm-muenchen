@@ -1,5 +1,6 @@
 import { verifySession } from "./admin-session";
 import { verifyToken } from "./admin-token";
+import { getCurrentTenant } from "@/lib/tenant";
 
 // API paths a magic-link (Leiter) token may reach. A full-admin session cookie
 // grants every route; a valid token grants only these — the routes the Leiter UI
@@ -19,6 +20,19 @@ export interface AdminApiCredentials {
 
 function isLeiterPath(pathname: string): boolean {
   return LEITER_API_PATHS.some(p => pathname === p || pathname.startsWith(`${p}/`));
+}
+
+export async function checkAdminRequest(request: Request): Promise<boolean> {
+  const cookieHeader = request.headers.get("cookie");
+  const sessionToken = cookieHeader
+    ?.split(";").map(s => s.trim()).find(s => s.startsWith("admin-session="))
+    ?.slice("admin-session=".length);
+  const { tenant } = await getCurrentTenant();
+  return isAuthorizedAdminApi(new URL(request.url).pathname, tenant, {
+    sessionToken,
+    tokenHeader: request.headers.get("x-admin-token") ?? undefined,
+    tokenEvent: request.headers.get("x-admin-token-event") ?? undefined,
+  });
 }
 
 /**

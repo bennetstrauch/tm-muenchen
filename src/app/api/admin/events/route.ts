@@ -2,10 +2,14 @@ import { getAllVeranstaltungen, createVeranstaltung } from '@/lib/veranstaltunge
 import type { Veranstaltung } from '@/lib/veranstaltungen';
 import { createCalendarEvent, isGuldeinEvent } from '@/lib/calendar';
 import { getCurrentTenant } from '@/lib/tenant';
+import { checkAdminRequest } from '@/lib/admin-api-gate';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: Request) {
+  if (!await checkAdminRequest(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const { tenant } = await getCurrentTenant();
     const events = await getAllVeranstaltungen(tenant);
@@ -17,6 +21,9 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  if (!await checkAdminRequest(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const { tenant } = await getCurrentTenant();
     const body: Omit<Veranstaltung, 'id'> = await request.json();

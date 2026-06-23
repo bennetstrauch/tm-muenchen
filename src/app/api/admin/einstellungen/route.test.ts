@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
+import { checkAdminRequest } from "@/lib/admin-api-gate";
 
 const tenantRow = {
   tenant: "muenchen",
@@ -28,6 +29,10 @@ vi.mock("@/lib/tenant", () => ({
   getCurrentTenant: vi.fn(async () => tenantRow),
 }));
 
+vi.mock("@/lib/admin-api-gate", () => ({
+  checkAdminRequest: vi.fn(async () => true),
+}));
+
 const eq = vi.fn(async () => ({ error: null }));
 const update = vi.fn(() => ({ eq }));
 const from = vi.fn(() => ({ update }));
@@ -39,10 +44,18 @@ beforeEach(() => {
   eq.mockClear();
 });
 
+function makeRequest(method: string, body?: unknown): Request {
+  return new Request("http://localhost/api/admin/einstellungen", {
+    method,
+    headers: { "content-type": "application/json", "cookie": "admin-session=test" },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+}
+
 describe("admin Einstellungen", () => {
   it("GET returns only the editable settings, including center_image_url and whatsapp_number, never the password hash", async () => {
     const { GET } = await import("./route");
-    const data = await (await GET()).json();
+    const data = await (await GET(makeRequest("GET"))).json();
     expect(data).toEqual({
       active_locales: ["de", "en"],
       whatsapp_enabled: true,
@@ -88,6 +101,20 @@ describe("admin Einstellungen", () => {
       infoabend_duration_minutes: 30,
       show_meditators_section: true,
     });
+  });
+
+  it("GET returns 401 for unauthenticated requests", async () => {
+    vi.mocked(checkAdminRequest).mockResolvedValueOnce(false);
+    const { GET } = await import("./route");
+    const res = await GET(makeRequest("GET"));
+    expect(res.status).toBe(401);
+  });
+
+  it("PUT returns 401 for unauthenticated requests", async () => {
+    vi.mocked(checkAdminRequest).mockResolvedValueOnce(false);
+    const { PUT } = await import("./route");
+    const res = await PUT(makeRequest("PUT", {}));
+    expect(res.status).toBe(401);
   });
 
   it("PUT ignores sensitive fields even when passed in the body", async () => {

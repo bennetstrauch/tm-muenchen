@@ -1,6 +1,7 @@
 import { put } from '@vercel/blob';
 import sharp from 'sharp';
 import { getCurrentTenant } from '@/lib/tenant';
+import { checkAdminRequest } from '@/lib/admin-api-gate';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,6 +17,9 @@ async function resolveFolder(prefix: string | null): Promise<string> {
 }
 
 export async function POST(request: Request) {
+  if (!await checkAdminRequest(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;

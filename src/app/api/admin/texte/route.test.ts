@@ -17,13 +17,8 @@ vi.mock('@/lib/github-copy', () => {
   return { readDeCopy: mockRead, commitDeCopy: mockCommit, GitHubConflictError };
 });
 
-// Mock admin session gate — allow by default
 vi.mock('@/lib/admin-api-gate', () => ({
-  isAuthorizedAdminApi: vi.fn(async () => true),
-}));
-
-vi.mock('@/lib/tenant', () => ({
-  getCurrentTenant: vi.fn(async () => ({ tenant: 'muenchen' })),
+  checkAdminRequest: vi.fn(async () => true),
 }));
 
 beforeEach(() => {
@@ -54,8 +49,8 @@ describe('GET /api/admin/texte', () => {
   });
 
   it('returns 401 for unauthenticated requests', async () => {
-    const { isAuthorizedAdminApi } = await import('@/lib/admin-api-gate');
-    vi.mocked(isAuthorizedAdminApi).mockResolvedValueOnce(false);
+    const { checkAdminRequest } = await import('@/lib/admin-api-gate');
+    vi.mocked(checkAdminRequest).mockResolvedValueOnce(false);
     const { GET } = await import('./route');
     const res = await GET(makeRequest('GET'));
     expect(res.status).toBe(401);
@@ -86,8 +81,8 @@ describe('PUT /api/admin/texte', () => {
   });
 
   it('returns 401 for unauthenticated requests', async () => {
-    const { isAuthorizedAdminApi } = await import('@/lib/admin-api-gate');
-    vi.mocked(isAuthorizedAdminApi).mockResolvedValueOnce(false);
+    const { checkAdminRequest } = await import('@/lib/admin-api-gate');
+    vi.mocked(checkAdminRequest).mockResolvedValueOnce(false);
     const { PUT } = await import('./route');
     const res = await PUT(makeRequest('PUT', {}));
     expect(res.status).toBe(401);

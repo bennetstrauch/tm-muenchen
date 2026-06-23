@@ -1,9 +1,13 @@
 import { getEmailActions, createEmailAction } from '@/lib/email-actions';
 import type { EmailAction } from '@/lib/email-actions';
+import { checkAdminRequest } from '@/lib/admin-api-gate';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
+  if (!await checkAdminRequest(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const { searchParams } = new URL(request.url);
     const eventId = searchParams.get('eventId') ?? undefined;
@@ -16,6 +20,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  if (!await checkAdminRequest(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const data: Omit<EmailAction, 'id'> = await request.json();
     const action = await createEmailAction(data);

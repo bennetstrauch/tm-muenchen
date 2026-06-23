@@ -2,11 +2,15 @@ import { updateVeranstaltung, deleteVeranstaltung, getVeranstaltungById, updateW
 import type { Veranstaltung } from '@/lib/veranstaltungen';
 import { updateCalendarEvent, deleteCalendarEvent, isGuldeinEvent } from '@/lib/calendar';
 import { getCurrentTenant } from '@/lib/tenant';
+import { checkAdminRequest } from '@/lib/admin-api-gate';
 
 export async function PATCH(
   request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
+  if (!await checkAdminRequest(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const { id } = await context.params;
     const { whatsappPostedAt } = await request.json() as { whatsappPostedAt: string };
@@ -24,6 +28,9 @@ export async function PUT(
   request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
+  if (!await checkAdminRequest(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const { id } = await context.params;
     const { tenant } = await getCurrentTenant();
@@ -47,9 +54,12 @@ export async function PUT(
 }
 
 export async function DELETE(
-  _request: Request,
+  request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
+  if (!await checkAdminRequest(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const { id } = await context.params;
     const { tenant } = await getCurrentTenant();

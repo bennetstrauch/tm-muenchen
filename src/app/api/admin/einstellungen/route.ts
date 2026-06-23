@@ -1,5 +1,6 @@
 import { getSupabase } from '@/lib/supabase';
 import { getCurrentTenant, type TenantSettings } from '@/lib/tenant';
+import { checkAdminRequest } from '@/lib/admin-api-gate';
 
 // The only tenant columns this tab may read or write. Acts as the whitelist:
 // admin_password_hash, hostname, tenant, etc. can never be read out or written.
@@ -19,7 +20,10 @@ function pickSettings(source: Partial<TenantSettings>): TenantSettings {
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: Request) {
+  if (!await checkAdminRequest(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const tenant = await getCurrentTenant();
     return Response.json(pickSettings(tenant));
@@ -30,6 +34,9 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
+  if (!await checkAdminRequest(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const body: Partial<TenantSettings> = await request.json();
     const tenant = await getCurrentTenant();

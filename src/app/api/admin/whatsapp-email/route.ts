@@ -2,6 +2,7 @@ import { Resend } from 'resend';
 import { lookupTeachersByFirstNames } from '@/lib/tmw-teachers';
 import { updateWhatsappPosted } from '@/lib/veranstaltungen';
 import { getCurrentTenant } from '@/lib/tenant';
+import { checkAdminRequest } from '@/lib/admin-api-gate';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -13,6 +14,9 @@ type RequestBody = {
 };
 
 export async function POST(request: Request) {
+  if (!await checkAdminRequest(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   const body: RequestBody = await request.json();
   const { eventId, eventTitle, hosts, text } = body;
 

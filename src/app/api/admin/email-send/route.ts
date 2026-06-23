@@ -4,6 +4,7 @@ import { createEmailAction, markEmailActionSent, markEmailActionFailed } from '@
 import { buildCustomEmailHtml } from '@/lib/email-veranstaltung';
 import { verifyToken } from '@/lib/admin-token';
 import { getCurrentTenant } from '@/lib/tenant';
+import { checkAdminRequest } from '@/lib/admin-api-gate';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -17,6 +18,9 @@ type SendRequest = {
 };
 
 export async function POST(request: Request) {
+  if (!await checkAdminRequest(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const data: SendRequest = await request.json();
     const { eventId, eventTitle, subject, body, scheduledAt, createdBy = 'admin' } = data;

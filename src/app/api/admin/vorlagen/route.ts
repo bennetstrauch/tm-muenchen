@@ -1,10 +1,14 @@
 import { getAllVorlagen, createVorlage } from '@/lib/vorlagen';
 import type { Vorlage } from '@/lib/vorlagen';
 import { getCurrentTenant } from '@/lib/tenant';
+import { checkAdminRequest } from '@/lib/admin-api-gate';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: Request) {
+  if (!await checkAdminRequest(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const { tenant } = await getCurrentTenant();
     const vorlagen = await getAllVorlagen(tenant);
@@ -16,6 +20,9 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  if (!await checkAdminRequest(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const { tenant } = await getCurrentTenant();
     const body: Omit<Vorlage, 'id'> = await request.json();

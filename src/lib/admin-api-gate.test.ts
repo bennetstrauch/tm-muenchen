@@ -1,7 +1,11 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { isAuthorizedAdminApi } from "./admin-api-gate";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { isAuthorizedAdminApi, checkAdminRequest } from "./admin-api-gate";
 import { createSession } from "./admin-session";
 import { generateToken } from "./admin-token";
+
+vi.mock("@/lib/tenant", () => ({
+  getCurrentTenant: vi.fn(async () => ({ tenant: "muenchen" })),
+}));
 
 beforeEach(() => {
   process.env.ADMIN_TOKEN_SECRET = "test-secret";
@@ -59,5 +63,36 @@ describe("admin API gate", () => {
     expect(
       await isAuthorizedAdminApi("/api/admin/events-secret", "muenchen", { tokenHeader, tokenEvent: "evt-1" }),
     ).toBe(false);
+  });
+});
+
+describe("checkAdminRequest", () => {
+  it("rejects an unauthenticated request", async () => {
+    const req = new Request("http://localhost/api/admin/einstellungen");
+    expect(await checkAdminRequest(req)).toBe(false);
+  });
+
+  it("admits a request with a valid session cookie", async () => {
+    const sessionToken = await createSession("muenchen");
+    const req = new Request("http://localhost/api/admin/einstellungen", {
+      headers: { cookie: `admin-session=${sessionToken}` },
+    });
+    expect(await checkAdminRequest(req)).toBe(true);
+  });
+
+  it("rejects a session cookie issued for a different tenant", async () => {
+    const sessionToken = await createSession("berlin");
+    const req = new Request("http://localhost/api/admin/einstellungen", {
+      headers: { cookie: `admin-session=${sessionToken}` },
+    });
+    expect(await checkAdminRequest(req)).toBe(false);
+  });
+
+  it("admits a valid magic-link token on a Leiter path", async () => {
+    const tokenHeader = await generateToken("evt-1", FUTURE);
+    const req = new Request("http://localhost/api/admin/email-send", {
+      headers: { "x-admin-token": tokenHeader, "x-admin-token-event": "evt-1" },
+    });
+    expect(await checkAdminRequest(req)).toBe(true);
   });
 });

@@ -1,10 +1,14 @@
 import { getEmailActions, updateEmailAction, deleteEmailAction } from '@/lib/email-actions';
 import type { EmailAction } from '@/lib/email-actions';
+import { checkAdminRequest } from '@/lib/admin-api-gate';
 
 export async function PUT(
   request: Request,
   context: { params: Promise<{ id: string }> },
 ) {
+  if (!await checkAdminRequest(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const { id } = await context.params;
     const data: EmailAction = await request.json();
@@ -17,9 +21,12 @@ export async function PUT(
 }
 
 export async function DELETE(
-  _request: Request,
+  request: Request,
   context: { params: Promise<{ id: string }> },
 ) {
+  if (!await checkAdminRequest(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const { id } = await context.params;
     await deleteEmailAction(id);
@@ -32,9 +39,12 @@ export async function DELETE(
 }
 
 export async function GET(
-  _request: Request,
+  request: Request,
   context: { params: Promise<{ id: string }> },
 ) {
+  if (!await checkAdminRequest(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const { id } = await context.params;
     const actions = await getEmailActions();

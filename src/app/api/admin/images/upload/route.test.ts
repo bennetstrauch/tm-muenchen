@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { checkAdminRequest } from "@/lib/admin-api-gate";
 
 vi.mock("sharp", () => ({
   default: () => ({
@@ -15,6 +16,10 @@ vi.mock("@vercel/blob", () => ({ put: putMock }));
 
 vi.mock("@/lib/tenant", () => ({
   getCurrentTenant: vi.fn(async () => ({ tenant: "muenchen" })),
+}));
+
+vi.mock("@/lib/admin-api-gate", () => ({
+  checkAdminRequest: vi.fn(async () => true),
 }));
 
 beforeEach(() => {
@@ -70,6 +75,13 @@ describe("image upload route", () => {
     });
     const res = await POST(req);
     expect(res.status).toBe(400);
+  });
+
+  it("returns 401 for unauthenticated requests", async () => {
+    vi.mocked(checkAdminRequest).mockResolvedValueOnce(false);
+    const { POST } = await import("./route");
+    const res = await POST(makeRequest(makeImageFile()));
+    expect(res.status).toBe(401);
   });
 
   it("returns 400 for non-image MIME types", async () => {
