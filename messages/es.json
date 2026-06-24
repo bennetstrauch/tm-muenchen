@@ -11,7 +11,7 @@
     "badge1": "Simple y sin esfuerzo",
     "badge2": "Millones de practicantes en todo el mundo",
     "badge3": "Sin concentración",
-    "badge4": "Sin bloquear pensamientos",
+    "badge4": "La mente encuentra calma",
     "badge5": "400+ estudios científicos",
     "ariaLabel": "Características de la Meditación Trascendental",
     "showMore": "Ver más",
@@ -42,7 +42,7 @@
     "heading": "Lo que hace única a la MT",
     "subheading": "La Meditación Trascendental es fundamentalmente diferente a otras técnicas.",
     "benefit0Title": "Sin esfuerzo — sin necesidad de concentrarte",
-    "benefit0Short": "La mayoría de las técnicas de meditación requieren enfoque o fuerza de voluntad. La MT es diferente: la mente se calma de forma completamente natural, sin esfuerzo. Por eso muchas personas descubren que aprenderla es sorprendentemente fácil.",
+    "benefit0Short": "La mayoría de las técnicas de meditación requieren concentración o fuerza de voluntad. La MT es diferente: la mente se calma de forma completamente natural, sin esfuerzo. Por eso mucha gente descubre que la MT es sorprendentemente fácil de aprender.",
     "benefit0Expanded": "Porque la técnica es sin esfuerzo, la mente se mueve espontáneamente hacia niveles de pensamiento más tranquilos. La meditación ocurre sola — no por disciplina. Eso hace que la MT sea accesible incluso para quienes no han tenido éxito con otras técnicas.",
     "benefit1Title": "Más profundo que el sueño — el cuerpo descansa de verdad",
     "benefit1Short": "Durante la MT, el cuerpo alcanza un descanso profundo que, según los estudios, es más intenso que el del sueño — mientras la mente permanece despierta y clara. En ese reposo, el sistema nervioso libera el estrés acumulado.",
@@ -51,20 +51,20 @@
     "benefit2Short": "Cada persona lleva en sí un reservorio de satisfacción plena: un océano de alegría al que la MT abre el acceso, trayendo cada vez más paz interior y menos irritabilidad en el día a día.",
     "benefit2Expanded": "Lo que filósofos, místicos y sabios han descrito durante milenios se vuelve concreto y duradero a través de la MT. Y no solo eso: también es científicamente medible.",
     "benefit3Title": "Más claridad mental, más calma ante lo inesperado",
-    "benefit3Short": "Diversos estudios lo muestran: quienes practican regularmente reaccionan con más calma en situaciones de estrés, toman decisiones más claras y son más creativos. No es autosugestión — es actividad cerebral medible.",
-    "benefit3Expanded": "Los estudios demuestran que la MT mejora la coordinación entre distintas áreas del cerebro. Este funcionamiento más integrado está documentado en deportistas de élite, directivos y creativos que practican MT con regularidad.",
+    "benefit3Short": "Diversos estudios lo confirman: quienes la practican con regularidad reaccionan con más calma ante el estrés, toman decisiones más claras y son más creativos. No es autosugestión — es algo medible en la actividad cerebral.",
+    "benefit3Expanded": "Los estudios muestran que la MT mejora la coordinación entre distintas áreas del cerebro. Este funcionamiento más integrado está bien documentado en deportistas de élite, líderes empresariales y creativos que practican MT con regularidad.",
     "benefit4Title": "Libérate del estrés — también del más arraigado",
     "benefit4Short": "La MT no solo alivia el estrés agudo, sino también la tensión acumulada a lo largo del tiempo. Muchos reportan: menos ansiedad, mejor sueño, mayor resiliencia.",
     "benefit4Expanded": "La MT ha sido estudiada en relación con trastornos causados por el estrés y el procesamiento de traumas — incluido el TEPT. El descanso fisiológico profundo que genera apoya la autorregulación natural del cuerpo de una manera que otras técnicas de relajación simplemente no alcanzan.",
     "benefit5Title": "Más de 400 estudios en universidades de primer nivel",
-    "benefit5Short": "La Meditación Trascendental es la técnica de meditación más investigada del mundo. Áreas de estudio: estrés, salud cardiovascular, función cerebral, rendimiento y resiliencia.",
+    "benefit5Short": "La Meditación Trascendental es la técnica de meditación más estudiada del mundo. Áreas de investigación: estrés, salud cardiovascular, función cerebral; rendimiento escolar, académico y profesional; resiliencia.",
     "benefit5Expanded": "Dado que la MT se enseña de forma estandarizada, puede estudiarse científicamente con mayor rigor que muchos otros enfoques. Los estudios han sido publicados en revistas como el American Journal of Cardiology y el International Journal of Neuroscience."
   },
   "HowItWorks": {
     "eyebrow": "El camino",
     "heading": "Así funciona",
     "subheading": "De la curiosidad a la práctica diaria — en cuatro sencillos pasos.",
-    "step0Title": "Charla introductoria gratuita",
+    "step0Title": "Cita informativa gratuita",
     "step0Description": "Descubrirás qué es la MT, en qué se diferencia de otras técnicas y podrás hacer todas las preguntas que quieras. Sin ningún compromiso.",
     "step1Title": "Instrucción personalizada",
     "step1Description": "Un profesor certificado te enseña la técnica de forma individual, a tu propio ritmo. No se necesitan conocimientos previos.",
@@ -132,13 +132,13 @@
   },
   "Teachers": {
     "eyebrow": "Centro MT Múnich",
-    "heading": "Tu instructor",
+    "heading": "Tu profesor/a",
     "readMore": "Leer más",
     "collapse": "Menos"
   },
   "CenterBanner": {
     "eyebrow": "Centro MT Múnich",
-    "line1": "Presencial u online —",
+    "line1": "En persona o en línea —",
     "line2": "estamos aquí para ti.",
     "ariaLabel": "Centro MT Múnich"
   },
@@ -213,7 +213,7 @@
       "label": "Enfoque",
       "headline0": "¿Tienes la cabeza llena pero sin claridad?",
       "headline1": "La claridad no se fuerza — simplemente surge.",
-      "subtitle": "MT no pone orden: deja que el orden surja solo. Mente más clara, más tranquila."
+      "subtitle": "La MT no pone orden: deja que el orden surja solo. Más enfoque, mente más serena."
     },
     "erschoepfung": {
       "label": "Agotamiento",

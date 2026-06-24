@@ -11,7 +11,7 @@
     "badge1": "Simple et sans effort",
     "badge2": "Pratiquée par des millions de personnes",
     "badge3": "Pas besoin de concentration",
-    "badge4": "Sans bloquer les pensées",
+    "badge4": "Les pensées s'apaisent",
     "badge5": "400+ études scientifiques",
     "ariaLabel": "Caractéristiques de la Méditation Transcendantale",
     "showMore": "Voir plus",
@@ -42,7 +42,7 @@
     "heading": "Ce qui rend la MT unique",
     "subheading": "La Méditation Transcendantale est fondamentalement différente des autres techniques.",
     "benefit0Title": "Sans effort – pas besoin de concentration",
-    "benefit0Short": "La plupart des techniques de méditation demandent de la concentration ou de la volonté. La MT, c'est différent : l'esprit se calme naturellement, sans effort. C'est pourquoi beaucoup de personnes trouvent la MT étonnamment facile à apprendre.",
+    "benefit0Short": "La plupart des techniques de méditation demandent concentration ou volonté. La MT, c'est différent : l'esprit se calme naturellement, sans effort. C'est pourquoi beaucoup de gens trouvent que la MT est étonnamment facile à apprendre.",
     "benefit0Expanded": "Parce que la technique est sans effort, l'esprit se dirige spontanément vers des niveaux de pensée plus calmes. La méditation se produit d'elle-même – pas par la discipline. Cela rend la MT accessible même aux personnes qui n'ont pas réussi avec d'autres techniques.",
     "benefit1Title": "Plus profond que le sommeil – le corps récupère vraiment",
     "benefit1Short": "Pendant la MT, le corps atteint un état de repos profond que les études décrivent comme plus profond que le sommeil – tandis que l'esprit reste éveillé et clair. Dans cet état, le système nerveux élimine le stress accumulé.",
@@ -51,20 +51,20 @@
     "benefit2Short": "Chacun porte en soi un réservoir de satisfaction profonde : un océan de joie que la MT rend accessible, avec de plus en plus de paix intérieure et moins d'irritabilité au quotidien.",
     "benefit2Expanded": "Ce que philosophes, mystiques et sages décrivent depuis des millénaires devient, grâce à la MT, concret et durablement intégré. Et en plus, c'est scientifiquement mesurable.",
     "benefit3Title": "Penser plus clairement, réagir plus sereinement",
-    "benefit3Short": "Plusieurs études le montrent : les pratiquants réguliers réagissent plus calmement sous pression, décident avec plus de clarté et font preuve de plus de créativité. Ce n'est pas de l'autosuggestion — c'est visible dans l'activité cérébrale.",
-    "benefit3Expanded": "Des études montrent que la MT améliore la coordination entre différentes zones du cerveau. Ce fonctionnement plus intégré est documenté chez des sportifs de haut niveau, des dirigeants et des créatifs qui pratiquent la MT régulièrement.",
+    "benefit3Short": "Plusieurs études le montrent : les pratiquants réguliers réagissent plus calmement dans les situations stressantes, prennent des décisions plus claires et font preuve de plus de créativité. Ce n'est pas de l'autosuggestion — c'est mesurable dans l'activité cérébrale.",
+    "benefit3Expanded": "Des études montrent que la MT améliore la coordination entre différentes régions du cerveau. Ce fonctionnement plus intégré est bien documenté chez les sportifs de haut niveau, les dirigeants et les créatifs qui pratiquent la MT régulièrement.",
     "benefit4Title": "Réduire le stress — même celui qui s'est accumulé",
     "benefit4Short": "La MT ne soulage pas seulement le stress du moment — elle aide aussi à dissoudre la pression accumulée sur le long terme. Beaucoup rapportent : moins d'anxiété, un meilleur sommeil, plus de résilience.",
     "benefit4Expanded": "La MT a été étudiée pour les troubles liés au stress et le traitement des traumatismes — y compris le PTSD. Le repos physiologique en profondeur soutient la capacité naturelle d'autorégulation du corps d'une façon que d'autres techniques de relaxation n'atteignent tout simplement pas.",
     "benefit5Title": "Plus de 400 études dans les meilleures universités",
-    "benefit5Short": "La Méditation Transcendantale est la technique de méditation la plus étudiée au monde. Domaines de recherche : stress, santé cardiaque, fonction cérébrale, performance et résilience.",
+    "benefit5Short": "La Méditation Transcendantale est la technique de méditation la plus étudiée au monde. Domaines de recherche : stress, santé cardiaque, fonctionnement cérébral, performances scolaires, académiques et professionnelles, résilience.",
     "benefit5Expanded": "Parce que la MT est enseignée de façon standardisée, elle se prête à une investigation scientifique plus fiable que beaucoup d'autres approches. Des études ont été publiées notamment dans l'American Journal of Cardiology et l'International Journal of Neuroscience."
   },
   "HowItWorks": {
     "eyebrow": "Le parcours",
     "heading": "Comment ça marche",
     "subheading": "De la curiosité à la pratique quotidienne — en quatre étapes simples.",
-    "step0Title": "Soirée d'introduction gratuite",
+    "step0Title": "Rendez-vous d'info gratuit",
     "step0Description": "Tu découvres ce qu'est la MT, en quoi elle diffère des autres techniques, et tu peux poser toutes tes questions. Aucun engagement.",
     "step1Title": "Initiation personnelle",
     "step1Description": "La technique est transmise en personne par un enseignant certifié — de façon individuelle, à ton rythme. Aucune expérience préalable requise.",
@@ -132,13 +132,13 @@
   },
   "Teachers": {
     "eyebrow": "Centre MT Munich",
-    "heading": "Ton enseignant",
+    "heading": "Ton enseignant(e)",
     "readMore": "Lire la suite",
     "collapse": "Réduire"
   },
   "CenterBanner": {
     "eyebrow": "Centre MT Munich",
-    "line1": "En présentiel ou en ligne —",
+    "line1": "En personne ou en ligne –",
     "line2": "on est là pour toi.",
     "ariaLabel": "Centre MT Munich"
   },
@@ -213,7 +213,7 @@
       "label": "Concentration",
       "headline0": "La tête pleine, mais pas les idées claires ?",
       "headline1": "La clarté ne se force pas — elle s'installe.",
-      "subtitle": "La MT ne range pas le chaos — elle laisse l'ordre s'installer naturellement : un esprit plus clair, plus calme."
+      "subtitle": "La MT ne fait pas le ménage — elle laisse l'ordre s'installer de lui-même : un esprit plus calme, un focus plus net."
     },
     "erschoepfung": {
       "label": "Épuisement",
