@@ -11,7 +11,7 @@
     "badge1": "Einfach und mühelos",
     "badge2": "Von Millionen weltweit praktiziert",
     "badge3": "Keine Konzentration nötig",
-    "badge4": "Ohne Gedanken stoppen",
+    "badge4": "Gedanken kommen zur Ruhe",
     "badge5": "400+ wissenschaftliche Studien",
     "ariaLabel": "Merkmale von Transzendentaler Meditation",
     "showMore": "Mehr anzeigen",
@@ -42,7 +42,7 @@
     "heading": "Was TM einzigartig macht",
     "subheading": "Transzendentale Meditation unterscheidet sich grundlegend von anderen Techniken.",
     "benefit0Title": "Mühelos – keine Konzentration nötig",
-    "benefit0Short": "Die meisten Meditationstechniken erfordern Fokus oder Willenskraft. TM ist anders: Der Geist darf sich ganz natürlich beruhigen – ohne Anstrengung. Deshalb finden viele Menschen TM überraschend leicht zu erlernen.",
+    "benefit0Short": "Die meisten Meditationstechniken erfordern Fokus oder Willenskraft. TM ist anders: Der Geist darf sich ganz natürlich beruhigen – ohne Anstrengung. Deshalb finden viele Menschen, dassTM überraschend leicht erlernt werden kann.",
     "benefit0Expanded": "Weil die Technik mühelos ist, bewegt sich der Geist spontan in Richtung ruhigerer Gedankenebenen. Meditation geschieht von selbst – nicht durch Disziplin. Das macht TM auch für Menschen zugänglich, die mit anderen Techniken keinen Erfolg gehabt haben.",
     "benefit1Title": "Tiefer als Schlaf – der Körper erholt sich wirklich",
     "benefit1Short": "Während der TM erreicht der Körper eine Tiefenruhe, die Studien zufolge tiefer ist als im Schlaf – während der Geist wach und klar bleibt. In dieser Ruhe baut das Nervensystem angesammelten Stress ab.",
@@ -51,20 +51,20 @@
     "benefit2Short": "Jeder Mensch trägt ein Reservoir an vollkommener Zufriedenheit in sich: ein Meer der Freude, das durch TM zugänglich wird, mehr und mehr innere Zufriedenheit und weniger Reizbarkeit im Alltag.",
     "benefit2Expanded": "Was von etlichen Philosophen, Mystikern und Weisen seit Jahrtausenden beschrieben wird, wird durch TM konkret und beständig integriert. Nicht nur das, es ist auch wissenschaftlich messbar.",
     "benefit3Title": "Klarer denken, ruhiger reagieren",
-    "benefit3Short": "Diverse Studien zeigen: Regelmäßig Praktizierende reagieren ruhiger in stressigen Situationen, entscheiden klarer, sind kreativer. Das ist keine Selbstsuggestion – sondern messbar in der Gehirnaktivität.",
-    "benefit3Expanded": "Studien zeigen, dass TM die Koordination verschiedener Gehirnbereiche verbessert. Diese integriertere Funktionsweise ist bei Spitzensportlern, Führungskräften und Kreativen dokumentiert, die TM regelmäßig praktizieren.",
+    "benefit3Short": "Diverse Studien zeigen: Regelmäßig Praktizierende reagieren in stressigen Situationen ruhiger, entscheiden klarer, sind kreativer. Das ist keine Selbstsuggestion – sondern messbar in der Gehirnaktivität.",
+    "benefit3Expanded": "Studien zeigen, dass TM die Koordination verschiedener Gehirnbereiche verbessert. Diese integriertere Funktionsweise ist bei Spitzensportlern, Führungskräften und Kreativen, die TM regelmäßig praktizieren, gut dokumentiert.",
     "benefit4Title": "Stress abbauen – auch den tiefsitzenden",
     "benefit4Short": "Nicht nur akuter Stress, sondern auch langfristig angesammelter Druck lässt sich durch TM abbauen. Viele berichten: weniger Angst, besserer Schlaf, mehr Resilienz.",
     "benefit4Expanded": "TM wurde in Studien bei stressbedingten Beschwerden und Traumaverarbeitung untersucht – darunter auch bei PTBS. Die physiologische Tiefenruhe unterstützt die natürliche Selbstregulation des Körpers auf eine Weise, die andere Entspannungstechniken schlicht nicht erreichen.",
     "benefit5Title": "Über 400 Studien an führenden Universitäten",
-    "benefit5Short": "Transzendentale Meditation ist die meistuntersuchte Meditationstechnik weltweit. Forschungsgebiete: Stress, Herzgesundheit, Gehirnfunktion, Leistung und Resilienz.",
+    "benefit5Short": "Transzendentale Meditation ist die bestuntersuchte Meditationstechnik weltweit. Forschungsgebiete: Stress, Herzgesundheit, Gehirnfunktion; schulische, akademische und berufliche Leistung; Resilienz.",
     "benefit5Expanded": "Weil TM standardisiert gelehrt wird, lässt sie sich wissenschaftlich zuverlässiger untersuchen als viele andere Ansätze. Studien erschienen u.a. im American Journal of Cardiology und dem International Journal of Neuroscience."
   },
   "HowItWorks": {
     "eyebrow": "Der Weg",
     "heading": "So funktioniert es",
     "subheading": "Von Neugier bis zur täglichen Praxis – in vier einfachen Schritten.",
-    "step0Title": "Kostenloser Infoabend",
+    "step0Title": "Kostenloser Info-Termin",
     "step0Description": "Du erfährst, was TM ist, wie sie sich von anderen Techniken unterscheidet, und kannst alle Fragen stellen. Keinerlei Verpflichtung.",
     "step1Title": "Persönliche Unterweisung",
     "step1Description": "Die Technik wird von einem zertifizierten Lehrer persönlich vermittelt – individuell, in deinem eigenen Tempo. Keine Vorkenntnisse nötig.",
@@ -122,13 +122,13 @@
   },
   "Teachers": {
     "eyebrow": "TM Center München",
-    "heading": "Es unterrichtet Dich",
+    "heading": "Es unterrichtet dich",
     "readMore": "Mehr lesen",
     "collapse": "Weniger"
   },
   "CenterBanner": {
     "eyebrow": "TM Center München",
-    "line1": "Vor Ort oder online —",
+    "line1": "Vor Ort oder online –",
     "line2": "wir sind für dich da.",
     "ariaLabel": "TM Center München"
   },
@@ -214,7 +214,7 @@
       "label": "Fokus",
       "headline0": "Dein Kopf ist voll, aber nicht klar?",
       "headline1": "Klarheit erzwingst du nicht – sie entsteht.",
-      "subtitle": "TM räumt nicht auf, er lässt Ordnung von selbst entstehen: klarer Fokus, ruhigerer Geist."
+      "subtitle": "TM räumt nicht auf, sie lässt Ordnung von selbst entstehen: klarer Fokus, ruhigerer Geist."
     },
     "erschoepfung": {
       "label": "Erschöpfung",
