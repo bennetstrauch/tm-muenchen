@@ -144,7 +144,7 @@
   },
   "AbschlussCta": {
     "heading": "Descubre si la MT es para ti",
-    "body": "Ven a una charla informativa gratuita, sin compromiso.",
+    "body": "Ven a una charla introductoria gratuita, sin compromiso.",
     "cta": "Reservar mi plaza"
   },
   "Wissenschaft": {
@@ -253,6 +253,6 @@
   },
   "Entdecken": {
     "headline": "Descubre cómo una técnica de relajación sencilla puede mejorar todas las áreas de tu vida.",
-    "cta": "Reserva tu charla introductoria"
+    "cta": "Reservar charla introductoria"
   }
 }
