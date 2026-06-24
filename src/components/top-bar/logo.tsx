@@ -35,7 +35,7 @@ export default async function TopBarLogo() {
   return (
     <a
       href="/"
-      aria-label="TM München – Startseite"
+      aria-label={`TM ${tenant.city} – Startseite`}
       className="flex-1 flex items-center justify-center gap-3"
     >
       <img src={logoSrc} alt="Transcendental Meditation" className="h-6 opacity-80 group-data-[transparent=true]:brightness-0 group-data-[transparent=true]:invert group-data-[transparent=true]:opacity-90" />

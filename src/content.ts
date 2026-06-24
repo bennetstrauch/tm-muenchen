@@ -26,18 +26,30 @@ const STRESS_IMAGES: HeroImage[] = [
   { src: "/hero/stress/3.jpg", focus: "65% 50%" },
   { src: "/hero/stress/4.jpg", focus: "50% 50%" },
   { src: "/hero/stress/5.jpg", focus: "45% 50%" },
-  { src: "/hero/stress/6.jpg", focus: "50% 45%" },
+  // { src: "/hero/stress/6.jpg", focus: "50% 45%" },   // missing from disk
   // { src: "/hero/stress/7.jpg", focus: "45% 35%" },
   { src: "/hero/stress/8.jpg", focus: "62% 35%" },
   { src: "/hero/stress/9.jpg", focus: "45% 40%" },
-  { src: "/hero/stress/10.jpg", focus: "45% 30%" },
+  // { src: "/hero/stress/10.jpg", focus: "45% 30%" },  // missing from disk
   // { src: "/hero/stress/11.jpg", focus: "70% 130%" },
-  { src: "/hero/stress/12.jpg", focus: "35% 35%" },
+  // { src: "/hero/stress/12.jpg", focus: "35% 35%" },  // removed
   // { src: "/hero/stress/13.jpg", focus: "50% 40%" },
   // { src: "/hero/stress/14.jpg", focus: "70% 30%" },
-  { src: "/hero/stress/15.jpg", focus: "55% 30%" },
+  // { src: "/hero/stress/15.jpg", focus: "55% 30%" },  // removed
   // { src: "/hero/stress/17.jpg", focus: "55% 30%" },
   // { src: "/hero/stress/18.jpg", focus: "50% 50%" },
+  // meditators — TODO: consider per-theme sets (see CONTEXT.md)
+  { src: "/hero/ourmeditators/BW3A0539.jpg",                    focus: "50% 50%" },
+  { src: "/hero/ourmeditators/BW3A0609.jpg",                    focus: "50% 45%" },
+  { src: "/hero/ourmeditators/BW3A0816.jpg",                    focus: "22% 45%" },
+  { src: "/hero/ourmeditators/BW3A0946.jpg",                    focus: "50% 55%" },
+  { src: "/hero/ourmeditators/BW3A0977.jpg",                    focus: "50% 45%" },
+  { src: "/hero/ourmeditators/BW3A1056.jpg",                    focus: "50% 50%" },
+  { src: "/hero/ourmeditators/BW3A1064.jpg",                    focus: "48% 48%" },
+  { src: "/hero/ourmeditators/BW3A1188.jpg",                    focus: "50% 48%" },
+  { src: "/hero/ourmeditators/20210116_175233-3L5A6581.jpg",    focus: "55% 50%" },
+  { src: "/hero/ourmeditators/20250504_135104-4U3A3332.jpg",    focus: "50% 40%" },
+  { src: "/hero/ourmeditators/3L5A6677.jpg",                    focus: "50% 55%" },
 ];
 
 export const themes: Record<string, Theme> = {

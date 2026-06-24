@@ -82,6 +82,16 @@ What a theme does NOT change: page structure, sections, copy outside the hero.
 
 Theme-switching arrows in the hero exist but are rarely used — real visitors scroll down. Themes are primarily for routing different ad audiences to the right entry point.
 
+### Hero images
+
+Configured in `src/content.ts`. Each theme has an `images: HeroImage[]` array; currently all themes share `STRESS_IMAGES`. One image is picked randomly per page load.
+
+`HeroImage.focus` is CSS `object-position` (e.g. `"50% 45%"`). The hero is `min-h-[100dvh]` with `object-cover`, so the crop differs significantly between mobile (portrait) and desktop (landscape) — focus must be set to keep the subject visible in both. On mobile, left/right edges get cut; on desktop, top/bottom get cut.
+
+**Current pool** (`STRESS_IMAGES`, `src/content.ts`): stock photos 3, 4, 5, 8, 9 + all 11 meditator photos from `/hero/ourmeditators/`. Stock 6 and 10 are commented out (missing from disk); 12 and 15 removed.
+
+**Future: per-theme image sets.** The `images` field already supports per-theme arrays (e.g. `innere-freude` already has its own). When there are enough photos, give each theme its own curated set — e.g. `schlaf` → calm/night/rest images, `angst` → open/nature/stillness, `innere-freude` → joyful/warm. The meditator photos in `/hero/ourmeditators/` are a good source to draw from once themes are differentiated.
+
 Target theme set (confirmed):
 - `/` → stress — "Endlich wirklich abschalten." (primary ad target)
 - `/schlaf` → Schlaf & Regeneration
@@ -108,7 +118,7 @@ Both apply. B is likely the bigger factor.
 ## Leiter-Benachrichtigung
 Automatic notification email sent to event leader(s) when a new Veranstaltung registration comes in. Triggered in `register-event/route.ts`. Host email resolved via TMW API first-name lookup (hosts field contains first names e.g. "Bennet, Malena"). Non-matched names silently skipped.
 
-Email structure: greeting with leader's first name → registrant details (name, email, phone, TM-Lehrer) → Magic-Link button → sign-off "Dein TM-München-IT-TEAM 😉"
+Email structure: greeting with leader's first name → registrant details (name, email, phone, TM-Lehrer) → Magic-Link button → sign-off "Dein [centerName] IT-Team 😉" (centerName from `tenant.center_banner_label ?? \`TM Center ${tenant.city}\``)
 
 ## Magic Link
 A time-limited, event-scoped admin access token embedded in the Leiter-Benachrichtigung email. Allows the recipient to view registrations and manage emails for one specific event without logging in.
@@ -166,7 +176,7 @@ Computed in AdminClient from `eventRegistrations[]` (Google Sheets "Veranstaltun
 Top-level admin tab showing all E-Mail Aktionen across all Veranstaltungen, with an event filter dropdown (same pattern as Anmeldungen tab). Displays upcoming automated Erinnerungen (derived from event fields) alongside stored custom emails and the sent log. Leiter see a scoped version via Magic Link (their event only). Entry point for composing new E-Mail Aktionen.
 
 ## E-Mail Compose Form
-Shared form used for both creating and editing E-Mail Aktionen (custom and reminder overrides). Fields: Veranstaltung (locked when editing), Betreff, Nachricht (plain text, injected into TM München email template with automatic "Hallo [Name]," salutation per recipient), Sendezeit (Jetzt / Planen with datetime picker), Empfänger (read-only count). Optional preview button + mandatory preview/confirmation modal on "Jetzt senden" (server-rendered iframe showing exact email HTML).
+Shared form used for both creating and editing E-Mail Aktionen (custom and reminder overrides). Fields: Veranstaltung (locked when editing), Betreff, Nachricht (plain text, injected into center email template with automatic "Hallo [Name]," salutation per recipient; sign-off and footer use `centerName` / `contactPhone` from tenant config), Sendezeit (Jetzt / Planen with datetime picker), Empfänger (read-only count). Optional preview button + mandatory preview/confirmation modal on "Jetzt senden" (server-rendered iframe showing exact email HTML).
 
 ## WhatsApp Community
 
@@ -519,7 +529,7 @@ Address: Guldenstraße 47, 80639 München
 Registergericht: Amtsgericht München (VR-Nummer: [Placeholder — to be filled in])
 Contact: +49 163 7354 836 · info@tm-muenchen.de
 
-In Phase 2 (multi-tenancy), these fields move to Supabase `tenants` table.
+For other tenants, the full content is overridden via `tenant.impressum_content` (HTML or plain text). The fallback `MuenchenImpressum` component is München-specific. Contact email uses `tenant.contact_email`. Page title is dynamic via `generateMetadata`.
 
 ## Datenschutz
 
@@ -530,6 +540,8 @@ Static German-language page at `/datenschutz`. Same locale-notice behaviour as I
 - Meta Pixel (only after cookie consent)
 
 Google Sheets section can be removed once registration data is fully migrated to Supabase.
+
+Contact email in the body uses `tenant.contact_email`. Page title is dynamic via `generateMetadata`. The address and legal entity ("Transzendentale Meditation München e.V.") remain München-specific — no multi-tenant override pattern yet (unlike Impressum).
 
 ## Baum des Lebens — Team & Rollen
 

@@ -6,10 +6,13 @@ import { getCurrentTenant } from '@/lib/tenant';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: 'Events für Meditierende – TM München',
-  description: 'Gruppenmeditationen, Center-Abende, Retreats und mehr für bereits Meditierende in München.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const tenant = await getCurrentTenant();
+  return {
+    title: `Events für Meditierende – TM ${tenant.city}`,
+    description: `Gruppenmeditationen, Center-Abende, Retreats und mehr für bereits Meditierende in ${tenant.city}.`,
+  };
+}
 
 export default async function EventsPage() {
   const tenant = await getCurrentTenant();

@@ -44,6 +44,7 @@ async function notifyLeiter(params: {
   baseUrl: string;
   fromEmail: string;
   replyTo?: string;
+  centerName?: string;
 }): Promise<void> {
   const firstNames = params.hosts.split(',').map(s => s.trim()).filter(Boolean);
   const leaders = await lookupTeachersByFirstNames(firstNames);
@@ -70,6 +71,7 @@ async function notifyLeiter(params: {
           eventTime: params.eventTime,
           eventLocation: params.eventLocation,
           magicLink,
+          centerName: params.centerName,
         }),
       }),
     ),
@@ -98,10 +100,13 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Pflichtfelder fehlen.' }, { status: 400 });
   }
 
+  const centerName = tenant.center_banner_label ?? `TM Center ${tenant.city}`;
   const params: EventEmailParams = {
     name, eventTitle, eventSubtitle,
     eventDate, eventTime, eventLocation,
     isOnline, onlineLink, hosts, price,
+    centerName,
+    contactPhone: tenant.contact_phone || undefined,
   };
 
   const reminderTime = eventTime || '19:00';
@@ -168,6 +173,7 @@ export async function POST(request: Request) {
     baseUrl: new URL(request.url).origin,
     fromEmail: tenant.from_email,
     replyTo: tenant.contact_email || undefined,
+    centerName,
   }).catch(err => console.error('Leiter notification failed:', err));
 
   return Response.json({ success: true });

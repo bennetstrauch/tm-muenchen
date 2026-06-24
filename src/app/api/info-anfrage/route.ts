@@ -94,7 +94,7 @@ export async function POST(request: Request) {
     replyTo: tenant.contact_email || undefined,
     to: email,
     subject: buildInfoAnfrageUserSubject(locale),
-    html: buildInfoAnfrageUserHtml({ name, locale }),
+    html: buildInfoAnfrageUserHtml({ name, locale, cityName: tenant.city }),
   }).catch(err => console.error('[info-anfrage] user email failed:', err));
 
   return Response.json({ success: true });

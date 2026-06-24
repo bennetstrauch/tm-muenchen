@@ -11,6 +11,7 @@ export type LeiterNotificationParams = {
   eventTime: string;
   eventLocation: string;
   magicLink: string;
+  centerName?: string;
 };
 
 export type EventEmailParams = {
@@ -24,17 +25,22 @@ export type EventEmailParams = {
   onlineLink?: string;
   hosts: string;
   price?: string;
+  centerName?: string;
+  contactPhone?: string;
 };
 
-function footerBlock(): string {
+function footerBlock(centerName?: string, contactPhone?: string): string {
+  const name = centerName ?? 'TM Center';
+  const phoneHtml = contactPhone
+    ? `: <a href="tel:${contactPhone.replace(/\s/g, '')}" style="color:#BCA075;">${contactPhone}</a>`
+    : '.';
   return `
   <tr>
     <td style="padding:20px;background:#ffffff;font-size:13px;color:#aaa;
                border-top:1px solid #eee;line-height:1.6;">
       <p style="margin:0;">
         Bitte beachten Sie: Dies ist eine automatisch erstellte Nachricht.
-        Bei Fragen wenden Sie sich bitte an das TM-Center München:
-        <a href="tel:089537224" style="color:#BCA075;">089-537224</a>
+        Bei Fragen wenden Sie sich bitte an das ${name}${phoneHtml}
       </p>
     </td>
   </tr>`;
@@ -77,6 +83,15 @@ function onlineLinkBlock(url: string, margin = '20px 0'): string {
 }
 
 export function buildEventConfirmationHtml(p: EventEmailParams): string {
+  const centerName = p.centerName ?? 'TM Center';
+  const phoneBlock = p.contactPhone
+    ? `<p style="margin:0 0 8px 0;">
+        Solltest du kurzfristig verhindert sein, melde dich bitte direkt beim Center:
+      </p>
+      <p style="margin:0 0 20px 0;">
+        <a href="tel:${p.contactPhone.replace(/\s/g, '')}" style="color:#BCA075;">${p.contactPhone}</a>
+      </p>`
+    : '';
   const body = `
   <tr>
     <td style="padding:20px;background:#ffffff;font-size:16px;line-height:1.6;">
@@ -86,24 +101,20 @@ export function buildEventConfirmationHtml(p: EventEmailParams): string {
       </p>
       ${eventBox(p)}
       ${p.isOnline && p.onlineLink ? onlineLinkBlock(p.onlineLink) : ''}
-      <p style="margin:0 0 8px 0;">
-        Solltest du kurzfristig verhindert sein, melde dich bitte direkt beim Center:
-      </p>
-      <p style="margin:0 0 20px 0;">
-        <a href="tel:089537224" style="color:#BCA075;">089-537224</a>
-      </p>
+      ${phoneBlock}
       <p style="margin:24px 0 0;font-size:16px;">
         Bis bald und herzliche Grüße,<br>
-        <span style="color:#BCA075;">TM-Center München</span>
+        <span style="color:#BCA075;">${centerName}</span>
       </p>
     </td>
   </tr>
-  ${footerBlock()}`;
+  ${footerBlock(centerName, p.contactPhone)}`;
 
   return emailWrapper(`Bestätigung: ${p.eventTitle}`, body);
 }
 
-export function buildCustomEmailHtml(name: string, body: string): string {
+export function buildCustomEmailHtml(name: string, body: string, opts?: { centerName?: string; contactPhone?: string }): string {
+  const centerName = opts?.centerName ?? 'TM Center';
   const paragraphs = body
     .split(/\n\n+/)
     .map(p => p.trim())
@@ -118,13 +129,13 @@ export function buildCustomEmailHtml(name: string, body: string): string {
       ${paragraphs}
       <p style="margin:28px 0 0;font-size:16px;">
         Herzliche Grüße,<br>
-        <span style="color:#BCA075;">TM-Center München</span>
+        <span style="color:#BCA075;">${centerName}</span>
       </p>
     </td>
   </tr>
-  ${footerBlock()}`;
+  ${footerBlock(centerName, opts?.contactPhone)}`;
 
-  return emailWrapper('Nachricht vom TM-Center München', content);
+  return emailWrapper(`Nachricht vom ${centerName}`, content);
 }
 
 export function buildEventReminderHtml(p: EventEmailParams, customBody?: string): string {
@@ -144,17 +155,17 @@ export function buildEventReminderHtml(p: EventEmailParams, customBody?: string)
       ${introText}
       ${eventBox(p)}
       ${p.isOnline && p.onlineLink ? onlineLinkBlock(p.onlineLink, '24px 0 16px') : ''}
-      <p style="margin:0 0 20px 0;font-size:15px;color:#777;line-height:1.7;">
+      ${p.contactPhone ? `<p style="margin:0 0 20px 0;font-size:15px;color:#777;line-height:1.7;">
         Solltest du kurzfristig verhindert sein, melde dich bitte direkt beim Center:
-        <a href="tel:089537224" style="color:#BCA075;">089-537224</a>
-      </p>
+        <a href="tel:${p.contactPhone.replace(/\s/g, '')}" style="color:#BCA075;">${p.contactPhone}</a>
+      </p>` : ''}
       <p style="margin:24px 0 0;font-size:16px;">
         Wir freuen uns auf dich!<br>
-        <span style="color:#BCA075;">TM-Center München</span>
+        <span style="color:#BCA075;">${p.centerName ?? 'TM Center'}</span>
       </p>
     </td>
   </tr>
-  ${footerBlock()}`;
+  ${footerBlock(p.centerName, p.contactPhone)}`;
 
   return emailWrapper(`Erinnerung: ${p.eventTitle} – ${p.eventDate}`, body);
 }
@@ -209,7 +220,7 @@ export function buildLeiterNotificationHtml(p: LeiterNotificationParams): string
       </div>
       <p style="margin:0;font-size:16px;">
         Hochachtungsvoll,<br>
-        <span style="color:#BCA075;">Dein TM-München-IT-TEAM 😉</span>
+        <span style="color:#BCA075;">Dein ${p.centerName ?? 'TM Center'} IT-Team 😉</span>
       </p>
     </td>
   </tr>`;

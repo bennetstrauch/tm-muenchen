@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getCurrentTenant } from "@/lib/tenant";
 
-export const metadata: Metadata = {
-  title: "Impressum | TM München",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const tenant = await getCurrentTenant();
+  return { title: `Impressum | TM ${tenant.city}` };
+}
 
 export default async function ImpressumPage() {
   const [locale, t, tenant] = await Promise.all([

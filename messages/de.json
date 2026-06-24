@@ -75,7 +75,7 @@
     "bottomCta": "Jetzt Info-Termin besuchen"
   },
   "Events": {
-    "heading": "Dein Infotermin",
+    "heading": "Dein Info-Termin",
     "cta": "Platz sichern",
     "empty": "Aktuell keine Termine geplant. Schreib uns gerne direkt an.",
     "close": "Schließen ×",
@@ -151,7 +151,7 @@
     "cta": "Beim Info-Termin mehr erfahren"
   },
   "InfoabendPreview": {
-    "heading": "So läuft der Infoevent ab",
+    "heading": "So läuft der Info-Event ab",
     "box0Label": "Format",
     "box0Value": "Online",
     "box1Label": "Kosten",

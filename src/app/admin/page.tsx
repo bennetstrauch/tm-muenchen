@@ -11,9 +11,10 @@ import { getCurrentTenant } from '@/lib/tenant';
 import { getEmailActions } from '@/lib/email-actions';
 import AdminClient from './admin-client';
 
-export const metadata: Metadata = {
-  title: 'Admin – TM München',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const tenant = await getCurrentTenant();
+  return { title: `Admin – TM ${tenant.city}` };
+}
 
 export const dynamic = 'force-dynamic';
 

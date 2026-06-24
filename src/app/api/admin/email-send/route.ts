@@ -73,6 +73,7 @@ export async function POST(request: Request) {
     });
 
     const tenant = await getCurrentTenant();
+    const centerName = tenant.center_banner_label ?? `TM Center ${tenant.city}`;
     const allRegistrations = await getEventRegistrations(tenant.tenant);
     const recipients = allRegistrations.filter(r => r.eventId === eventId);
 
@@ -90,7 +91,7 @@ export async function POST(request: Request) {
         replyTo: tenant.contact_email || undefined,
         to: r.email,
         subject,
-        html: buildCustomEmailHtml(r.name || 'liebe/r Teilnehmer/in', body),
+        html: buildCustomEmailHtml(r.name || 'liebe/r Teilnehmer/in', body, { centerName, contactPhone: tenant.contact_phone || undefined }),
       });
       if (result.error) {
         errors.push(`${r.email}: ${result.error.message}`);

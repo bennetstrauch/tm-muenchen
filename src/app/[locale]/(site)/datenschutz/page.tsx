@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
+import { getCurrentTenant } from "@/lib/tenant";
 
-export const metadata: Metadata = {
-  title: "Datenschutz | TM München",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const tenant = await getCurrentTenant();
+  return { title: `Datenschutz | TM ${tenant.city}` };
+}
 
 export default async function DatenschutzPage() {
-  const locale = await getLocale();
-  const t = await getTranslations("LegalPages");
+  const [locale, t, tenant] = await Promise.all([
+    getLocale(),
+    getTranslations("LegalPages"),
+    getCurrentTenant(),
+  ]);
 
   return (
     <main className="min-h-screen bg-white">
@@ -32,8 +37,8 @@ export default async function DatenschutzPage() {
               Guldenstraße 47<br />
               80639 München<br />
               E-Mail:{" "}
-              <a href="mailto:info@tm-muenchen.de" className="hover:text-[#1A3352] transition-colors">
-                info@tm-muenchen.de
+              <a href={`mailto:${tenant.contact_email}`} className="hover:text-[#1A3352] transition-colors">
+                {tenant.contact_email}
               </a>
             </p>
           </section>
@@ -144,8 +149,8 @@ export default async function DatenschutzPage() {
           <section>
             <Eyebrow>Kontakt für Datenschutzanfragen</Eyebrow>
             <p>
-              <a href="mailto:info@tm-muenchen.de" className="hover:text-[#1A3352] transition-colors">
-                info@tm-muenchen.de
+              <a href={`mailto:${tenant.contact_email}`} className="hover:text-[#1A3352] transition-colors">
+                {tenant.contact_email}
               </a>
             </p>
           </section>

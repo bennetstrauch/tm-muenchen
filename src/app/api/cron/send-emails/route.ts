@@ -50,6 +50,8 @@ export async function GET(request: Request) {
   try {
     // ── 1. Pending custom bulk emails past their scheduledAt ─────────────────
     const tenant = await getCurrentTenant();
+    const centerName = tenant.center_banner_label ?? `TM Center ${tenant.city}`;
+    const contactPhone = tenant.contact_phone || undefined;
     const [allActions, allRegistrations, allEvents] = await Promise.all([
       getEmailActions(),
       getEventRegistrations(tenant.tenant),
@@ -70,7 +72,7 @@ export async function GET(request: Request) {
       const { sent, errors } = await sendBulk(
         recipients,
         action.subject,
-        name => buildCustomEmailHtml(name, action.body),
+        name => buildCustomEmailHtml(name, action.body, { centerName, contactPhone }),
         tenant.from_email,
         tenant.contact_email || undefined,
       );
@@ -125,6 +127,8 @@ export async function GET(request: Request) {
               onlineLink: event.onlineLink || undefined,
               hosts: event.hosts,
               price: event.price || undefined,
+              centerName,
+              contactPhone,
             },
             slot.body,
           ),
