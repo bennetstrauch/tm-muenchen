@@ -90,6 +90,8 @@ Do not:
 - use client components by default — server-first
 - add visual complexity that doesn't serve conversion
 - jump straight to implementation — understand precisely what is required and have a simple solution in mind before touching code, then write failing tests first (/tdd), then make them pass
+- bypass an established abstraction (`getCurrentTenant()`, `checkAdminRequest()`, etc.) at a call site — if a helper needs to change, change the helper. See ADR-0002.
+- mix languages in user-facing labels or copy — this codebase uses German throughout admin UI labels
 
 ## Agent skills
 
@@ -99,7 +101,8 @@ Issues live in GitHub Issues (`gh` CLI). See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
-Default label vocabulary (needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix). See `docs/agents/triage-labels.md`.
+Default label vocabulary (needs-triage, needs
+-info, ready-for-agent, ready-for-human, wontfix). See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
@@ -107,13 +110,25 @@ Single-context — one `CONTEXT.md` + `docs/adr/` at repo root. See `docs/agents
 
 ## Development workflow (skill pipeline)
 
-For any non-trivial feature or improvement, follow this pipeline:
+### Feature pipeline
+For any non-trivial feature or improvement:
 
 1. **/grill-with-docs** — interview to resolve all product decisions, update `CONTEXT.md` inline
 2. **/to-prd** — write a tight PRD from the grilling output (core entities, MVP scope, non-goals, definition of done)
 3. **/to-issues** — convert PRD to independently-grabbable vertical-slice issues
-4. **/tdd** — implement each issue with red-green-refactor loop (where applicable)
-5. **Ralph loop** — autonomous agent that reads PRD + progress file, picks next task, implements, commits, updates progress. Run only once the backlog is decomposed into small safe chunks.
-6. **/improve-codebase-architecture** — optional, after features stabilise
+4. **/pre-impl** — per issue: read task, find existing abstractions, write implementation contract, get sign-off
+5. **/tdd** — implement with red-green-refactor loop (after pre-impl sign-off)
+6. **/craft** — quality audit of the diff **before committing** — not after
+7. **Ralph loop** — autonomous agent for executing a decomposed backlog. Only after steps 1–3 are complete.
+8. **/improve-codebase-architecture** — optional, after features stabilise
+
+### Bug pipeline
+For any bug fix or quick ad-hoc change:
+
+1. **/diagnose** — reproduce → minimise → hypothesise → instrument → fix → regression-test
+2. **/pre-impl** — state the fix, list which abstractions it uses, flag any bypass (even for small changes)
+3. **/craft** — audit the diff **before committing**
+
+**Rule:** `/craft` always runs before a commit, not after. `/pre-impl` always runs before code is written, not after.
 
 Claude is the primary coding assistant throughout. No Google Stitch — design decisions happen in conversation or via screenshots.

@@ -1,4 +1,3 @@
-import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -10,11 +9,6 @@ import { verifySession } from '@/lib/admin-session';
 import { getCurrentTenant } from '@/lib/tenant';
 import { getEmailActions } from '@/lib/email-actions';
 import AdminClient from './admin-client';
-
-export async function generateMetadata(): Promise<Metadata> {
-  const tenant = await getCurrentTenant();
-  return { title: `Admin – TM ${tenant.city}` };
-}
 
 export const dynamic = 'force-dynamic';
 

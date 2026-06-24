@@ -23,7 +23,7 @@ export default async function SiteShell({
       <MainOffset>{children}</MainOffset>
       <Footer />
       <StickyCta />
-      <CookieBanner />
+      <CookieBanner pixelId={tenant.meta_pixel_id} />
     </NavProvider>
   );
 }

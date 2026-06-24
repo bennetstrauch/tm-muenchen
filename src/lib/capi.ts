@@ -1,13 +1,12 @@
 import { createHash } from "crypto";
 
-const PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID!;
-const ACCESS_TOKEN = process.env.FACEBOOK_CAPI_TOKEN!;
-
 function sha256(value: string): string {
   return createHash("sha256").update(value.trim().toLowerCase()).digest("hex");
 }
 
 export type CAPILeadParams = {
+  pixelId: string;
+  capiToken: string;
   eventId: string;
   eventSourceUrl: string;
   clientIp?: string;
@@ -18,7 +17,7 @@ export type CAPILeadParams = {
 };
 
 export async function sendCapiLead(params: CAPILeadParams): Promise<void> {
-  const { eventId, eventSourceUrl, clientIp, clientUserAgent, email, name, phone } = params;
+  const { pixelId, capiToken, eventId, eventSourceUrl, clientIp, clientUserAgent, email, name, phone } = params;
 
   const userData: Record<string, string> = {};
 
@@ -32,7 +31,7 @@ export async function sendCapiLead(params: CAPILeadParams): Promise<void> {
   if (clientIp) userData.client_ip_address = clientIp;
   if (clientUserAgent) userData.client_user_agent = clientUserAgent;
 
-  const res = await fetch(`https://graph.facebook.com/v21.0/${PIXEL_ID}/events`, {
+  const res = await fetch(`https://graph.facebook.com/v21.0/${pixelId}/events`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -46,7 +45,7 @@ export async function sendCapiLead(params: CAPILeadParams): Promise<void> {
           user_data: userData,
         },
       ],
-      access_token: ACCESS_TOKEN,
+      access_token: capiToken,
     }),
   });
 

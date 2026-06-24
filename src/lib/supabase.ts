@@ -154,6 +154,8 @@ type TenantRow = {
   show_meditators_section: boolean;
   center_banner_label: string | null;
   can_edit_copy: boolean;
+  meta_pixel_id: string | null;
+  meta_pixel_capi_token: string | null;
 };
 
 export type Database = {

@@ -13,6 +13,38 @@ export type CopySection = {
 
 export const copySubset: CopySection[] = [
   {
+    label: 'Hero',
+    fields: [
+      { key: 'Hero.badge',     label: 'Badge',         type: 'text' },
+      { key: 'Hero.cta',       label: 'CTA-Button',    type: 'text' },
+      { key: 'Hero.learnMore', label: 'Mehr erfahren', type: 'text' },
+    ],
+  },
+  {
+    label: 'Vertrauens-Badges',
+    fields: [
+      { key: 'TrustBadges.badge0', label: 'Badge 1', type: 'text' },
+      { key: 'TrustBadges.badge1', label: 'Badge 2', type: 'text' },
+      { key: 'TrustBadges.badge2', label: 'Badge 3', type: 'text' },
+      { key: 'TrustBadges.badge3', label: 'Badge 4', type: 'text' },
+      { key: 'TrustBadges.badge4', label: 'Badge 5', type: 'text' },
+      { key: 'TrustBadges.badge5', label: 'Badge 6', type: 'text' },
+    ],
+  },
+  {
+    label: 'So läuft der Infoabend ab',
+    fields: [
+      { key: 'InfoabendPreview.heading',  label: 'Überschrift',          type: 'text' },
+      { key: 'InfoabendPreview.box0Label', label: 'Karte 1 – Label',     type: 'text' },
+      { key: 'InfoabendPreview.box0Value', label: 'Karte 1 – Wert',      type: 'text' },
+      { key: 'InfoabendPreview.box1Label', label: 'Karte 2 – Label',     type: 'text' },
+      { key: 'InfoabendPreview.box1Value', label: 'Karte 2 – Wert',      type: 'text' },
+      { key: 'InfoabendPreview.point0',    label: 'Punkt 1',             type: 'text' },
+      { key: 'InfoabendPreview.point1',    label: 'Punkt 2',             type: 'text' },
+      { key: 'InfoabendPreview.point2',    label: 'Punkt 3',             type: 'text' },
+    ],
+  },
+  {
     label: 'Themen (Hero-Headlines)',
     fields: [
       { key: 'Themes.stress.headline0',       label: 'Stress – Zeile 1',           type: 'text' },
@@ -38,6 +70,13 @@ export const copySubset: CopySection[] = [
   {
     label: 'Für wen ist TM?',
     fields: [
+      { key: 'ForWhom.eyebrow',      label: 'Dachzeile',                     type: 'text' },
+      { key: 'ForWhom.heading',      label: 'Überschrift',                 type: 'text' },
+      { key: 'ForWhom.tab0',         label: 'Tab 1 – Label',               type: 'text' },
+      { key: 'ForWhom.tab1',         label: 'Tab 2 – Label',               type: 'text' },
+      { key: 'ForWhom.tab2',         label: 'Tab 3 – Label',               type: 'text' },
+      { key: 'ForWhom.tab3',         label: 'Tab 4 – Label',               type: 'text' },
+      { key: 'ForWhom.tab4',         label: 'Tab 5 – Label',               type: 'text' },
       { key: 'ForWhom.item0Title',       label: 'Stress – Titel',              type: 'text' },
       { key: 'ForWhom.item0Description', label: 'Stress – Beschreibung',       type: 'textarea' },
       { key: 'ForWhom.item1Title',       label: 'Gesundheit – Titel',          type: 'text' },
@@ -53,6 +92,9 @@ export const copySubset: CopySection[] = [
   {
     label: 'Was TM einzigartig macht',
     fields: [
+      { key: 'WhyTm.eyebrow',     label: 'Dachzeile',      type: 'text' },
+      { key: 'WhyTm.heading',     label: 'Überschrift',  type: 'text' },
+      { key: 'WhyTm.subheading',  label: 'Unterzeile',   type: 'textarea' },
       { key: 'WhyTm.benefit0Title',    label: 'Vorteil 1 – Titel',           type: 'text' },
       { key: 'WhyTm.benefit0Short',    label: 'Vorteil 1 – Kurztext',        type: 'textarea' },
       { key: 'WhyTm.benefit0Expanded', label: 'Vorteil 1 – Langtext',        type: 'textarea' },
@@ -76,6 +118,9 @@ export const copySubset: CopySection[] = [
   {
     label: 'So funktioniert es',
     fields: [
+      { key: 'HowItWorks.eyebrow',    label: 'Dachzeile',     type: 'text' },
+      { key: 'HowItWorks.heading',    label: 'Überschrift', type: 'text' },
+      { key: 'HowItWorks.subheading', label: 'Unterzeile',  type: 'textarea' },
       { key: 'HowItWorks.step0Title',       label: 'Schritt 1 – Titel',       type: 'text' },
       { key: 'HowItWorks.step0Description', label: 'Schritt 1 – Beschreibung', type: 'textarea' },
       { key: 'HowItWorks.step1Title',       label: 'Schritt 2 – Titel',       type: 'text' },
@@ -84,11 +129,13 @@ export const copySubset: CopySection[] = [
       { key: 'HowItWorks.step2Description', label: 'Schritt 3 – Beschreibung', type: 'textarea' },
       { key: 'HowItWorks.step3Title',       label: 'Schritt 4 – Titel',       type: 'text' },
       { key: 'HowItWorks.step3Description', label: 'Schritt 4 – Beschreibung', type: 'textarea' },
+      { key: 'HowItWorks.bottomCta',        label: 'Abschluss-CTA',            type: 'text' },
     ],
   },
   {
     label: 'Was andere sagen',
     fields: [
+      { key: 'WasAndereSagen.heading', label: 'Überschrift', type: 'text' },
       { key: 'WasAndereSagen.quote0',         label: 'Zitat 1',            type: 'textarea' },
       { key: 'WasAndereSagen.extendedQuote0', label: 'Zitat 1 – Fortsetzung', type: 'textarea' },
       { key: 'WasAndereSagen.quote1',         label: 'Zitat 2',            type: 'textarea' },
@@ -101,10 +148,43 @@ export const copySubset: CopySection[] = [
     ],
   },
   {
+    label: 'Testimonial (Zitat mit Bild)',
+    fields: [
+      { key: 'Testimonials.quote0',  label: 'Zitat',   type: 'textarea' },
+      { key: 'Testimonials.detail0', label: 'Details', type: 'text' },
+    ],
+  },
+  {
+    label: 'Wissenschaft & Forschung',
+    fields: [
+      { key: 'Wissenschaft.eyebrow', label: 'Dachzeile',      type: 'text' },
+      { key: 'Wissenschaft.heading', label: 'Überschrift',   type: 'textarea' },
+      { key: 'Wissenschaft.body',    label: 'Einleitungstext', type: 'textarea' },
+      { key: 'Wissenschaft.bullet0', label: 'Punkt 1',       type: 'text' },
+      { key: 'Wissenschaft.bullet1', label: 'Punkt 2',       type: 'text' },
+      { key: 'Wissenschaft.bullet2', label: 'Punkt 3',       type: 'text' },
+      { key: 'Wissenschaft.cta',     label: 'CTA-Button',    type: 'text' },
+    ],
+  },
+  {
+    label: 'TM Center',
+    fields: [
+      { key: 'CenterBanner.line1', label: 'Zeile 1', type: 'text' },
+      { key: 'CenterBanner.line2', label: 'Zeile 2', type: 'text' },
+    ],
+  },
+  {
+    label: 'Lehrer-Sektion',
+    fields: [
+      { key: 'Teachers.heading', label: 'Überschrift', type: 'text' },
+    ],
+  },
+  {
     label: 'Abschluss',
     fields: [
       { key: 'AbschlussCta.heading', label: 'Überschrift', type: 'text' },
       { key: 'AbschlussCta.body',    label: 'Text',        type: 'text' },
+      { key: 'AbschlussCta.cta',     label: 'CTA-Button',  type: 'text' },
     ],
   },
   {

@@ -88,8 +88,10 @@ export async function POST(request: Request) {
   }).catch(err => console.error("[register] Supabase write failed:", err));
 
   // Facebook Conversions API — non-fatal
-  if (eventId) {
+  if (eventId && tenant.meta_pixel_id && tenant.meta_pixel_capi_token) {
     sendCapiLead({
+      pixelId: tenant.meta_pixel_id,
+      capiToken: tenant.meta_pixel_capi_token,
       eventId,
       eventSourceUrl,
       clientIp: hasConsent ? clientIp : undefined,

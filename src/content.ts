@@ -39,17 +39,16 @@ const STRESS_IMAGES: HeroImage[] = [
   // { src: "/hero/stress/17.jpg", focus: "55% 30%" },
   // { src: "/hero/stress/18.jpg", focus: "50% 50%" },
   // meditators — TODO: consider per-theme sets (see CONTEXT.md)
-  { src: "/hero/ourmeditators/BW3A0539.jpg",                    focus: "50% 50%" },
-  { src: "/hero/ourmeditators/BW3A0609.jpg",                    focus: "50% 45%" },
-  { src: "/hero/ourmeditators/BW3A0816.jpg",                    focus: "22% 45%" },
-  { src: "/hero/ourmeditators/BW3A0946.jpg",                    focus: "50% 55%" },
-  { src: "/hero/ourmeditators/BW3A0977.jpg",                    focus: "50% 45%" },
-  { src: "/hero/ourmeditators/BW3A1056.jpg",                    focus: "50% 50%" },
-  { src: "/hero/ourmeditators/BW3A1064.jpg",                    focus: "48% 48%" },
-  { src: "/hero/ourmeditators/BW3A1188.jpg",                    focus: "50% 48%" },
-  { src: "/hero/ourmeditators/20210116_175233-3L5A6581.jpg",    focus: "55% 50%" },
-  { src: "/hero/ourmeditators/20250504_135104-4U3A3332.jpg",    focus: "50% 40%" },
-  { src: "/hero/ourmeditators/3L5A6677.jpg",                    focus: "50% 55%" },
+  { src: "/hero/ourmeditators/woman-blonde-meditating-white-studio.jpg",  focus: "50% 50%" },
+  { src: "/hero/ourmeditators/three-people-laughing-outside.jpg",         focus: "50% 45%" },
+  { src: "/hero/ourmeditators/man-meditating-park-bench.jpg",             focus: "22% 45%" },
+  { src: "/hero/ourmeditators/man-woman-meditating-on-grass.jpg",         focus: "50% 55%" },
+  { src: "/hero/ourmeditators/two-men-sitting-park-bench.jpg",            focus: "50% 45%" },
+  { src: "/hero/ourmeditators/man-red-beard-glasses-grass-smiling.jpg",   focus: "50% 50%" },
+  { src: "/hero/ourmeditators/man-glasses-olive-sweater-grass-smiling.jpg", focus: "48% 48%" },
+  { src: "/hero/ourmeditators/woman-blonde-meditating-on-grass.jpg",      focus: "50% 48%" },
+  { src: "/hero/ourmeditators/woman-blue-top-sofa-reading-indoor.jpg",    focus: "55% 50%" },
+  { src: "/hero/ourmeditators/woman-red-coat-meditating-forest.jpg",      focus: "50% 55%" },
 ];
 
 export const themes: Record<string, Theme> = {

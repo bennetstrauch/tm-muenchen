@@ -237,7 +237,7 @@ Handle: `https://www.instagram.com/muenchentranszendiert`
 Instagram icon shown in TopBar on **all pages** (landing page, theme variants, `/events`).
 
 ## Meta Pixel
-Client-side ad-conversion tracking for Instagram/Facebook campaigns. Pixel ID: `2767733383607726`.
+Client-side ad-conversion tracking for Instagram/Facebook campaigns. Pixel ID is per-tenant, stored in `tenants.meta_pixel_id` (nullable — tenants with no pixel ID skip the cookie banner and CAPI entirely). Known values: `muenchen` → `2767733383607726`, `deutschland` → `1114987708855861`.
 
 Fires three standard events:
 - `PageView` — on every page load after consent
@@ -501,6 +501,43 @@ The admin "Texte" tab exposes a curated **copy subset** (defined in `copy-subset
 The Texte tab is **only visible to tenants with `can_edit_copy = true`** (a column in the `tenants` table, default false). Currently only Freiburg has this enabled. This prevents other center admins from accidentally editing global copy.
 
 On save, the admin commits the updated `de.json` via GitHub API → auto-translate Action fires → EN/FR/ES updated automatically. See ADR 0008.
+
+## Visuelle Textbearbeitung (geplant)
+
+Two problems with the current Texte tab:
+
+1. **Coverage gap** — not all content keys in `de.json` are exposed in the form (section headings, Wissenschaft section, InfoabendPreview, TrustBadges, etc.). Fixed by extending `copy-subset.ts` — no new UI.
+
+2. **Discovery gap** — Jochen can see text on the page and want to change it, but can't find the matching field in the form without memorising the structure.
+
+### Decided approach: split-view with click-to-highlight (MVP)
+
+A "Vorschau" toggle in the Texte tab opens a split layout: form on the left, live site iframe on the right. Clicking text on the page (b2 direction) scrolls the form to the matching field and highlights it. Editing still happens in the form — not inline.
+
+**Why not true inline editing (click-on-page → edit right there):** `useTranslations()` returns plain strings, not React elements. Making strings clickable inline would require replacing every `{t('key')}` JSX call with `<EditableText k="key" />` across ~30 component files, most of which are server components. That's a 5–10 day refactor justified only if more copy editors are added.
+
+**Why not a library (Puck, Builder.io, TinaCMS, Sanity overlays):** All require migrating to a different CMS model. We'd still build the editing layer ourselves; the library just adds a migration cost.
+
+### MVP implementation plan (when built)
+
+1. Texte tab gets a "Vorschau anzeigen" toggle button
+2. Toggle opens a split layout: form (left, ~40%) + iframe (right, ~60%)
+3. Iframe loads the landing page with a `?tm-preview=<token>` query param
+4. Middleware detects the param (token = current admin session hmac), injects a small `<script>` before `</body>`
+5. The injected script:
+   - Fetches current de.json values from `/api/admin/texte`
+   - Builds a reverse map `{ textValue → i18nKey }`
+   - Scans the DOM for text nodes matching known copy-subset values
+   - Wraps matches in `<span data-tm-key="...">` with subtle hover outline
+   - On click, fires `window.parent.postMessage({ type: 'tm-select', key }, '*')`
+6. Texte tab listens for `postMessage`, scrolls to + highlights (yellow flash) the matching `<textarea>` or `<input>`
+7. Iframe is same-origin → postMessage unrestricted
+
+**Auth:** only visible to tenants with `can_edit_copy = true`, same as the Texte tab itself. The `?tm-preview` token is verified by the existing admin session.
+
+**Fragility note:** Text matching works well for long unique German sentences (most copy-subset values). Short strings (button labels, single words) may not be unique enough to match reliably — those fields would simply not be clickable, but the form is still there as fallback.
+
+**Non-goal:** real-time preview (iframe does not update as you type — only after save). Rich text editing. Per-tenant copy overrides. Structural page editing (layout, sections, images).
 
 ## Copy-Änderungsbenachrichtigung
 

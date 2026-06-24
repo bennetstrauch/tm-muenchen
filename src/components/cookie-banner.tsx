@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 
 const STORAGE_KEY = "tm_cookie_consent";
-const PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID!;
 
-function loadPixel() {
+function loadPixel(pixelId: string) {
   if (typeof window === "undefined" || window.fbq) return;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,22 +24,22 @@ function loadPixel() {
   script.src = "https://connect.facebook.net/en_US/fbevents.js";
   document.head.appendChild(script);
 
-  window.fbq!("init", PIXEL_ID);
+  window.fbq!("init", pixelId);
   window.fbq!("track", "PageView");
 }
 
-export default function CookieBanner() {
+export default function CookieBanner({ pixelId }: { pixelId: string | null }) {
   const t = useTranslations("CookieBanner");
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === "accepted") {
-      loadPixel();
+      if (pixelId) loadPixel(pixelId);
     } else if (!stored) {
       setVisible(true);
     }
-  }, []);
+  }, [pixelId]);
 
   function dismiss() {
     setVisible(false);
@@ -50,7 +49,7 @@ export default function CookieBanner() {
   function accept() {
     localStorage.setItem(STORAGE_KEY, "accepted");
     dismiss();
-    loadPixel();
+    if (pixelId) loadPixel(pixelId);
   }
 
   function decline() {
