@@ -158,6 +158,10 @@ type TenantRow = {
   meta_pixel_capi_token: string | null;
 };
 
+// Nullable columns are optional on insert (the DB defaults them to null).
+type NullableKeys<T> = { [K in keyof T]: null extends T[K] ? K : never }[keyof T];
+type Insertable<T> = Omit<T, NullableKeys<T>> & Partial<Pick<T, NullableKeys<T>>>;
+
 export type Database = {
   public: {
     Tables: {
@@ -175,7 +179,7 @@ export type Database = {
       };
       tenants: {
         Row: TenantRow;
-        Insert: TenantRow;
+        Insert: Insertable<TenantRow>;
         Update: Partial<TenantRow>;
         Relationships: [];
       };
