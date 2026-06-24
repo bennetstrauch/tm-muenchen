@@ -63,15 +63,15 @@
   "HowItWorks": {
     "eyebrow": "El camino",
     "heading": "Así funciona",
-    "subheading": "De la curiosidad a la práctica diaria — en cuatro sencillos pasos.",
+    "subheading": "De la curiosidad a la práctica diaria – en cuatro pasos sencillos.",
     "step0Title": "Cita informativa gratuita",
     "step0Description": "Descubrirás qué es la MT, en qué se diferencia de otras técnicas y podrás hacer todas las preguntas que quieras. Sin ningún compromiso.",
     "step1Title": "Instrucción personalizada",
-    "step1Description": "Un profesor certificado te enseña la técnica de forma individual, a tu propio ritmo. No se necesitan conocimientos previos.",
+    "step1Description": "La técnica la enseña personalmente un profesor certificado – de forma individual, a tu propio ritmo. Sin conocimientos previos.",
     "step2Title": "Meditación diaria en casa",
-    "step2Description": "20 minutos, sentado cómodamente, dos veces al día. Sin app, sin guía, sin concentración — solo una práctica autónoma y sin esfuerzo.",
+    "step2Description": "20 minutos, sentado cómodamente, dos veces al día. Sin app, sin guía, sin concentración forzada – solo una práctica fluida e independiente.",
     "step3Title": "Los efectos se despliegan solos",
-    "step3Description": "Con la práctica regular, la calma se traslada al día a día: más energía, más claridad — incluso en los momentos de mayor estrés.",
+    "step3Description": "Con la práctica regular, la calma se traslada a tu vida cotidiana: más energía, más claridad – incluso en los momentos de mayor estrés.",
     "bottomCta": "Reservar mi charla introductoria"
   },
   "Events": {
@@ -144,7 +144,7 @@
   },
   "AbschlussCta": {
     "heading": "Descubre si la MT es para ti",
-    "body": "Ven a una charla introductoria gratuita&nbsp;– sin compromiso.",
+    "body": "Ven a una charla introductoria gratuita – sin ningún compromiso.",
     "cta": "Reservar mi plaza"
   },
   "Wissenschaft": {
@@ -245,10 +245,10 @@
     "extendedQuote1": "Noto un crecimiento continuo en todas las áreas de mi vida, mantengo la calma incluso en situaciones difíciles y no siento en absoluto que estoy envejeciendo. A los 67 años tengo la misma energía que cuando tenía 40, y percibo una evolución constante en mi conciencia.",
     "quote2": "La meditación ha cambiado mi vida. Nada me ha abierto tanto los ojos como la Meditación Trascendental. Me da calma y felicidad, y aporta paz y tranquilidad a mi vida, que es bastante caótica.",
     "quote3": "La MT es muy buena para la salud y perfectamente compatible con el día a día. Cualquier persona que cuide su salud y su calidad de vida debería meditar. De todas las formas de meditación que he conocido, la MT destaca por su sencillez y su eficacia.",
-    "quote4": "No he encontrado nada más eficaz ni más fiable contra el estrés y el cansancio, ni nada que aporte más alegría de vivir, vitalidad y creatividad que la MT&nbsp;– una base sólida para una vida personal y profesional plena.",
-    "extendedQuote4": "Como regalo inesperado, viví una apertura hacia adentro, el descubrimiento de mi yo, de mi dimensión espiritual&nbsp;– un enriquecimiento que no se puede comprar con dinero. La MT es, desde hace más de 42 años, el silencioso y fiel compañero de mi vida, y seguirá siéndolo.",
+    "quote4": "No he encontrado nada más eficaz ni más fiable que la MT para combatir el estrés y el cansancio, y para ganar en alegría de vivir, vitalidad y creatividad – es la base de una vida personal y profesional plena.",
+    "extendedQuote4": "Como regalo añadido viví una apertura hacia dentro, el descubrimiento de mi yo, de mi dimensión espiritual – un enriquecimiento que no se puede comprar con dinero. La MT es desde hace más de 42 años el silencioso y fiel compañero de mi vida, y lo seguirá siendo.",
     "quote5": "Y fue un regalo para toda la vida. Algo a lo que puedes volver en cualquier momento.",
-    "extendedQuote5": "En los momentos de mayor locura, la meditación me ayudó a encontrar instantes de silencio — y desearía que también pudiera ofrecer a los jóvenes, en un mundo agitado, ese refugio de calma.",
+    "extendedQuote5": "En los momentos de locura, la meditación me ayudó a encontrar instantes de silencio – y desearía que también pudiera ofrecer a los jóvenes, en un mundo agitado, un refugio tranquilo al que retirarse.",
     "extendedQuote0": "Siento un crecimiento continuo en todas las áreas de mi vida. Incluso en situaciones difíciles mantengo la perspectiva, y no noto en absoluto que estoy envejeciendo. Con 67 años tengo tanta energía como cuando tenía 40, y percibo una expansión constante de mi consciencia."
   },
   "Entdecken": {
