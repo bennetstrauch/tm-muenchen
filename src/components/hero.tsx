@@ -7,7 +7,19 @@ import HeroBackground from "./hero-background";
 
 let heroHasAnimated = false;
 
-const STRESS_FALLBACK: HeroImage[] = [1,2,3,4,5,7,8,9,11,12,14,15,16,17,18].map(n => ({ src: `/hero/stress/${n}.jpg` }));
+const STRESS_FALLBACK: HeroImage[] = [
+  { src: "/hero/stress/woman-dancing-silhouette-sunset.jpg" },
+  { src: "/hero/stress/ocean-waves-pastel-sunset.jpg" },
+  { src: "/hero/stress/mother-child-beach-sunset.jpg" },
+  { src: "/hero/stress/girl-picking-flowers-meadow.jpg" },
+  { src: "/hero/stress/woman-laughing-field-grass.jpg" },
+  { src: "/hero/stress/woman-meditating-lake-eyes-closed.jpg" },
+  { src: "/hero/stress/woman-orchard-looking-away.jpg" },
+  { src: "/hero/stress/woman-eyes-closed-golden-bokeh.jpg" },
+  { src: "/hero/stress/man-blonde-meditating-trees.jpg" },
+  { src: "/hero/stress/woman-meditating-chair-porch.jpg" },
+  { src: "/hero/stress/man-arms-spread-mountain-vista.jpg" },
+];
 
 export default function Hero({
   headline,

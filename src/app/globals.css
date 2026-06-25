@@ -45,12 +45,9 @@ html {
 }
 
 /* ── Hero image — shift subject down on mobile only ─ */
-.hero-img-shift {
-  transform: scale(1.12) translateY(6%);
-}
-@media (min-width: 640px) {
+@media (max-width: 639px) {
   .hero-img-shift {
-    transform: none;
+    transform: scale(var(--hero-scale, 1.12)) translateY(var(--hero-ty, 6%));
   }
 }
 

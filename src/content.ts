@@ -11,7 +11,8 @@
 // ─────────────────────────────────────────────────
 export type HeroImage = {
   src: string;
-  focus?: string; // CSS object-position, e.g. "45% 30%". Defaults to "center"
+  focus?: string;          // CSS object-position, e.g. "45% 30%". Defaults to "center"
+  mobileTranslateY?: string; // shifts image down on mobile (< 640px), e.g. "22%"
 };
 
 export type Theme = {
@@ -21,34 +22,31 @@ export type Theme = {
 };
 
 const STRESS_IMAGES: HeroImage[] = [
-  // { src: "/hero/stress/1.jpg", focus: "45% 30%" },
-  // { src: "/hero/stress/2.jpg", focus: "62% 25%" },
-  { src: "/hero/stress/3.jpg", focus: "65% 50%" },
-  { src: "/hero/stress/4.jpg", focus: "50% 50%" },
-  { src: "/hero/stress/5.jpg", focus: "45% 50%" },
-  // { src: "/hero/stress/6.jpg", focus: "50% 45%" },   // missing from disk
-  // { src: "/hero/stress/7.jpg", focus: "45% 35%" },
-  { src: "/hero/stress/8.jpg", focus: "62% 35%" },
-  { src: "/hero/stress/9.jpg", focus: "45% 40%" },
-  // { src: "/hero/stress/10.jpg", focus: "45% 30%" },  // missing from disk
-  // { src: "/hero/stress/11.jpg", focus: "70% 130%" },
-  // { src: "/hero/stress/12.jpg", focus: "35% 35%" },  // removed
-  // { src: "/hero/stress/13.jpg", focus: "50% 40%" },
-  // { src: "/hero/stress/14.jpg", focus: "70% 30%" },
-  // { src: "/hero/stress/15.jpg", focus: "55% 30%" },  // removed
-  // { src: "/hero/stress/17.jpg", focus: "55% 30%" },
-  // { src: "/hero/stress/18.jpg", focus: "50% 50%" },
+  // { src: "/hero/stress/woman-pink-headband-tree-forest.jpg",  focus: "45% 30%" },
+  { src: "/hero/stress/woman-dancing-silhouette-sunset.jpg",     focus: "65% 50%" },
+  { src: "/hero/stress/ocean-waves-pastel-sunset.jpg",           focus: "50% 50%" },
+  { src: "/hero/stress/mother-child-beach-sunset.jpg",           focus: "45% 50%" },
+  // { src: "/hero/stress/woman-curly-orange-hair-outdoor.jpg",  focus: "45% 35%" },
+  { src: "/hero/stress/girl-picking-flowers-meadow.jpg",         focus: "62% 35%" },
+  // { src: "/hero/stress/couple-bench-garden-from-behind.jpg",  focus: "45% 40%" }, // people from behind
+  // { src: "/hero/stress/woman-laughing-field-grass.jpg",       focus: "70% 130%" },
+  // { src: "/hero/stress/woman-meditating-lake-eyes-closed.jpg", focus: "35% 35%" },
+  // { src: "/hero/stress/woman-orchard-looking-away.jpg",       focus: "70% 30%" },
+  // { src: "/hero/stress/woman-eyes-closed-golden-bokeh.jpg",   focus: "55% 30%" },
+  // { src: "/hero/stress/man-blonde-meditating-trees.jpg",      focus: "55% 30%" },
+  // { src: "/hero/stress/woman-meditating-chair-porch.jpg",     focus: "50% 50%" },
+  // { src: "/hero/stress/man-arms-spread-mountain-vista.jpg",   focus: "50% 50%" },
   // meditators — TODO: consider per-theme sets (see CONTEXT.md)
-  { src: "/hero/ourmeditators/woman-blonde-meditating-white-studio.jpg",  focus: "50% 50%" },
-  { src: "/hero/ourmeditators/three-people-laughing-outside.jpg",         focus: "50% 45%" },
-  { src: "/hero/ourmeditators/man-meditating-park-bench.jpg",             focus: "22% 45%" },
-  { src: "/hero/ourmeditators/man-woman-meditating-on-grass.jpg",         focus: "50% 55%" },
-  { src: "/hero/ourmeditators/two-men-sitting-park-bench.jpg",            focus: "50% 45%" },
-  { src: "/hero/ourmeditators/man-red-beard-glasses-grass-smiling.jpg",   focus: "50% 50%" },
-  { src: "/hero/ourmeditators/man-glasses-olive-sweater-grass-smiling.jpg", focus: "48% 48%" },
-  { src: "/hero/ourmeditators/woman-blonde-meditating-on-grass.jpg",      focus: "50% 48%" },
-  { src: "/hero/ourmeditators/woman-blue-top-sofa-reading-indoor.jpg",    focus: "55% 50%" },
-  { src: "/hero/ourmeditators/woman-red-coat-meditating-forest.jpg",      focus: "50% 55%" },
+  { src: "/hero/ourmeditators/woman-blonde-meditating-white-studio.jpg",    focus: "50% 50%" },
+  { src: "/hero/ourmeditators/three-people-laughing-outside.jpg",           focus: "50% 45%", mobileTranslateY: "35%" },
+  { src: "/hero/ourmeditators/man-meditating-park-bench.jpg",               focus: "60% 45%" },
+  { src: "/hero/ourmeditators/man-woman-meditating-on-grass.jpg",           focus: "50% 55%" },
+  { src: "/hero/ourmeditators/two-men-sitting-park-bench.jpg",              focus: "50% 45%" },
+  { src: "/hero/ourmeditators/man-red-beard-glasses-grass-smiling.jpg",     focus: "50% 50%", mobileTranslateY: "22%" },
+  { src: "/hero/ourmeditators/man-glasses-olive-sweater-grass-smiling.jpg", focus: "58% 48%", mobileTranslateY: "22%" },
+  { src: "/hero/ourmeditators/woman-blonde-meditating-on-grass.jpg",        focus: "50% 48%" },
+  { src: "/hero/ourmeditators/woman-blue-top-sofa-reading-indoor.jpg",      focus: "55% 50%" },
+  { src: "/hero/ourmeditators/woman-red-coat-meditating-forest.jpg",        focus: "50% 55%" },
 ];
 
 export const themes: Record<string, Theme> = {
@@ -59,7 +57,7 @@ export const themes: Record<string, Theme> = {
   },
   "innere-freude": {
     slug: "innere-freude",
-    images: [{ src: "/hero/stress/3.jpg", focus: "65% 50%" }],
+    images: [{ src: "/hero/stress/woman-dancing-silhouette-sunset.jpg", focus: "65% 50%" }],
     forWhomIndex: 4,
   },
   schlaf: {

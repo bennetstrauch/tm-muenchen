@@ -30,8 +30,11 @@ export default function HeroBackground({ images }: { images: HeroImage[] }) {
           src={current.src}
           alt=""
           fill
-          className="object-cover opacity-0 transition-opacity duration-700"
-          style={{ objectPosition: current.focus ?? "center" }}
+          className={`object-cover opacity-0 transition-opacity duration-700${current.mobileTranslateY ? " hero-img-shift" : ""}`}
+          style={{
+            objectPosition: current.focus ?? "center",
+            ...(current.mobileTranslateY && { "--hero-ty": current.mobileTranslateY } as React.CSSProperties),
+          }}
           priority
           sizes="100vw"
           onLoad={e => { (e.currentTarget as HTMLImageElement).style.opacity = "1"; }}
