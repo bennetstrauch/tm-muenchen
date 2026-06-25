@@ -154,7 +154,15 @@
     "bullet0": "Current research findings on stress, heart health, and brain function",
     "bullet1": "Real-world experiences from teachers and meditators",
     "bullet2": "How TM differs from other techniques — and why that difference is scientifically measurable",
-    "cta": "Learn more at the info session"
+    "cta": "Learn more at the info session",
+    "stat0Label": "Scientific Studies",
+    "stat1Label": "Practitioners Worldwide",
+    "stat2Label": "Years of Research",
+    "logosIntro": "Researched by leading institutions",
+    "logo0Caption": "Meta-analysis across 146 studies on anxiety reduction",
+    "logo1Caption": "TM lowers blood pressure and cardiovascular risk",
+    "logo2Caption": "Discovery of the relaxation response through TM",
+    "logo3Caption": "NIH study: 48% fewer heart attacks & strokes"
   },
   "InfoabendPreview": {
     "heading": "Here's what to expect at the info session",
