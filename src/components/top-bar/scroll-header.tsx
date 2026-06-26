@@ -26,7 +26,7 @@ export default function ScrollHeader({
       className={`group fixed top-0 left-0 right-0 z-[9998] h-14 flex items-center px-5 transition-all duration-[250ms] ${
         isTransparent
           ? 'bg-transparent border-b border-transparent'
-          : 'bg-white/10 backdrop-blur-md border-b border-white/15'
+          : 'bg-[#F8F5EF] border-b border-[#E8E3DA]'
       }`}
     >
       {children}

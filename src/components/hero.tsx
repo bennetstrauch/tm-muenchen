@@ -8,17 +8,7 @@ import HeroBackground from "./hero-background";
 let heroHasAnimated = false;
 
 const STRESS_FALLBACK: HeroImage[] = [
-  { src: "/hero/stress/woman-dancing-silhouette-sunset.jpg" },
-  { src: "/hero/stress/ocean-waves-pastel-sunset.jpg" },
-  { src: "/hero/stress/mother-child-beach-sunset.jpg" },
-  { src: "/hero/stress/girl-picking-flowers-meadow.jpg" },
-  { src: "/hero/stress/woman-laughing-field-grass.jpg" },
-  { src: "/hero/stress/woman-meditating-lake-eyes-closed.jpg" },
-  { src: "/hero/stress/woman-orchard-looking-away.jpg" },
-  { src: "/hero/stress/woman-eyes-closed-golden-bokeh.jpg" },
-  { src: "/hero/stress/man-blonde-meditating-trees.jpg" },
-  { src: "/hero/stress/woman-meditating-chair-porch.jpg" },
-  { src: "/hero/stress/man-arms-spread-mountain-vista.jpg" },
+  { src: "/hero/ourmeditators/woman-red-coat-meditating-forest.jpg" },
 ];
 
 export default function Hero({
@@ -49,10 +39,10 @@ export default function Hero({
 
       <HeroBackground images={imagePool} />
 
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(248,245,239,.88)_0%,rgba(248,245,239,.78)_35%,rgba(248,245,239,.55)_65%,rgba(248,245,239,.35)_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(248,245,239,.96)_0%,rgba(248,245,239,.88)_35%,rgba(248,245,239,.55)_52%,rgba(248,245,239,0)_68%)]" />
 
       {/* ── Badge ─────────────────────────────────────── */}
-      <div
+      {/* <div
         className={`relative z-[9999] -mt-2.5 ${staticCls}`}
         style={staticAnim("fadeInUp 0.7s ease forwards 0.06s")}
       >
@@ -64,7 +54,7 @@ export default function Hero({
             {t("badge")}
           </span>
         </a>
-      </div>
+      </div> */}
 
       <div className="relative z-10 flex flex-col items-center w-full mt-[calc(4vh+2rem)] sm:mt-[calc(5vh+1.5rem)]">
 
