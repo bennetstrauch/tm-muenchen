@@ -12,6 +12,7 @@ const SUPPRESSED_IDS = [
   "lehrer",
   "wie-es-funktioniert",
   "abschluss-cta",
+  "kurse",
 ];
 
 export default function StickyCta() {

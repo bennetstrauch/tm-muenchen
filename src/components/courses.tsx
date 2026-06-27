@@ -7,6 +7,8 @@ import { IndividualAppointment } from "./events";
 import { formatEventDate } from "@/lib/events";
 import { lookupCityByPlz } from "@/lib/plz-city";
 
+const INITIAL_COUNT = 3;
+
 const LOCALE_BCP47: Record<string, string> = {
   de: "de-DE", en: "en-GB", fr: "fr-FR", es: "es-ES",
 };
@@ -55,13 +57,12 @@ export type ContactData = {
   plz: string;
   city: string;
   address1: string;
-  newsSubscribed: boolean;
 };
 
 const EMPTY_CONTACT: ContactData = {
   firstName: "", lastName: "", email: "", phone: "",
   gender: "", dobDay: "", dobMonth: "", dobYear: "",
-  plz: "", city: "", address1: "", newsSubscribed: false,
+  plz: "", city: "", address1: "",
 };
 
 const INPUT_CLS = `
@@ -134,7 +135,7 @@ function DobInput({
   );
 }
 
-// ── ContactStep ──────────────────────────────────────────────────────────────
+// ── ContactStep (no newsletter — newsletter is step 3 only) ─────────────────
 
 function ContactStep({
   data,
@@ -143,7 +144,7 @@ function ContactStep({
   onNext,
 }: {
   data: ContactData;
-  onChange: (field: keyof ContactData, value: string | boolean) => void;
+  onChange: (field: keyof ContactData, value: string) => void;
   onBack: () => void;
   onNext: () => void;
 }) {
@@ -155,12 +156,27 @@ function ContactStep({
       onChange(field, e.target.value);
   }
 
-  function handlePlzChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const plz = e.target.value;
+  async function handlePlzChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const plz = e.target.value.replace(/\D/g, "").slice(0, 5);
     onChange("plz", plz);
     if (plz.length === 5) {
-      const city = lookupCityByPlz(plz);
-      if (city) onChange("city", city);
+      // Local lookup first (major cities), API fallback for everything else
+      const local = lookupCityByPlz(plz);
+      if (local) {
+        onChange("city", local);
+      } else {
+        try {
+          const res = await fetch(
+            `https://openplzapi.org/de/Localities?postalCode=${plz}&page=1&pageSize=1`,
+          );
+          if (res.ok) {
+            const data = await res.json() as { name?: string }[];
+            if (data[0]?.name) onChange("city", data[0].name);
+          }
+        } catch {
+          // silently ignore — user can type city manually
+        }
+      }
     }
   }
 
@@ -175,10 +191,6 @@ function ContactStep({
     if (!data.city.trim()) errs.city = "Pflichtfeld";
     setErrors(errs);
     return Object.keys(errs).length === 0;
-  }
-
-  function handleNext() {
-    if (validate()) onNext();
   }
 
   return (
@@ -241,19 +253,10 @@ function ContactStep({
       <input placeholder={t("contactStreet")} value={data.address1} autoComplete="address-line1"
         onChange={set("address1")} className={INPUT_CLS} />
 
-      <label className="flex items-center gap-2 cursor-pointer group">
-        <input type="checkbox" checked={data.newsSubscribed}
-          onChange={e => onChange("newsSubscribed", e.target.checked)}
-          className="w-4 h-4 rounded border-[#DBEAFE] accent-[#A5C3D7]" />
-        <span className="text-xs text-[#3D5573] group-hover:text-[#1A3352] transition-colors">
-          {t("contactNewsletter")}
-        </span>
-      </label>
-
       <div className="flex items-center gap-4 pt-2">
         <button
           type="button"
-          onClick={handleNext}
+          onClick={() => { if (validate()) onNext(); }}
           className="
             px-8 py-3 bg-[#A5C3D7] text-[#1A3352]
             text-[0.68rem] tracking-[0.18em] uppercase font-medium rounded-full
@@ -315,7 +318,7 @@ function KursgebührModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-// ── ReviewStep ───────────────────────────────────────────────────────────────
+// ── ReviewStep (newsletter only here) ───────────────────────────────────────
 
 function ReviewStep({
   course,
@@ -332,17 +335,18 @@ function ReviewStep({
 }) {
   const t = useTranslations("Courses");
   const locale = useLocale();
-  const { weekday, date } = formatEventDate(slot.time ? course.date : course.date, locale);
 
   const [check1, setCheck1] = useState(false);
   const [check2, setCheck2] = useState(false);
-  const [check3, setCheck3] = useState(false);
+  const [newsSubscribed, setNewsSubscribed] = useState(false);
   const [showFeeModal, setShowFeeModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  const genderLabel = contact.gender === "F" ? t("genderFemale") : contact.gender === "M" ? t("genderMale") : t("genderDiverse");
-  const birthdate = `${contact.dobDay.padStart(2,"0")}.${contact.dobMonth.padStart(2,"0")}.${contact.dobYear}`;
+  // "Herr"/"Frau", nothing for divers
+  const salutation = contact.gender === "F" ? "Frau" : contact.gender === "M" ? "Herr" : "";
+  const birthdate = `${contact.dobDay.padStart(2, "0")}.${contact.dobMonth.padStart(2, "0")}.${contact.dobYear}`;
+  const { weekday: slotWeekday, date: slotDate } = formatEventDate(course.date, locale);
 
   async function handleSubmit() {
     setSubmitting(true);
@@ -362,7 +366,7 @@ function ReviewStep({
           address1: contact.address1 || undefined,
           zip_code: contact.plz,
           city: contact.city,
-          news_subscribed: contact.newsSubscribed,
+          news_subscribed: newsSubscribed,
           locale,
         }),
       });
@@ -377,8 +381,6 @@ function ReviewStep({
     }
   }
 
-  const { weekday: slotWeekday, date: slotDate } = formatEventDate(course.date, locale);
-
   return (
     <>
       {showFeeModal && <KursgebührModal onClose={() => setShowFeeModal(false)} />}
@@ -390,7 +392,7 @@ function ReviewStep({
             {t("yourData")}
           </p>
           <div className="text-sm text-[#1A3352] space-y-0.5">
-            <p>{genderLabel} {contact.firstName} {contact.lastName}</p>
+            <p>{salutation && `${salutation} `}{contact.firstName} {contact.lastName}</p>
             <p className="text-[#3D5573]">{contact.email}</p>
             {contact.phone && <p className="text-[#3D5573]">{contact.phone}</p>}
             <p className="text-[#3D5573]">{birthdate}</p>
@@ -412,7 +414,7 @@ function ReviewStep({
               return (
                 <p key={i}>
                   <span className="font-medium">{fw} {fu.time}, {fd}</span>
-                  {" — "}<span className="text-[#3D5573]">{i + 1}. {t("followUpLabel").replace(":", "")}</span>
+                  {" — "}<span className="text-[#3D5573]">{i + 1}. Folgetreffen</span>
                 </p>
               );
             })}
@@ -446,7 +448,7 @@ function ReviewStep({
           </label>
 
           <label className="flex items-start gap-2.5 cursor-pointer">
-            <input type="checkbox" checked={check3} onChange={e => setCheck3(e.target.checked)}
+            <input type="checkbox" checked={newsSubscribed} onChange={e => setNewsSubscribed(e.target.checked)}
               className="mt-0.5 w-4 h-4 rounded border-[#DBEAFE] accent-[#A5C3D7] flex-shrink-0" />
             <span className="text-xs text-[#3D5573] leading-relaxed">{t("newsletterLabel")}</span>
           </label>
@@ -493,14 +495,14 @@ function TeacherSlotGroup({
   onSelect: (slot: CourseSlot) => void;
 }) {
   return (
-    <div>
+    <div className="mb-5">
       {genderLabel && (
-        <p className="text-[0.7rem] tracking-[0.14em] uppercase font-medium text-[#3D5573] mb-3">
+        <p className="text-sm font-semibold text-[#1A3352] mb-3 tracking-wide">
           {genderLabel}
         </p>
       )}
-      <div className="flex items-start gap-4 mb-5">
-        {/* Teacher photo + name */}
+      <div className="flex items-start gap-4">
+        {/* Teacher photo + name — shown once */}
         <div className="flex flex-col items-center gap-1.5 flex-shrink-0 w-16">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -508,7 +510,7 @@ function TeacherSlotGroup({
             alt={group.teacher.teacherName}
             className="w-14 h-14 rounded-full object-cover border border-[#DBEAFE]"
           />
-          <span className="text-[0.65rem] text-[#3D5573] text-center leading-tight">
+          <span className="text-[0.7rem] text-[#3D5573] text-center leading-tight">
             {group.teacher.teacherName.split(" ")[0]}
           </span>
         </div>
@@ -544,11 +546,13 @@ function SlotStep({
   course,
   selectedSlot,
   onSelect,
+  onContinue,
   onShowAlternative,
 }: {
   course: TMCourse;
   selectedSlot: CourseSlot | null;
   onSelect: (slot: CourseSlot) => void;
+  onContinue: () => void;
   onShowAlternative: () => void;
 }) {
   const t = useTranslations("Courses");
@@ -557,6 +561,11 @@ function SlotStep({
 
   return (
     <div className="mt-5 pt-5 border-t border-[#DBEAFE]">
+      {/* Slot selection hint */}
+      <p className="text-sm text-[#3D5573] mb-5">
+        {t("chooseSlotHint")}
+      </p>
+
       {groups.map((group, i) => (
         <TeacherSlotGroup
           key={i}
@@ -571,13 +580,34 @@ function SlotStep({
         />
       ))}
 
+      {/* Inline Weiter button — appears below slots when a slot is selected */}
+      {selectedSlot && (
+        <div className="mt-4 mb-5">
+          <button
+            type="button"
+            onClick={onContinue}
+            className="
+              px-10 py-3
+              bg-[#2D6A4F] text-white
+              text-[0.72rem] tracking-[0.2em] uppercase font-medium
+              rounded-full shadow-sm
+              transition-all duration-200
+              hover:bg-[#245a41] hover:shadow-md
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D6A4F]
+            "
+          >
+            {t("continueButton")} →
+          </button>
+        </div>
+      )}
+
       {/* Folgetreffen bar */}
       {course.followUps.length > 0 && (
         <div className="mb-4">
-          <span className="text-[0.65rem] tracking-[0.12em] uppercase font-medium text-[#3D5573] mr-2">
+          <span className="text-xs font-semibold text-[#1A3352] mr-2">
             {t("followUpLabel")}:
           </span>
-          <span className="text-[0.78rem] text-[#3D5573]">
+          <span className="text-xs text-[#3D5573]">
             {course.followUps.map((fu, i) => (
               <span key={i}>
                 {i > 0 && " · "}
@@ -592,7 +622,7 @@ function SlotStep({
       <button
         type="button"
         onClick={onShowAlternative}
-        className="text-[0.72rem] text-[#A5C3D7] hover:text-[#1A3352] underline underline-offset-2 transition-colors"
+        className="text-xs text-[#A5C3D7] hover:text-[#1A3352] underline underline-offset-2 transition-colors"
       >
         {t("alternativeLink")}
       </button>
@@ -600,7 +630,7 @@ function SlotStep({
   );
 }
 
-// ── Course row (collapsed + expanded) ───────────────────────────────────────
+// ── Course card (collapsed + expanded) ──────────────────────────────────────
 
 type Step = 1 | 2 | 3;
 
@@ -623,10 +653,8 @@ function CourseCard({
   const [showAlternative, setShowAlternative] = useState(false);
   const [contactData, setContactData] = useState<ContactData>(EMPTY_CONTACT);
   const [success, setSuccess] = useState(false);
-  const [cardVisible, setCardVisible] = useState(true);
-  const cardRef = useRef<HTMLLIElement>(null);
 
-  // Reset state when card closes
+  // Reset when closed
   useEffect(() => {
     if (!isOpen) {
       setSelectedSlot(null);
@@ -636,34 +664,21 @@ function CourseCard({
     }
   }, [isOpen]);
 
-  // IntersectionObserver for sticky CTA visibility
-  useEffect(() => {
-    if (!isOpen || !cardRef.current) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => setCardVisible(entry.isIntersecting),
-      { threshold: 0 },
-    );
-    obs.observe(cardRef.current);
-    return () => obs.disconnect();
-  }, [isOpen]);
-
-  const showStickyCta = selectedSlot !== null && step === 1 && cardVisible && !showAlternative;
-
   return (
-    <li className="py-6 border-b border-[#DBEAFE] last:border-0" ref={cardRef}>
-      {/* Collapsed row */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex flex-col gap-0.5 min-w-0">
+    <li className="py-5 border-b border-[#DBEAFE] last:border-0">
+      {/* Collapsed row — compact, centred */}
+      <div className="flex items-center justify-center gap-6 flex-wrap">
+        <div className="flex flex-col gap-0.5">
           <div className="flex items-baseline gap-2 flex-wrap">
-            <span className="text-[0.9rem] tracking-[0.12em] uppercase text-[#1A3352]/60 whitespace-nowrap">
+            <span className="text-[0.85rem] tracking-[0.1em] uppercase text-[#1A3352]/60 whitespace-nowrap">
               {weekday}
             </span>
-            <span className="font-[family-name:var(--font-jakarta)] font-semibold text-[1.05rem] text-[#1A3352] leading-snug whitespace-nowrap">
+            <span className="font-[family-name:var(--font-jakarta)] font-semibold text-[1rem] text-[#1A3352] leading-snug whitespace-nowrap">
               {date}
             </span>
           </div>
           {teacherNames && (
-            <span className="text-[0.75rem] text-[#3D5573] italic">{teacherNames}</span>
+            <span className="text-xs text-[#3D5573] italic">{teacherNames}</span>
           )}
         </div>
 
@@ -673,11 +688,11 @@ function CourseCard({
           className="
             inline-flex items-center gap-2 flex-shrink-0
             px-5 py-2.5
-            bg-[#1A3352] text-white
+            bg-[#2D6A4F] text-white
             text-[0.65rem] tracking-[0.16em] uppercase font-medium rounded-full
             transition-all duration-200
-            hover:bg-[#2a4d72] hover:shadow-[0_4px_12px_rgba(26,51,82,0.25)]
-            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A3352] focus-visible:ring-offset-2
+            hover:bg-[#245a41] hover:shadow-[0_4px_12px_rgba(45,106,79,0.3)]
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D6A4F] focus-visible:ring-offset-2
           "
         >
           {isOpen ? t("close") : t("chooseSlot")}
@@ -692,6 +707,7 @@ function CourseCard({
               course={course}
               selectedSlot={selectedSlot}
               onSelect={setSelectedSlot}
+              onContinue={() => setStep(2)}
               onShowAlternative={() => setShowAlternative(true)}
             />
           )}
@@ -710,6 +726,7 @@ function CourseCard({
               onNext={() => setStep(3)}
             />
           )}
+
           {step === 3 && !success && selectedSlot && (
             <ReviewStep
               course={course}
@@ -728,46 +745,27 @@ function CourseCard({
           )}
         </div>
       )}
-
-      {/* Sticky "Weiter" CTA — fixed at bottom of viewport */}
-      {showStickyCta && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-safe">
-          <div className="w-full max-w-md px-4 pb-4 pt-2 bg-gradient-to-t from-white via-white to-transparent">
-            <button
-              type="button"
-              onClick={() => setStep(2)}
-              className="
-                w-full py-4
-                bg-[#A5C3D7] text-[#1A3352]
-                text-[0.72rem] tracking-[0.2em] uppercase font-medium
-                rounded-full shadow-lg
-                transition-all duration-200
-                hover:bg-[#8BAAC3] hover:shadow-xl
-                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A5C3D7]
-              "
-            >
-              {t("continueButton")}
-            </button>
-          </div>
-        </div>
-      )}
     </li>
   );
 }
 
-// ── Main export ──────────────────────────────────────────────────────────────
+// ── Main section with pagination ─────────────────────────────────────────────
 
 export default function Courses({ courses, locale }: { courses: TMCourse[]; locale: string }) {
   const t = useTranslations("Courses");
   const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
   function toggle(i: number) {
     setOpenIdx(openIdx === i ? null : i);
   }
 
+  const visibleCourses = showAll ? courses : courses.slice(0, INITIAL_COUNT);
+  const hiddenCount = courses.length - INITIAL_COUNT;
+
   if (courses.length === 0) {
     return (
-      <section className="section bg-[#F8F5EF] pt-6 sm:pt-10">
+      <section id="kurse" className="section bg-[#F8F5EF] pt-6 sm:pt-10">
         <div className="section-inner">
           <div className="text-center mb-6">
             <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight mb-3">
@@ -781,7 +779,7 @@ export default function Courses({ courses, locale }: { courses: TMCourse[]; loca
   }
 
   return (
-    <section className="section bg-[#F8F5EF] pt-6 sm:pt-10">
+    <section id="kurse" className="section bg-[#F8F5EF] pt-6 sm:pt-10">
       <div className="section-inner">
         <div className="text-center mb-6">
           <h2 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight mb-3">
@@ -790,7 +788,7 @@ export default function Courses({ courses, locale }: { courses: TMCourse[]; loca
         </div>
 
         <ul className="px-4">
-          {courses.map((course, i) => (
+          {visibleCourses.map((course, i) => (
             <CourseCard
               key={`${course.date}-${i}`}
               course={course}
@@ -799,6 +797,25 @@ export default function Courses({ courses, locale }: { courses: TMCourse[]; loca
             />
           ))}
         </ul>
+
+        <div className="px-4">
+          {!showAll && hiddenCount > 0 && (
+            <button
+              onClick={() => setShowAll(true)}
+              className="
+                w-full mt-2 mb-1 py-3
+                text-[0.68rem] tracking-[0.18em] uppercase font-medium
+                text-[#3D5573] hover:text-[#1A3352]
+                border border-dashed border-[#A5C3D7]/60 rounded-2xl
+                hover:border-[#A5C3D7] hover:bg-[#A5C3D7]/5
+                transition-all duration-200
+              "
+            >
+              {t("showMore", { count: hiddenCount })}
+            </button>
+          )}
+          <IndividualAppointment />
+        </div>
       </div>
     </section>
   );

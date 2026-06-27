@@ -181,7 +181,9 @@
     "contactPlz": "PLZ",
     "contactCity": "Stadt",
     "contactStreet": "Straße und Hausnummer (optional)",
-    "contactNewsletter": "Ich möchte den TM-Newsletter erhalten."
+    "contactNewsletter": "Ich möchte den TM-Newsletter erhalten.",
+    "chooseSlotHint": "Bitte wähle deinen persönlichen Termin:",
+    "showMore": "{count} weitere Termine anzeigen"
   },
   "AbschlussCta": {
     "heading": "Finde heraus, wie sehr TM dein Leben bereichern kann",
