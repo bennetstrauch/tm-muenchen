@@ -11,10 +11,10 @@ const INPUT_CLS = `
   bg-white
 `;
 
-function IndividualAppointment() {
+export function IndividualAppointment({ initialOpen = false }: { initialOpen?: boolean }) {
   const t = useTranslations("Events");
   const locale = useLocale();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(initialOpen);
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
