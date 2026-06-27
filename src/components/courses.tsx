@@ -3,18 +3,14 @@
 import { useState, useRef, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import type { TMCourse, CourseSlot } from "@/lib/courses";
-import { IndividualAppointment } from "./events";
+import { IndividualAppointment } from "./individual-appointment";
 import { formatEventDate } from "@/lib/events";
 import { lookupCityByPlz } from "@/lib/plz-city";
 
 const INITIAL_COUNT = 3;
 
-const LOCALE_BCP47: Record<string, string> = {
-  de: "de-DE", en: "en-GB", fr: "fr-FR", es: "es-ES",
-};
-
 function formatFollowUp(isoDate: string, time: string, locale: string): string {
-  const bcp47 = LOCALE_BCP47[locale] ?? "de-DE";
+  const bcp47 = ({ de: "de-DE", en: "en-GB", fr: "fr-FR", es: "es-ES" } as Record<string, string>)[locale] ?? "de-DE";
   const d = new Date(`${isoDate}T12:00:00`);
   const weekday = d.toLocaleDateString(bcp47, { weekday: "short" }).replace(".", "");
   const day = d.getDate();
@@ -45,7 +41,7 @@ function groupSlots(slots: CourseSlot[], genderRestricted: boolean): SlotGroup[]
 
 // ── Contact form types ───────────────────────────────────────────────────────
 
-export type ContactData = {
+type ContactData = {
   firstName: string;
   lastName: string;
   email: string;
@@ -182,13 +178,13 @@ function ContactStep({
 
   function validate(): boolean {
     const errs: Record<string, string> = {};
-    if (!data.firstName.trim()) errs.firstName = "Pflichtfeld";
-    if (!data.lastName.trim()) errs.lastName = "Pflichtfeld";
-    if (!data.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errs.email = "Gültige E-Mail erforderlich";
-    if (!data.gender) errs.gender = "Pflichtfeld";
-    if (!data.dobDay || !data.dobMonth || !data.dobYear || data.dobYear.length < 4) errs.dob = "Vollständiges Geburtsdatum erforderlich";
-    if (!data.plz.trim()) errs.plz = "Pflichtfeld";
-    if (!data.city.trim()) errs.city = "Pflichtfeld";
+    if (!data.firstName.trim()) errs.firstName = t("validationRequired");
+    if (!data.lastName.trim()) errs.lastName = t("validationRequired");
+    if (!data.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errs.email = t("validationEmail");
+    if (!data.gender) errs.gender = t("validationRequired");
+    if (!data.dobDay || !data.dobMonth || !data.dobYear || data.dobYear.length < 4) errs.dob = t("validationDob");
+    if (!data.plz.trim()) errs.plz = t("validationRequired");
+    if (!data.city.trim()) errs.city = t("validationRequired");
     setErrors(errs);
     return Object.keys(errs).length === 0;
   }
@@ -277,7 +273,7 @@ function ContactStep({
 
 // ── Kursgebühr modal ────────────────────────────────────────────────────────
 
-function KursgebührModal({ onClose }: { onClose: () => void }) {
+function CourseFeeModal({ onClose }: { onClose: () => void }) {
   const t = useTranslations("Courses");
 
   const tiers = [
@@ -343,8 +339,7 @@ function ReviewStep({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  // "Herr"/"Frau", nothing for divers
-  const salutation = contact.gender === "F" ? "Frau" : contact.gender === "M" ? "Herr" : "";
+  const salutation = contact.gender === "F" ? t("salutationFemale") : contact.gender === "M" ? t("salutationMale") : "";
   const birthdate = `${contact.dobDay.padStart(2, "0")}.${contact.dobMonth.padStart(2, "0")}.${contact.dobYear}`;
   const { weekday: slotWeekday, date: slotDate } = formatEventDate(course.date, locale);
 
@@ -383,7 +378,7 @@ function ReviewStep({
 
   return (
     <>
-      {showFeeModal && <KursgebührModal onClose={() => setShowFeeModal(false)} />}
+      {showFeeModal && <CourseFeeModal onClose={() => setShowFeeModal(false)} />}
 
       <div className="mt-5 pt-5 border-t border-[#DBEAFE] space-y-5">
         {/* Personal data summary */}
@@ -414,7 +409,7 @@ function ReviewStep({
               return (
                 <p key={i}>
                   <span className="font-medium">{fw} {fu.time}, {fd}</span>
-                  {" — "}<span className="text-[#3D5573]">{i + 1}. Folgetreffen</span>
+                  {" — "}<span className="text-[#3D5573]">{t("followUpN", { n: i + 1 })}</span>
                 </p>
               );
             })}
@@ -427,7 +422,9 @@ function ReviewStep({
             <input type="checkbox" checked={check1} onChange={e => setCheck1(e.target.checked)}
               className="mt-0.5 w-4 h-4 rounded border-[#DBEAFE] accent-[#A5C3D7] flex-shrink-0" />
             <span className="text-xs text-[#3D5573] leading-relaxed">
-              Bitte bestätigen Sie, dass Sie an <strong className="text-[#1A3352]">allen Treffen</strong> teilnehmen können. *
+              {t.rich("allMeetingsLabel", {
+                strong: chunks => <strong className="text-[#1A3352]">{chunks}</strong>,
+              })} *
             </span>
           </label>
 
@@ -435,15 +432,17 @@ function ReviewStep({
             <input type="checkbox" checked={check2} onChange={e => setCheck2(e.target.checked)}
               className="mt-0.5 w-4 h-4 rounded border-[#DBEAFE] accent-[#A5C3D7] flex-shrink-0" />
             <span className="text-xs text-[#3D5573] leading-relaxed">
-              Die{" "}
-              <button
-                type="button"
-                onClick={() => setShowFeeModal(true)}
-                className="text-[#A5C3D7] underline underline-offset-2 hover:text-[#1A3352] transition-colors"
-              >
-                {t("feeLinkText")}
-              </button>
-              {" "}ist mir bekannt. *
+              {t.rich("feeLabel", {
+                link: chunks => (
+                  <button
+                    type="button"
+                    onClick={() => setShowFeeModal(true)}
+                    className="text-[#A5C3D7] underline underline-offset-2 hover:text-[#1A3352] transition-colors"
+                  >
+                    {chunks}
+                  </button>
+                ),
+              })} *
             </span>
           </label>
 

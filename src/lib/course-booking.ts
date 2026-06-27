@@ -23,12 +23,7 @@ export async function bookCourse(params: CourseBookingParams): Promise<{ id: num
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      slot: params.slot,
-      first_name: params.first_name,
-      last_name: params.last_name,
-      email: params.email,
-      gender: params.gender,
-      birthdate: params.birthdate,
+      ...params,
       phone_number: params.phone_number ?? '',
       address1: params.address1 ?? '',
       zip_code: params.zip_code ?? '',

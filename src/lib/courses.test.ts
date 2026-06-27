@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { getCourses } from './courses';
 
 const mockFetch = vi.fn();
@@ -110,5 +110,19 @@ describe('getCourses', () => {
     mockFetch.mockRejectedValue(new Error('Network error'));
     const courses = await getCourses([108]);
     expect(courses).toEqual([]);
+  });
+
+  it('logs an error when one center fetch fails but still returns results from others', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    mockFetch
+      .mockRejectedValueOnce(new Error('TMW down'))
+      .mockResolvedValueOnce({ ok: true, json: async () => [makeCourse()] });
+    const courses = await getCourses([108, 109]);
+    expect(courses).toHaveLength(1);
+    expect(errorSpy).toHaveBeenCalledWith(
+      '[courses] fetchCenter failed:',
+      expect.any(Error),
+    );
+    errorSpy.mockRestore();
   });
 });

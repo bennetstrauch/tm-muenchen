@@ -147,10 +147,8 @@
     "successTitle": "Anmeldung bestätigt!",
     "successBody": "Du erhältst in Kürze eine Bestätigungs-E-Mail von uns.",
     "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
-    "allMeetingsLabel": "Bitte bestätigen Sie, dass Sie an {strong} teilnehmen können.",
-    "allMeetingsStrong": "allen Treffen",
-    "feeLabel": "Die {link} ist mir bekannt.",
-    "feeLinkText": "Kursgebühr",
+    "allMeetingsLabel": "Bitte bestätigen Sie, dass Sie an <strong>allen Treffen</strong> teilnehmen können.",
+    "feeLabel": "Die <link>Kursgebühr</link> ist mir bekannt.",
     "newsletterLabel": "Ich möchte den TM-Newsletter erhalten.",
     "yourData": "Deine Daten",
     "yourAppointments": "Deine Seminartermine",
@@ -183,7 +181,12 @@
     "contactStreet": "Straße und Hausnummer (optional)",
     "contactNewsletter": "Ich möchte den TM-Newsletter erhalten.",
     "chooseSlotHint": "Bitte wähle deinen persönlichen Termin",
-    "showMore": "{count} weitere Termine anzeigen"
+    "showMore": "{count} weitere Termine anzeigen",
+    "validationRequired": "Pflichtfeld",
+    "validationEmail": "Gültige E-Mail erforderlich",
+    "validationDob": "Vollständiges Geburtsdatum erforderlich",
+    "salutationFemale": "Frau",
+    "salutationMale": "Herr"
   },
   "AbschlussCta": {
     "heading": "Finde heraus, wie sehr TM dein Leben bereichern kann",

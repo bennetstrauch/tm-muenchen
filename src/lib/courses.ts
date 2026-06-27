@@ -98,10 +98,9 @@ export async function getCourses(centerIds: number[]): Promise<TMCourse[]> {
   const token = process.env.TMW_API_KEY;
   if (!token) return [];
   const today = new Date().toISOString().slice(0, 10);
-  try {
-    const settled = await Promise.allSettled(centerIds.map(id => fetchCenter(id, token, today)));
-    return settled.flatMap(r => r.status === 'fulfilled' ? r.value : []);
-  } catch {
-    return [];
-  }
+  const settled = await Promise.allSettled(centerIds.map(id => fetchCenter(id, token, today)));
+  settled.forEach(r => {
+    if (r.status === 'rejected') console.error('[courses] fetchCenter failed:', r.reason);
+  });
+  return settled.flatMap(r => r.status === 'fulfilled' ? r.value : []);
 }
