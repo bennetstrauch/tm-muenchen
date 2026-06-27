@@ -84,7 +84,7 @@ function parseCourse(raw: RawCourse, today: string): TMCourse | null {
 async function fetchCenter(id: number, token: string, today: string): Promise<TMCourse[]> {
   const res = await fetch(`https://tmw.meditation.de/api/center/${id}/courses`, {
     headers: { Authorization: `Token ${token}` },
-    next: { revalidate: 3600 },
+    next: { revalidate: 300 },
   } as RequestInit);
   if (!res.ok) throw new Error(`TMW courses API error ${id}: ${res.status}`);
   const raw = await res.json() as RawCourse[];

@@ -488,16 +488,21 @@ function TeacherSlotGroup({
   genderLabel,
   selectedPk,
   onSelect,
+  onContinue,
 }: {
   group: SlotGroup;
   genderLabel: string | null;
   selectedPk: number | null;
   onSelect: (slot: CourseSlot) => void;
+  onContinue: () => void;
 }) {
+  const t = useTranslations("Courses");
+  const groupHasSelected = group.slots.some(s => s.pk === selectedPk);
+
   return (
     <div className="mb-5">
       {genderLabel && (
-        <p className="text-sm font-semibold text-[#1A3352] mb-3 tracking-wide">
+        <p className="text-sm font-semibold text-[#1A3352] mb-3 tracking-wide text-center">
           {genderLabel}
         </p>
       )}
@@ -536,53 +541,10 @@ function TeacherSlotGroup({
           ))}
         </div>
       </div>
-    </div>
-  );
-}
 
-// ── Step 1: slot selection ───────────────────────────────────────────────────
-
-function SlotStep({
-  course,
-  selectedSlot,
-  onSelect,
-  onContinue,
-  onShowAlternative,
-}: {
-  course: TMCourse;
-  selectedSlot: CourseSlot | null;
-  onSelect: (slot: CourseSlot) => void;
-  onContinue: () => void;
-  onShowAlternative: () => void;
-}) {
-  const t = useTranslations("Courses");
-  const locale = useLocale();
-  const groups = groupSlots(course.slots, course.genderRestricted);
-
-  return (
-    <div className="mt-5 pt-5 border-t border-[#DBEAFE]">
-      {/* Slot selection hint */}
-      <p className="text-sm text-[#3D5573] mb-5">
-        {t("chooseSlotHint")}
-      </p>
-
-      {groups.map((group, i) => (
-        <TeacherSlotGroup
-          key={i}
-          group={group}
-          genderLabel={
-            course.genderRestricted
-              ? group.gender === "F" ? t("forWomen") : t("forMen")
-              : null
-          }
-          selectedPk={selectedSlot?.pk ?? null}
-          onSelect={onSelect}
-        />
-      ))}
-
-      {/* Inline Weiter button — appears below slots when a slot is selected */}
-      {selectedSlot && (
-        <div className="mt-4 mb-5">
+      {/* Weiter — only under the group that owns the selected slot */}
+      {groupHasSelected && (
+        <div className="mt-4">
           <button
             type="button"
             onClick={onContinue}
@@ -600,6 +562,50 @@ function SlotStep({
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+// ── Step 1: slot selection ───────────────────────────────────────────────────
+
+function SlotStep({
+  course,
+  selectedSlot,
+  onSelect,
+  onContinue,
+  onShowAlternative,
+}: {
+  course: TMCourse;
+  selectedSlot: CourseSlot | null;
+  onSelect: (slot: CourseSlot) => void;
+  onContinue: () => void;  // passed into each group
+  onShowAlternative: () => void;
+}) {
+  const t = useTranslations("Courses");
+  const locale = useLocale();
+  const groups = groupSlots(course.slots, course.genderRestricted);
+
+  return (
+    <div className="mt-5 pt-5 border-t border-[#DBEAFE]">
+      {/* Slot selection hint */}
+      <p className="text-sm font-semibold text-[#1A3352] mb-5">
+        {t("chooseSlotHint")}
+      </p>
+
+      {groups.map((group, i) => (
+        <TeacherSlotGroup
+          key={i}
+          group={group}
+          genderLabel={
+            course.genderRestricted
+              ? group.gender === "F" ? t("forWomen") : t("forMen")
+              : null
+          }
+          selectedPk={selectedSlot?.pk ?? null}
+          onSelect={onSelect}
+          onContinue={onContinue}
+        />
+      ))}
 
       {/* Folgetreffen bar */}
       {course.followUps.length > 0 && (
@@ -637,11 +643,15 @@ type Step = 1 | 2 | 3;
 function CourseCard({
   course,
   isOpen,
+  isAnyOpen,
   onToggle,
+  onBooked,
 }: {
   course: TMCourse;
   isOpen: boolean;
+  isAnyOpen: boolean;
   onToggle: () => void;
+  onBooked: () => void;
 }) {
   const t = useTranslations("Courses");
   const locale = useLocale();
@@ -666,10 +676,10 @@ function CourseCard({
 
   return (
     <li className="py-5 border-b border-[#DBEAFE] last:border-0">
-      {/* Collapsed row — compact, centred */}
-      <div className="flex items-center justify-center gap-6 flex-wrap">
-        <div className="flex flex-col gap-0.5">
-          <div className="flex items-baseline gap-2 flex-wrap">
+      {/* Collapsed row — fixed-width date column so all rows align */}
+      <div className="flex items-center justify-center gap-10 flex-wrap">
+        <div className="flex flex-col gap-1 w-[220px]">
+          <div className="flex items-baseline gap-2">
             <span className="text-[0.85rem] tracking-[0.1em] uppercase text-[#1A3352]/60 whitespace-nowrap">
               {weekday}
             </span>
@@ -685,15 +695,16 @@ function CourseCard({
         <button
           type="button"
           onClick={onToggle}
-          className="
-            inline-flex items-center gap-2 flex-shrink-0
-            px-5 py-2.5
-            bg-[#2D6A4F] text-white
-            text-[0.65rem] tracking-[0.16em] uppercase font-medium rounded-full
-            transition-all duration-200
-            hover:bg-[#245a41] hover:shadow-[0_4px_12px_rgba(45,106,79,0.3)]
-            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D6A4F] focus-visible:ring-offset-2
-          "
+          className={[
+            "inline-flex items-center gap-2 flex-shrink-0",
+            "px-5 py-2.5",
+            "bg-[#2D6A4F] text-white",
+            "text-[0.65rem] tracking-[0.16em] uppercase font-medium rounded-full",
+            "transition-all duration-200",
+            "hover:bg-[#245a41] hover:shadow-[0_4px_12px_rgba(45,106,79,0.3)]",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D6A4F] focus-visible:ring-offset-2",
+            !isOpen && isAnyOpen ? "opacity-40" : "",
+          ].join(" ")}
         >
           {isOpen ? t("close") : t("chooseSlot")}
         </button>
@@ -733,7 +744,7 @@ function CourseCard({
               slot={selectedSlot}
               contact={contactData}
               onBack={() => setStep(2)}
-              onSuccess={() => setSuccess(true)}
+              onSuccess={() => { setSuccess(true); onBooked(); }}
             />
           )}
 
@@ -755,13 +766,22 @@ export default function Courses({ courses, locale }: { courses: TMCourse[]; loca
   const t = useTranslations("Courses");
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [showAll, setShowAll] = useState(false);
+  const [bookedDates, setBookedDates] = useState<Set<string>>(new Set());
+
+  // Filter out courses that were just booked in this session
+  const availableCourses = courses.filter(c => !bookedDates.has(c.date));
 
   function toggle(i: number) {
     setOpenIdx(openIdx === i ? null : i);
   }
 
-  const visibleCourses = showAll ? courses : courses.slice(0, INITIAL_COUNT);
-  const hiddenCount = courses.length - INITIAL_COUNT;
+  function markBooked(date: string) {
+    setBookedDates(prev => new Set([...prev, date]));
+    setOpenIdx(null);
+  }
+
+  const visibleCourses = showAll ? availableCourses : availableCourses.slice(0, INITIAL_COUNT);
+  const hiddenCount = availableCourses.length - INITIAL_COUNT;
 
   if (courses.length === 0) {
     return (
@@ -793,7 +813,9 @@ export default function Courses({ courses, locale }: { courses: TMCourse[]; loca
               key={`${course.date}-${i}`}
               course={course}
               isOpen={openIdx === i}
+              isAnyOpen={openIdx !== null}
               onToggle={() => toggle(i)}
+              onBooked={() => markBooked(course.date)}
             />
           ))}
         </ul>
