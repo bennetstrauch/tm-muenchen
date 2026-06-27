@@ -590,7 +590,7 @@ function SlotStep({
       {/* Slot selection hint — hairline rule on each side */}
       <div className="flex items-center gap-3 mb-6">
         <div className="flex-1 h-px bg-[#DBEAFE]" />
-        <p className="text-[0.8rem] tracking-wide text-[#3D5573] shrink-0">
+        <p className="text-[1rem] tracking-wide text-[#3D5573] shrink-0">
           {t("chooseSlotHint")}
         </p>
         <div className="flex-1 h-px bg-[#DBEAFE]" />
