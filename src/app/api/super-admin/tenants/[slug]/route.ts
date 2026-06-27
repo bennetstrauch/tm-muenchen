@@ -43,6 +43,8 @@ export async function PUT(
     show_teachers: body.show_teachers ?? true,
     show_meditators_section: body.show_meditators_section ?? true,
     center_banner_label: body.center_banner_label || null,
+    show_courses: body.show_courses ?? false,
+    course_locales: body.course_locales ?? ['de'],
   };
 
   const { data, error } = await db.from("tenants").update(row).eq("tenant", slug);

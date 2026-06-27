@@ -23,6 +23,11 @@ const tenantRow = {
   show_teachers: true,
   show_meditators_section: true,
   center_banner_label: null,
+  show_courses: false,
+  course_locales: ['de'],
+  can_edit_copy: false,
+  meta_pixel_id: null,
+  meta_pixel_capi_token: null,
 };
 
 vi.mock("@/lib/tenant", () => ({
@@ -66,6 +71,8 @@ describe("admin Einstellungen", () => {
       center_image_url: "https://blob.example.com/center/muenchen/photo.webp",
       infoabend_duration_minutes: 30,
       show_meditators_section: true,
+      show_courses: false,
+      course_locales: ['de'],
     });
     expect(data).not.toHaveProperty("admin_password_hash");
     expect(data).not.toHaveProperty("hostname");
@@ -100,6 +107,8 @@ describe("admin Einstellungen", () => {
       center_image_url: "https://blob.example.com/center/muenchen/new.webp",
       infoabend_duration_minutes: 30,
       show_meditators_section: true,
+      show_courses: false,
+      course_locales: ['de'],
     });
   });
 

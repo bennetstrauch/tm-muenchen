@@ -15,6 +15,8 @@ function pickSettings(source: Partial<TenantSettings>): TenantSettings {
     center_image_url: source.center_image_url ?? null,
     infoabend_duration_minutes: source.infoabend_duration_minutes ?? 30,
     show_meditators_section: source.show_meditators_section ?? true,
+    show_courses: source.show_courses ?? false,
+    course_locales: source.course_locales ?? ['de'],
   };
 }
 

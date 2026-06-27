@@ -66,6 +66,8 @@ export default function TenantForm({ tenant }: Props) {
       whatsapp_number: fd.get('whatsapp_number') || null,
       show_teachers: fd.get('show_teachers') === 'on',
       show_meditators_section: fd.get('show_meditators_section') === 'on',
+      show_courses: fd.get('show_courses') === 'on',
+      course_locales: ['de', 'en', 'fr', 'es'].filter(l => fd.get(`course_locale_${l}`) === 'on'),
       center_image_url: fd.get('center_image_url'),
       logo_url: fd.get('logo_url'),
       logo_label: fd.get('logo_label'),
@@ -278,6 +280,30 @@ export default function TenantForm({ tenant }: Props) {
               />
               Für bereits Meditierende (Veranstaltungen / /events) anzeigen
             </label>
+            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                name="show_courses"
+                defaultChecked={tenant?.show_courses ?? false}
+                className="rounded border-gray-300 text-[#BCA075]"
+              />
+              Kurs-Buchung anzeigen
+            </label>
+            <div className="ml-6 space-y-1">
+              <p className="text-xs text-gray-500">Kurs-Sprachen:</p>
+              {(['de','en','fr','es'] as const).map(code => (
+                <label key={code} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name={`course_locale_${code}`}
+                    defaultChecked={code === 'de' || (tenant?.course_locales ?? ['de']).includes(code)}
+                    disabled={code === 'de'}
+                    className="rounded border-gray-300 text-[#BCA075]"
+                  />
+                  {code.toUpperCase()}
+                </label>
+              ))}
+            </div>
             <Field label="Infoabend-Dauer (Minuten)">
               <input
                 name="infoabend_duration_minutes"

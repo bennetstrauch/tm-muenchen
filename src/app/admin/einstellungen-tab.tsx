@@ -23,6 +23,8 @@ const DEFAULTS: TenantSettings = {
   center_image_url: null,
   infoabend_duration_minutes: 30,
   show_meditators_section: true,
+  show_courses: false,
+  course_locales: ['de'],
 };
 
 export default function EinstellungenTab() {
@@ -201,6 +203,44 @@ export default function EinstellungenTab() {
             Veranstaltungen-Bereich und /events anzeigen
           </label>
           <p className="text-xs text-gray-400 mt-1">Deaktivieren für die nationale Seite (Deutschland).</p>
+        </div>
+
+        <div>
+          <p className="text-xs font-medium text-gray-500 mb-2">Kurs-Buchung</p>
+          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer mb-3">
+            <input
+              type="checkbox"
+              className={CHECK_CLS}
+              checked={settings.show_courses}
+              onChange={e => setSettings(prev => ({ ...prev, show_courses: e.target.checked }))}
+            />
+            Kurs-Buchung anzeigen
+          </label>
+          {settings.show_courses && (
+            <div>
+              <p className="text-xs text-gray-500 mb-1.5">Sprachen, in denen der Bereich angezeigt wird:</p>
+              <div className="flex flex-wrap gap-4">
+                {settings.active_locales.map(code => (
+                  <label key={code} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className={CHECK_CLS}
+                      checked={settings.course_locales.includes(code)}
+                      disabled={code === 'de'}
+                      onChange={e => setSettings(prev => ({
+                        ...prev,
+                        course_locales: e.target.checked
+                          ? [...prev.course_locales, code]
+                          : prev.course_locales.filter(l => l !== code),
+                      }))}
+                    />
+                    {ALL_LOCALES.find(l => l.code === code)?.label ?? code}
+                  </label>
+                ))}
+              </div>
+              <p className="text-xs text-gray-400 mt-1">Deutsch ist immer aktiv.</p>
+            </div>
+          )}
         </div>
 
         <div>
