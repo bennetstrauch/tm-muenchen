@@ -272,6 +272,213 @@ function ContactStep({
   );
 }
 
+// ── Kursgebühr modal ────────────────────────────────────────────────────────
+
+function KursgebührModal({ onClose }: { onClose: () => void }) {
+  const t = useTranslations("Courses");
+
+  const tiers = [
+    { name: t("feeNormal"), amount: t("feeNormalAmount"), desc: t("feeNormalDesc") },
+    { name: t("feeFamily"), amount: t("feeFamilyAmount"), desc: t("feeFamilyDesc") },
+    { name: t("feeScholarship"), amount: t("feeScholarshipAmount"), desc: t("feeScholarshipDesc") },
+  ];
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
+      role="dialog" aria-modal="true"
+    >
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} aria-hidden="true" />
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-4 right-4 text-[#3D5573] hover:text-[#1A3352] text-lg leading-none"
+          aria-label="Schließen"
+        >
+          ×
+        </button>
+        <h3 className="text-base font-semibold text-[#1A3352] mb-4">{t("feeModalHeading")}</h3>
+        <div className="space-y-4">
+          {tiers.map(tier => (
+            <div key={tier.name} className="border border-[#DBEAFE] rounded-xl px-4 py-3">
+              <div className="flex items-baseline justify-between mb-1">
+                <span className="text-sm font-medium text-[#1A3352]">{tier.name}</span>
+                <span className="text-base font-semibold text-[#1A3352]">{tier.amount}</span>
+              </div>
+              <p className="text-xs text-[#3D5573] leading-relaxed">{tier.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── ReviewStep ───────────────────────────────────────────────────────────────
+
+function ReviewStep({
+  course,
+  slot,
+  contact,
+  onBack,
+  onSuccess,
+}: {
+  course: TMCourse;
+  slot: CourseSlot;
+  contact: ContactData;
+  onBack: () => void;
+  onSuccess: () => void;
+}) {
+  const t = useTranslations("Courses");
+  const locale = useLocale();
+  const { weekday, date } = formatEventDate(slot.time ? course.date : course.date, locale);
+
+  const [check1, setCheck1] = useState(false);
+  const [check2, setCheck2] = useState(false);
+  const [check3, setCheck3] = useState(false);
+  const [showFeeModal, setShowFeeModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  const genderLabel = contact.gender === "F" ? t("genderFemale") : contact.gender === "M" ? t("genderMale") : t("genderDiverse");
+  const birthdate = `${contact.dobDay.padStart(2,"0")}.${contact.dobMonth.padStart(2,"0")}.${contact.dobYear}`;
+
+  async function handleSubmit() {
+    setSubmitting(true);
+    setError("");
+    try {
+      const res = await fetch("/api/coursebooking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          slot: slot.pk,
+          first_name: contact.firstName,
+          last_name: contact.lastName,
+          email: contact.email,
+          gender: contact.gender,
+          birthdate,
+          phone: contact.phone || undefined,
+          address1: contact.address1 || undefined,
+          zip_code: contact.plz,
+          city: contact.city,
+          news_subscribed: contact.newsSubscribed,
+          locale,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error ?? t("errorGeneric"));
+      }
+      onSuccess();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("errorGeneric"));
+      setSubmitting(false);
+    }
+  }
+
+  const { weekday: slotWeekday, date: slotDate } = formatEventDate(course.date, locale);
+
+  return (
+    <>
+      {showFeeModal && <KursgebührModal onClose={() => setShowFeeModal(false)} />}
+
+      <div className="mt-5 pt-5 border-t border-[#DBEAFE] space-y-5">
+        {/* Personal data summary */}
+        <div>
+          <p className="text-[0.65rem] tracking-[0.12em] uppercase font-medium text-[#3D5573] mb-2">
+            {t("yourData")}
+          </p>
+          <div className="text-sm text-[#1A3352] space-y-0.5">
+            <p>{genderLabel} {contact.firstName} {contact.lastName}</p>
+            <p className="text-[#3D5573]">{contact.email}</p>
+            {contact.phone && <p className="text-[#3D5573]">{contact.phone}</p>}
+            <p className="text-[#3D5573]">{birthdate}</p>
+          </div>
+        </div>
+
+        {/* Appointment dates */}
+        <div>
+          <p className="text-[0.65rem] tracking-[0.12em] uppercase font-medium text-[#3D5573] mb-2">
+            {t("yourAppointments")}
+          </p>
+          <div className="text-sm text-[#1A3352] space-y-1">
+            <p>
+              <span className="font-medium">{slotWeekday} {slot.time}, {slotDate}</span>
+              {" — "}<span className="text-[#3D5573]">{t("personalInitiation")}</span>
+            </p>
+            {course.followUps.map((fu, i) => {
+              const { weekday: fw, date: fd } = formatEventDate(fu.date, locale);
+              return (
+                <p key={i}>
+                  <span className="font-medium">{fw} {fu.time}, {fd}</span>
+                  {" — "}<span className="text-[#3D5573]">{i + 1}. {t("followUpLabel").replace(":", "")}</span>
+                </p>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Checkboxes */}
+        <div className="space-y-3">
+          <label className="flex items-start gap-2.5 cursor-pointer">
+            <input type="checkbox" checked={check1} onChange={e => setCheck1(e.target.checked)}
+              className="mt-0.5 w-4 h-4 rounded border-[#DBEAFE] accent-[#A5C3D7] flex-shrink-0" />
+            <span className="text-xs text-[#3D5573] leading-relaxed">
+              Bitte bestätigen Sie, dass Sie an <strong className="text-[#1A3352]">allen Treffen</strong> teilnehmen können. *
+            </span>
+          </label>
+
+          <label className="flex items-start gap-2.5 cursor-pointer">
+            <input type="checkbox" checked={check2} onChange={e => setCheck2(e.target.checked)}
+              className="mt-0.5 w-4 h-4 rounded border-[#DBEAFE] accent-[#A5C3D7] flex-shrink-0" />
+            <span className="text-xs text-[#3D5573] leading-relaxed">
+              Die{" "}
+              <button
+                type="button"
+                onClick={() => setShowFeeModal(true)}
+                className="text-[#A5C3D7] underline underline-offset-2 hover:text-[#1A3352] transition-colors"
+              >
+                {t("feeLinkText")}
+              </button>
+              {" "}ist mir bekannt. *
+            </span>
+          </label>
+
+          <label className="flex items-start gap-2.5 cursor-pointer">
+            <input type="checkbox" checked={check3} onChange={e => setCheck3(e.target.checked)}
+              className="mt-0.5 w-4 h-4 rounded border-[#DBEAFE] accent-[#A5C3D7] flex-shrink-0" />
+            <span className="text-xs text-[#3D5573] leading-relaxed">{t("newsletterLabel")}</span>
+          </label>
+        </div>
+
+        {error && <p className="text-red-500 text-xs">{error}</p>}
+
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={!check1 || !check2 || submitting}
+            className="
+              px-8 py-3 bg-[#1A3352] text-white
+              text-[0.68rem] tracking-[0.18em] uppercase font-medium rounded-full
+              transition-all duration-200
+              hover:bg-[#2a4d72] disabled:opacity-40 disabled:cursor-not-allowed
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A3352]
+            "
+          >
+            {submitting ? t("submitting") : t("submitButton")}
+          </button>
+          <button type="button" onClick={onBack}
+            className="text-[0.68rem] tracking-[0.12em] uppercase text-[#3D5573] hover:text-[#1A3352] transition-colors">
+            {t("backButton")}
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}
+
 // ── Slot grid for one teacher group ─────────────────────────────────────────
 
 function TeacherSlotGroup({
@@ -415,6 +622,7 @@ function CourseCard({
   const [step, setStep] = useState<Step>(1);
   const [showAlternative, setShowAlternative] = useState(false);
   const [contactData, setContactData] = useState<ContactData>(EMPTY_CONTACT);
+  const [success, setSuccess] = useState(false);
   const [cardVisible, setCardVisible] = useState(true);
   const cardRef = useRef<HTMLLIElement>(null);
 
@@ -424,6 +632,7 @@ function CourseCard({
       setSelectedSlot(null);
       setStep(1);
       setShowAlternative(false);
+      setSuccess(false);
     }
   }, [isOpen]);
 
@@ -501,7 +710,22 @@ function CourseCard({
               onNext={() => setStep(3)}
             />
           )}
-          {step === 3 && null}
+          {step === 3 && !success && selectedSlot && (
+            <ReviewStep
+              course={course}
+              slot={selectedSlot}
+              contact={contactData}
+              onBack={() => setStep(2)}
+              onSuccess={() => setSuccess(true)}
+            />
+          )}
+
+          {success && (
+            <div className="mt-5 pt-5 border-t border-[#DBEAFE] py-6">
+              <p className="text-[#287E1A] font-medium text-sm mb-1">{t("successTitle")}</p>
+              <p className="text-[#3D5573] text-sm">{t("successBody")}</p>
+            </div>
+          )}
         </div>
       )}
 
