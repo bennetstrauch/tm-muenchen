@@ -38,6 +38,8 @@ export async function POST(request: Request) {
     show_meditators_section: body.show_meditators_section ?? true,
     center_banner_label: body.center_banner_label || null,
     can_edit_copy: body.can_edit_copy ?? false,
+    show_courses: body.show_courses ?? false,
+    course_locales: body.course_locales ?? ['de'],
   };
 
   const { data, error } = await getSupabase().from("tenants").insert(row).select().single();

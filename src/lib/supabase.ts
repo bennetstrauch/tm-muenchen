@@ -156,6 +156,28 @@ type TenantRow = {
   can_edit_copy: boolean;
   meta_pixel_id: string | null;
   meta_pixel_capi_token: string | null;
+  show_courses: boolean;
+  course_locales: string[];
+};
+
+type KursAnmeldungRow = {
+  id: string;
+  tenant: string;
+  slot_pk: number;
+  tmw_booking_id: number | null;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string | null;
+  gender: string;
+  birthdate: string;
+  address1: string | null;
+  zip_code: string | null;
+  city: string | null;
+  news_subscribed: boolean;
+  locale: string;
+  source: string | null;
+  created_at: string;
 };
 
 // Nullable columns are optional on insert (the DB defaults them to null).
@@ -211,6 +233,12 @@ export type Database = {
         Row: InfoAnfrageRow;
         Insert: Omit<InfoAnfrageRow, "id" | "created_at">;
         Update: Partial<Omit<InfoAnfrageRow, "id" | "created_at">>;
+        Relationships: [];
+      };
+      kurs_anmeldungen: {
+        Row: KursAnmeldungRow;
+        Insert: Omit<KursAnmeldungRow, "id" | "created_at">;
+        Update: Partial<Omit<KursAnmeldungRow, "id" | "created_at">>;
         Relationships: [];
       };
     };

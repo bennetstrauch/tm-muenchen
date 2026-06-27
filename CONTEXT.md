@@ -1,9 +1,25 @@
 # TM München – Domain Glossary
 
-## Infoabend
-A free, non-binding introductory session (~60 min) where people learn what TM is, how it differs from other techniques, and can ask questions. Offered both online and in-person in Munich. This is the **primary conversion goal** of the landing page — getting visitors to sign up for one.
+## Infogespräch
+A free, non-binding introductory session (~30 min) where people learn what TM is, how it differs from other techniques, and can ask questions. Offered both online and in-person in Munich. This is the **primary conversion goal** of the landing page — getting visitors to sign up for one.
 
-> Canonical term: **Infoabend** (not "Infovortrag", not "Info-Termin", not "Infovortrag")
+> Canonical term: **Infogespräch** (DE) / **info evening** (EN). Not "Infoabend", not "Infovortrag", not "Info-Termin". "Infoabend" is outdated and retired.
+
+## TM-Kurs
+A paid multi-day TM learning course consisting of a **Persönliche Unterweisung** (the personal initiation session on day 1) plus three follow-up group sessions (Folgetreffen). Offered by the center with one or two teachers. Courses may be gender-restricted (separate slots for men and women, taught by a same-gender teacher) or open (all genders with one teacher).
+
+**Fee tiers (static, not from API):**
+- Normal-Tarif: 1.190 €
+- Familien-Tarif: 1.785 € (for couples and families with children)
+- Stipendium-Tarif: 595 € (for students, apprentices, unemployed, low-income)
+
+Installment payments from 22 €/month available.
+
+> Canonical terms:
+> - **TM-Kurs** — the full course offering (collapsed card label, section heading)
+> - **Persönliche Unterweisung** — day 1 personal initiation session (not "Einführung", not "Persönliche Einführung")
+> - **Folgetreffen** — the three follow-up group sessions (not "Folgetag")
+> - **gender_restricted** — API field; when `true`, show "Für Frauen" / "Für Männer" slot groups; when `false`, no gender headers
 
 ## Baum des Lebens
 An interactive tree visualization of TM benefits, planned as a separate page (`/lebensbaum`). The tree is the main navigation metaphor: trunk = TM technique, roots = tradition/teaching, earth = pure consciousness (spirituality), 4 main branches = benefit domains (Geistiges Potenzial, Gesundheit, Beziehung/Sozialverhalten, Gesellschaft/Weltfrieden), leaves = specific subtopics (e.g. Herz-Kreislauf, Angst, Burnout).
@@ -46,8 +62,8 @@ A route that duplicates the existing landing page (`/`) with a redesigned hero. 
 **Implementation (shipped 2026-06-23):**
 - Route: `src/app/[locale]/(entdecken)/entdecken/page.tsx` — own route group so it gets a separate layout without affecting `(site)` pages
 - `components/entdecken-hero.tsx` — client component: looping `<video>`, gradient overlay, i18n headline + CTA
-- Transparent TopBar: `ScrollHeader` (`top-bar/scroll-header.tsx`) is a thin client wrapper around `<header>`; it attaches a scroll listener only when `transparent={true}` and exposes `data-transparent` on the element. Sub-components (NavMenu, TopBarLogo, ContactButtons) use `group-data-[transparent=true]:` Tailwind variants for white colouring — no JS, no props on those components.
-- `SiteShell` (`components/site-shell.tsx`) holds the shared layout (TopBar + NavPanel + Footer + StickyCta + CookieBanner). Both `(site)/layout.tsx` and `(entdecken)/layout.tsx` are one-liners that call it; the only difference is `transparentBar={true}` on the latter.
+- Transparent TopBar: `ScrollHeader` (`top-bar/scroll-header.tsx`) is a thin client wrapper around `<header>`; it attaches a scroll listener only when `transparent={true}` and exposes `data-transparent` on the element. When not scrolled: `bg-transparent`. When scrolled: **solid cream `#F8F5EF`** with border `#E8E3DA` (replaces the old frosted glass `bg-white/10 backdrop-blur-md`). All top bar elements (logo, hamburger, contact icons) are **always navy blue `#1A3352`** — the `group-data-[transparent=true]:` white variants were removed from NavMenu, TopBarLogo, and ContactButtons (2026-06-26). The `data-transparent` attribute still exists on the element for potential future use.
+- `SiteShell` (`components/site-shell.tsx`) holds the shared layout (TopBar + NavPanel + Footer + StickyCta + CookieBanner). Both `(site)/layout.tsx` and `(entdecken)/layout.tsx` are one-liners that call it; both now pass `transparentBar={true}` — the site layout was updated 2026-06-26 so main landing pages also get transparent-at-top with cream-on-scroll.
 - `PageClient` gained an optional `heroSlot` prop — passing `null` suppresses the built-in Hero so `EntdeckenPage` can render `EntdeckenHero` above it and reuse everything else unchanged.
 - Copy: `Entdecken.headline` and `Entdecken.cta` live in `de.json` and are included in the copy-subset → editable by Jochen via the Texte tab.
 
@@ -82,13 +98,28 @@ What a theme does NOT change: page structure, sections, copy outside the hero.
 
 Theme-switching arrows in the hero exist but are rarely used — real visitors scroll down. Themes are primarily for routing different ad audiences to the right entry point.
 
+### Hero overlay
+
+The hero overlay (`hero.tsx`) is a cream gradient (`rgba(248,245,239,…)`) layered over the background image:
+
+```
+0%  → opacity 0.96  (very top — badge/headline area)
+35% → opacity 0.88  (headline)
+52% → opacity 0.55  (CTA + dates strip — end of text area)
+68% → opacity 0     (fully transparent — photo shows at full colour)
+```
+
+Below ~68% of the hero height the photo is completely unobscured. The bottom ~32% of the hero (spacer + "Mehr erfahren" button) sits directly over the raw image. **Note:** the "Mehr erfahren" button contrast against the photo has not yet been verified — check if a scrim is needed (see handoff 2026-06-26).
+
+The "Die einzige Technik ihrer Art" badge is currently **commented out** in `hero.tsx` (easy to restore). The `learnMore` button at the bottom is active.
+
 ### Hero images
 
 Configured in `src/content.ts`. Each theme has an `images: HeroImage[]` array; currently all themes share `STRESS_IMAGES`. One image is picked randomly per page load.
 
-`HeroImage.focus` is CSS `object-position` (e.g. `"50% 45%"`). The hero is `min-h-[100dvh]` with `object-cover`, so the crop differs significantly between mobile (portrait) and desktop (landscape) — focus must be set to keep the subject visible in both. On mobile, left/right edges get cut; on desktop, top/bottom get cut.
+`HeroImage.focus` is CSS `object-position` (e.g. `"50% 45%"`). The hero is `min-h-[100dvh]` with `object-cover`, so the crop differs significantly between mobile (portrait) and desktop (landscape) — focus must be set to keep the subject visible in both. On mobile, left/right edges get cut; on desktop, top/bottom get cut. For landscape images in portrait mobile viewports, `focus` Y has no effect — use `mobileTranslateY` instead (positive = shifts image down). CSS scale `1.12` in `.hero-img-shift` gives ~10–12% safe margin before the image edge shows.
 
-**Current pool** (`STRESS_IMAGES`, `src/content.ts`): stock photos 3, 4, 5, 8, 9 + all 11 meditator photos from `/hero/ourmeditators/`. Stock 6 and 10 are commented out (missing from disk); 12 and 15 removed.
+**Current pool** (`STRESS_IMAGES`, `src/content.ts`): **all images are commented out** as of 2026-06-26 while the hero overlay design is being finalised. Only `woman-red-coat-meditating-forest.jpg` (focus `"50% 55%"`) is active. The full commented pool: stock photos (woman-dancing-silhouette-sunset, ocean-waves-pastel-sunset, mother-child-beach-sunset, girl-picking-flowers-meadow) + 9 meditator photos from `/hero/ourmeditators/`. Re-enable and tune individually once overlay is confirmed. `man-woman-meditating-on-grass.jpg` focus was adjusted to `"50% 40%"` during tuning.
 
 **Future: per-theme image sets.** The `images` field already supports per-theme arrays (e.g. `innere-freude` already has its own). When there are enough photos, give each theme its own curated set — e.g. `schlaf` → calm/night/rest images, `angst` → open/nature/stillness, `innere-freude` → joyful/warm. The meditator photos in `/hero/ourmeditators/` are a good source to draw from once themes are differentiated.
 
