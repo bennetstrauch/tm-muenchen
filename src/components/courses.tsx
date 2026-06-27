@@ -676,9 +676,9 @@ function CourseCard({
 
   return (
     <li className="py-5 border-b border-[#DBEAFE] last:border-0">
-      {/* Collapsed row — fixed-width date column so all rows align */}
-      <div className="flex items-center justify-center gap-10 flex-wrap">
-        <div className="flex flex-col gap-1 w-[220px]">
+      {/* Collapsed row — text left, button right, always on one line */}
+      <div className="flex items-center justify-between gap-6">
+        <div className="flex flex-col gap-1 min-w-0">
           <div className="flex items-baseline gap-2">
             <span className="text-[0.85rem] tracking-[0.1em] uppercase text-[#1A3352]/60 whitespace-nowrap">
               {weekday}
@@ -696,7 +696,7 @@ function CourseCard({
           type="button"
           onClick={onToggle}
           className={[
-            "inline-flex items-center gap-2 flex-shrink-0",
+            "inline-flex items-center gap-2 flex-shrink-0 ml-2",
             "px-5 py-2.5",
             "bg-[#2D6A4F] text-white",
             "text-[0.65rem] tracking-[0.16em] uppercase font-medium rounded-full",
