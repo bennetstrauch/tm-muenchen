@@ -258,10 +258,10 @@ function ContactStep({
           type="button"
           onClick={() => { if (validate()) onNext(); }}
           className="
-            px-8 py-3 bg-[#A5C3D7] text-[#1A3352]
+            px-8 py-3 bg-[#2D6A4F] text-white
             text-[0.68rem] tracking-[0.18em] uppercase font-medium rounded-full
-            transition-all duration-200 hover:bg-[#8BAAC3]
-            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A5C3D7]
+            transition-all duration-200 hover:bg-[#245a41] hover:shadow-md
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D6A4F]
           "
         >
           {t("continueButton")}
@@ -462,11 +462,11 @@ function ReviewStep({
             onClick={handleSubmit}
             disabled={!check1 || !check2 || submitting}
             className="
-              px-8 py-3 bg-[#1A3352] text-white
+              px-8 py-3 bg-[#2D6A4F] text-white
               text-[0.68rem] tracking-[0.18em] uppercase font-medium rounded-full
               transition-all duration-200
-              hover:bg-[#2a4d72] disabled:opacity-40 disabled:cursor-not-allowed
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A3352]
+              hover:bg-[#245a41] hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D6A4F]
             "
           >
             {submitting ? t("submitting") : t("submitButton")}
@@ -587,10 +587,14 @@ function SlotStep({
 
   return (
     <div className="mt-5 pt-5 border-t border-[#DBEAFE]">
-      {/* Slot selection hint */}
-      <p className="text-sm font-semibold text-[#1A3352] mb-5">
-        {t("chooseSlotHint")}
-      </p>
+      {/* Slot selection hint — hairline rule on each side */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="flex-1 h-px bg-[#DBEAFE]" />
+        <p className="text-[0.8rem] tracking-wide text-[#3D5573] shrink-0">
+          {t("chooseSlotHint")}
+        </p>
+        <div className="flex-1 h-px bg-[#DBEAFE]" />
+      </div>
 
       {groups.map((group, i) => (
         <TeacherSlotGroup
@@ -607,10 +611,10 @@ function SlotStep({
         />
       ))}
 
-      {/* Folgetreffen bar */}
+      {/* Folgetreffen bar — flex so wrapped lines indent under the dates */}
       {course.followUps.length > 0 && (
-        <div className="mb-4">
-          <span className="text-xs font-semibold text-[#1A3352] mr-2">
+        <div className="flex gap-2 mb-4 items-baseline">
+          <span className="text-xs font-semibold text-[#1A3352] shrink-0">
             {t("followUpLabel")}:
           </span>
           <span className="text-xs text-[#3D5573]">

@@ -182,7 +182,7 @@
     "contactCity": "Stadt",
     "contactStreet": "Straße und Hausnummer (optional)",
     "contactNewsletter": "Ich möchte den TM-Newsletter erhalten.",
-    "chooseSlotHint": "Bitte wähle deinen persönlichen Termin:",
+    "chooseSlotHint": "Bitte wähle deinen persönlichen Termin",
     "showMore": "{count} weitere Termine anzeigen"
   },
   "AbschlussCta": {
