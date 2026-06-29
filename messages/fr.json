@@ -180,7 +180,7 @@
     "link2": "Comment ça marche",
     "link3": "Prochaines soirées d'introduction",
     "link4": "Pour ceux qui méditent déjà",
-    "link5": "Cours de MT",
+    "link5": "Cours MT",
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
     "prevTheme": "Thème précédent",
@@ -315,6 +315,11 @@
     "contactStreet": "Rue et numéro (facultatif)",
     "contactNewsletter": "Je souhaite recevoir la newsletter MT.",
     "chooseSlotHint": "Choisis ton créneau personnel",
-    "showMore": "Afficher {count} autres créneaux"
+    "showMore": "Afficher {count} autres créneaux",
+    "validationRequired": "Champ obligatoire",
+    "validationEmail": "Adresse e-mail valide requise",
+    "validationDob": "Date de naissance complète requise",
+    "salutationFemale": "Madame",
+    "salutationMale": "Monsieur"
   }
 }

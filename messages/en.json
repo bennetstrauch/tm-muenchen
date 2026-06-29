@@ -315,6 +315,11 @@
     "contactStreet": "Street and house number (optional)",
     "contactNewsletter": "I'd like to receive the TM newsletter.",
     "chooseSlotHint": "Please pick your personal appointment",
-    "showMore": "Show {count} more dates"
+    "showMore": "Show {count} more dates",
+    "validationRequired": "Required field",
+    "validationEmail": "Please enter a valid email address",
+    "validationDob": "Please enter your full date of birth",
+    "salutationFemale": "Ms",
+    "salutationMale": "Mr"
   }
 }

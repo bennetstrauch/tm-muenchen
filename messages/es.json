@@ -315,6 +315,11 @@
     "contactStreet": "Calle y número (opcional)",
     "contactNewsletter": "Quiero recibir el boletín de MT.",
     "chooseSlotHint": "Elige tu cita personal",
-    "showMore": "Ver {count} fechas más"
+    "showMore": "Ver {count} fechas más",
+    "validationRequired": "Campo obligatorio",
+    "validationEmail": "Introduce un email válido",
+    "validationDob": "Introduce tu fecha de nacimiento completa",
+    "salutationFemale": "Sra.",
+    "salutationMale": "Sr."
   }
 }
