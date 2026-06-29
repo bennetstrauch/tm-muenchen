@@ -16,6 +16,7 @@ const NAV_LINKS: NavLink[] = [
   { labelKey: "link2", href: "#wie-es-funktioniert",   type: "anchor" },
   { labelKey: "link3", href: "#anmeldung",             type: "anchor" },
   { labelKey: "link4", href: "/events",                type: "page"   },
+  { labelKey: "link5", href: "#kurse",                 type: "anchor" },
 ];
 
 const ITEM_BASE_CLS = `
@@ -48,7 +49,7 @@ const chevron = (
 
 const LOCALE_LABELS: Record<Locale, string> = { de: "DE", en: "EN", fr: "FR", es: "ES" };
 
-export default function NavPanel({ activeLocales, showMeditatorsSection = true }: { activeLocales: string[]; showMeditatorsSection?: boolean }) {
+export default function NavPanel({ activeLocales, showMeditatorsSection = true, showCourses = false }: { activeLocales: string[]; showMeditatorsSection?: boolean; showCourses?: boolean }) {
   const t = useTranslations("Nav");
   const { isOpen, setIsOpen, setPanelHeight } = useNavContext();
   const locales = routing.locales.filter((l) => activeLocales.includes(l));
@@ -99,7 +100,11 @@ export default function NavPanel({ activeLocales, showMeditatorsSection = true }
       >
         <div ref={innerRef} className="min-h-0">
           <div className="bg-white/95 backdrop-blur-md border-b border-[#1A3352]/10 shadow-[0_8px_24px_rgba(26,51,82,0.07)]">
-            {NAV_LINKS.filter(l => l.href !== '/events' || showMeditatorsSection).map((link, i) => {
+            {NAV_LINKS.filter(l => {
+              if (l.href === '/events') return showMeditatorsSection;
+              if (l.href === '#kurse') return showCourses;
+              return true;
+            }).map((link, i) => {
               const label = t(link.labelKey as Parameters<typeof t>[0]);
               const cls = `${ITEM_BASE_CLS}${i > 0 ? " border-t border-[#1A3352]/8" : ""}`;
               if (link.type === "page") {

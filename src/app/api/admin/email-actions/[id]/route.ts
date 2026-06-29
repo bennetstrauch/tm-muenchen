@@ -1,6 +1,7 @@
 import { getEmailActions, updateEmailAction, deleteEmailAction } from '@/lib/email-actions';
 import type { EmailAction } from '@/lib/email-actions';
 import { checkAdminRequest } from '@/lib/admin-api-gate';
+import { getCurrentTenant } from '@/lib/tenant';
 
 export async function PUT(
   request: Request,
@@ -10,9 +11,10 @@ export async function PUT(
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
   try {
+    const { tenant } = await getCurrentTenant();
     const { id } = await context.params;
     const data: EmailAction = await request.json();
-    await updateEmailAction({ ...data, id });
+    await updateEmailAction(tenant, { ...data, id });
     return Response.json({ success: true });
   } catch (err) {
     console.error('email-actions PUT failed:', err);
@@ -28,8 +30,9 @@ export async function DELETE(
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
   try {
+    const { tenant } = await getCurrentTenant();
     const { id } = await context.params;
-    await deleteEmailAction(id);
+    await deleteEmailAction(tenant, id);
     return Response.json({ success: true });
   } catch (err) {
     console.error('email-actions DELETE failed:', err);
@@ -46,8 +49,9 @@ export async function GET(
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
   try {
+    const { tenant } = await getCurrentTenant();
     const { id } = await context.params;
-    const actions = await getEmailActions();
+    const actions = await getEmailActions(tenant);
     const action = actions.find(a => a.id === id);
     if (!action) return Response.json({ error: 'Nicht gefunden.' }, { status: 404 });
     return Response.json(action);

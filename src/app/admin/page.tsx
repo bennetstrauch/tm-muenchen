@@ -30,13 +30,13 @@ export default async function AdminPage({
     }
 
     // Valid token: load data and render in token-scoped mode
-    const { tenant: tenantSlug, city } = await getCurrentTenant();
+    const { tenant: tenantSlug, city, hostname } = await getCurrentTenant();
     const [infoRegistrations, events, eventRegistrations, vorlagen, emailActions] = await Promise.all([
       getInfoAnmeldungen(tenantSlug).catch(() => []),
       getAllVeranstaltungen(tenantSlug).catch(() => []),
       getEventRegistrations(tenantSlug).catch(() => []),
       getAllVorlagen(tenantSlug).catch(() => []),
-      getEmailActions().catch(() => []),
+      getEmailActions(tenantSlug).catch(() => []),
     ]);
 
     return (
@@ -58,6 +58,7 @@ export default async function AdminPage({
               eventRegistrations={eventRegistrations}
               initialVorlagen={vorlagen}
               initialEmailActions={emailActions}
+              hostname={hostname}
               tokenEventId={eventParam}
               tokenHeader={tokenParam}
             />
@@ -70,7 +71,7 @@ export default async function AdminPage({
   // --- Normal session-based access ---
   const cookieStore = await cookies();
   const sessionToken = cookieStore.get('admin-session')?.value;
-  const { tenant, city, can_edit_copy } = await getCurrentTenant();
+  const { tenant, city, hostname, can_edit_copy } = await getCurrentTenant();
 
   if (!sessionToken || !await verifySession(sessionToken, tenant)) {
     redirect('/admin/login');
@@ -81,7 +82,7 @@ export default async function AdminPage({
     getAllVeranstaltungen(tenant).catch(() => []),
     getEventRegistrations(tenant).catch(() => []),
     getAllVorlagen(tenant).catch(() => []),
-    getEmailActions().catch(() => []),
+    getEmailActions(tenant).catch(() => []),
   ]);
 
   return (
@@ -115,6 +116,7 @@ export default async function AdminPage({
             eventRegistrations={eventRegistrations}
             initialVorlagen={vorlagen}
             initialEmailActions={emailActions}
+            hostname={hostname}
             canEditCopy={can_edit_copy}
           />
         </Suspense>

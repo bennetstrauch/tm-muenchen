@@ -1,6 +1,7 @@
 import { getEmailActions, createEmailAction } from '@/lib/email-actions';
 import type { EmailAction } from '@/lib/email-actions';
 import { checkAdminRequest } from '@/lib/admin-api-gate';
+import { getCurrentTenant } from '@/lib/tenant';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,9 +10,10 @@ export async function GET(request: Request) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
   try {
+    const { tenant } = await getCurrentTenant();
     const { searchParams } = new URL(request.url);
     const eventId = searchParams.get('eventId') ?? undefined;
-    const actions = await getEmailActions(eventId);
+    const actions = await getEmailActions(tenant, eventId);
     return Response.json(actions);
   } catch (err) {
     console.error('email-actions GET failed:', err);
@@ -24,8 +26,9 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
   try {
+    const { tenant } = await getCurrentTenant();
     const data: Omit<EmailAction, 'id'> = await request.json();
-    const action = await createEmailAction(data);
+    const action = await createEmailAction(tenant, data);
     return Response.json(action, { status: 201 });
   } catch (err) {
     console.error('email-actions POST failed:', err);

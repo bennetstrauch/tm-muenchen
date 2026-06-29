@@ -27,7 +27,7 @@ export default async function InfoabendPreview() {
   return (
     <section
       id="infoabend"
-      className="section bg-[#FAFAF8] border-t border-[#E8E4DC] scroll-mt-10"
+      className="section bg-[#1A3352] scroll-mt-10"
       aria-labelledby="infoabend-heading"
     >
       <div className="section-inner">
@@ -35,7 +35,7 @@ export default async function InfoabendPreview() {
         <div className="text-center mb-8">
           <h2
             id="infoabend-heading"
-            className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight"
+            className="font-display font-light text-[2rem] sm:text-[2.75rem] text-white leading-tight"
           >
             {t("heading")}
           </h2>
@@ -45,17 +45,12 @@ export default async function InfoabendPreview() {
           {infoBoxes.map(({ label, value }) => (
             <div
               key={label}
-              className="
-                bg-white border-l-[3px] border-[#BCA075]
-                rounded-r-xl
-                px-5 py-4
-                shadow-sm
-              "
+              className="bg-white/5 border border-white/10 rounded-xl px-5 py-4"
             >
               <p className="text-[0.6rem] tracking-[0.22em] uppercase text-[#BCA075] mb-1 font-medium">
                 {label}
               </p>
-              <p className="text-[#1A3352] text-base font-medium leading-snug whitespace-pre-line sm:whitespace-normal">
+              <p className="text-white text-base font-medium leading-snug whitespace-pre-line sm:whitespace-normal">
                 {value}
               </p>
             </div>
@@ -76,7 +71,7 @@ export default async function InfoabendPreview() {
                 <circle cx="8" cy="8" r="7" stroke="#BCA075" strokeWidth="1.2" />
                 <circle cx="8" cy="8" r="3" fill="#BCA075" />
               </svg>
-              <span className="text-base text-[#1A3352]/80 leading-relaxed">
+              <span className="text-base text-white leading-relaxed">
                 {point}
               </span>
             </li>

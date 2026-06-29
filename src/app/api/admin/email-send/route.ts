@@ -39,9 +39,14 @@ export async function POST(request: Request) {
       }
     }
 
+    const tenant = await getCurrentTenant();
+    const centerName = tenant.center_banner_label ?? `TM Center ${tenant.city}`;
+    const allRegistrations = await getEventRegistrations(tenant.tenant);
+    const recipients = allRegistrations.filter(r => r.eventId === eventId);
+
     // If scheduled for the future, persist and return
     if (scheduledAt && new Date(scheduledAt) > new Date()) {
-      const action = await createEmailAction({
+      const action = await createEmailAction(tenant.tenant, {
         eventId,
         eventTitle,
         type: 'custom',
@@ -58,7 +63,7 @@ export async function POST(request: Request) {
     }
 
     // Send now — log first so we have the id for error tracking
-    const action = await createEmailAction({
+    const action = await createEmailAction(tenant.tenant, {
       eventId,
       eventTitle,
       type: 'custom',
@@ -72,13 +77,8 @@ export async function POST(request: Request) {
       createdBy,
     });
 
-    const tenant = await getCurrentTenant();
-    const centerName = tenant.center_banner_label ?? `TM Center ${tenant.city}`;
-    const allRegistrations = await getEventRegistrations(tenant.tenant);
-    const recipients = allRegistrations.filter(r => r.eventId === eventId);
-
     if (recipients.length === 0) {
-      await markEmailActionFailed(action.id, 'Keine Anmeldungen für diese Veranstaltung.');
+      await markEmailActionFailed(tenant.tenant, action.id, 'Keine Anmeldungen für diese Veranstaltung.');
       return Response.json({ sent: 0, warning: 'Keine Anmeldungen.' });
     }
 
@@ -102,11 +102,11 @@ export async function POST(request: Request) {
 
     if (errors.length > 0) {
       const msg = `${errors.length} von ${recipients.length} E-Mails fehlgeschlagen: ${errors.join('; ')}`;
-      await markEmailActionFailed(action.id, msg);
+      await markEmailActionFailed(tenant.tenant, action.id, msg);
       return Response.json({ sent, errors }, { status: 500 });
     }
 
-    await markEmailActionSent(action.id, sent);
+    await markEmailActionSent(tenant.tenant, action.id, sent);
     return Response.json({ sent });
   } catch (err) {
     console.error('email-send failed:', err);

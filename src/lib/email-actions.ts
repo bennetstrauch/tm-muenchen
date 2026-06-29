@@ -1,8 +1,4 @@
-import { getSheets } from './sheets';
-
-const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID!;
-const TAB = 'E-Mail Aktionen';
-const RANGE = `${TAB}!A:L`;
+import { getSupabase } from './supabase';
 
 export type EmailActionType = 'custom' | 'reminder-1' | 'reminder-2';
 export type EmailActionStatus = 'pending' | 'sent' | 'failed' | 'cancelled';
@@ -15,134 +11,131 @@ export type EmailAction = {
   type: EmailActionType;
   subject: string;
   body: string;
-  scheduledAt: string;      // ISO datetime, empty = send now
-  sentAt: string;           // ISO datetime, empty if not yet sent
+  scheduledAt: string;
+  sentAt: string;
   status: EmailActionStatus;
   recipientCount: number;
   errorMessage: string;
   createdBy: EmailActionCreatedBy;
 };
 
-function rowToEmailAction(row: string[]): EmailAction {
+function rowToEmailAction(row: {
+  id: string; event_id: string; event_title: string; type: string;
+  subject: string; body: string; scheduled_at: string; sent_at: string;
+  status: string; recipient_count: number; error_message: string; created_by: string;
+}): EmailAction {
   return {
-    id: row[0] ?? '',
-    eventId: row[1] ?? '',
-    eventTitle: row[2] ?? '',
-    type: (row[3] ?? 'custom') as EmailActionType,
-    subject: row[4] ?? '',
-    body: row[5] ?? '',
-    scheduledAt: row[6] ?? '',
-    sentAt: row[7] ?? '',
-    status: (row[8] ?? 'pending') as EmailActionStatus,
-    recipientCount: parseInt(row[9] ?? '0') || 0,
-    errorMessage: row[10] ?? '',
-    createdBy: (row[11] ?? 'admin') as EmailActionCreatedBy,
+    id: row.id,
+    eventId: row.event_id,
+    eventTitle: row.event_title,
+    type: row.type as EmailActionType,
+    subject: row.subject,
+    body: row.body,
+    scheduledAt: row.scheduled_at,
+    sentAt: row.sent_at,
+    status: row.status as EmailActionStatus,
+    recipientCount: row.recipient_count,
+    errorMessage: row.error_message,
+    createdBy: row.created_by as EmailActionCreatedBy,
   };
 }
 
-function emailActionToRow(a: EmailAction): string[] {
-  return [
-    a.id,
-    a.eventId,
-    a.eventTitle,
-    a.type,
-    a.subject,
-    a.body,
-    a.scheduledAt,
-    a.sentAt,
-    a.status,
-    String(a.recipientCount),
-    a.errorMessage,
-    a.createdBy,
-  ];
+export async function getEmailActions(tenant: string, eventId?: string): Promise<EmailAction[]> {
+  let query = getSupabase()
+    .from('email_actions')
+    .select('*')
+    .eq('tenant', tenant)
+    .neq('status', 'cancelled')
+    .order('scheduled_at', { ascending: false });
+
+  if (eventId) query = query.eq('event_id', eventId);
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data ?? []).map(rowToEmailAction);
 }
 
-function generateId(): string {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+export async function createEmailAction(tenant: string, data: Omit<EmailAction, 'id'>): Promise<EmailAction> {
+  const { data: row, error } = await getSupabase()
+    .from('email_actions')
+    .insert({
+      tenant,
+      event_id: data.eventId,
+      event_title: data.eventTitle,
+      type: data.type,
+      subject: data.subject,
+      body: data.body,
+      scheduled_at: data.scheduledAt,
+      sent_at: data.sentAt,
+      status: data.status,
+      recipient_count: data.recipientCount,
+      error_message: data.errorMessage,
+      created_by: data.createdBy,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return rowToEmailAction(row);
 }
 
-function colLetter(n: number): string {
-  let result = '';
-  while (n > 0) {
-    const rem = (n - 1) % 26;
-    result = String.fromCharCode(65 + rem) + result;
-    n = Math.floor((n - 1) / 26);
-  }
-  return result;
+export async function updateEmailAction(tenant: string, action: EmailAction): Promise<void> {
+  const { error } = await getSupabase()
+    .from('email_actions')
+    .update({
+      event_id: action.eventId,
+      event_title: action.eventTitle,
+      type: action.type,
+      subject: action.subject,
+      body: action.body,
+      scheduled_at: action.scheduledAt,
+      sent_at: action.sentAt,
+      status: action.status,
+      recipient_count: action.recipientCount,
+      error_message: action.errorMessage,
+      created_by: action.createdBy,
+    })
+    .eq('id', action.id)
+    .eq('tenant', tenant);
+  if (error) throw error;
 }
 
-async function findRowIndex(sheets: ReturnType<typeof getSheets>, id: string): Promise<number> {
-  const res = await sheets.spreadsheets.values.get({
-    spreadsheetId: SPREADSHEET_ID,
-    range: `${TAB}!A:A`,
-  });
-  const col = (res.data.values ?? []) as string[][];
-  return col.findIndex((row, i) => i > 0 && row[0] === id);
+export async function deleteEmailAction(tenant: string, id: string): Promise<void> {
+  const { data, error } = await getSupabase()
+    .from('email_actions')
+    .select('*')
+    .eq('id', id)
+    .eq('tenant', tenant)
+    .single();
+  if (error) throw new Error(`EmailAction ${id} not found`);
+  if (data.status !== 'pending') throw new Error('Only pending actions can be cancelled');
+  await updateEmailAction(tenant, { ...rowToEmailAction(data), status: 'cancelled' });
 }
 
-export async function getEmailActions(eventId?: string): Promise<EmailAction[]> {
-  const sheets = getSheets();
-  const res = await sheets.spreadsheets.values.get({
-    spreadsheetId: SPREADSHEET_ID,
-    range: RANGE,
-  });
-  const rows = (res.data.values ?? []) as string[][];
-  const actions = rows
-    .filter(row => row.length >= 2 && row[0] && row[0] !== 'id')
-    .map(rowToEmailAction);
-  return eventId ? actions.filter(a => a.eventId === eventId) : actions;
-}
-
-export async function createEmailAction(data: Omit<EmailAction, 'id'>): Promise<EmailAction> {
-  const sheets = getSheets();
-  const action: EmailAction = { ...data, id: generateId() };
-  await sheets.spreadsheets.values.append({
-    spreadsheetId: SPREADSHEET_ID,
-    range: RANGE,
-    valueInputOption: 'USER_ENTERED',
-    requestBody: { values: [emailActionToRow(action)] },
-  });
-  return action;
-}
-
-export async function updateEmailAction(action: EmailAction): Promise<void> {
-  const sheets = getSheets();
-  const idx = await findRowIndex(sheets, action.id);
-  if (idx === -1) throw new Error(`EmailAction ${action.id} not found`);
-  const row = emailActionToRow(action);
-  await sheets.spreadsheets.values.update({
-    spreadsheetId: SPREADSHEET_ID,
-    range: `${TAB}!A${idx + 1}:${colLetter(row.length)}${idx + 1}`,
-    valueInputOption: 'USER_ENTERED',
-    requestBody: { values: [row] },
-  });
-}
-
-export async function deleteEmailAction(id: string): Promise<void> {
-  const actions = await getEmailActions();
-  const action = actions.find(a => a.id === id);
-  if (!action) throw new Error(`EmailAction ${id} not found`);
-  if (action.status !== 'pending') throw new Error('Only pending actions can be cancelled');
-  await updateEmailAction({ ...action, status: 'cancelled' });
-}
-
-export async function markEmailActionSent(id: string, recipientCount: number): Promise<void> {
-  const actions = await getEmailActions();
-  const action = actions.find(a => a.id === id);
-  if (!action) throw new Error(`EmailAction ${id} not found`);
-  await updateEmailAction({
-    ...action,
+export async function markEmailActionSent(tenant: string, id: string, recipientCount: number): Promise<void> {
+  const { data, error } = await getSupabase()
+    .from('email_actions')
+    .select('*')
+    .eq('id', id)
+    .eq('tenant', tenant)
+    .single();
+  if (error) throw new Error(`EmailAction ${id} not found`);
+  await updateEmailAction(tenant, {
+    ...rowToEmailAction(data),
     status: 'sent',
     sentAt: new Date().toISOString(),
     recipientCount,
   });
 }
 
-export async function markEmailActionFailed(id: string, errorMessage: string): Promise<void> {
-  const actions = await getEmailActions();
-  const action = actions.find(a => a.id === id);
-  if (!action) throw new Error(`EmailAction ${id} not found`);
-  await updateEmailAction({ ...action, status: 'failed', errorMessage });
+export async function markEmailActionFailed(tenant: string, id: string, errorMessage: string): Promise<void> {
+  const { data, error } = await getSupabase()
+    .from('email_actions')
+    .select('*')
+    .eq('id', id)
+    .eq('tenant', tenant)
+    .single();
+  if (error) throw new Error(`EmailAction ${id} not found`);
+  await updateEmailAction(tenant, { ...rowToEmailAction(data), status: 'failed', errorMessage });
 }
 
 /**

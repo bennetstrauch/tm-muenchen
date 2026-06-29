@@ -85,12 +85,15 @@ export function IndividualAppointment({ initialOpen = false }: { initialOpen?: b
             <input name="phone" type="tel" placeholder={t("formPhone")} className={INPUT_CLS} />
           </div>
           <div className="mb-3">
+            <label htmlFor="ia-message" className="block text-sm text-[#1A3352] mb-1.5">
+              {t("infoAnfrageAvailability")}
+            </label>
             <textarea
+              id="ia-message"
               name="message"
               rows={3}
               placeholder={t("infoAnfragePlaceholder")}
               className={`${INPUT_CLS} resize-none`}
-              aria-label={t("infoAnfrageAvailability")}
             />
           </div>
           <label className="flex items-center gap-2 mb-4 cursor-pointer group">

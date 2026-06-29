@@ -161,10 +161,10 @@ A time-limited, event-scoped admin access token embedded in the Leiter-Benachric
 - If token is expired or invalid: show login prompt
 
 ## E-Mail Aktion
-A stored email sent or scheduled to all registrants of a specific Veranstaltung. Persisted in the "E-Mail Aktionen" Google Sheet tab. Two kinds exist:
+A stored email sent or scheduled to all registrants of a specific Veranstaltung. Persisted in the Supabase `email_actions` table with a `tenant` column (tenant-scoped). Two kinds exist:
 
 - **Benutzerdefiniert** — free-form email composed by an admin or Leiter. Can be sent immediately or scheduled for a future datetime.
-- **Erinnerung** — automated reminder derived from the event's `reminder1Hours` / `reminder2Hours` fields. Body text can be overridden per event (`reminderBody1`, `reminderBody2` columns in Veranstaltungen sheet). Scheduled time is calculated from event date/time minus the configured hours offset, but can be manually overridden. Upcoming reminders appear as derived (virtual) entries in the E-Mails tab; a real row is written to E-Mail Aktionen when the reminder is actually sent (sent log).
+- **Erinnerung** — automated reminder derived from the event's `reminder1Hours` / `reminder2Hours` fields. Body text can be overridden per event (`reminderBody1`, `reminderBody2` columns in Veranstaltungen). Scheduled time is calculated from event date/time minus the configured hours offset, but can be manually overridden. Upcoming reminders appear as derived (virtual) entries in the E-Mails tab; a real row is written to `email_actions` when the reminder is actually sent (sent log).
 
 Canonical term: **E-Mail Aktion** (not "E-Mail", not "Broadcast", not "Kampagne")
 
@@ -172,7 +172,7 @@ Canonical term: **E-Mail Aktion** (not "E-Mail", not "Broadcast", not "Kampagne"
 
 ```
 admin/page.tsx          — Server component: fetches all data (events, registrations,
-                          email actions, vorlagen) via Google Sheets; resolves tenant
+                          email actions, vorlagen) via Supabase; resolves tenant
                           + auth (session cookie or magic-link token); passes everything
                           as props to AdminClient.
 
@@ -201,7 +201,7 @@ ComposeForm             — Stateless form for new/edit-action/edit-reminder. Ca
 
 ### registrationsByEvent
 
-Computed in AdminClient from `eventRegistrations[]` (Google Sheets "Veranstaltungen Anmeldungen" tab) as `Record<eventId, count>`. Passed to EmailActionsTab, which shows `~N` for pending email actions before send, and the real `recipientCount` after. Shows `—` when count is 0 (no registrations yet, or migration not done — see ADR 0005).
+Computed in AdminClient from `eventRegistrations[]` (Supabase `anmeldungen` table) as `Record<eventId, count>`. Passed to EmailActionsTab, which shows `~N` for pending email actions before send, and the real `recipientCount` after. Shows `—` when count is 0 (no registrations yet).
 
 ## E-Mails Tab (Admin)
 Top-level admin tab showing all E-Mail Aktionen across all Veranstaltungen, with an event filter dropdown (same pattern as Anmeldungen tab). Displays upcoming automated Erinnerungen (derived from event fields) alongside stored custom emails and the sent log. Leiter see a scoped version via Magic Link (their event only). Entry point for composing new E-Mail Aktionen.

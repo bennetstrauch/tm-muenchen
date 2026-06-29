@@ -53,7 +53,7 @@ export async function GET(request: Request) {
     const centerName = tenant.center_banner_label ?? `TM Center ${tenant.city}`;
     const contactPhone = tenant.contact_phone || undefined;
     const [allActions, allRegistrations, allEvents] = await Promise.all([
-      getEmailActions(),
+      getEmailActions(tenant.tenant),
       getEventRegistrations(tenant.tenant),
       getAllVeranstaltungen(tenant.tenant),
     ]);
@@ -65,7 +65,7 @@ export async function GET(request: Request) {
     for (const action of pendingCustom) {
       const recipients = allRegistrations.filter(r => r.eventId === action.eventId);
       if (recipients.length === 0) {
-        await markEmailActionFailed(action.id, 'Keine Anmeldungen.');
+        await markEmailActionFailed(tenant.tenant, action.id, 'Keine Anmeldungen.');
         results.push(`custom ${action.id}: no recipients`);
         continue;
       }
@@ -77,10 +77,10 @@ export async function GET(request: Request) {
         tenant.contact_email || undefined,
       );
       if (sent > 0) {
-        await markEmailActionSent(action.id, sent);
+        await markEmailActionSent(tenant.tenant, action.id, sent);
         results.push(`custom ${action.id}: sent ${sent}`);
       } else {
-        await markEmailActionFailed(action.id, errors.join('; '));
+        await markEmailActionFailed(tenant.tenant, action.id, errors.join('; '));
         results.push(`custom ${action.id}: failed`);
       }
     }
@@ -136,7 +136,7 @@ export async function GET(request: Request) {
           tenant.contact_email || undefined,
         );
 
-        const action = await createEmailAction({
+        const action = await createEmailAction(tenant.tenant, {
           eventId: event.id,
           eventTitle: event.title,
           type: slot.type,

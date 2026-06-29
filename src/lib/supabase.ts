@@ -160,6 +160,22 @@ type TenantRow = {
   course_locales: string[];
 };
 
+type EmailActionRow = {
+  id: string;
+  tenant: string;
+  event_id: string;
+  event_title: string;
+  type: string;
+  subject: string;
+  body: string;
+  scheduled_at: string;
+  sent_at: string;
+  status: string;
+  recipient_count: number;
+  error_message: string;
+  created_by: string;
+};
+
 type KursAnmeldungRow = {
   id: string;
   tenant: string;
@@ -239,6 +255,12 @@ export type Database = {
         Row: KursAnmeldungRow;
         Insert: Omit<KursAnmeldungRow, "id" | "created_at">;
         Update: Partial<Omit<KursAnmeldungRow, "id" | "created_at">>;
+        Relationships: [];
+      };
+      email_actions: {
+        Row: EmailActionRow;
+        Insert: Omit<EmailActionRow, "id"> & { id?: string };
+        Update: Partial<EmailActionRow>;
         Relationships: [];
       };
     };

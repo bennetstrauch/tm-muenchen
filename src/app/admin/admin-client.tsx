@@ -440,7 +440,7 @@ function EventFormFields({
         </label>
         <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
           <input type="checkbox" className={CHECK_CLS} checked={form.registrationOpen} onChange={e => onChange('registrationOpen', e.target.checked)} />
-          Anmeldung offen
+          Anmeldung möglich
         </label>
         <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
           <input type="checkbox" className={CHECK_CLS} checked={form.visible} onChange={e => onChange('visible', e.target.checked)} />
@@ -950,6 +950,7 @@ function EventRegistrationsTable({
 
 type WaPanelProps = {
   event: Veranstaltung;
+  hostname: string;
   greeting: string;     setGreeting:     (v: string) => void;
   freetext: string;     setFreetext:     (v: string) => void;
   signoff: string;      setSignoff:      (v: string) => void;
@@ -963,7 +964,7 @@ type WaPanelProps = {
 };
 
 function WaPanel({
-  event, greeting, setGreeting, freetext, setFreetext,
+  event, hostname, greeting, setGreeting, freetext, setFreetext,
   signoff, setSignoff, showDesc, setShowDesc,
   marking, emailSending, emailResult,
   onWhatsappOpen, onEmailSend, onClose,
@@ -975,7 +976,7 @@ function WaPanel({
     description: showDesc ? (event.description || undefined) : undefined,
     freetext: freetext || undefined,
     signoff: signoff || 'Liebe Grüße',
-  });
+  }, hostname);
 
   function handleCopy() {
     navigator.clipboard.writeText(preview).then(() => {
@@ -1108,6 +1109,7 @@ export default function AdminClient({
   eventRegistrations,
   initialVorlagen,
   initialEmailActions,
+  hostname,
   tokenEventId,
   tokenHeader,
   canEditCopy = false,
@@ -1117,6 +1119,7 @@ export default function AdminClient({
   eventRegistrations: EventRegistrationRecord[];
   initialVorlagen: Vorlage[];
   initialEmailActions: EmailAction[];
+  hostname: string;
   tokenEventId?: string;
   tokenHeader?: string;
   canEditCopy?: boolean;
@@ -1209,7 +1212,7 @@ export default function AdminClient({
       description: waShowDesc ? (event.description || undefined) : undefined,
       freetext: waFreetext || undefined,
       signoff: waSignoff || 'Liebe Grüße',
-    });
+    }, hostname);
   }
 
   async function handleWhatsappOpen(event: Veranstaltung) {
@@ -1583,6 +1586,7 @@ export default function AdminClient({
                         {waPanelId === event.id && (
                           <WaPanel
                             event={event}
+                            hostname={hostname}
                             greeting={waGreeting} setGreeting={setWaGreeting}
                             freetext={waFreetext} setFreetext={setWaFreetext}
                             signoff={waSignoff}   setSignoff={setWaSignoff}
@@ -1736,6 +1740,7 @@ export default function AdminClient({
                               <td colSpan={4} className="px-6 pb-4">
                                 <WaPanel
                                   event={event}
+                                  hostname={hostname}
                                   greeting={waGreeting} setGreeting={setWaGreeting}
                                   freetext={waFreetext} setFreetext={setWaFreetext}
                                   signoff={waSignoff}   setSignoff={setWaSignoff}

@@ -30,7 +30,7 @@ export function buildWhatsappUrl(text: string): string {
   return `https://web.whatsapp.com/send?text=${encodeURIComponent(text)}`;
 }
 
-export function generateWhatsAppText(event: Veranstaltung, options: Options = {}): string {
+export function generateWhatsAppText(event: Veranstaltung, options: Options = {}, hostname: string): string {
   const { greeting, description, freetext, signoff = 'Liebe Grüße' } = options;
 
   const leiter = event.hosts
@@ -41,7 +41,7 @@ export function generateWhatsAppText(event: Veranstaltung, options: Options = {}
 
   const location = event.isOnline ? 'Online' : event.location;
   const slug = eventSlug(event);
-  const signupUrl = `tm-muenchen.de/events?open=${slug}`;
+  const signupUrl = `${hostname}/events?open=${slug}`;
 
   const parts: string[] = [];
 
