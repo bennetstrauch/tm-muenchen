@@ -106,6 +106,20 @@ describe('generateWhatsAppText', () => {
     expect(withUmlauts).toContain('tm-muenchen.de/events?open=gruppenuebung-muenchen');
   });
 
+  it('omits the signup block when showSignupLink is false', () => {
+    const text = generateWhatsAppText(BASE, { showSignupLink: false }, HOST);
+    expect(text).not.toContain('Jetzt anmelden');
+    expect(text).not.toContain('tm-muenchen.de/events');
+    expect(text).toContain('Gruppenmeditation');
+    expect(text).toContain('Liebe Grüße');
+  });
+
+  it('includes the signup block by default', () => {
+    const text = generateWhatsAppText(BASE, {}, HOST);
+    expect(text).toContain('Jetzt anmelden');
+    expect(text).toContain('tm-muenchen.de/events?open=gruppenmeditation');
+  });
+
   it('uses the provided hostname in the sign-up URL', () => {
     const text = generateWhatsAppText(BASE, {}, 'tm-luebeck.de');
     expect(text).toContain('tm-luebeck.de/events?open=gruppenmeditation');

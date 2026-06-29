@@ -955,6 +955,7 @@ type WaPanelProps = {
   freetext: string;     setFreetext:     (v: string) => void;
   signoff: string;      setSignoff:      (v: string) => void;
   showDesc: boolean;    setShowDesc:     (v: boolean) => void;
+  showSignupLink: boolean; setShowSignupLink: (v: boolean) => void;
   marking: boolean;
   emailSending: boolean;
   emailResult: { ok: boolean; msg: string } | null;
@@ -965,7 +966,7 @@ type WaPanelProps = {
 
 function WaPanel({
   event, hostname, greeting, setGreeting, freetext, setFreetext,
-  signoff, setSignoff, showDesc, setShowDesc,
+  signoff, setSignoff, showDesc, setShowDesc, showSignupLink, setShowSignupLink,
   marking, emailSending, emailResult,
   onWhatsappOpen, onEmailSend, onClose,
 }: WaPanelProps) {
@@ -976,6 +977,7 @@ function WaPanel({
     description: showDesc ? (event.description || undefined) : undefined,
     freetext: freetext || undefined,
     signoff: signoff || 'Liebe Grüße',
+    showSignupLink,
   }, hostname);
 
   function handleCopy() {
@@ -1020,6 +1022,16 @@ function WaPanel({
       </div>
 
       <div className="flex items-center gap-4 flex-wrap">
+        <label className={`flex items-center gap-2 select-none ${event.registrationOpen ? 'cursor-pointer' : 'opacity-40 cursor-not-allowed'}`}>
+          <input
+            type="checkbox"
+            checked={showSignupLink && event.registrationOpen}
+            disabled={!event.registrationOpen}
+            onChange={e => setShowSignupLink(e.target.checked)}
+            className="h-3.5 w-3.5 rounded border-gray-300 accent-green-600 cursor-pointer disabled:cursor-not-allowed"
+          />
+          <span className="text-xs text-gray-500">Anmeldelink anzeigen</span>
+        </label>
         {event.description && (
           <label className="flex items-center gap-2 cursor-pointer select-none">
             <input
@@ -1165,6 +1177,7 @@ export default function AdminClient({
   const [waSignoff, setWaSignoff] = useState('Liebe Grüße');
   const [waMarking, setWaMarking] = useState(false);
   const [waShowDesc, setWaShowDesc] = useState(false);
+  const [waShowSignupLink, setWaShowSignupLink] = useState(true);
   const [waEmailSending, setWaEmailSending] = useState(false);
   const [waEmailResult, setWaEmailResult] = useState<{ ok: boolean; msg: string } | null>(null);
 
@@ -1174,6 +1187,7 @@ export default function AdminClient({
     setWaFreetext('');
     setWaSignoff('Liebe Grüße');
     setWaShowDesc(false);
+    setWaShowSignupLink(event.registrationOpen);
     setWaEmailResult(null);
   }
 
@@ -1212,6 +1226,7 @@ export default function AdminClient({
       description: waShowDesc ? (event.description || undefined) : undefined,
       freetext: waFreetext || undefined,
       signoff: waSignoff || 'Liebe Grüße',
+      showSignupLink: waShowSignupLink,
     }, hostname);
   }
 
@@ -1591,6 +1606,7 @@ export default function AdminClient({
                             freetext={waFreetext} setFreetext={setWaFreetext}
                             signoff={waSignoff}   setSignoff={setWaSignoff}
                             showDesc={waShowDesc} setShowDesc={setWaShowDesc}
+                            showSignupLink={waShowSignupLink} setShowSignupLink={setWaShowSignupLink}
                             marking={waMarking}
                             emailSending={waEmailSending}
                             emailResult={waEmailResult}
@@ -1745,6 +1761,7 @@ export default function AdminClient({
                                   freetext={waFreetext} setFreetext={setWaFreetext}
                                   signoff={waSignoff}   setSignoff={setWaSignoff}
                                   showDesc={waShowDesc} setShowDesc={setWaShowDesc}
+                            showSignupLink={waShowSignupLink} setShowSignupLink={setWaShowSignupLink}
                                   marking={waMarking}
                                   emailSending={waEmailSending}
                                   emailResult={waEmailResult}
