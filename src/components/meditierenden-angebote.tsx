@@ -16,10 +16,11 @@ const FORM_HEADINGS: Partial<Record<Category, string>> = {
   ueberpruefung: "Die Meditation ist nicht so leicht, wie sie es sein sollte. Vereinbare einen Termin mit uns. 😊",
 };
 
-const CATEGORIES: { id: Category; label: string; betreff: string; showInTabs: boolean; icon: React.ReactNode }[] = [
+const CATEGORIES: { id: Category; label: string; tabLabel: string; betreff: string; showInTabs: boolean; icon: React.ReactNode }[] = [
   {
     id: "treffen",
     label: "Regelmäßige Treffen",
+    tabLabel: "Regelmäßige Treffen",
     betreff: "MeditierendenTreffen",
     showInTabs: false,
     icon: (
@@ -34,6 +35,7 @@ const CATEGORIES: { id: Category; label: string; betreff: string; showInTabs: bo
   {
     id: "ueberpruefung",
     label: "TM-Überprüfung",
+    tabLabel: "TM-Überprüfung",
     betreff: "TM-Überprüfung",
     showInTabs: true,
     icon: (
@@ -46,6 +48,7 @@ const CATEGORIES: { id: Category; label: string; betreff: string; showInTabs: bo
   {
     id: "vertiefung",
     label: "Vertiefungs-Wochenende",
+    tabLabel: "Wochenende",
     betreff: "Vertiefungs-Wochenende",
     showInTabs: true,
     icon: (
@@ -57,6 +60,7 @@ const CATEGORIES: { id: Category; label: string; betreff: string; showInTabs: bo
   {
     id: "fortgeschritten",
     label: "Fortgeschrittenentechniken",
+    tabLabel: "Fortgeschritten",
     betreff: "Fortgeschrittenentechniken",
     showInTabs: true,
     icon: (
@@ -110,25 +114,21 @@ function TabLayout({
   }
 
   const tabBase = `
-    flex items-center gap-1.5 px-3 py-2 text-[0.7rem] tracking-[0.1em] uppercase font-medium
-    rounded-lg transition-all duration-150 whitespace-nowrap
-    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A5C3D7]
+    flex-shrink-0 whitespace-nowrap px-4 py-3
+    text-[0.78rem] tracking-[0.06em] font-medium
+    border-b-2 transition-all duration-150
+    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#BCA075] focus-visible:ring-offset-2
   `;
-  const tabActive = "bg-[#1A3352] text-white";
-  const tabInactive = "text-[#3D5573] hover:bg-[#F0F6FA] hover:text-[#1A3352]";
+  const tabActive = "border-[#BCA075] text-[#1A3352]";
+  const tabInactive = "border-transparent text-[#7A9BB5] hover:text-[#1A3352] hover:border-[#DBEAFE]";
 
   return (
     <div>
-      <div className="flex flex-wrap gap-1.5 mb-6 pb-4 border-b border-[#DBEAFE]">
+      <div className="flex overflow-x-auto mb-6 border-b border-[#DBEAFE] scrollbar-none">
         <button
           onClick={() => setActiveTab("im-center")}
           className={`${tabBase} ${activeTab === "im-center" ? tabActive : tabInactive}`}
         >
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <rect x="1.5" y="3" width="13" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
-            <path d="M5 3V1.5M11 3V1.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-            <path d="M1.5 7h13" stroke="currentColor" strokeWidth="1.2" />
-          </svg>
           Im Center
         </button>
 
@@ -141,11 +141,10 @@ function TabLayout({
               onClick={() => handleCategoryClick(cat)}
               className={`${tabBase} ${isActive ? tabActive : tabInactive}`}
             >
-              {cat.icon}
-              {cat.label}
+              {cat.tabLabel}
               {url && (
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true" className="opacity-50">
-                  <path d="M5.5 1H9m0 0v3.5M9 1L4 6M1 4v5h5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
+                <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true" className="inline ml-1 opacity-40">
+                  <path d="M5.5 1H9m0 0v3.5M9 1L4 6M1 4v5h5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               )}
             </button>
