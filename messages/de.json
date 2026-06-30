@@ -99,7 +99,9 @@
     "infoAnfragePlaceholder": "z.B. Werktags abends, oder am Wochenende …",
     "infoAnfrageSubmit": "Anfrage senden",
     "infoAnfrageSuccessTitle": "Danke für deine Anfrage!",
-    "infoAnfrageSuccessBody": "Wir melden uns bald bei dir und finden gemeinsam einen Termin, der zu dir passt."
+    "infoAnfrageSuccessBody": "Wir melden uns bald bei dir und finden gemeinsam einen Termin, der zu dir passt.",
+    "ueberpruefungHeading": "Die Meditation ist nicht so leicht, wie sie es sein sollte?\nVereinbare einen Termin mit uns. 😊",
+    "treffenHeading": "Du hast einen Vorschlag für Events im Center oder Online. Bitte teile ihn uns mit! 😊"
   },
   "WasAndereSagen": {
     "heading": "Was Ärzte & TM-Praktizierende sagen",

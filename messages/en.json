@@ -124,7 +124,9 @@
     "infoAnfragePlaceholder": "e.g. weekday evenings, or weekends …",
     "infoAnfrageSubmit": "Send request",
     "infoAnfrageSuccessTitle": "Thanks for reaching out!",
-    "infoAnfrageSuccessBody": "We'll be in touch soon and find a time that works for you."
+    "infoAnfrageSuccessBody": "We'll be in touch soon and find a time that works for you.",
+    "ueberpruefungHeading": "Is your meditation not as effortless as it should be?\nBook a session with us. 😊",
+    "treffenHeading": "You have a suggestion for events at the center or online. Please share it with us! 😊"
   },
   "Testimonials": {
     "quote0": "Transcendental Meditation allows me to go inward and find a depth of rest and peace I don't experience anywhere else.",

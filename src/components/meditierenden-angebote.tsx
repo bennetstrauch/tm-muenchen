@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { TenantConfig } from "@/lib/tenant";
 import type { Veranstaltung } from "@/lib/veranstaltungen";
 import MeditierendenEvents from "./meditierenden-events";
@@ -11,10 +12,6 @@ const DEFAULT_FORTGESCHRITTEN_URL = "https://tm-wochenende.de/fortgeschritten/";
 
 type Category = "ueberpruefung" | "vertiefung" | "treffen" | "fortgeschritten";
 
-const FORM_HEADINGS: Partial<Record<Category, string>> = {
-  treffen: "Du hast einen Vorschlag für Events im Center oder Online. Bitte teile ihn uns mit! 😊",
-  ueberpruefung: "Die Meditation ist nicht so leicht, wie sie es sein sollte. Vereinbare einen Termin mit uns. 😊",
-};
 
 const CATEGORIES: { id: Category; label: string; tabLabel: string; betreff: string; showInTabs: boolean; icon: React.ReactNode }[] = [
   {
@@ -102,6 +99,11 @@ function TabLayout({
   whatsappLink?: string | null;
   contactEmail?: string | null;
 }) {
+  const t = useTranslations("Events");
+  const formHeadings: Partial<Record<Category, string>> = {
+    ueberpruefung: t("ueberpruefungHeading"),
+    treffen: t("treffenHeading"),
+  };
   const [activeTab, setActiveTab] = useState<"im-center" | Category>("im-center");
 
   function handleCategoryClick(cat: typeof CATEGORIES[number]) {
@@ -124,32 +126,35 @@ function TabLayout({
 
   return (
     <div>
-      <div className="flex overflow-x-auto mb-6 border-b border-[#DBEAFE] scrollbar-none">
-        <button
-          onClick={() => setActiveTab("im-center")}
-          className={`${tabBase} ${activeTab === "im-center" ? tabActive : tabInactive}`}
-        >
-          Im Center
-        </button>
+      <div className="relative">
+        <div className="flex overflow-x-auto mb-6 border-b border-[#DBEAFE] scrollbar-none md:justify-center">
+          <button
+            onClick={() => setActiveTab("im-center")}
+            className={`${tabBase} ${activeTab === "im-center" ? tabActive : tabInactive}`}
+          >
+            Im Center
+          </button>
 
-        {CATEGORIES.filter(cat => cat.showInTabs).map((cat) => {
-          const url = getExternalUrl(tenant, cat.id);
-          const isActive = activeTab === cat.id;
-          return (
-            <button
-              key={cat.id}
-              onClick={() => handleCategoryClick(cat)}
-              className={`${tabBase} ${isActive ? tabActive : tabInactive}`}
-            >
-              {cat.tabLabel}
-              {url && (
-                <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true" className="inline ml-1 opacity-40">
-                  <path d="M5.5 1H9m0 0v3.5M9 1L4 6M1 4v5h5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              )}
-            </button>
-          );
-        })}
+          {CATEGORIES.filter(cat => cat.showInTabs).map((cat) => {
+            const url = getExternalUrl(tenant, cat.id);
+            const isActive = activeTab === cat.id;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => handleCategoryClick(cat)}
+                className={`${tabBase} ${isActive ? tabActive : tabInactive}`}
+              >
+                {cat.tabLabel}
+                {url && (
+                  <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true" className="inline ml-1 opacity-40">
+                    <path d="M5.5 1H9m0 0v3.5M9 1L4 6M1 4v5h5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </button>
+            );
+          })}
+        </div>
+        <div className="pointer-events-none absolute right-0 inset-y-0 w-16 bg-gradient-to-l from-white via-white/60 to-transparent md:hidden" />
       </div>
 
       {activeTab === "im-center" && (
@@ -157,8 +162,8 @@ function TabLayout({
       )}
       {CATEGORIES.map((cat) =>
         activeTab === cat.id && !getExternalUrl(tenant, cat.id) ? (
-          <div key={cat.id} className="pt-2">
-            <IndividualAppointment initialOpen betreff={cat.betreff} heading={FORM_HEADINGS[cat.id]} />
+          <div key={cat.id}>
+            <IndividualAppointment initialOpen betreff={cat.betreff} heading={formHeadings[cat.id]} />
           </div>
         ) : null
       )}
@@ -169,6 +174,11 @@ function TabLayout({
 // ── Card grid (no events) ─────────────────────────────────────
 
 function CardGrid({ tenant }: { tenant: TenantConfig }) {
+  const t = useTranslations("Events");
+  const formHeadings: Partial<Record<Category, string>> = {
+    ueberpruefung: t("ueberpruefungHeading"),
+    treffen: t("treffenHeading"),
+  };
   const [openForm, setOpenForm] = useState<Category | null>(null);
 
   function handleCardClick(cat: typeof CATEGORIES[number]) {
@@ -198,6 +208,7 @@ function CardGrid({ tenant }: { tenant: TenantConfig }) {
                   src={CARD_IMAGES[cat.id]}
                   alt=""
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  style={cat.id === "fortgeschritten" ? { objectPosition: "right center" } : undefined}
                 />
                 {url && (
                   <div className="absolute top-3 right-3">
@@ -224,7 +235,7 @@ function CardGrid({ tenant }: { tenant: TenantConfig }) {
             </button>
             {isOpen && (
               <div className="px-6 pb-6 bg-[#F8F5EF] border-t border-[#E8E3DA]">
-                <IndividualAppointment initialOpen betreff={cat.betreff} heading={FORM_HEADINGS[cat.id]} />
+                <IndividualAppointment initialOpen betreff={cat.betreff} heading={formHeadings[cat.id]} />
               </div>
             )}
           </div>

@@ -202,6 +202,13 @@ export const copySubset: CopySection[] = [
       { key: 'Entdecken.cta',      label: 'CTA-Button', type: 'text' },
     ],
   },
+  {
+    label: 'Meditierende – Formulare',
+    fields: [
+      { key: 'Events.ueberpruefungHeading', label: 'TM-Überprüfung – Formular-Überschrift', type: 'textarea' },
+      { key: 'Events.treffenHeading',       label: 'Regelmäßige Treffen – Formular-Überschrift', type: 'textarea' },
+    ],
+  },
 ];
 
 export function allSubsetKeys(): string[] {

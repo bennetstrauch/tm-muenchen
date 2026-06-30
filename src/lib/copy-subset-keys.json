@@ -102,6 +102,14 @@
   "Wissenschaft.bullet0",
   "Wissenschaft.bullet1",
   "Wissenschaft.bullet2",
+  "Wissenschaft.stat0Label",
+  "Wissenschaft.stat1Label",
+  "Wissenschaft.stat2Label",
+  "Wissenschaft.logosIntro",
+  "Wissenschaft.logo0Caption",
+  "Wissenschaft.logo1Caption",
+  "Wissenschaft.logo2Caption",
+  "Wissenschaft.logo3Caption",
   "Wissenschaft.cta",
   "CenterBanner.line1",
   "CenterBanner.line2",
@@ -110,5 +118,7 @@
   "AbschlussCta.body",
   "AbschlussCta.cta",
   "Entdecken.headline",
-  "Entdecken.cta"
+  "Entdecken.cta",
+  "Events.ueberpruefungHeading",
+  "Events.treffenHeading"
 ]

@@ -51,7 +51,7 @@ export function IndividualAppointment({ initialOpen = false, betreff, heading }:
   }
 
   return (
-    <div className="mt-4">
+    <div className={initialOpen ? "" : "mt-4"}>
       {!open && formState !== "success" && (
         <button
           type="button"
@@ -80,7 +80,7 @@ export function IndividualAppointment({ initialOpen = false, betreff, heading }:
       {open && formState !== "success" && (
         <form onSubmit={handleSubmit} className="py-5 px-1">
           {heading && (
-            <p className="text-sm text-[#3D5573] leading-relaxed mb-4">{heading}</p>
+            <p className="text-base font-semibold text-[#1A3352] leading-relaxed mb-4 whitespace-pre-line">{heading}</p>
           )}
           <div className="mb-3">
             <input name="name" type="text" placeholder={t("formName")} required className={INPUT_CLS} />
