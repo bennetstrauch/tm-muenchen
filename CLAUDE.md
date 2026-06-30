@@ -93,6 +93,16 @@ Do not:
 - bypass an established abstraction (`getCurrentTenant()`, `checkAdminRequest()`, etc.) at a call site — if a helper needs to change, change the helper. See ADR-0002.
 - mix languages in user-facing labels or copy — this codebase uses German throughout admin UI labels
 
+## Images
+
+All images committed to `public/` must be compressed before committing:
+- **Format:** WebP
+- **Max width:** 900px (sufficient for 2× retina at the widest card/section layout)
+- **Quality:** 80
+- **Tool:** `sharp` (already installed) — use or adapt `scripts/compress-meditierenden-images.mjs` as a template
+
+Never commit raw camera exports or unoptimised downloads. A single uncompressed JPEG can exceed the entire rest of the optimised image budget (treffen.jpg was 7 MB; after compression: 43 KB).
+
 ## Agent skills
 
 ### Issue tracker
