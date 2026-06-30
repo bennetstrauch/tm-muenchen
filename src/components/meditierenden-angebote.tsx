@@ -11,12 +11,17 @@ const DEFAULT_FORTGESCHRITTEN_URL = "https://tm-wochenende.de/fortgeschritten/";
 
 type Category = "ueberpruefung" | "vertiefung" | "treffen" | "fortgeschritten";
 
-const CATEGORIES: { id: Category; label: string; betreff: string; heading?: string; icon: React.ReactNode }[] = [
+const FORM_HEADINGS: Partial<Record<Category, string>> = {
+  treffen: "Du hast einen Vorschlag für Events im Center oder Online. Bitte teile ihn uns mit! 😊",
+  ueberpruefung: "Die Meditation ist nicht so leicht, wie sie es sein sollte. Vereinbare einen Termin mit uns. 😊",
+};
+
+const CATEGORIES: { id: Category; label: string; betreff: string; showInTabs: boolean; icon: React.ReactNode }[] = [
   {
     id: "treffen",
     label: "Regelmäßige Treffen",
     betreff: "MeditierendenTreffen",
-    heading: "Du hast einen Vorschlag für Events im Center oder Online. Bitte teile ihn uns mit! 😊",
+    showInTabs: false,
     icon: (
       <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
         <circle cx="5.5" cy="5" r="2" stroke="currentColor" strokeWidth="1.1" />
@@ -30,7 +35,7 @@ const CATEGORIES: { id: Category; label: string; betreff: string; heading?: stri
     id: "ueberpruefung",
     label: "TM-Überprüfung",
     betreff: "TM-Überprüfung",
-    heading: "Die Meditation ist nicht so leicht, wie sie es sein sollte. Vereinbare einen Termin mit uns. 😊",
+    showInTabs: true,
     icon: (
       <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
         <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.2" />
@@ -42,6 +47,7 @@ const CATEGORIES: { id: Category; label: string; betreff: string; heading?: stri
     id: "vertiefung",
     label: "Vertiefungs-Wochenende",
     betreff: "Vertiefungs-Wochenende",
+    showInTabs: true,
     icon: (
       <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
         <path d="M8 2L10.5 7H13.5L11 10l1 4-4-2-4 2 1-4L2.5 7h3L8 2z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" />
@@ -52,6 +58,7 @@ const CATEGORIES: { id: Category; label: string; betreff: string; heading?: stri
     id: "fortgeschritten",
     label: "Fortgeschrittenentechniken",
     betreff: "Fortgeschrittenentechniken",
+    showInTabs: true,
     icon: (
       <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
         <path d="M8 1.5l1.5 3.2 3.5.5-2.5 2.5.6 3.5L8 9.5l-3.1 1.7.6-3.5L3 5.2l3.5-.5L8 1.5z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" />
@@ -125,7 +132,7 @@ function TabLayout({
           Im Center
         </button>
 
-        {CATEGORIES.filter(cat => cat.id !== "treffen").map((cat) => {
+        {CATEGORIES.filter(cat => cat.showInTabs).map((cat) => {
           const url = getExternalUrl(tenant, cat.id);
           const isActive = activeTab === cat.id;
           return (
@@ -152,7 +159,7 @@ function TabLayout({
       {CATEGORIES.map((cat) =>
         activeTab === cat.id && !getExternalUrl(tenant, cat.id) ? (
           <div key={cat.id} className="pt-2">
-            <IndividualAppointment initialOpen betreff={cat.betreff} heading={cat.heading} />
+            <IndividualAppointment initialOpen betreff={cat.betreff} heading={FORM_HEADINGS[cat.id]} />
           </div>
         ) : null
       )}
@@ -218,7 +225,7 @@ function CardGrid({ tenant }: { tenant: TenantConfig }) {
             </button>
             {isOpen && (
               <div className="px-6 pb-6 bg-[#F8F5EF] border-t border-[#E8E3DA]">
-                <IndividualAppointment initialOpen betreff={cat.betreff} heading={cat.heading} />
+                <IndividualAppointment initialOpen betreff={cat.betreff} heading={FORM_HEADINGS[cat.id]} />
               </div>
             )}
           </div>
