@@ -181,7 +181,7 @@ function CardGrid({ tenant }: { tenant: TenantConfig }) {
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
       {CATEGORIES.map((cat) => {
         const url = getExternalUrl(tenant, cat.id);
         const isOpen = openForm === cat.id;
@@ -189,22 +189,10 @@ function CardGrid({ tenant }: { tenant: TenantConfig }) {
           <div key={cat.id} className="rounded-2xl overflow-hidden border border-[#E8E3DA] shadow-sm">
             <button
               onClick={() => handleCardClick(cat)}
-              className="flex w-full text-left group h-28 sm:h-32"
+              className="flex flex-row md:flex-col w-full text-left group h-28 md:h-auto"
             >
-              {/* Left: text area */}
-              <div className="flex-1 flex flex-col justify-center gap-2 px-6 py-5 bg-[#F8F5EF] group-hover:bg-[#F2EDE5] transition-colors">
-                <div className="text-[#BCA075]">{cat.icon}</div>
-                <div>
-                  <p className="font-display font-light text-[1.05rem] sm:text-[1.15rem] text-[#1A3352] leading-tight">
-                    {cat.label}
-                  </p>
-                  {!url && (
-                    <p className="text-[0.65rem] text-[#7A9BB5] mt-0.5 tracking-wide">Termin anfragen →</p>
-                  )}
-                </div>
-              </div>
-              {/* Right: image */}
-              <div className="w-2/5 sm:w-1/3 relative overflow-hidden flex-shrink-0">
+              {/* Image: right on mobile, top on desktop */}
+              <div className="w-2/5 flex-shrink-0 md:w-full md:h-44 relative overflow-hidden md:order-first">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={CARD_IMAGES[cat.id]}
@@ -220,6 +208,18 @@ function CardGrid({ tenant }: { tenant: TenantConfig }) {
                     </div>
                   </div>
                 )}
+              </div>
+              {/* Text: left on mobile, bottom on desktop */}
+              <div className="flex-1 flex flex-col justify-center gap-1.5 px-5 py-4 md:px-6 md:py-5 bg-[#F8F5EF] group-hover:bg-[#F2EDE5] transition-colors">
+                <div className="text-[#BCA075]">{cat.icon}</div>
+                <div>
+                  <p className="font-display font-semibold text-[1.05rem] md:text-[1.2rem] text-[#1A3352] leading-tight hyphens-auto" lang="de">
+                    {cat.label}
+                  </p>
+                  {!url && (
+                    <p className="text-[0.65rem] text-[#7A9BB5] mt-1 tracking-wide">Termin anfragen →</p>
+                  )}
+                </div>
               </div>
             </button>
             {isOpen && (
