@@ -576,6 +576,18 @@ An automated email sent to the copy editor (Jochen) when `de.json` changes on `m
 
 Purpose: keeps Jochen informed when Bennet adds new sections or rewrites existing copy, so he can review it for accuracy and tone.
 
+## Meditierenden-Angebote
+
+Four standard TM offerings for existing meditators, surfaced on the `/events` page as tabs (when center events exist) or as a card grid (when no events are registered).
+
+> Canonical terms:
+> - **TM-Überprüfung** — a personal technique check-up session for existing meditators (not "Checking", not "Auffrischung")
+> - **Vertiefungs-Wochenende** — a multi-day deepening retreat (not "Retreat", not "Seminar")
+> - **Regelmäßige Treffen** — recurring group meditation meetups at the center (not "Gruppenmeditation", not "Center-Abend")
+> - **Fortgeschrittenentechniken** — advanced TM techniques for established practitioners (not "Advanced techniques", not "Vertiefungstechniken")
+
+Each offering has a platform default (national URL or inline appointment form) that tenants can override with a center-specific external URL.
+
 ## Footer
 
 A slim footer shown on the landing page and all theme variants (site layout), but **not** on `/events`. Contains three things:

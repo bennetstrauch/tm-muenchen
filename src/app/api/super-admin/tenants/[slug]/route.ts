@@ -45,6 +45,10 @@ export async function PUT(
     center_banner_label: body.center_banner_label || null,
     show_courses: body.show_courses ?? false,
     course_locales: body.course_locales ?? ['de'],
+    meditators_ueberpruefung_url: body.meditators_ueberpruefung_url || null,
+    meditators_vertiefung_url: body.meditators_vertiefung_url || null,
+    meditators_treffen_url: body.meditators_treffen_url || null,
+    meditators_fortgeschrittenentechniken_url: body.meditators_fortgeschrittenentechniken_url || null,
   };
 
   const { data, error } = await db.from("tenants").update(row).eq("tenant", slug);

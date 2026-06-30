@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { content } from "../content";
 
 const SUPPRESSED_IDS = [
-  "infoabend",
+  "infoevent",
   "anmeldung",
   "wissenschaft",
   "lehrer",
@@ -24,7 +24,7 @@ export default function StickyCta() {
   const [suppressed, setSuppressed] = useState(false);
   const [released, setReleased] = useState(false);
   const [bannerVisible, setBannerVisible] = useState(false);
-  const [ctaHref, setCtaHref] = useState<string>("#infoabend");
+  const [ctaHref, setCtaHref] = useState<string>("#infoevent");
 
   useEffect(() => {
     if (!localStorage.getItem("tm_cookie_consent")) {
@@ -77,10 +77,10 @@ export default function StickyCta() {
   }, [pathname]);
 
   useEffect(() => {
-    const infoEl = document.getElementById("infoabend");
+    const infoEl = document.getElementById("infoevent");
     if (!infoEl) return;
     const infoObserver = new IntersectionObserver(([entry]) => {
-      setCtaHref(!entry.isIntersecting && entry.boundingClientRect.top > 0 ? "#infoabend" : "#anmeldung");
+      setCtaHref(!entry.isIntersecting && entry.boundingClientRect.top > 0 ? "#infoevent" : "#anmeldung");
     }, { threshold: 0 });
     infoObserver.observe(infoEl);
     return () => infoObserver.disconnect();

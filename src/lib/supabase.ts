@@ -158,6 +158,10 @@ type TenantRow = {
   meta_pixel_capi_token: string | null;
   show_courses: boolean;
   course_locales: string[];
+  meditators_ueberpruefung_url: string | null;
+  meditators_vertiefung_url: string | null;
+  meditators_treffen_url: string | null;
+  meditators_fortgeschrittenentechniken_url: string | null;
 };
 
 type EmailActionRow = {

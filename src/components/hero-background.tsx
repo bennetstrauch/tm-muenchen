@@ -9,7 +9,12 @@ export default function HeroBackground({ images }: { images: HeroImage[] }) {
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    setCurrent(images[Math.floor(Math.random() * images.length)]);
+    const isMobile = window.innerWidth < 640;
+    const pool = images.filter(img =>
+      (!img.desktopOnly || !isMobile) && (!img.mobileOnly || isMobile)
+    );
+    const source = pool.length ? pool : images;
+    setCurrent(source[Math.floor(Math.random() * source.length)]);
   }, [images]);
 
   // If the image was already cached, onLoad won't fire — reveal it directly.

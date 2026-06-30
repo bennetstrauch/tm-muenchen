@@ -77,6 +77,35 @@ describe("POST /api/super-admin/tenants", () => {
     expect(await bcrypt.compare("plain-text", insertedRow.admin_password_hash)).toBe(true);
   });
 
+  it("saves meditators_*_url fields; empty string becomes null", async () => {
+    const { POST } = await import("./route");
+    await POST(makeRequest("POST", {
+      tenant: "juechen",
+      hostname: "tm.yoga-und-meditation.com",
+      city: "Jüchen",
+      password: "pw",
+      active_locales: ["de"],
+      tmw_center_ids: "190",
+      contact_email: "a@b.de",
+      contact_phone: "0",
+      from_email: "",
+      instagram_link: "",
+      whatsapp_enabled: false,
+      whatsapp_link: "",
+      center_image_url: "",
+      impressum_content: "",
+      meditators_ueberpruefung_url: "https://yoga-und-meditation.com/checking",
+      meditators_vertiefung_url: "",
+      meditators_treffen_url: "https://yoga-und-meditation.com/treffen",
+      meditators_fortgeschrittenentechniken_url: "",
+    }));
+    const row = mockInsert.mock.calls[0][0];
+    expect(row.meditators_ueberpruefung_url).toBe("https://yoga-und-meditation.com/checking");
+    expect(row.meditators_vertiefung_url).toBeNull();
+    expect(row.meditators_treffen_url).toBe("https://yoga-und-meditation.com/treffen");
+    expect(row.meditators_fortgeschrittenentechniken_url).toBeNull();
+  });
+
   it("parses comma-separated tmw_center_ids into an int array", async () => {
     const { POST } = await import("./route");
     await POST(makeRequest("POST", {

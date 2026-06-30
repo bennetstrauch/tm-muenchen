@@ -59,6 +59,34 @@ describe("PUT /api/super-admin/tenants/[slug]", () => {
     expect(await bcrypt.compare("new-password", updatedRow.admin_password_hash)).toBe(true);
   });
 
+  it("saves meditators_*_url fields; empty string becomes null", async () => {
+    const { PUT } = await import("./route");
+    await PUT(makePut("juechen", {
+      hostname: "tm.yoga-und-meditation.com",
+      city: "Jüchen",
+      password: "",
+      active_locales: ["de"],
+      tmw_center_ids: "190",
+      contact_email: "a@b.de",
+      contact_phone: "0",
+      from_email: "",
+      instagram_link: "",
+      whatsapp_enabled: false,
+      whatsapp_link: "",
+      center_image_url: "",
+      impressum_content: "",
+      meditators_ueberpruefung_url: "https://yoga-und-meditation.com/checking",
+      meditators_vertiefung_url: "",
+      meditators_treffen_url: "",
+      meditators_fortgeschrittenentechniken_url: "https://yoga-und-meditation.com/fortgeschritten",
+    }), { params: Promise.resolve({ slug: "juechen" }) });
+    const row = mockUpdate.mock.calls[0][0];
+    expect(row.meditators_ueberpruefung_url).toBe("https://yoga-und-meditation.com/checking");
+    expect(row.meditators_vertiefung_url).toBeNull();
+    expect(row.meditators_treffen_url).toBeNull();
+    expect(row.meditators_fortgeschrittenentechniken_url).toBe("https://yoga-und-meditation.com/fortgeschritten");
+  });
+
   it("preserves the existing hash when password field is blank", async () => {
     const { PUT } = await import("./route");
     await PUT(makePut("berlin", {

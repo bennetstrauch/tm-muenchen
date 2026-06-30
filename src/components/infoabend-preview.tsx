@@ -26,15 +26,15 @@ export default async function InfoabendPreview() {
 
   return (
     <section
-      id="infoabend"
+      id="infoevent"
       className="section bg-[#1A3352] scroll-mt-10"
-      aria-labelledby="infoabend-heading"
+      aria-labelledby="infoevent-heading"
     >
       <div className="section-inner">
 
         <div className="text-center mb-8">
           <h2
-            id="infoabend-heading"
+            id="infoevent-heading"
             className="font-display font-light text-[2rem] sm:text-[2.75rem] text-white leading-tight"
           >
             {t("heading")}

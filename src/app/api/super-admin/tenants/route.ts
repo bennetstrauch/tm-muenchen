@@ -40,6 +40,10 @@ export async function POST(request: Request) {
     can_edit_copy: body.can_edit_copy ?? false,
     show_courses: body.show_courses ?? false,
     course_locales: body.course_locales ?? ['de'],
+    meditators_ueberpruefung_url: body.meditators_ueberpruefung_url || null,
+    meditators_vertiefung_url: body.meditators_vertiefung_url || null,
+    meditators_treffen_url: body.meditators_treffen_url || null,
+    meditators_fortgeschrittenentechniken_url: body.meditators_fortgeschrittenentechniken_url || null,
   };
 
   const { data, error } = await getSupabase().from("tenants").insert(row).select().single();

@@ -76,7 +76,7 @@ export default function PageClient({
             headline={headline}
             images={heroTheme.images}
             nextDates={nextDates}
-            ctaHref="#infoabend"
+            ctaHref="#infoevent"
           />
           {heroThemeIndex > 0 && (
             <HeroArrow direction="left" label={tNav("prevTheme")} onClick={() => navigateToTheme(HERO_THEMES[heroThemeIndex - 1])} />

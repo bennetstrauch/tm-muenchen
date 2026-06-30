@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getVeranstaltungen } from '@/lib/veranstaltungen';
-import MeditierendenEvents from '@/components/meditierenden-events';
+import MeditierendenAngebote from '@/components/meditierenden-angebote';
 import { getCurrentTenant } from '@/lib/tenant';
 
 export const dynamic = 'force-dynamic';
@@ -37,7 +37,7 @@ export default async function EventsPage() {
           </p>
         </div>
 
-        <MeditierendenEvents events={events} whatsappLink={whatsappLink} contactEmail={contactEmail} />
+        <MeditierendenAngebote events={events} tenant={tenant} whatsappLink={whatsappLink} contactEmail={contactEmail} />
 
         {whatsappLink && (
           <div className="mt-16 border-t border-[#DBEAFE] pt-10 text-center">

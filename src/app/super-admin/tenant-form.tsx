@@ -67,13 +67,17 @@ export default function TenantForm({ tenant }: Props) {
       show_teachers: fd.get('show_teachers') === 'on',
       show_meditators_section: fd.get('show_meditators_section') === 'on',
       show_courses: fd.get('show_courses') === 'on',
-      course_locales: ['de', 'en', 'fr', 'es'].filter(l => fd.get(`course_locale_${l}`) === 'on'),
+      course_locales: ['de', ...(['en', 'fr', 'es'] as const).filter(l => fd.get(`course_locale_${l}`) === 'on')],
       center_image_url: fd.get('center_image_url'),
       logo_url: fd.get('logo_url'),
       logo_label: fd.get('logo_label'),
       infoabend_duration_minutes: Number(fd.get('infoabend_duration_minutes') ?? 30),
       center_banner_label: fd.get('center_banner_label'),
       impressum_content: fd.get('impressum_content'),
+      meditators_ueberpruefung_url: fd.get('meditators_ueberpruefung_url') || null,
+      meditators_vertiefung_url: fd.get('meditators_vertiefung_url') || null,
+      meditators_treffen_url: fd.get('meditators_treffen_url') || null,
+      meditators_fortgeschrittenentechniken_url: fd.get('meditators_fortgeschrittenentechniken_url') || null,
     };
 
     const url = isEdit
@@ -333,6 +337,22 @@ export default function TenantForm({ tenant }: Props) {
             <Field label="Impressum-Inhalt">
               <textarea name="impressum_content" defaultValue={tenant?.impressum_content ?? ''}
                 rows={4} className={`${inputCls()} resize-y`} />
+            </Field>
+          </Section>
+
+          <Section title="Meditierenden-Angebote (URL-Overrides)">
+            <p className="text-xs text-gray-500 -mt-1 mb-2">Leer lassen = Plattform-Default (nationales Link oder Inline-Formular)</p>
+            <Field label="TM-Überprüfung URL">
+              <input name="meditators_ueberpruefung_url" defaultValue={tenant?.meditators_ueberpruefung_url ?? ''} placeholder="https://..." className={inputCls()} />
+            </Field>
+            <Field label="Vertiefungs-Wochenende URL">
+              <input name="meditators_vertiefung_url" defaultValue={tenant?.meditators_vertiefung_url ?? ''} placeholder="https://tm-wochenende.de/... (Standard)" className={inputCls()} />
+            </Field>
+            <Field label="Regelmäßige Treffen URL">
+              <input name="meditators_treffen_url" defaultValue={tenant?.meditators_treffen_url ?? ''} placeholder="https://... (leer = Terminanfrage-Formular)" className={inputCls()} />
+            </Field>
+            <Field label="Fortgeschrittenentechniken URL">
+              <input name="meditators_fortgeschrittenentechniken_url" defaultValue={tenant?.meditators_fortgeschrittenentechniken_url ?? ''} placeholder="https://tm-wochenende.de/... (Standard)" className={inputCls()} />
             </Field>
           </Section>
 

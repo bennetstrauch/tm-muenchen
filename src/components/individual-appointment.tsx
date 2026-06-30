@@ -12,7 +12,7 @@ const INPUT_CLS = `
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
-export function IndividualAppointment({ initialOpen = false }: { initialOpen?: boolean }) {
+export function IndividualAppointment({ initialOpen = false, betreff }: { initialOpen?: boolean; betreff?: string }) {
   const t = useTranslations("Events");
   const locale = useLocale();
   const [open, setOpen] = useState(initialOpen);
@@ -24,6 +24,8 @@ export function IndividualAppointment({ initialOpen = false }: { initialOpen?: b
     setFormState("submitting");
     setErrorMsg("");
     const fd = new FormData(e.currentTarget);
+    const raw = (fd.get("message") as string) || "";
+    const message = (betreff ? `Betreff: ${betreff}\n\n${raw}` : raw) || undefined;
     try {
       const res = await fetch("/api/info-anfrage", {
         method: "POST",
@@ -32,7 +34,7 @@ export function IndividualAppointment({ initialOpen = false }: { initialOpen?: b
           name: fd.get("name"),
           email: fd.get("email"),
           phone: fd.get("phone") || undefined,
-          message: fd.get("message") || undefined,
+          message,
           locale,
           newsSubscribed: fd.get("newsSubscribed") === "on",
         }),
