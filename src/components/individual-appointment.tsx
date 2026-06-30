@@ -12,7 +12,7 @@ const INPUT_CLS = `
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
-export function IndividualAppointment({ initialOpen = false, betreff }: { initialOpen?: boolean; betreff?: string }) {
+export function IndividualAppointment({ initialOpen = false, betreff, heading }: { initialOpen?: boolean; betreff?: string; heading?: string }) {
   const t = useTranslations("Events");
   const locale = useLocale();
   const [open, setOpen] = useState(initialOpen);
@@ -79,6 +79,9 @@ export function IndividualAppointment({ initialOpen = false, betreff }: { initia
 
       {open && formState !== "success" && (
         <form onSubmit={handleSubmit} className="py-5 px-1">
+          {heading && (
+            <p className="text-sm text-[#3D5573] leading-relaxed mb-4">{heading}</p>
+          )}
           <div className="mb-3">
             <input name="name" type="text" placeholder={t("formName")} required className={INPUT_CLS} />
           </div>

@@ -11,11 +11,12 @@ const DEFAULT_FORTGESCHRITTEN_URL = "https://tm-wochenende.de/fortgeschritten/";
 
 type Category = "ueberpruefung" | "vertiefung" | "treffen" | "fortgeschritten";
 
-const CATEGORIES: { id: Category; label: string; betreff: string; icon: React.ReactNode }[] = [
+const CATEGORIES: { id: Category; label: string; betreff: string; heading?: string; icon: React.ReactNode }[] = [
   {
     id: "treffen",
     label: "Regelmäßige Treffen",
     betreff: "MeditierendenTreffen",
+    heading: "Du hast einen Vorschlag für Events im Center oder Online. Bitte teile ihn uns mit! 😊",
     icon: (
       <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
         <circle cx="5.5" cy="5" r="2" stroke="currentColor" strokeWidth="1.1" />
@@ -29,6 +30,7 @@ const CATEGORIES: { id: Category; label: string; betreff: string; icon: React.Re
     id: "ueberpruefung",
     label: "TM-Überprüfung",
     betreff: "TM-Überprüfung",
+    heading: "Die Meditation ist nicht so leicht, wie sie es sein sollte. Vereinbare einen Termin mit uns. 😊",
     icon: (
       <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
         <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.2" />
@@ -123,7 +125,7 @@ function TabLayout({
           Im Center
         </button>
 
-        {CATEGORIES.map((cat) => {
+        {CATEGORIES.filter(cat => cat.id !== "treffen").map((cat) => {
           const url = getExternalUrl(tenant, cat.id);
           const isActive = activeTab === cat.id;
           return (
@@ -150,7 +152,7 @@ function TabLayout({
       {CATEGORIES.map((cat) =>
         activeTab === cat.id && !getExternalUrl(tenant, cat.id) ? (
           <div key={cat.id} className="pt-2">
-            <IndividualAppointment initialOpen betreff={cat.betreff} />
+            <IndividualAppointment initialOpen betreff={cat.betreff} heading={cat.heading} />
           </div>
         ) : null
       )}
@@ -216,7 +218,7 @@ function CardGrid({ tenant }: { tenant: TenantConfig }) {
             </button>
             {isOpen && (
               <div className="px-6 pb-6 bg-[#F8F5EF] border-t border-[#E8E3DA]">
-                <IndividualAppointment initialOpen betreff={cat.betreff} />
+                <IndividualAppointment initialOpen betreff={cat.betreff} heading={cat.heading} />
               </div>
             )}
           </div>
