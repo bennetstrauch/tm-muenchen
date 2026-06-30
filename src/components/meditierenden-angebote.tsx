@@ -13,11 +13,24 @@ type Category = "ueberpruefung" | "vertiefung" | "treffen" | "fortgeschritten";
 
 const CATEGORIES: { id: Category; label: string; betreff: string; icon: React.ReactNode }[] = [
   {
+    id: "treffen",
+    label: "Regelmäßige Treffen",
+    betreff: "MeditierendenTreffen",
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <circle cx="5.5" cy="5" r="2" stroke="currentColor" strokeWidth="1.1" />
+        <circle cx="10.5" cy="5" r="2" stroke="currentColor" strokeWidth="1.1" />
+        <path d="M1 13c0-2.5 2-4 4.5-4M15 13c0-2.5-2-4-4.5-4M8 13c0-2.2 1.3-3.5 3-3.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+        <path d="M5 9.5C6.5 9 7 9 8 9" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
     id: "ueberpruefung",
     label: "TM-Überprüfung",
     betreff: "TM-Überprüfung",
     icon: (
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
         <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.2" />
         <path d="M5 8l2 2 4-4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
@@ -28,21 +41,8 @@ const CATEGORIES: { id: Category; label: string; betreff: string; icon: React.Re
     label: "Vertiefungs-Wochenende",
     betreff: "Vertiefungs-Wochenende",
     icon: (
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
         <path d="M8 2L10.5 7H13.5L11 10l1 4-4-2-4 2 1-4L2.5 7h3L8 2z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" />
-      </svg>
-    ),
-  },
-  {
-    id: "treffen",
-    label: "Regelmäßige Treffen",
-    betreff: "MeditierendenTreffen",
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-        <circle cx="5.5" cy="5" r="2" stroke="currentColor" strokeWidth="1.1" />
-        <circle cx="10.5" cy="5" r="2" stroke="currentColor" strokeWidth="1.1" />
-        <path d="M1 13c0-2.5 2-4 4.5-4M15 13c0-2.5-2-4-4.5-4M8 13c0-2.2 1.3-3.5 3-3.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-        <path d="M5 9.5C6.5 9 7 9 8 9" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -51,14 +51,19 @@ const CATEGORIES: { id: Category; label: string; betreff: string; icon: React.Re
     label: "Fortgeschrittenentechniken",
     betreff: "Fortgeschrittenentechniken",
     icon: (
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
         <path d="M8 1.5l1.5 3.2 3.5.5-2.5 2.5.6 3.5L8 9.5l-3.1 1.7.6-3.5L3 5.2l3.5-.5L8 1.5z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" />
       </svg>
     ),
   },
 ];
 
-const CARD_IMAGE = "/retreat-gruss.jpg";
+const CARD_IMAGES: Record<Category, string> = {
+  treffen: "/meditierenden/treffen.jpg",
+  ueberpruefung: "/meditierenden/ueberpruefung.jpg",
+  vertiefung: "/meditierenden/vertiefung.jpg",
+  fortgeschritten: "/meditierenden/fortgeschritten.jpg",
+};
 
 // Vertiefung and Fortgeschritten always have a national default URL → always link out.
 // Überprüfung and Treffen have no national default → show inline form unless tenant overrides.
@@ -168,36 +173,49 @@ function CardGrid({ tenant }: { tenant: TenantConfig }) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="flex flex-col gap-3">
       {CATEGORIES.map((cat) => {
         const url = getExternalUrl(tenant, cat.id);
         const isOpen = openForm === cat.id;
         return (
-          <div key={cat.id} className="rounded-2xl overflow-hidden border border-[#DBEAFE]">
+          <div key={cat.id} className="rounded-2xl overflow-hidden border border-[#E8E3DA] shadow-sm">
             <button
               onClick={() => handleCardClick(cat)}
-              className="relative w-full text-left group"
+              className="flex w-full text-left group h-28 sm:h-32"
             >
-              <div
-                className="h-36 w-full bg-cover bg-center"
-                style={{ backgroundImage: `url(${CARD_IMAGE})` }}
-              >
-                <div className="absolute inset-0 bg-[#1A3352]/50 group-hover:bg-[#1A3352]/60 transition-colors" />
-                <div className="relative z-10 p-5 h-full flex flex-col justify-end">
-                  <div className="flex items-center gap-2 text-white mb-0.5">
-                    {cat.icon}
-                    <span className="text-[0.65rem] tracking-[0.18em] uppercase font-medium">{cat.label}</span>
-                    {url && (
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true" className="opacity-70 ml-auto">
-                        <path d="M5.5 1H9m0 0v3.5M9 1L4 6M1 4v5h5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    )}
-                  </div>
+              {/* Left: text area */}
+              <div className="flex-1 flex flex-col justify-center gap-2 px-6 py-5 bg-[#F8F5EF] group-hover:bg-[#F2EDE5] transition-colors">
+                <div className="text-[#BCA075]">{cat.icon}</div>
+                <div>
+                  <p className="font-display font-light text-[1.05rem] sm:text-[1.15rem] text-[#1A3352] leading-tight">
+                    {cat.label}
+                  </p>
+                  {!url && (
+                    <p className="text-[0.65rem] text-[#7A9BB5] mt-0.5 tracking-wide">Termin anfragen →</p>
+                  )}
                 </div>
+              </div>
+              {/* Right: image */}
+              <div className="w-2/5 sm:w-1/3 relative overflow-hidden flex-shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={CARD_IMAGES[cat.id]}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                {url && (
+                  <div className="absolute top-3 right-3">
+                    <div className="bg-white/80 rounded-full p-1.5">
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true" className="text-[#1A3352]">
+                        <path d="M5.5 1H9m0 0v3.5M9 1L4 6M1 4v5h5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                  </div>
+                )}
               </div>
             </button>
             {isOpen && (
-              <div className="px-5 pb-5">
+              <div className="px-6 pb-6 bg-[#F8F5EF] border-t border-[#E8E3DA]">
                 <IndividualAppointment initialOpen betreff={cat.betreff} />
               </div>
             )}
