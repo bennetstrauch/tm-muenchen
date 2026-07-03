@@ -7,6 +7,7 @@ export type RegistrationEmailParams = {
   eventType: "Online" | "Präsenz";
   meetLink?: string;
   locale?: string;
+  centerName?: string;
   teacher: {
     name: string;
     email: string;
@@ -46,7 +47,7 @@ const STRINGS: Record<string, EmailStrings> = {
       `Bestätigung: TM-${isOnline ? "Online-" : ""}Infoabend am ${date} um ${time} Uhr`,
     reminderSubject: (time, isOnline) =>
       `Erinnerung: Morgen um ${time} Uhr findet Ihr TM-${isOnline ? "Online-" : ""}Infoabend statt`,
-    headerBrand: "Transzendentale Meditation · München",
+    headerBrand: "Transzendentale Meditation",
     greeting: (name) => `Hallo ${name},`,
     registrationConfirmed: (date, time, isOnline) =>
       `Sie haben sich erfolgreich zum ${isOnline ? "Online-" : ""}Infoabend über Transzendentale Meditation (TM) am <strong>${date} um ${time} Uhr</strong> angemeldet.`,
@@ -82,7 +83,7 @@ const STRINGS: Record<string, EmailStrings> = {
       `Confirmation: TM Info${isOnline ? " Online" : ""} Session on ${date} at ${time}`,
     reminderSubject: (time, isOnline) =>
       `Reminder: Your TM Info${isOnline ? " Online" : ""} Session is tomorrow at ${time}`,
-    headerBrand: "Transcendental Meditation · Munich",
+    headerBrand: "Transcendental Meditation",
     greeting: (name) => `Hello ${name},`,
     registrationConfirmed: (date, time, isOnline) =>
       `You have successfully registered for the ${isOnline ? "online " : ""}Transcendental Meditation (TM) info session on <strong>${date} at ${time}</strong>.`,
@@ -118,7 +119,7 @@ const STRINGS: Record<string, EmailStrings> = {
       `Confirmation : Soirée d'info TM${isOnline ? " en ligne" : ""} le ${date} à ${time}`,
     reminderSubject: (time, isOnline) =>
       `Rappel : Votre soirée d'info TM${isOnline ? " en ligne" : ""} est demain à ${time}`,
-    headerBrand: "Méditation Transcendantale · Munich",
+    headerBrand: "Méditation Transcendantale",
     greeting: (name) => `Bonjour ${name},`,
     registrationConfirmed: (date, time, isOnline) =>
       `Tu t'es inscrit(e) avec succès à la soirée d'information${isOnline ? " en ligne" : ""} sur la Méditation Transcendantale (MT) le <strong>${date} à ${time}</strong>.`,
@@ -154,7 +155,7 @@ const STRINGS: Record<string, EmailStrings> = {
       `Confirmación: Sesión informativa TM${isOnline ? " online" : ""} el ${date} a las ${time}`,
     reminderSubject: (time, isOnline) =>
       `Recordatorio: Tu sesión informativa TM${isOnline ? " online" : ""} es mañana a las ${time}`,
-    headerBrand: "Meditación Trascendental · Múnich",
+    headerBrand: "Meditación Trascendental",
     greeting: (name) => `Hola ${name},`,
     registrationConfirmed: (date, time, isOnline) =>
       `Te has inscrito con éxito a la sesión informativa${isOnline ? " online" : ""} sobre Meditación Trascendental (MT) el <strong>${date} a las ${time}</strong>.`,
@@ -201,7 +202,7 @@ export function buildReminderSubject(time: string, isOnline: boolean, locale = "
 
 // ── Shared pieces ─────────────────────────────────────────
 
-export function emailWrapper(title: string, body: string): string {
+export function emailWrapper(title: string, body: string, headerBrand: string): string {
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -220,7 +221,7 @@ export function emailWrapper(title: string, body: string): string {
           <tr>
             <td style="padding:24px 20px 0;background:#ffffff;">
               <p style="margin:0;font-size:13px;letter-spacing:3px;text-transform:uppercase;
-                         color:#BCA075;">Transzendentale Meditation · München</p>
+                         color:#BCA075;">${headerBrand}</p>
             </td>
           </tr>
 
@@ -276,6 +277,7 @@ function footerBlock(locale = "de"): string {
 export function buildConfirmationHtml(p: RegistrationEmailParams): string {
   const isOnline = p.eventType === "Online";
   const s = strings(p.locale);
+  const headerBrand = p.centerName ? `${s.headerBrand} · ${p.centerName}` : s.headerBrand;
 
   const meetSection = isOnline && p.meetLink ? `
     <div style="text-align:center;margin:20px 0;">
@@ -315,7 +317,7 @@ export function buildConfirmationHtml(p: RegistrationEmailParams): string {
     </tr>
     ${footerBlock(p.locale)}`;
 
-  return emailWrapper(s.confirmationSubject(p.eventDate, p.eventTime, isOnline), body);
+  return emailWrapper(s.confirmationSubject(p.eventDate, p.eventTime, isOnline), body, headerBrand);
 }
 
 // ── Reminder email ────────────────────────────────────────
@@ -323,6 +325,7 @@ export function buildConfirmationHtml(p: RegistrationEmailParams): string {
 export function buildReminderHtml(p: RegistrationEmailParams): string {
   const isOnline = p.eventType === "Online";
   const s = strings(p.locale);
+  const headerBrand = p.centerName ? `${s.headerBrand} · ${p.centerName}` : s.headerBrand;
 
   const meetSection = isOnline && p.meetLink ? `
     <div style="text-align:center;margin:24px 0 16px;">
@@ -370,14 +373,14 @@ export function buildReminderHtml(p: RegistrationEmailParams): string {
         ${teacherContact}
         <p style="margin:24px 0 0;font-size:16px;">
           ${s.signoff}<br>
-          <span style="color:#BCA075;">${s.headerBrand}</span>
+          <span style="color:#BCA075;">${headerBrand}</span>
         </p>
       </td>
     </tr>
     <tr><td>${p.teacher ? teacherBlock(p.teacher, p.locale) : ""}</td></tr>
     ${footerBlock(p.locale)}`;
 
-  return emailWrapper(s.reminderSubject(p.eventTime, isOnline), body);
+  return emailWrapper(s.reminderSubject(p.eventTime, isOnline), body, headerBrand);
 }
 
 // ── Teacher notification email ────────────────────────────

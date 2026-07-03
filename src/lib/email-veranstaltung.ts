@@ -110,7 +110,7 @@ export function buildEventConfirmationHtml(p: EventEmailParams): string {
   </tr>
   ${footerBlock(centerName, p.contactPhone)}`;
 
-  return emailWrapper(`Bestätigung: ${p.eventTitle}`, body);
+  return emailWrapper(`Bestätigung: ${p.eventTitle}`, body, centerName);
 }
 
 export function buildCustomEmailHtml(name: string, body: string, opts?: { centerName?: string; contactPhone?: string }): string {
@@ -135,10 +135,11 @@ export function buildCustomEmailHtml(name: string, body: string, opts?: { center
   </tr>
   ${footerBlock(centerName, opts?.contactPhone)}`;
 
-  return emailWrapper(`Nachricht vom ${centerName}`, content);
+  return emailWrapper(`Nachricht vom ${centerName}`, content, centerName);
 }
 
 export function buildEventReminderHtml(p: EventEmailParams, customBody?: string): string {
+  const centerName = p.centerName ?? 'TM Center';
   const introText = customBody
     ? customBody
         .split(/\n\n+/)
@@ -161,16 +162,17 @@ export function buildEventReminderHtml(p: EventEmailParams, customBody?: string)
       </p>` : ''}
       <p style="margin:24px 0 0;font-size:16px;">
         Wir freuen uns auf dich!<br>
-        <span style="color:#BCA075;">${p.centerName ?? 'TM Center'}</span>
+        <span style="color:#BCA075;">${centerName}</span>
       </p>
     </td>
   </tr>
-  ${footerBlock(p.centerName, p.contactPhone)}`;
+  ${footerBlock(centerName, p.contactPhone)}`;
 
-  return emailWrapper(`Erinnerung: ${p.eventTitle} – ${p.eventDate}`, body);
+  return emailWrapper(`Erinnerung: ${p.eventTitle} – ${p.eventDate}`, body, centerName);
 }
 
 export function buildLeiterNotificationHtml(p: LeiterNotificationParams): string {
+  const centerName = p.centerName ?? 'TM Center';
   const body = `
   <tr>
     <td style="padding:20px;background:#ffffff;font-size:16px;line-height:1.6;">
@@ -220,10 +222,10 @@ export function buildLeiterNotificationHtml(p: LeiterNotificationParams): string
       </div>
       <p style="margin:0;font-size:16px;">
         Hochachtungsvoll,<br>
-        <span style="color:#BCA075;">Dein ${p.centerName ?? 'TM Center'} IT-Team 😉</span>
+        <span style="color:#BCA075;">Dein ${centerName} IT-Team 😉</span>
       </p>
     </td>
   </tr>`;
 
-  return emailWrapper(`Neue Anmeldung: ${p.eventTitle} – ${p.eventDate}`, body);
+  return emailWrapper(`Neue Anmeldung: ${p.eventTitle} – ${p.eventDate}`, body, centerName);
 }
