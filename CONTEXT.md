@@ -204,7 +204,21 @@ ComposeForm             — Stateless form for new/edit-action/edit-reminder. Ca
 Computed in AdminClient from `eventRegistrations[]` (Supabase `anmeldungen` table) as `Record<eventId, count>`. Passed to EmailActionsTab, which shows `~N` for pending email actions before send, and the real `recipientCount` after. Shows `—` when count is 0 (no registrations yet).
 
 ## E-Mails Tab (Admin)
-Top-level admin tab showing all E-Mail Aktionen across all Veranstaltungen, with an event filter dropdown (same pattern as Anmeldungen tab). Displays upcoming automated Erinnerungen (derived from event fields) alongside stored custom emails and the sent log. Leiter see a scoped version via Magic Link (their event only). Entry point for composing new E-Mail Aktionen.
+Top-level admin tab showing all E-Mail Aktionen across all Veranstaltungen, with an event filter dropdown. Displays upcoming automated Erinnerungen (derived from event fields) alongside stored custom emails and the sent log. Leiter see a scoped version via Magic Link (their event only). Entry point for composing new E-Mail Aktionen.
+
+## Anmeldungen Tab (Admin)
+Top-level admin tab showing Veranstaltungs-Anmeldungen grouped per event, not as a flat list. Each upcoming event gets a group header (Titel · Datum · Uhrzeit · Anmeldungen count) with its signup list expanded by default and collapsible per event. Upcoming events with zero Anmeldungen still appear (with count 0). Past events sit below in a collapsed "Vergangene Veranstaltungen" section (newest first, headers collapsed). The tab count in the tab bar counts only Anmeldungen for upcoming events. Groups are ordered by event date; within a group, Anmeldungen sort by Anmeldedatum (newest first), switchable to Name by clicking the column header (click again toggles direction, one sort state for all groups). At the very bottom sits the Gesamtübersicht. In Magic-Link (locked) mode only the scoped event's group is shown — no past section, no Gesamtübersicht.
+
+## Veranstaltungsreihe
+A set of Veranstaltungen that belong together as a recurring series — e.g. all Online Center-Abende. Membership is determined by shared Vorlage; events without a Vorlage fall back to grouping by identical title. A single event with no Vorlage and no title-mates is not a Reihe.
+
+Canonical term: **Veranstaltungsreihe** (not "Serie", not "Vorlagen-Gruppe")
+
+## Gesamtübersicht (Anmeldungen Tab)
+Section at the bottom of the Anmeldungen tab showing one line per Veranstaltungsreihe with aggregate counts only ("X Anmeldungen über Y Termine") — no signup lists. Answers "how many participated in this Reihe altogether?". Hidden in Magic-Link mode.
+
+## Verwaiste Anmeldung
+An Anmeldung whose Veranstaltung was deleted (registrations survive event deletion). Still displayed in the Anmeldungen tab: its group is built from the event title/date stored on the Anmeldung itself and marked "(gelöscht)". Never silently hidden.
 
 ## E-Mail Compose Form
 Shared form used for both creating and editing E-Mail Aktionen (custom and reminder overrides). Fields: Veranstaltung (locked when editing), Betreff, Nachricht (plain text, injected into center email template with automatic "Hallo [Name]," salutation per recipient; sign-off and footer use `centerName` / `contactPhone` from tenant config), Sendezeit (Jetzt / Planen with datetime picker), Empfänger (read-only count). Optional preview button + mandatory preview/confirmation modal on "Jetzt senden" (server-rendered iframe showing exact email HTML).

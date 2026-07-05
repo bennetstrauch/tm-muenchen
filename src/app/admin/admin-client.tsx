@@ -1,14 +1,16 @@
 'use client';
 
-import { useState, useMemo, useRef, useEffect, Fragment } from 'react';
+import { useState, useMemo, useRef, Fragment } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import type { Registration } from '@/lib/sheets';
 import type { Veranstaltung, EventRegistrationRecord } from '@/lib/veranstaltungen';
 import type { Vorlage } from '@/lib/vorlagen';
 import type { EmailAction } from '@/lib/email-actions';
-import { eventSlug, formatVeranstaltungDate } from '@/lib/format';
+import { eventSlug } from '@/lib/format';
 import { generateWhatsAppText, buildWhatsappUrl } from '@/lib/whatsapp';
 import InfoRegistrationsTable from './registrations-table';
+import AnmeldungenTab from './anmeldungen-tab';
+import { buildAnmeldungenView } from '@/lib/anmeldungen-groups';
 import EmailActionsTab from './email-tab';
 import LehrerTab from './lehrer-tab';
 import EinstellungenTab from './einstellungen-tab';
@@ -856,96 +858,6 @@ function EventStatusBadges({ event }: { event: Veranstaltung }) {
   );
 }
 
-// ─── EventRegistrationsTable ──────────────────────────────────────────────────
-
-function EventRegistrationsTable({
-  registrations,
-  lockedEventId,
-}: {
-  registrations: EventRegistrationRecord[];
-  lockedEventId?: string;
-}) {
-  // Resolve locked event title from registrations by eventId
-  const lockedEventTitle = useMemo(() => {
-    if (!lockedEventId) return undefined;
-    return registrations.find(r => r.eventId === lockedEventId)?.eventTitle;
-  }, [lockedEventId, registrations]);
-
-  const eventTitles = Array.from(new Set(registrations.map(r => r.eventTitle).filter(Boolean))).sort();
-  const countByTitle = useMemo(
-    () => registrations.reduce((acc, r) => {
-      if (r.eventTitle) acc.set(r.eventTitle, (acc.get(r.eventTitle) ?? 0) + 1);
-      return acc;
-    }, new Map<string, number>()),
-    [registrations],
-  );
-  const [filter, setFilter] = useState(lockedEventTitle ?? '');
-
-  // Sync filter when lockedEventTitle becomes available (data arrives after mount)
-  useEffect(() => {
-    if (lockedEventTitle) setFilter(lockedEventTitle);
-  }, [lockedEventTitle]);
-
-  const filtered = filter ? registrations.filter(r => r.eventTitle === filter) : registrations;
-
-  return (
-    <>
-      <div className="px-6 py-3 border-b border-gray-100 flex items-center gap-3">
-        <label className="text-xs text-gray-400 uppercase tracking-wider">Event</label>
-        <select
-          value={filter}
-          onChange={e => { if (!lockedEventId) setFilter(e.target.value); }}
-          disabled={!!lockedEventId}
-          className="text-sm border border-gray-200 rounded px-2 py-1 text-gray-700 bg-white disabled:opacity-70 disabled:cursor-not-allowed"
-        >
-          <option value="">Alle ({registrations.length})</option>
-          {eventTitles.map(t => (
-            <option key={t} value={t}>
-              {t} ({countByTitle.get(t) ?? 0})
-            </option>
-          ))}
-        </select>
-      </div>
-      {filtered.length === 0 ? (
-        <p className="p-6 text-gray-400 text-sm">Keine Anmeldungen.</p>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-gray-400 text-xs uppercase tracking-wider border-b border-gray-100">
-                <th className="px-6 py-3">Angemeldet am</th>
-                <th className="px-6 py-3">Name</th>
-                <th className="px-6 py-3">E-Mail</th>
-                <th className="px-6 py-3">Telefon</th>
-                <th className="px-6 py-3">TM-Lehrer</th>
-                <th className="px-6 py-3">Erlernt am</th>
-                <th className="px-6 py-3">Veranstaltung</th>
-                <th className="px-6 py-3">Datum</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {filtered.map((r, i) => (
-                <tr key={i} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-gray-400 whitespace-nowrap text-xs">{r.timestamp}</td>
-                  <td className="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">{r.name}</td>
-                  <td className="px-6 py-4 text-gray-600">
-                    <a href={`mailto:${r.email}`} className="hover:text-[#BCA075]">{r.email}</a>
-                  </td>
-                  <td className="px-6 py-4 text-gray-600 whitespace-nowrap">{r.phone || '—'}</td>
-                  <td className="px-6 py-4 text-gray-600 whitespace-nowrap">{r.tmLehrer || '—'}</td>
-                  <td className="px-6 py-4 text-gray-600 whitespace-nowrap">{r.datumErlernen || '—'}</td>
-                  <td className="px-6 py-4 text-gray-600 whitespace-nowrap">{r.eventTitle}</td>
-                  <td className="px-6 py-4 text-gray-600 whitespace-nowrap">{r.eventDate}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </>
-  );
-}
-
 // ─── WaPanel ─────────────────────────────────────────────────────────────────
 
 type WaPanelProps = {
@@ -1279,7 +1191,7 @@ export default function AdminClient({
     }
   }
 
-  const today = useMemo(() => new Date().toISOString().slice(0, 10), []);
+  const today = new Date().toISOString().slice(0, 10);
 
   const upcomingEvents = useMemo(
     () => [...events]
@@ -1299,6 +1211,11 @@ export default function AdminClient({
   );
 
   const [showPast, setShowPast] = useState(false);
+
+  const anmeldungenView = useMemo(
+    () => buildAnmeldungenView(eventRegistrations, events, today),
+    [eventRegistrations, events, today]
+  );
 
   const registrationCountByEvent = useMemo(
     () => eventRegistrations.reduce((acc, r) => {
@@ -1470,8 +1387,8 @@ export default function AdminClient({
           </>
         )}
         <button className={TAB_CLS(tab === 'anmeldungen')} onClick={() => setTab('anmeldungen')}>
-          <span className="sm:hidden">Anm. ({eventRegistrations.length})</span>
-          <span className="hidden sm:inline">Anmeldungen ({eventRegistrations.length})</span>
+          <span className="sm:hidden">Anm. ({anmeldungenView.upcomingSignupCount})</span>
+          <span className="hidden sm:inline">Anmeldungen ({anmeldungenView.upcomingSignupCount})</span>
         </button>
         <button className={TAB_CLS(tab === 'emails')} onClick={() => setTab('emails')}>
           E-Mails
@@ -1895,10 +1812,7 @@ export default function AdminClient({
           <div className="px-6 py-4 border-b border-gray-100">
             <h2 className="font-medium text-gray-700">Anmeldungen für Veranstaltungen</h2>
           </div>
-          <EventRegistrationsTable
-            registrations={eventRegistrations}
-            lockedEventId={tokenEventId}
-          />
+          <AnmeldungenTab view={anmeldungenView} lockedEventId={tokenEventId} />
         </div>
       )}
 
