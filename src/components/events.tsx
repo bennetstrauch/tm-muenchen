@@ -154,8 +154,8 @@ function EventRow({
               <span className="whitespace-nowrap">{t("timeDisplay", { time: event.time })}</span>
               <span className="text-[#DBEAFE]">·</span>
               <span className={`
-                text-[0.65rem] tracking-[0.12em] uppercase font-medium px-2 py-0.5 rounded-full whitespace-nowrap
-                ${isPresenz ? "bg-[#F59E0B]/20 text-[#1A3352]" : "bg-[#DBEAFE] text-[#1A3352]"}
+                text-[0.65rem] tracking-[0.12em] uppercase px-2 py-0.5 rounded-full whitespace-nowrap
+                ${isPresenz ? "bg-[#F59E0B]/20 text-[#1A3352] font-bold" : "bg-[#DBEAFE] text-[#1A3352] font-medium"}
               `}>
                 {t(event.type === "Online" ? "typeOnline" : "typePraesenz")}
               </span>
@@ -185,7 +185,13 @@ function EventRow({
         </div>
 
         {isPresenz && (
-          <span className="text-[0.75rem] text-[#3D5573]">{event.location}</span>
+          isOpen ? (
+            <span className="self-start inline-flex items-center gap-1.5 bg-[#FEF3C7] border border-[#F59E0B]/80 rounded-lg px-3 py-1.5 text-[0.8rem] font-semibold text-[#1A3352]">
+              📍 {event.location}
+            </span>
+          ) : (
+            <span className="text-[0.75rem] text-[#3D5573]">{event.location}</span>
+          )
         )}
 
       </div>

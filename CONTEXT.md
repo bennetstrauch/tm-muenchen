@@ -451,6 +451,9 @@ On submit, `/api/register`:
 
 TMW handles all Infoabend confirmation, reminder, and Leiter-Benachrichtigung emails automatically. Resend is not used for Infoabend registrations.
 
+### Vor-Ort-Hinweis
+Präsenz-Infoabende are easily mistaken for online ones. Canonical badge term: **Vor Ort** (not "Präsenz") — rendered bold. While the registration form of a Vor-Ort-Termin is open, the event's address is prominently highlighted (yellow box, amber border, 📍) so nobody signs up thinking it's online.
+
 ## Individueller Info-Termin
 
 A flow for visitors who want a personal appointment rather than a group Infoabend. Triggered by "Individuellen Termin anfragen" in the events section — an inline-expanding form (no page navigation) with fields: Name, E-Mail, Telefon (optional), Verfügbarkeit free-text (optional), Newsletter-Checkbox.
