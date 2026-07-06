@@ -215,7 +215,7 @@ A set of Veranstaltungen that belong together as a recurring series — e.g. all
 Canonical term: **Veranstaltungsreihe** (not "Serie", not "Vorlagen-Gruppe")
 
 ## Gesamtübersicht (Anmeldungen Tab)
-Section at the bottom of the Anmeldungen tab showing one line per Veranstaltungsreihe with aggregate counts only ("X Anmeldungen über Y Termine") — no signup lists. Answers "how many participated in this Reihe altogether?". Hidden in Magic-Link mode.
+Section at the bottom of the Anmeldungen tab showing one line per Veranstaltungsreihe with aggregate counts only ("X Anmeldungen über Y Termine") — no signup lists. Answers "how many participated in this Reihe altogether?". Hidden in Magic-Link mode. Counts span only Termine that still exist: Verwaiste Anmeldungen are not part of any Reihe total (their Vorlage link died with the event) — they remain visible as their own marked groups instead.
 
 ## Verwaiste Anmeldung
 An Anmeldung whose Veranstaltung was deleted (registrations survive event deletion). Still displayed in the Anmeldungen tab: its group is built from the event title/date stored on the Anmeldung itself and marked "(gelöscht)". Never silently hidden.

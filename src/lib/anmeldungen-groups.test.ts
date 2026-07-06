@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildAnmeldungenView, visibleGroups, type AnmeldungenEvent } from './anmeldungen-groups';
+import { buildAnmeldungenView, visibleGroups, sortRegistrations, type AnmeldungenEvent } from './anmeldungen-groups';
 import type { EventRegistrationRecord } from './veranstaltungen';
 
 function makeEvent(overrides: Partial<AnmeldungenEvent> & { id: string }): AnmeldungenEvent {
@@ -114,6 +114,18 @@ describe('buildAnmeldungenView', () => {
     expect(group.registrations).toHaveLength(2);
   });
 
+  it('sorts past groups by Datum, neueste zuerst', () => {
+    const events = [
+      makeEvent({ id: 'alt', date: '2026-01-01' }),
+      makeEvent({ id: 'juenger', date: '2026-06-01' }),
+      makeEvent({ id: 'mittel', date: '2026-03-01' }),
+    ];
+
+    const view = buildAnmeldungenView([], events, TODAY);
+
+    expect(view.past.map(g => g.eventId)).toEqual(['juenger', 'mittel', 'alt']);
+  });
+
   it('keeps verwaiste Anmeldungen with empty eventId separated by Veranstaltung', () => {
     const regs = [
       makeReg({ eventId: '', eventTitle: 'Retreat 2025', eventDate: '2025-03-01' }),
@@ -123,6 +135,63 @@ describe('buildAnmeldungenView', () => {
     const view = buildAnmeldungenView(regs, [], TODAY);
 
     expect(view.past.map(g => g.title).sort()).toEqual(['Retreat 2025', 'Sommerfest 2025']);
+  });
+});
+
+describe('Gesamtübersicht (reihen)', () => {
+  it('aggregates events sharing a Vorlage into one Veranstaltungsreihe with total counts', () => {
+    const events = [
+      makeEvent({ id: 'ca1', title: 'Online Center-Abend', date: '2026-01-10', vorlageId: 'v1' }),
+      makeEvent({ id: 'ca2', title: 'Online Center-Abend Spezial', date: '2026-08-10', vorlageId: 'v1' }),
+    ];
+    const regs = [
+      makeReg({ eventId: 'ca1' }),
+      makeReg({ eventId: 'ca1', email: 'b@example.com' }),
+      makeReg({ eventId: 'ca2', email: 'c@example.com' }),
+    ];
+
+    const view = buildAnmeldungenView(regs, events, TODAY);
+
+    expect(view.reihen).toEqual([
+      { label: 'Online Center-Abend Spezial', termine: 2, anmeldungen: 3 },
+    ]);
+  });
+
+  it('falls back to identical title for events without Vorlage and omits Einzelveranstaltungen', () => {
+    const events = [
+      makeEvent({ id: 'g1', title: 'Gruppenmeditation', date: '2026-02-01', vorlageId: undefined }),
+      makeEvent({ id: 'g2', title: 'Gruppenmeditation', date: '2026-05-01', vorlageId: undefined }),
+      makeEvent({ id: 'solo', title: 'Retreat 2026', date: '2026-04-01', vorlageId: undefined }),
+    ];
+    const regs = [makeReg({ eventId: 'g1' }), makeReg({ eventId: 'solo', email: 'b@example.com' })];
+
+    const view = buildAnmeldungenView(regs, events, TODAY);
+
+    expect(view.reihen).toEqual([
+      { label: 'Gruppenmeditation', termine: 2, anmeldungen: 1 },
+    ]);
+  });
+});
+
+describe('sortRegistrations', () => {
+  const regs = [
+    makeReg({ name: 'Clara', timestamp: '2026-07-01T09:00:00Z' }),
+    makeReg({ name: 'Anna', timestamp: '2026-07-03T09:00:00Z' }),
+    makeReg({ name: 'Ben', timestamp: '2026-07-02T09:00:00Z' }),
+  ];
+
+  it('sorts by Name aufsteigend', () => {
+    const sorted = sortRegistrations(regs, { key: 'name', dir: 'asc' });
+    expect(sorted.map(r => r.name)).toEqual(['Anna', 'Ben', 'Clara']);
+  });
+
+  it('flips direction and sorts by Anmeldedatum', () => {
+    expect(sortRegistrations(regs, { key: 'name', dir: 'desc' }).map(r => r.name))
+      .toEqual(['Clara', 'Ben', 'Anna']);
+    expect(sortRegistrations(regs, { key: 'timestamp', dir: 'asc' }).map(r => r.name))
+      .toEqual(['Clara', 'Ben', 'Anna']);
+    expect(sortRegistrations(regs, { key: 'timestamp', dir: 'desc' }).map(r => r.name))
+      .toEqual(['Anna', 'Ben', 'Clara']);
   });
 });
 
