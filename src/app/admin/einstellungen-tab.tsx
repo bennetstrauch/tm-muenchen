@@ -25,6 +25,7 @@ const DEFAULTS: TenantSettings = {
   show_meditators_section: true,
   show_courses: false,
   course_locales: ['de'],
+  impressum_content: '',
 };
 
 export default function EinstellungenTab() {
@@ -267,6 +268,17 @@ export default function EinstellungenTab() {
               onChange={handleCenterImageUpload}
             />
           </label>
+        </div>
+
+        <div>
+          <p className="text-xs font-medium text-gray-500 mb-2">Impressum</p>
+          <textarea
+            className={`${INPUT_CLS} resize-y`}
+            rows={12}
+            value={settings.impressum_content}
+            onChange={e => setSettings(prev => ({ ...prev, impressum_content: e.target.value }))}
+          />
+          <p className="text-xs text-gray-400 mt-1">HTML möglich. Leer lassen zeigt einen Platzhalter.</p>
         </div>
 
       </div>

@@ -17,6 +17,7 @@ function pickSettings(source: Partial<TenantSettings>): TenantSettings {
     show_meditators_section: source.show_meditators_section ?? true,
     show_courses: source.show_courses ?? false,
     course_locales: source.course_locales ?? ['de'],
+    impressum_content: source.impressum_content ?? '',
   };
 }
 

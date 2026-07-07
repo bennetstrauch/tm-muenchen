@@ -58,7 +58,7 @@ function makeRequest(method: string, body?: unknown): Request {
 }
 
 describe("admin Einstellungen", () => {
-  it("GET returns only the editable settings, including center_image_url and whatsapp_number, never the password hash", async () => {
+  it("GET returns only the editable settings, including impressum_content, never the password hash", async () => {
     const { GET } = await import("./route");
     const data = await (await GET(makeRequest("GET"))).json();
     expect(data).toEqual({
@@ -73,12 +73,13 @@ describe("admin Einstellungen", () => {
       show_meditators_section: true,
       show_courses: false,
       course_locales: ['de'],
+      impressum_content: "z",
     });
     expect(data).not.toHaveProperty("admin_password_hash");
     expect(data).not.toHaveProperty("hostname");
   });
 
-  it("PUT writes center_image_url and whatsapp_number along with other editable columns", async () => {
+  it("PUT writes impressum_content along with other editable columns", async () => {
     const { PUT } = await import("./route");
     const req = new Request("http://localhost/api/admin/einstellungen", {
       method: "PUT",
@@ -91,6 +92,7 @@ describe("admin Einstellungen", () => {
         contact_email: "new@b.de",
         contact_phone: "999",
         center_image_url: "https://blob.example.com/center/muenchen/new.webp",
+        impressum_content: "<h2>Angaben</h2><p>Beispiel e.V.</p>",
       }),
     });
 
@@ -109,6 +111,7 @@ describe("admin Einstellungen", () => {
       show_meditators_section: true,
       show_courses: false,
       course_locales: ['de'],
+      impressum_content: "<h2>Angaben</h2><p>Beispiel e.V.</p>",
     });
   });
 

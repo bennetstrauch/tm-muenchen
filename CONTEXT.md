@@ -617,16 +617,14 @@ Design principle: clean and minimal — one row on desktop, stacked on mobile.
 
 ## Impressum
 
-Static German-language page at `/impressum` (under `[locale]` routing). Content is hardcoded German — not run through the i18n/auto-translate system, as it is a legal text specific to German law. A notice is shown when `locale !== 'de'` informing the visitor the page is only available in German.
+German-language page at `/impressum` (under `[locale]` routing). Content is German only — not run through the i18n/auto-translate system, as it is a legal text specific to German law. A notice is shown when `locale !== 'de'` informing the visitor the page is only available in German.
 
-Legal entity: **Transzendentale Meditation München e.V.**
-Address: Guldenstraße 47, 80639 München
-1. Vorsitzender: Christoph Fereber
-2. Vorsitzender: Wolfgang Arden
-Registergericht: Amtsgericht München (VR-Nummer: [Placeholder — to be filled in])
-Contact: +49 163 7354 836 · info@tm-muenchen.de
+Content comes entirely from `tenant.impressum_content` — editable by tenant admins in the admin Einstellungen tab (and by the super-admin in the tenant form). Three rendering modes:
+- **Empty** → placeholder "Impressum folgt." (no cross-tenant fallback — a tenant must never show another tenant's legal data)
+- **Starts with `<`** → rendered as HTML. The page styles semantic tags (`h2`/`p`/`a`) via container CSS so DB content stays free of layout ("content lives in CMS, layout lives in code"). Not sanitized — accepted risk: tenant admins are trusted, and hostname-based tenant isolation means injected script only runs on the tenant's own domain.
+- **Otherwise** → plain text with preserved line breaks
 
-For other tenants, the full content is overridden via `tenant.impressum_content` (HTML or plain text). The fallback `MuenchenImpressum` component is München-specific. Contact email uses `tenant.contact_email`. Page title is dynamic via `generateMetadata`.
+München's content is seeded as semantic HTML (template: `docs/impressum-seed-muenchen.html`). Legal entity: **Transzendentale Meditation München e.V.**, Guldeinstraße 47, 80639 München. Vorstand: Christoph Färber (1.), Wolfgang Arden (2.). Registernummer: 14188 (Amtsgericht München). Page title is dynamic via `generateMetadata`.
 
 ## Datenschutz
 

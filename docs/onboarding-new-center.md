@@ -42,6 +42,8 @@ Click **+ Neuer Tenant** and fill in:
 | WhatsApp | enable + link | Optional — only if center has a community |
 | Impressum | paste legal text | Required — varies per center (Verein vs. individual) |
 
+**Impressum:** Copy `docs/impressum-seed-muenchen.html` as a template and replace the München data (legal entity, address, Vorstand, register number, contact). Write semantic HTML (`<h2>`, `<p>`, `<a>`, `<br>`) — the public page styles these tags automatically. Leaving the field empty shows an "Impressum folgt." placeholder, never another center's legal data. The center admin can edit it later in the admin **Einstellungen** tab.
+
 Save → tenant appears in the list.
 
 ---
