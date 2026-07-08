@@ -210,13 +210,13 @@
     },
     "innereFreude": {
       "label": "Alegría interior",
-      "headline0": "Dentro de ti hay un océano de alegría sin límites.",
+      "headline0": "Todos llevamos dentro un océano de alegría sin límites.",
       "headline1": "La MT te abre la puerta.",
       "subtitle": "Sumérgete en tu felicidad de forma fácil y fiable"
     },
     "schlaf": {
       "label": "Sueño",
-      "headline0": "¿Realmente estás descansando?",
+      "headline0": "¿Cómo estás durmiendo?",
       "headline1": "Sin pastillas. Sin fuerza de voluntad.",
       "subtitle": "La MT le da a tu sistema nervioso el descanso profundo que el sueño solo ya no siempre logra."
     },
@@ -228,7 +228,7 @@
     },
     "erschoepfung": {
       "label": "Agotamiento",
-      "headline0": "¿Sin energía, aunque no hayas hecho nada?",
+      "headline0": "¿Agotado sin haber hecho nada?",
       "headline1": "Energía real. Desde dentro.",
       "subtitle": "MT te da acceso a un silencio interior genuino, no como técnica, sino como estado natural."
     },
