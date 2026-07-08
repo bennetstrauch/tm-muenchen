@@ -41,6 +41,8 @@ export default function TenantForm({ tenant }: Props) {
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(fd.get('contact_email')))) errs.contact_email = 'Ungültige E-Mail-Adresse';
     if (!fd.get('contact_phone')) errs.contact_phone = 'Pflichtfeld';
     if (!fd.get('from_email')) errs.from_email = 'Pflichtfeld';
+    if (!fd.get('legal_entity')) errs.legal_entity = 'Pflichtfeld';
+    if (!fd.get('legal_address')) errs.legal_address = 'Pflichtfeld';
     if (Object.keys(errs).length > 0) {
       setFieldErrors(errs);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -74,6 +76,8 @@ export default function TenantForm({ tenant }: Props) {
       infoabend_duration_minutes: Number(fd.get('infoabend_duration_minutes') ?? 30),
       center_banner_label: fd.get('center_banner_label'),
       impressum_content: fd.get('impressum_content'),
+      legal_entity: fd.get('legal_entity'),
+      legal_address: fd.get('legal_address'),
       meditators_ueberpruefung_url: fd.get('meditators_ueberpruefung_url') || null,
       meditators_vertiefung_url: fd.get('meditators_vertiefung_url') || null,
       meditators_treffen_url: fd.get('meditators_treffen_url') || null,
@@ -163,6 +167,20 @@ export default function TenantForm({ tenant }: Props) {
             <Field label="Stadt (Anzeigename)" required>
               <input name="city" defaultValue={tenant?.city} className={inputCls(false, !!fieldErrors.city)} />
               <FieldError msg={fieldErrors.city} />
+            </Field>
+          </Section>
+
+          <Section title="Rechtsangaben (Datenschutz)">
+            <Field label="Rechtsträger (Verein oder voller Name bei Freiberuflichkeit)" required>
+              <input name="legal_entity" defaultValue={tenant?.legal_entity ?? ''}
+                placeholder="z. B. Transzendentale Meditation München e.V."
+                className={inputCls(false, !!fieldErrors.legal_entity)} />
+              <FieldError msg={fieldErrors.legal_entity} />
+            </Field>
+            <Field label="Anschrift (Straße, PLZ Ort)" required>
+              <textarea name="legal_address" defaultValue={tenant?.legal_address ?? ''} rows={2}
+                className={`${inputCls(false, !!fieldErrors.legal_address)} resize-y`} />
+              <FieldError msg={fieldErrors.legal_address} />
             </Field>
           </Section>
 

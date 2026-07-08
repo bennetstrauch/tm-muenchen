@@ -391,6 +391,8 @@ city                         text      (display name, e.g. 'München')
 center_image_url             text      (nullable; falls back to München default)
 tmw_center_ids               int[]     (TMW API center IDs for this tenant)
 impressum_content            text      (free text; legal entity varies — Verein, individual, etc.)
+legal_entity                 text      (Datenschutz Verantwortlicher: Verein or full name of freelance teacher; required in super-admin form)
+legal_address                text      (postal address of the Verantwortlicher, multiline "Straße\nPLZ Ort")
 logo_url                     text      (nullable; overrides /tm-logo.svg in TopBar)
 logo_label                   text      (nullable; overrides "map pin + city" in TopBar — if set, map pin is hidden)
 infoabend_duration_minutes   int       (default 30; InfoabendPreview formats as "X Min.")
@@ -636,7 +638,12 @@ Static German-language page at `/datenschutz`. Same locale-notice behaviour as I
 
 Google Sheets section can be removed once registration data is fully migrated to Supabase.
 
-Contact email in the body uses `tenant.contact_email`. Page title is dynamic via `generateMetadata`. The address and legal entity ("Transzendentale Meditation München e.V.") remain München-specific — no multi-tenant override pattern yet (unlike Impressum).
+The page text is shared code (it describes the platform's actual processing); only tenant-specific parts are dynamic:
+- **Verantwortlicher** — `tenant.legal_entity` + `tenant.legal_address` (migration 005; required in the super-admin form, empty lines are skipped until backfilled) + `tenant.contact_email`
+- **Meta Pixel section** — rendered only when `tenant.meta_pixel_id` is set
+- **Supervisory authority** — deliberately generic ("eine Datenschutzaufsichtsbehörde"): naming one is optional under Art. 13(2)(d) DSGVO, and the state authority differs per tenant (the previously hardcoded BayLfD was also wrong for private bodies — that would be BayLDA)
+
+Page title is dynamic via `generateMetadata`.
 
 ## Baum des Lebens — Team & Rollen
 

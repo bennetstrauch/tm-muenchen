@@ -147,6 +147,8 @@ type TenantRow = {
   center_image_url: string | null;
   tmw_center_ids: number[];
   impressum_content: string;
+  legal_entity: string;
+  legal_address: string;
   logo_url: string | null;
   logo_label: string | null;
   infoabend_duration_minutes: number;

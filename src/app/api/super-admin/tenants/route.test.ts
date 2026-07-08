@@ -106,6 +106,32 @@ describe("POST /api/super-admin/tenants", () => {
     expect(row.meditators_fortgeschrittenentechniken_url).toBeNull();
   });
 
+  it("saves legal_entity and legal_address for the Datenschutz Verantwortlicher block", async () => {
+    const { POST } = await import("./route");
+    await POST(makeRequest("POST", {
+      tenant: "berlin",
+      hostname: "tm-berlin.de",
+      city: "Berlin",
+      password: "pw",
+      active_locales: ["de"],
+      tmw_center_ids: "200",
+      contact_email: "a@b.de",
+      contact_phone: "0",
+      from_email: "a@b.de",
+      instagram_link: "",
+      whatsapp_enabled: false,
+      whatsapp_link: "",
+      center_image_url: "",
+      impressum_content: "",
+      legal_entity: "Transzendentale Meditation Berlin e.V.",
+      legal_address: "Beispielstraße 1\n10115 Berlin",
+    }));
+
+    const insertedRow = mockInsert.mock.calls[0][0];
+    expect(insertedRow.legal_entity).toBe("Transzendentale Meditation Berlin e.V.");
+    expect(insertedRow.legal_address).toBe("Beispielstraße 1\n10115 Berlin");
+  });
+
   it("parses comma-separated tmw_center_ids into an int array", async () => {
     const { POST } = await import("./route");
     await POST(makeRequest("POST", {

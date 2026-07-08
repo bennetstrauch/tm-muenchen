@@ -31,6 +31,8 @@ export async function POST(request: Request) {
     whatsapp_number: body.whatsapp_number || null,
     center_image_url: body.center_image_url || null,
     impressum_content: body.impressum_content || "",
+    legal_entity: body.legal_entity,
+    legal_address: body.legal_address,
     logo_url: body.logo_url || null,
     logo_label: body.logo_label || null,
     infoabend_duration_minutes: body.infoabend_duration_minutes ?? 30,

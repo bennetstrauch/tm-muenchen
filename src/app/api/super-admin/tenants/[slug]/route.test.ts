@@ -87,6 +87,31 @@ describe("PUT /api/super-admin/tenants/[slug]", () => {
     expect(row.meditators_fortgeschrittenentechniken_url).toBe("https://yoga-und-meditation.com/fortgeschritten");
   });
 
+  it("saves legal_entity and legal_address", async () => {
+    const { PUT } = await import("./route");
+    await PUT(makePut("berlin", {
+      hostname: "tm-berlin.de",
+      city: "Berlin",
+      password: "",
+      active_locales: ["de"],
+      tmw_center_ids: "200",
+      contact_email: "a@b.de",
+      contact_phone: "0",
+      from_email: "a@b.de",
+      instagram_link: "",
+      whatsapp_enabled: false,
+      whatsapp_link: "",
+      center_image_url: "",
+      impressum_content: "",
+      legal_entity: "Maria Mustermann, Lehrerin für Transzendentale Meditation",
+      legal_address: "Beispielstraße 1\n10115 Berlin",
+    }), { params: Promise.resolve({ slug: "berlin" }) });
+
+    const updatedRow = mockUpdate.mock.calls[0][0];
+    expect(updatedRow.legal_entity).toBe("Maria Mustermann, Lehrerin für Transzendentale Meditation");
+    expect(updatedRow.legal_address).toBe("Beispielstraße 1\n10115 Berlin");
+  });
+
   it("preserves the existing hash when password field is blank", async () => {
     const { PUT } = await import("./route");
     await PUT(makePut("berlin", {

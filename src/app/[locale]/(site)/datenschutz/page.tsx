@@ -32,10 +32,11 @@ export default async function DatenschutzPage() {
 
           <section>
             <Eyebrow>Verantwortlicher</Eyebrow>
-            <p>
-              Transzendentale Meditation München e.V.<br />
-              Guldenstraße 47<br />
-              80639 München<br />
+            {/* legal_entity/legal_address can still be '' for tenants awaiting
+                backfill (migration 005) — render only what exists. */}
+            <p className="whitespace-pre-line">
+              {tenant.legal_entity && <>{tenant.legal_entity}{"\n"}</>}
+              {tenant.legal_address && <>{tenant.legal_address}{"\n"}</>}
               E-Mail:{" "}
               <a href={`mailto:${tenant.contact_email}`} className="hover:text-[#1A3352] transition-colors">
                 {tenant.contact_email}
@@ -111,7 +112,7 @@ export default async function DatenschutzPage() {
                 </p>
               </div>
 
-              <div>
+              {tenant.meta_pixel_id && <div>
                 <p className="font-medium text-[#1A3352]/85 mb-1">Meta Pixel (Werbe-Tracking)</p>
                 <p>
                   Mit Ihrer Einwilligung verwenden wir das Meta Pixel der Meta Platforms
@@ -125,7 +126,7 @@ export default async function DatenschutzPage() {
                     facebook.com/policy.php
                   </a>
                 </p>
-              </div>
+              </div>}
 
             </div>
           </section>
@@ -137,12 +138,7 @@ export default async function DatenschutzPage() {
               Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18),
               Datenübertragbarkeit (Art. 20) und Widerspruch (Art. 21 DSGVO). Außerdem steht
               Ihnen das Recht zu, eine Beschwerde bei einer Datenschutzaufsichtsbehörde
-              einzureichen. Zuständig ist der Bayerische Landesbeauftragte für den Datenschutz
-              (BayLfD),{" "}
-              <a href="https://www.datenschutz-bayern.de" target="_blank" rel="noopener noreferrer" className="hover:text-[#1A3352] transition-colors">
-                datenschutz-bayern.de
-              </a>
-              .
+              einzureichen.
             </p>
           </section>
 
