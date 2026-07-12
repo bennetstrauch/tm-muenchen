@@ -16,6 +16,15 @@ import { getLocale } from "next-intl/server";
 import { getTeachers } from "@/lib/teachers";
 import { getTestimonials } from "@/content";
 import { getCurrentTenant } from "@/lib/tenant";
+import type { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const tenant = await getCurrentTenant();
+  return {
+    title: `Meditation lernen in ${tenant.city} – Transzendentale Meditation (TM)`,
+    description: `Lerne Transzendentale Meditation in ${tenant.city} – einfach, mühelos, ohne Konzentration. Kostenloser Infoabend online & vor Ort. Wissenschaftlich belegt, persönlich unterrichtet.`,
+  };
+}
 
 export default async function Home() {
   const locale = await getLocale();

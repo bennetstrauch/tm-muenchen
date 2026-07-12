@@ -74,6 +74,7 @@ describe("admin Einstellungen", () => {
       show_courses: false,
       course_locales: ['de'],
       impressum_content: "z",
+      google_business_url: null,
     });
     expect(data).not.toHaveProperty("admin_password_hash");
     expect(data).not.toHaveProperty("hostname");
@@ -112,6 +113,7 @@ describe("admin Einstellungen", () => {
       show_courses: false,
       course_locales: ['de'],
       impressum_content: "<h2>Angaben</h2><p>Beispiel e.V.</p>",
+      google_business_url: null,
     });
   });
 

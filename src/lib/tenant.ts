@@ -8,7 +8,7 @@ export type TenantConfig = Database["public"]["Tables"]["tenants"]["Row"];
 // The subset of a tenant row that the admin Einstellungen tab may read and edit.
 export type TenantSettings = Pick<
   TenantConfig,
-  "active_locales" | "whatsapp_enabled" | "whatsapp_link" | "whatsapp_number" | "contact_email" | "contact_phone" | "center_image_url" | "infoabend_duration_minutes" | "show_meditators_section" | "show_courses" | "course_locales" | "impressum_content"
+  "active_locales" | "whatsapp_enabled" | "whatsapp_link" | "whatsapp_number" | "contact_email" | "contact_phone" | "center_image_url" | "infoabend_duration_minutes" | "show_meditators_section" | "show_courses" | "course_locales" | "impressum_content" | "google_business_url"
 >;
 
 // Server-side: full tenant row for the current request. Wrapped in React cache()

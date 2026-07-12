@@ -26,6 +26,7 @@ const DEFAULTS: TenantSettings = {
   show_courses: false,
   course_locales: ['de'],
   impressum_content: '',
+  google_business_url: null,
 };
 
 export default function EinstellungenTab() {
@@ -152,6 +153,17 @@ export default function EinstellungenTab() {
               </div>
             </div>
           )}
+        </div>
+
+        <div>
+          <p className="text-xs font-medium text-gray-500 mb-2">Google-Profil</p>
+          <input
+            className={INPUT_CLS}
+            placeholder="https://g.page/… (Link zu eurem Google-Unternehmensprofil)"
+            value={settings.google_business_url ?? ''}
+            onChange={e => setSettings(prev => ({ ...prev, google_business_url: e.target.value || null }))}
+          />
+          <p className="text-xs text-gray-400 mt-1">Für den &bdquo;Auf Google&ldquo;-Link auf der Seite und Suchmaschinen.</p>
         </div>
 
         <div>

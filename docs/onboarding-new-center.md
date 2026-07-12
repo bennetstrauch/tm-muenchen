@@ -107,6 +107,18 @@ Falls back to the München default image if left empty.
 
 ---
 
+## 8. Optional: Google Business Profile (local centers only)
+
+Purely optional and **not required** to run the site. For **local** centers (fixed address, in-person presence), a well-maintained Google Business Profile is the highest-leverage *free* local-search lever — it surfaces the center in Google Maps above paid ads. The national `deutschland` tenant has no single location and skips this.
+
+The website already emits the matching `LocalBusiness` structured data automatically per tenant, so the only work is the external Google profile itself. Hand the center admin the checklist — it's theirs to own, at their own pace:
+
+→ **`docs/marketing/google-business-profile.md`**
+
+For the on-page data to be correct, make sure `legal_entity` and `legal_address` (the Verantwortlicher fields) are filled for the tenant in super-admin — they feed both the Datenschutz page and the SEO structured data.
+
+---
+
 ## Summary Checklist
 
 - [ ] TMW center IDs found and verified
@@ -116,3 +128,5 @@ Falls back to the München default image if left empty.
 - [ ] Resend sender domain verified
 - [ ] Smoke test passed (site loads, admin works, email sends)
 - [ ] Center image uploaded (optional)
+- [ ] `legal_entity` + `legal_address` filled (feeds Datenschutz + SEO structured data)
+- [ ] Google Business Profile checklist handed to the center admin (optional, local centers only)

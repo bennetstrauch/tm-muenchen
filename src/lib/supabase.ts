@@ -143,6 +143,7 @@ type TenantRow = {
   contact_phone: string;
   from_email: string;
   instagram_link: string;
+  google_business_url: string | null;
   city: string;
   center_image_url: string | null;
   tmw_center_ids: number[];

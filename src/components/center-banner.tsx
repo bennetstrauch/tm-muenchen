@@ -69,6 +69,18 @@ export default async function CenterBanner() {
           <p className="font-display font-light italic text-[1.9rem] sm:text-[2.75rem] text-white/90 leading-tight">
             {t("line2")}
           </p>
+
+          {tenant.google_business_url && (
+            <a
+              href={tenant.google_business_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-sm text-white backdrop-blur-sm transition hover:bg-white/20"
+            >
+              <span className="text-amber-300 tracking-tight" aria-hidden="true">★★★★★</span>
+              Auf Google
+            </a>
+          )}
         </div>
       </div>
     </section>

@@ -26,6 +26,7 @@ export async function POST(request: Request) {
     contact_phone: body.contact_phone,
     from_email: body.from_email,
     instagram_link: body.instagram_link || "https://www.instagram.com/tmdeutschland",
+    google_business_url: body.google_business_url || null,
     whatsapp_enabled: body.whatsapp_enabled ?? false,
     whatsapp_link: body.whatsapp_link || null,
     whatsapp_number: body.whatsapp_number || null,

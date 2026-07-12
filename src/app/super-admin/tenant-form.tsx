@@ -63,6 +63,7 @@ export default function TenantForm({ tenant }: Props) {
       contact_phone: fd.get('contact_phone'),
       from_email: fd.get('from_email'),
       instagram_link: fd.get('instagram_link'),
+      google_business_url: fd.get('google_business_url') || null,
       whatsapp_enabled: fd.get('whatsapp_enabled') === 'on',
       whatsapp_link: fd.get('whatsapp_link'),
       whatsapp_number: fd.get('whatsapp_number') || null,
@@ -261,6 +262,12 @@ export default function TenantForm({ tenant }: Props) {
             <Field label="Instagram-Link">
               <input name="instagram_link"
                 defaultValue={tenant?.instagram_link ?? 'https://www.instagram.com/tmdeutschland'}
+                className={inputCls()} />
+            </Field>
+            <Field label="Google-Profil (Link)">
+              <input name="google_business_url"
+                defaultValue={tenant?.google_business_url ?? ''}
+                placeholder="https://g.page/…"
                 className={inputCls()} />
             </Field>
             <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">

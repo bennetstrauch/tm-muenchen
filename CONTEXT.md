@@ -387,6 +387,7 @@ contact_email                text
 contact_phone                text
 from_email                   text      (Resend sender address for Veranstaltungen emails only)
 instagram_link               text      (default: https://www.instagram.com/tmdeutschland)
+google_business_url          text      (nullable; Google Business Profile URL → JSON-LD sameAs + "Auf Google" link in CenterBanner; blank = hidden)
 city                         text      (display name, e.g. 'München')
 center_image_url             text      (nullable; falls back to München default)
 tmw_center_ids               int[]     (TMW API center IDs for this tenant)

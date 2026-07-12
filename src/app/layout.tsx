@@ -27,6 +27,7 @@ const cormorant = Cormorant_Garamond({
 export async function generateMetadata(): Promise<Metadata> {
   const tenant = await getCurrentTenant();
   return {
+    metadataBase: new URL(`https://${tenant.hostname}`),
     title: `TM ${tenant.city} – Transzendentale Meditation`,
     description:
       "Die einzige Meditationstechnik, die ohne Konzentration funktioniert — wissenschaftlich belegt, in 4 Tagen erlernbar.",
