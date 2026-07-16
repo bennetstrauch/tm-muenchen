@@ -5,7 +5,9 @@ import { getTranslation } from '@/lib/translate';
 export default async function TopBarLogo() {
   const [tenant, locale] = await Promise.all([getCurrentTenant(), getLocale()]);
 
-  const logoSrc = tenant.logo_url ?? '/tm-logo.svg';
+  // Temporär: altes Baum-Logo als Default für die ortsgebundenen Center-Seiten.
+  // Neues Ringe-/Wortmarken-Logo bleibt unter /tm-logo.svg erhalten.
+  const logoSrc = tenant.logo_url ?? '/tm-tree-logo.png';
 
   let cityLabel: React.ReactNode;
   if (tenant.logo_label) {
