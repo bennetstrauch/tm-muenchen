@@ -3,6 +3,7 @@ import { getCurrentTenant } from "@/lib/tenant";
 import { splitName } from "@/lib/name";
 import { cityToPlz } from "@/lib/geo";
 import { bookInfoabend } from "@/lib/tmw-booking";
+import { buildSource } from "@/lib/attribution-source";
 import { insertInfoAnmeldung } from "@/lib/info-anmeldungen";
 
 type RequestBody = {
@@ -17,6 +18,8 @@ type RequestBody = {
   eventId?: string;
   hasConsent?: boolean;
   newsSubscribed?: boolean;
+  path?: string;
+  params?: Record<string, string>;
 };
 
 function normalizePhone(phone: string): string {
@@ -30,6 +33,7 @@ export async function POST(request: Request) {
     name, email, phone, lectureId,
     eventDate, eventTime, eventType,
     locale = "de", eventId, hasConsent, newsSubscribed = false,
+    path = "/", params = {},
   } = body;
 
   if (!name?.trim() || !email?.trim()) {
@@ -39,7 +43,8 @@ export async function POST(request: Request) {
   const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
   const clientUserAgent = request.headers.get("user-agent") ?? undefined;
   const eventSourceUrl = request.headers.get("referer") ?? "https://tm-muenchen.de";
-  const source = request.headers.get("host") ?? "tm-muenchen.de";
+  const host = request.headers.get("host") ?? "tm-muenchen.de";
+  const source = buildSource(host, path, params);
   const rawCity = request.headers.get("x-vercel-ip-city") ?? "";
   const city = decodeURIComponent(rawCity);
   const zip_code = cityToPlz(rawCity);

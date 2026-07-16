@@ -1,6 +1,7 @@
 import TopBar from '@/components/top-bar';
 import NavPanel from '@/components/top-bar/nav-panel';
 import MainOffset from '@/components/main-offset';
+import AttributionCapture from '@/components/attribution-capture';
 import { NavProvider } from '@/contexts/nav-context';
 import { getCurrentTenant } from '@/lib/tenant';
 
@@ -13,6 +14,7 @@ export default async function EventsLayout({ children }: { children: React.React
       <MainOffset>
         {children}
       </MainOffset>
+      <AttributionCapture />
     </NavProvider>
   );
 }

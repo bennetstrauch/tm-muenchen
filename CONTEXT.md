@@ -293,6 +293,23 @@ Fires three standard events:
 
 **Cookie-Banner**: Custom bottom-bar component (no external CMP library). One sentence of copy + "Akzeptieren" / "Ablehnen" buttons. Styled in the site's blue/gold theme. Shown only on first visit; subsequent visits read localStorage directly.
 
+## Kampagnen-Tracking (Attribution)
+
+How an Infoabend or Info-Anfrage registration is tied back to the ad click that produced it. Two receivers of attribution:
+
+1. **TMW *Quelle*** — the TMW `source` field, shown to the center in the TM-Webcenter. For parity with the national meditation.de pages, `source` is the **full landing URL** (`https://{host}{path}?{allowlisted-query}`), not the bare hostname. Lets the center see `/schlaf`, `_ad=fb`, `utm_*` per registration and manually attribute.
+2. **Meta match** — `fbc` + `fbp` sent on the CAPI `Lead` event so Meta can attribute the conversion to the ad click (previously only weak email/IP matching → Meta undercounted).
+
+> Canonical term: **Kampagnen-Tracking** (not "Attribution", not "UTM-Tracking").
+
+**Erstkontakt-Erfassung (first-touch capture):** ad-click params (`fbclid`, `utm_*`, `_ad`) + the landing path are captured **client-side on first load** and persisted to `sessionStorage` (per-visit, first-touch — survives in-page navigation and locale switches; does not survive across sessions, so return visits are not misattributed). At submit the shared client helper also reads the `_fbc`/`_fbp` cookies. This is the only place with access to the landing query string and Pixel cookies.
+
+**Client supplies, server assembles.** The client is untrusted: it sends captured *path + params + fbc/fbp* in the POST body, but the server pins the host, allowlists query keys (`fbclid, utm_source, utm_medium, utm_campaign, utm_content, utm_term, utm_id, _ad`), validates the path, strips control chars, length-caps `source`, and format-validates `fbc`/`fbp` before any value reaches TMW, Supabase, or Meta. See ADR 0009.
+
+**Consent gating:** `fbc`/`fbp` and all PII are sent to Meta **only when the visitor accepted the Cookie-Banner** (`fbc`/`fbp` only exist post-consent anyway). Cookie-rejecters are deliberately not attributed via reconstructed `fbclid` — the extra recovery is not legally clean for ad attribution under DSGVO. Consistent with ADR 0001. The `source` full-URL (no PII, no Meta) is always written to TMW/Supabase regardless of consent.
+
+Applies to **Infoabend** (`/api/register`) and **Individueller Info-Termin** (`/api/info-anfrage`) — the latter gains a CAPI `Lead` event (browser Pixel + CAPI deduped on a shared `event_id`, same pattern as Infoabend). **Not** applied to Veranstaltungen (`/api/register-event`) — existing meditators, not ad traffic.
+
 ## Sprachen (i18n)
 
 Supported locales: **DE** (source, no URL prefix), **EN** (`/en`), **FR** (`/fr`), **ES** (`/es`). Per-center configurable in Phase 2 (multi-tenancy).
@@ -447,7 +464,7 @@ Registration form fields (single step): **Name** (single field), **E-Mail**, **T
 On submit, `/api/register`:
 1. Splits Name on first space → `first_name` + `last_name` (empty string if no space; fallback `"-"` if TMW rejects empty)
 2. Derives `zip_code` from Vercel `x-vercel-ip-city` header via hardcoded city→PLZ map; `""` for unknown cities
-3. Reads `source` from `host` request header (e.g. `"tm-muenchen.de"`)
+3. Builds `source` as the **full landing URL** — `https://{host}{landing_path}?{query}` — captured on landing (see **Kampagnen-Tracking**). Degrades to `https://{host}{path}` for organic visits. Same string is written to TMW `source` and Supabase `info_anmeldungen.source`.
 4. Calls TMW `POST /api/booking` with `lecture` PK, `seats: 1`, `first_name`, `last_name`, `email`, `phone`, `zip_code`, `source`, `news_subscribed` — **fatal if this fails**
 5. Writes full snapshot to Supabase `info_anmeldungen` — non-fatal
 6. Fires CAPI Lead event — non-fatal

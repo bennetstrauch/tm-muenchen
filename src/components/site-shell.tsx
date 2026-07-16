@@ -3,6 +3,7 @@ import TopBar from "@/components/top-bar";
 import NavPanel from "@/components/top-bar/nav-panel";
 import MainOffset from "@/components/main-offset";
 import CookieBanner from "@/components/cookie-banner";
+import AttributionCapture from "@/components/attribution-capture";
 import Footer from "@/components/footer";
 import { NavProvider } from "@/contexts/nav-context";
 import { getCurrentTenant } from "@/lib/tenant";
@@ -26,6 +27,7 @@ export default async function SiteShell({
       <Footer />
       <StickyCta />
       <CookieBanner pixelId={tenant.meta_pixel_id} />
+      <AttributionCapture />
     </NavProvider>
   );
 }

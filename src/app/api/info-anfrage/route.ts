@@ -3,6 +3,7 @@ import { getCurrentTenant } from '@/lib/tenant';
 import { splitName } from '@/lib/name';
 import { cityToPlz } from '@/lib/geo';
 import { requestInfoTermin } from '@/lib/tmw-infobooking';
+import { buildSource } from '@/lib/attribution-source';
 import { insertInfoAnfrage } from '@/lib/info-anfragen';
 import {
   buildInfoAnfrageUserSubject,
@@ -22,6 +23,8 @@ type RequestBody = {
   newsSubscribed?: boolean;
   hasConsent?: boolean;
   eventId?: string;
+  path?: string;
+  params?: Record<string, string>;
 };
 
 export async function POST(request: Request) {
@@ -29,13 +32,15 @@ export async function POST(request: Request) {
   const {
     name, email, phone, message,
     locale = 'de', newsSubscribed = false,
+    path = '/', params = {},
   } = body;
 
   if (!name?.trim() || !email?.trim()) {
     return Response.json({ error: 'Pflichtfelder fehlen.' }, { status: 400 });
   }
 
-  const source = request.headers.get('host') ?? 'tm-muenchen.de';
+  const host = request.headers.get('host') ?? 'tm-muenchen.de';
+  const source = buildSource(host, path, params);
   const rawCity = request.headers.get('x-vercel-ip-city') ?? '';
   const city = decodeURIComponent(rawCity);
   const zip_code = cityToPlz(rawCity);

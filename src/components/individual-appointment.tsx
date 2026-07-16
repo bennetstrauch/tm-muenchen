@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
+import { getAttribution } from "@/lib/attribution";
 
 const INPUT_CLS = `
   w-full border border-[#DBEAFE] rounded-md px-4 py-2.5
@@ -26,6 +27,7 @@ export function IndividualAppointment({ initialOpen = false, betreff, heading }:
     const fd = new FormData(e.currentTarget);
     const raw = (fd.get("message") as string) || "";
     const message = (betreff ? `Betreff: ${betreff}\n\n${raw}` : raw) || undefined;
+    const { path, params } = getAttribution();
     try {
       const res = await fetch("/api/info-anfrage", {
         method: "POST",
@@ -37,6 +39,8 @@ export function IndividualAppointment({ initialOpen = false, betreff, heading }:
           message,
           locale,
           newsSubscribed: fd.get("newsSubscribed") === "on",
+          path,
+          params,
         }),
       });
       if (!res.ok) {

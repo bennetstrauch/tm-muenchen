@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { type TMEvent, formatEventDate } from "../lib/events";
+import { getAttribution } from "@/lib/attribution";
 import { IndividualAppointment } from "./individual-appointment";
 
 export { IndividualAppointment };
@@ -31,6 +32,7 @@ function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => v
     const fd = new FormData(e.currentTarget);
     const eventId = crypto.randomUUID();
     const hasConsent = localStorage.getItem("tm_cookie_consent") === "accepted";
+    const { path, params } = getAttribution();
 
     try {
       const res = await fetch("/api/register", {
@@ -48,6 +50,8 @@ function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => v
           eventId,
           hasConsent,
           newsSubscribed: fd.get("newsSubscribed") === "on",
+          path,
+          params,
         }),
       });
 
