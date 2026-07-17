@@ -1,7 +1,7 @@
 import { Resend } from 'resend';
 import { getCurrentTenant } from '@/lib/tenant';
 import { splitName } from '@/lib/name';
-import { cityToPlz } from '@/lib/geo';
+import { resolveGeo } from '@/lib/geo';
 import { requestInfoTermin } from '@/lib/tmw-infobooking';
 import { buildSource } from '@/lib/attribution-source';
 import { insertInfoAnfrage } from '@/lib/info-anfragen';
@@ -41,9 +41,7 @@ export async function POST(request: Request) {
 
   const host = request.headers.get('host') ?? 'tm-muenchen.de';
   const source = buildSource(host, path, params);
-  const rawCity = request.headers.get('x-vercel-ip-city') ?? '';
-  const city = decodeURIComponent(rawCity);
-  const zip_code = cityToPlz(rawCity);
+  const { city, zip_code } = resolveGeo(request.headers);
 
   const { first_name, last_name: rawLastName } = splitName(name);
   const last_name = rawLastName || "'";
@@ -83,6 +81,7 @@ export async function POST(request: Request) {
     tmw_registration_id: tmwId,
     news_subscribed: newsSubscribed,
     city: city || null,
+    zip_code: zip_code || null,
   }).catch(err => console.error('[info-anfrage] Supabase write failed:', err));
 
   // Send center notification (always, in German)

@@ -20,3 +20,9 @@ export function cityToPlz(city: string): string {
   const decoded = decodeURIComponent(city).trim().toLowerCase();
   return CITY_PLZ[decoded] ?? '';
 }
+
+export function resolveGeo(headers: Headers): { city: string; zip_code: string } {
+  const city = decodeURIComponent(headers.get('x-vercel-ip-city') ?? '');
+  const zip_code = headers.get('x-vercel-ip-postal-code') || cityToPlz(city);
+  return { city, zip_code };
+}

@@ -463,7 +463,7 @@ Registration form fields (single step): **Name** (single field), **E-Mail**, **T
 
 On submit, `/api/register`:
 1. Splits Name on first space → `first_name` + `last_name` (empty string if no space; fallback `"-"` if TMW rejects empty)
-2. Derives `zip_code` from Vercel `x-vercel-ip-city` header via hardcoded city→PLZ map; `""` for unknown cities
+2. Derives `city` + `zip_code` from Vercel geo headers via `resolveGeo(headers)` (see **IP-basierte PLZ-Auflösung**)
 3. Builds `source` as the **full landing URL** — `https://{host}{landing_path}?{query}` — captured on landing (see **Kampagnen-Tracking**). Degrades to `https://{host}{path}` for organic visits. Same string is written to TMW `source` and Supabase `info_anmeldungen.source`.
 4. Calls TMW `POST /api/booking` with `lecture` PK, `seats: 1`, `first_name`, `last_name`, `email`, `phone`, `zip_code`, `source`, `news_subscribed` — **fatal if this fails**
 5. Writes full snapshot to Supabase `info_anmeldungen` — non-fatal
@@ -480,7 +480,7 @@ A flow for visitors who want a personal appointment rather than a group Infoaben
 
 On submit, `POST /api/info-anfrage`:
 1. Validates name + email — 400 if missing
-2. Splits name + derives zip_code from Vercel city header
+2. Splits name + derives `city` + `zip_code` via `resolveGeo(headers)` (see **IP-basierte PLZ-Auflösung**)
 3. **DE locale only**: calls TMW `POST /api/infobooking` via `requestInfoTermin()` — fatal if fails. TMW sends their own confirmation email to the visitor.
 4. Writes to `info_anfragen` — non-fatal
 5. Sends center notification email (always, German) to `tenant.contact_email` via Resend
@@ -489,6 +489,17 @@ On submit, `POST /api/info-anfrage`:
 `IndividualAppointment` component in `events.tsx` appears in two places: empty-events state and below the event list. State machine: `idle | submitting | success | error`, same pattern as `RegistrationForm`.
 
 Email strings for this flow live in `lib/email-info-anfrage.ts` (inline string map, same pattern as `lib/email.ts`). TMW infobooking client: `lib/tmw-infobooking.ts` → `requestInfoTermin()`. Data layer: `lib/info-anfragen.ts` → `insertInfoAnfrage()`.
+
+### IP-basierte PLZ-Auflösung
+
+The visitor's postal code (PLZ) is resolved server-side from their IP and sent to TMW with every Infoabend booking and Info-Termin request, so the national org knows roughly where a lead comes from. The visitor never types it.
+
+Single helper `resolveGeo(headers)` in `lib/geo.ts` returns `{ city, zip_code }` from Vercel's edge geo headers:
+
+- **`city`** — decoded `x-vercel-ip-city`, always returned (informational).
+- **`zip_code`** — `x-vercel-ip-postal-code || cityToPlz(city)`. No country gate: TMW's `zip_code` accepts any string ≤12 chars (its API example uses the Austrian `1010`/Wien), so real postal codes are forwarded whatever the country.
+
+`x-vercel-ip-postal-code` is the real, per-request source (Vercel's edge does the IP→PLZ lookup). `cityToPlz` — the legacy 15-city→downtown-PLZ map, German-only — is now only a fallback for the rare case where Vercel sends a city but no postal code. Both `info_anmeldungen` and `info_anfragen` persist the resolved `zip_code` alongside `city` purely so quality can be verified later (not shown in admin).
 
 ### Teachers (multi-tenant)
 

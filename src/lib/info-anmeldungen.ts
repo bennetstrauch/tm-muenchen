@@ -15,6 +15,7 @@ type InfoAnmeldungInsert = {
   event_type: string;
   source: string;
   city: string | null;
+  zip_code: string | null;
   news_subscribed: boolean;
 };
 

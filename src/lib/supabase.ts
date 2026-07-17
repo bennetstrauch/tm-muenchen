@@ -94,6 +94,7 @@ type InfoAnfrageRow = {
   tmw_registration_id: string | null;
   news_subscribed: boolean;
   city: string | null;
+  zip_code: string | null;
   created_at: string;
 };
 
@@ -112,6 +113,7 @@ type InfoAnmeldungRow = {
   event_type: string;
   source: string;
   city: string | null;
+  zip_code: string | null;
   news_subscribed: boolean;
   created_at: string;
 };

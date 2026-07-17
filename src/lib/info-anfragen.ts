@@ -11,6 +11,7 @@ type InfoAnfrageInsert = {
   tmw_registration_id: string | null;
   news_subscribed: boolean;
   city: string | null;
+  zip_code: string | null;
 };
 
 export async function insertInfoAnfrage(data: InfoAnfrageInsert): Promise<void> {

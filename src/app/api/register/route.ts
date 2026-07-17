@@ -1,7 +1,7 @@
 import { sendCapiLead } from "@/lib/capi";
 import { getCurrentTenant } from "@/lib/tenant";
 import { splitName } from "@/lib/name";
-import { cityToPlz } from "@/lib/geo";
+import { resolveGeo } from "@/lib/geo";
 import { bookInfoabend } from "@/lib/tmw-booking";
 import { buildSource } from "@/lib/attribution-source";
 import { insertInfoAnmeldung } from "@/lib/info-anmeldungen";
@@ -45,9 +45,7 @@ export async function POST(request: Request) {
   const eventSourceUrl = request.headers.get("referer") ?? "https://tm-muenchen.de";
   const host = request.headers.get("host") ?? "tm-muenchen.de";
   const source = buildSource(host, path, params);
-  const rawCity = request.headers.get("x-vercel-ip-city") ?? "";
-  const city = decodeURIComponent(rawCity);
-  const zip_code = cityToPlz(rawCity);
+  const { city, zip_code } = resolveGeo(request.headers);
   const normalizedPhone = phone ? normalizePhone(phone) : undefined;
 
   const { first_name, last_name: rawLastName } = splitName(name);
@@ -89,6 +87,7 @@ export async function POST(request: Request) {
     event_type: eventType,
     source,
     city: city || null,
+    zip_code: zip_code || null,
     news_subscribed: newsSubscribed,
   }).catch(err => console.error("[register] Supabase write failed:", err));
 
