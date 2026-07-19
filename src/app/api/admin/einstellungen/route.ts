@@ -14,6 +14,7 @@ function pickSettings(source: Partial<TenantSettings>): TenantSettings {
     contact_phone: source.contact_phone ?? '',
     center_image_url: source.center_image_url ?? null,
     infoabend_duration_minutes: source.infoabend_duration_minutes ?? 30,
+    plz_abfrage: source.plz_abfrage ?? false,
     show_meditators_section: source.show_meditators_section ?? true,
     show_courses: source.show_courses ?? false,
     course_locales: source.course_locales ?? ['de'],

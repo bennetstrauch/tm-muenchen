@@ -83,6 +83,8 @@
     "formName": "Vor- und Nachname *",
     "formEmail": "E-Mail *",
     "formPhone": "Telefon (optional)",
+    "formPlz": "PLZ",
+    "formPlzInvalid": "Bitte gib eine gültige PLZ ein.",
     "formNewsSubscribed": "Ja, ich möchte den Newsletter erhalten.",
     "formSubmit": "Jetzt anmelden",
     "formSubmitting": "Wird gesendet…",

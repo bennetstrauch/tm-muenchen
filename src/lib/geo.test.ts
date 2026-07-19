@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { cityToPlz, resolveGeo } from './geo';
+import { cityToPlz, resolveGeo, isValidPlz } from './geo';
 
 function headers(h: Record<string, string>): Headers {
   return new Headers(h);
@@ -21,6 +21,37 @@ describe('cityToPlz', () => {
   it('is case-insensitive', () => {
     expect(cityToPlz('MÜNCHEN')).toBe('80331');
     expect(cityToPlz('münchen')).toBe('80331');
+  });
+});
+
+describe('isValidPlz', () => {
+  it('accepts a German 5-digit PLZ', () => {
+    expect(isValidPlz('80331')).toBe(true);
+  });
+
+  it('accepts a 4-digit Austrian/Swiss PLZ', () => {
+    expect(isValidPlz('5020')).toBe(true);
+  });
+
+  it('trims surrounding whitespace before checking', () => {
+    expect(isValidPlz('  80331  ')).toBe(true);
+  });
+
+  it('rejects fewer than 4 digits', () => {
+    expect(isValidPlz('123')).toBe(false);
+  });
+
+  it('rejects more than 5 digits', () => {
+    expect(isValidPlz('123456')).toBe(false);
+  });
+
+  it('rejects non-digit characters', () => {
+    expect(isValidPlz('8033a')).toBe(false);
+    expect(isValidPlz('AB12')).toBe(false);
+  });
+
+  it('rejects an empty string', () => {
+    expect(isValidPlz('')).toBe(false);
   });
 });
 

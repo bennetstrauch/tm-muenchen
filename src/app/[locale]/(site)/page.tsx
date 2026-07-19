@@ -44,7 +44,7 @@ export default async function Home() {
       <PageClient
         initialTheme="stress"
         nextDates={nextDates}
-        conversionSlot={<><InfoabendPreview /><Events events={events} /></>}
+        conversionSlot={<><InfoabendPreview /><Events events={events} plzAbfrage={tenant.plz_abfrage} /></>}
       />
       <Testimonials testimonials={getTestimonials("stress")} />
       <WhyTm />

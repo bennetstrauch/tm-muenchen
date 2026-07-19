@@ -22,6 +22,7 @@ const DEFAULTS: TenantSettings = {
   contact_phone: '',
   center_image_url: null,
   infoabend_duration_minutes: 30,
+  plz_abfrage: false,
   show_meditators_section: true,
   show_courses: false,
   course_locales: ['de'],
@@ -202,6 +203,16 @@ export default function EinstellungenTab() {
             />
             <span className="text-sm text-gray-500">Minuten Dauer</span>
           </div>
+          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer mt-3">
+            <input
+              type="checkbox"
+              className={CHECK_CLS}
+              checked={settings.plz_abfrage}
+              onChange={e => setSettings(prev => ({ ...prev, plz_abfrage: e.target.checked }))}
+            />
+            PLZ im Anmeldeformular abfragen
+          </label>
+          <p className="text-xs text-gray-400 mt-1">Fragt Anmeldende nach ihrer PLZ (statt sie automatisch aus der IP zu schätzen).</p>
         </div>
 
         <div>

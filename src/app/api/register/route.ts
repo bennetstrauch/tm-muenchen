@@ -1,7 +1,8 @@
 import { sendCapiLead } from "@/lib/capi";
 import { getCurrentTenant } from "@/lib/tenant";
 import { splitName } from "@/lib/name";
-import { resolveGeo } from "@/lib/geo";
+import { resolveGeo, isValidPlz } from "@/lib/geo";
+import { lookupCityByPlz } from "@/lib/plz-city";
 import { bookInfoabend } from "@/lib/tmw-booking";
 import { buildSource } from "@/lib/attribution-source";
 import { insertInfoAnmeldung } from "@/lib/info-anmeldungen";
@@ -18,6 +19,7 @@ type RequestBody = {
   eventId?: string;
   hasConsent?: boolean;
   newsSubscribed?: boolean;
+  plz?: string;
   path?: string;
   params?: Record<string, string>;
 };
@@ -33,24 +35,36 @@ export async function POST(request: Request) {
     name, email, phone, lectureId,
     eventDate, eventTime, eventType,
     locale = "de", eventId, hasConsent, newsSubscribed = false,
-    path = "/", params = {},
+    plz, path = "/", params = {},
   } = body;
 
   if (!name?.trim() || !email?.trim()) {
     return Response.json({ error: "Pflichtfelder fehlen." }, { status: 400 });
   }
 
+  const tenant = await getCurrentTenant();
+
   const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
   const clientUserAgent = request.headers.get("user-agent") ?? undefined;
   const eventSourceUrl = request.headers.get("referer") ?? "https://tm-muenchen.de";
   const host = request.headers.get("host") ?? "tm-muenchen.de";
   const source = buildSource(host, path, params);
-  const { city, zip_code } = resolveGeo(request.headers);
+  let { city, zip_code } = resolveGeo(request.headers);
+
+  // PLZ-Abfrage: when the tenant opted in and the visitor typed a PLZ, prefer it
+  // over the IP guess (blank still falls back to IP). Gated on the server flag.
+  if (tenant.plz_abfrage && plz?.trim()) {
+    if (!isValidPlz(plz)) {
+      return Response.json({ error: "Bitte gib eine gültige PLZ ein." }, { status: 400 });
+    }
+    zip_code = plz.trim();
+    city = lookupCityByPlz(zip_code) ?? city;
+  }
+
   const normalizedPhone = phone ? normalizePhone(phone) : undefined;
 
   const { first_name, last_name: rawLastName } = splitName(name);
   const last_name = rawLastName || "'";
-  const tenant = await getCurrentTenant();
 
   // Write to TMW — primary, fatal
   let tmwId: string | null = null;

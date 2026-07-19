@@ -75,6 +75,7 @@ export default function TenantForm({ tenant }: Props) {
       logo_url: fd.get('logo_url'),
       logo_label: fd.get('logo_label'),
       infoabend_duration_minutes: Number(fd.get('infoabend_duration_minutes') ?? 30),
+      plz_abfrage: fd.get('plz_abfrage') === 'on',
       center_banner_label: fd.get('center_banner_label'),
       impressum_content: fd.get('impressum_content'),
       legal_entity: fd.get('legal_entity'),
@@ -342,6 +343,15 @@ export default function TenantForm({ tenant }: Props) {
                 className={inputCls()}
               />
             </Field>
+            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                name="plz_abfrage"
+                defaultChecked={tenant?.plz_abfrage ?? false}
+                className="rounded border-gray-300 text-[#BCA075]"
+              />
+              PLZ im Anmeldeformular abfragen
+            </label>
             <Field label="Center-Bild URL">
               <input name="center_image_url" defaultValue={tenant?.center_image_url ?? ''} className={inputCls()} />
             </Field>

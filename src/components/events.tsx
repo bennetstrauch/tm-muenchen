@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { type TMEvent, formatEventDate } from "../lib/events";
+import { isValidPlz } from "@/lib/geo";
 import { getAttribution } from "@/lib/attribution";
 import { IndividualAppointment } from "./individual-appointment";
 
@@ -17,19 +18,27 @@ const INPUT_CLS = `
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
-function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => void }) {
+function RegistrationForm({ event, onClose, plzAbfrage }: { event: TMEvent; onClose: () => void; plzAbfrage: boolean }) {
   const t = useTranslations("Events");
   const locale = useLocale();
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [plzError, setPlzError] = useState(false);
   const { weekday, date } = formatEventDate(event.date, locale);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    const fd = new FormData(e.currentTarget);
+    const plz = ((fd.get("plz") as string) ?? "").trim();
+    if (plzAbfrage && plz && !isValidPlz(plz)) {
+      setPlzError(true);
+      return;
+    }
+    setPlzError(false);
     setFormState("submitting");
     setErrorMsg("");
 
-    const fd = new FormData(e.currentTarget);
     const eventId = crypto.randomUUID();
     const hasConsent = localStorage.getItem("tm_cookie_consent") === "accepted";
     const { path, params } = getAttribution();
@@ -50,6 +59,7 @@ function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => v
           eventId,
           hasConsent,
           newsSubscribed: fd.get("newsSubscribed") === "on",
+          plz: plzAbfrage ? plz || undefined : undefined,
           path,
           params,
         }),
@@ -79,13 +89,34 @@ function RegistrationForm({ event, onClose }: { event: TMEvent; onClose: () => v
 
   return (
     <form onSubmit={handleSubmit} className="py-5 px-1">
-      <div className="mb-3">
-        <input name="name" type="text" placeholder={t("formName")} required className={INPUT_CLS} />
-      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+        <input name="name" type="text" placeholder={t("formName")} required className={INPUT_CLS} />
         <input name="email" type="email" placeholder={t("formEmail")} required className={INPUT_CLS} />
-        <input name="phone" type="tel" placeholder={t("formPhone")} className={INPUT_CLS} />
       </div>
+      {plzAbfrage ? (
+        <div className="mb-3">
+          <div className="grid grid-cols-[2fr_1fr] gap-3">
+            <input name="phone" type="tel" placeholder={t("formPhone")} className={INPUT_CLS} />
+            <input
+              name="plz"
+              type="text"
+              inputMode="numeric"
+              maxLength={5}
+              placeholder={t("formPlz")}
+              className={`${INPUT_CLS} ${plzError ? "border-red-400" : ""}`}
+              onChange={e => {
+                e.target.value = e.target.value.replace(/\D/g, "").slice(0, 5);
+                if (plzError) setPlzError(false);
+              }}
+            />
+          </div>
+          {plzError && <p className="text-red-600 text-xs mt-1">{t("formPlzInvalid")}</p>}
+        </div>
+      ) : (
+        <div className="mb-3">
+          <input name="phone" type="tel" placeholder={t("formPhone")} className={INPUT_CLS} />
+        </div>
+      )}
 
       <label className="flex items-center gap-2 mb-4 cursor-pointer group">
         <input
@@ -134,10 +165,12 @@ function EventRow({
   event,
   isOpen,
   onToggle,
+  plzAbfrage,
 }: {
   event: TMEvent;
   isOpen: boolean;
   onToggle: () => void;
+  plzAbfrage: boolean;
 }) {
   const t = useTranslations("Events");
   const locale = useLocale();
@@ -200,14 +233,14 @@ function EventRow({
 
       </div>
 
-      {isOpen && <RegistrationForm event={event} onClose={onToggle} />}
+      {isOpen && <RegistrationForm event={event} onClose={onToggle} plzAbfrage={plzAbfrage} />}
     </li>
   );
 }
 
 const INITIAL_COUNT = 3;
 
-export default function Events({ events }: { events: TMEvent[] }) {
+export default function Events({ events, plzAbfrage = false }: { events: TMEvent[]; plzAbfrage?: boolean }) {
   const t = useTranslations("Events");
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [showAll, setShowAll] = useState(false);
@@ -236,6 +269,7 @@ export default function Events({ events }: { events: TMEvent[] }) {
                   event={event}
                   isOpen={openIdx === i}
                   onToggle={() => setOpenIdx(openIdx === i ? null : i)}
+                  plzAbfrage={plzAbfrage}
                 />
               ))}
             </ul>

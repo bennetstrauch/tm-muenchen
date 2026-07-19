@@ -155,6 +155,7 @@ type TenantRow = {
   logo_url: string | null;
   logo_label: string | null;
   infoabend_duration_minutes: number;
+  plz_abfrage: boolean;
   show_teachers: boolean;
   show_meditators_section: boolean;
   center_banner_label: string | null;

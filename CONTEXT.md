@@ -474,6 +474,23 @@ TMW handles all Infoabend confirmation, reminder, and Leiter-Benachrichtigung em
 ### Vor-Ort-Hinweis
 Präsenz-Infoabende are easily mistaken for online ones. Canonical badge term: **Vor Ort** (not "Präsenz") — rendered bold. While the registration form of a Vor-Ort-Termin is open, the event's address is prominently highlighted (yellow box, amber border, 📍) so nobody signs up thinking it's online.
 
+## PLZ-Abfrage
+
+A per-tenant setting that switches the visitor's postal code from **silent IP inference** (the default — see **IP-basierte PLZ-Auflösung**) to **explicit input** in the Infoabend sign-up form. Off by default; every center keeps IP inference unless it opts in.
+
+The toggle is about *collection*, not display: when a tenant turns it on, they are choosing to **ask** the visitor for their PLZ rather than infer it — typically because a local center wants trustworthy catchment data instead of an IP guess.
+
+Semantics when **on**:
+- A PLZ field appears in the Infoabend registration form. It is **not labelled optional**, but it is a **soft field**: leaving it blank never blocks a sign-up.
+- **Blank → the lead still goes through**, and the PLZ falls back to IP inference for that registration (today's behaviour). A center never loses a lead over the field.
+- **Filled → must be a plausible postal code (4–5 digits).** A malformed entry is the only thing that blocks submit, with an inline error. A valid entry is preferred over the IP guess, and the associated city is taken from the typed PLZ (falling back to the IP-derived city when the PLZ isn't recognised).
+
+Scope: **Infoabend sign-up only**. The **Individueller Info-Termin** deliberately stays on IP inference even when PLZ-Abfrage is on — it is a lower-traffic secondary path, and the toggle can be extended to it later if needed.
+
+Relationship to **ADR 0010**: that decision governs the IP-inference path, which stays country-agnostic and unchanged. PLZ-Abfrage is a separate, tenant-opted path layered on top; the 4–5-digit rule accepts German 5-digit and Austrian/Swiss 4-digit codes, so no Germany-shaped gate is reintroduced.
+
+> Canonical term: **PLZ-Abfrage** (not "Show PLZ", not "PLZ-Pflichtfeld" — it is a soft ask, not a hard requirement).
+
 ## Individueller Info-Termin
 
 A flow for visitors who want a personal appointment rather than a group Infoabend. Triggered by "Individuellen Termin anfragen" in the events section — an inline-expanding form (no page navigation) with fields: Name, E-Mail, Telefon (optional), Verfügbarkeit free-text (optional), Newsletter-Checkbox.

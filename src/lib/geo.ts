@@ -21,6 +21,12 @@ export function cityToPlz(city: string): string {
   return CITY_PLZ[decoded] ?? '';
 }
 
+// A plausible postal code: 4–5 digits (German 5-digit, Austrian/Swiss 4-digit).
+// Shared by the PLZ-Abfrage form (client pre-submit) and /api/register (server).
+export function isValidPlz(plz: string): boolean {
+  return /^\d{4,5}$/.test(plz.trim());
+}
+
 export function resolveGeo(headers: Headers): { city: string; zip_code: string } {
   const city = decodeURIComponent(headers.get('x-vercel-ip-city') ?? '');
   const zip_code = headers.get('x-vercel-ip-postal-code') || cityToPlz(city);
