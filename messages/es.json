@@ -101,7 +101,9 @@
     "infoAnfrageSuccessTitle": "¡Gracias por tu mensaje!",
     "infoAnfrageSuccessBody": "Nos pondremos en contacto contigo pronto y encontraremos juntos un horario que te venga bien.",
     "ueberpruefungHeading": "¿Tu meditación no fluye como debería?\nReserva una cita con nosotros. 😊",
-    "treffenHeading": "¿Tienes una idea para eventos en el centro o en línea? ¡Cuéntanosla! 😊"
+    "treffenHeading": "¿Tienes una idea para eventos en el centro o en línea? ¡Cuéntanosla! 😊",
+    "formPlz": "Código postal",
+    "formPlzInvalid": "Por favor, introduce un código postal válido."
   },
   "Trustpilot": {
     "heading": "Lo que dicen otros",

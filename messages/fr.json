@@ -101,7 +101,9 @@
     "infoAnfrageSuccessTitle": "Merci pour ta demande !",
     "infoAnfrageSuccessBody": "On te recontacte très vite pour trouver ensemble un créneau qui te convient.",
     "ueberpruefungHeading": "Ta méditation ne se passe pas aussi bien que tu le voudrais ?\nPrends rendez-vous avec nous. 😊",
-    "treffenHeading": "Tu as une idée d'événement pour le Centre ou en ligne ? Partage-la avec nous ! 😊"
+    "treffenHeading": "Tu as une idée d'événement pour le Centre ou en ligne ? Partage-la avec nous ! 😊",
+    "formPlz": "Code postal",
+    "formPlzInvalid": "Saisis un code postal valide."
   },
   "Trustpilot": {
     "heading": "Ce qu'ils en disent",
