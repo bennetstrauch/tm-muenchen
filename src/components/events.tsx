@@ -31,7 +31,7 @@ function RegistrationForm({ event, onClose, plzAbfrage }: { event: TMEvent; onCl
 
     const fd = new FormData(e.currentTarget);
     const plz = ((fd.get("plz") as string) ?? "").trim();
-    if (plzAbfrage && plz && !isValidPlz(plz)) {
+    if (plzAbfrage && !isValidPlz(plz)) {
       setPlzError(true);
       return;
     }
@@ -102,6 +102,7 @@ function RegistrationForm({ event, onClose, plzAbfrage }: { event: TMEvent; onCl
               type="text"
               inputMode="numeric"
               maxLength={5}
+              required
               placeholder={t("formPlz")}
               className={`${INPUT_CLS} ${plzError ? "border-red-400" : ""}`}
               onChange={e => {
