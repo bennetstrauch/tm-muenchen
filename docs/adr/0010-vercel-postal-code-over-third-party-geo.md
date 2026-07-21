@@ -38,3 +38,13 @@ Die gesamte Logik lebt in `resolveGeo(headers)` (`lib/geo.ts`) — beide Routen 
 - Kein neuer Datenverarbeiter, keine DSGVO-Erweiterung, 0 €.
 - Wer künftig „mehr Genauigkeit" via Drittanbieter-API einbauen will, reaktiviert damit ein Compliance-Problem — deshalb diese ADR.
 - Migration `20260717_geo_zip_code.sql` muss in Prod ausgeführt werden, sonst verwirft der Insert das Feld stillschweigend.
+
+## Mobilfunk-Grenze (bewusst nicht „gefixt")
+Auf **Mobilfunk** (Cellular) ist die IP→PLZ-Auflösung strukturell ungenau: die öffentliche IP gehört dem Carrier-Gateway (CGNAT), nicht dem Nutzer — ein Germeringer im Telekom-Netz erscheint ggf. als München oder Frankfurt. Auf WLAN/Festnetz ist die Auflösung stadt-genau. Das ist keine Bug, sondern eine Eigenschaft von IP-Geolocation.
+
+„Nur WLAN automatchen" ist **nicht umsetzbar**, ohne genau das zu tun, was diese ADR ablehnt:
+- **Server-seitig** liefert Vercel keine ASN/Connection-Type-Header; Cellular-Klassifizierung gäbe es nur über Drittanbieter-IP-Intelligence (MaxMind o. ä.) → DSGVO/Drittland (siehe Entscheidung 2).
+- **Client-seitig** ist `navigator.connection.type === 'cellular'` auf iOS Safari `undefined` und auf Android Chrome aus Datenschutzgründen nicht exponiert (nur `effectiveType`, das WLAN nicht von Cellular trennt) — versagt also gerade dort, wo es gebraucht würde.
+- **User-Agent** erkennt nur „Handy vs. Desktop", nicht das Netz — das ist das falsche Signal: es verwirft gutes WLAN-am-Handy und übersieht getethertes Notebook.
+
+Wer eine *echte* PLZ auf Mobilfunk braucht, aktiviert `plz_abfrage` (Feld ist dann Pflicht) — der einzige zuverlässige Weg.
