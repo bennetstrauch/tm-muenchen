@@ -103,7 +103,22 @@
     "infoAnfrageSuccessTitle": "Danke für deine Anfrage!",
     "infoAnfrageSuccessBody": "Wir melden uns bald bei dir und finden gemeinsam einen Termin, der zu dir passt.",
     "ueberpruefungHeading": "Die Meditation ist nicht so leicht, wie sie es sein sollte?\nVereinbare einen Termin mit uns. 😊",
-    "treffenHeading": "Du hast einen Vorschlag für Events im Center oder Online. Bitte teile ihn uns mit! 😊"
+    "treffenHeading": "Du hast einen Vorschlag für Events im Center oder Online. Bitte teile ihn uns mit! 😊",
+    "tabImCenter": "Im Center",
+    "catUeberpruefung": "TM-Überprüfung",
+    "catUeberpruefungTab": "TM-Überprüfung",
+    "catVertiefung": "Vertiefungs-Wochenende",
+    "catVertiefungTab": "Wochenende",
+    "catTreffen": "Regelmäßige Treffen",
+    "catTreffenTab": "Regelmäßige Treffen",
+    "catFortgeschritten": "Fortgeschrittenentechniken",
+    "catFortgeschrittenTab": "Fortgeschritten",
+    "ogEventsTitle": "Events für Meditierende",
+    "ogEventsBlurb": "Gruppenmeditationen, Center-Abende, Retreats und mehr für bereits Meditierende in {city}.",
+    "ogUeberpruefungBlurb": "Damit Meditation leicht und wirkungsvoll bleibt.",
+    "ogTreffenBlurb": "Schlag uns ein Event vor, das du dir wünschst – online oder im Center.",
+    "ogVertiefungBlurb": "Einmal richtig auftanken: Gemeinsam meditieren und tief in die eigene Glückseligkeit eintauchen.",
+    "ogFortgeschrittenBlurb": "Wie Dünger für deine Entwicklung – die fortgeschrittenen Techniken der TM."
   },
   "WasAndereSagen": {
     "heading": "Was Ärzte & TM-Praktizierende sagen",

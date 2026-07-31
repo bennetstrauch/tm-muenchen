@@ -1,23 +1,30 @@
 "use client";
 
-import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useState, useEffect } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import type { TenantConfig } from "@/lib/tenant";
 import type { Veranstaltung } from "@/lib/veranstaltungen";
 import MeditierendenEvents from "./meditierenden-events";
 import { IndividualAppointment } from "./individual-appointment";
+import { getExternalUrl, pathForTab, type Category, type Tab } from "@/lib/meditators-tabs";
 
-const DEFAULT_VERTIEFUNG_URL = "https://tm-wochenende.de/tm-kraft-der-stille/";
-const DEFAULT_FORTGESCHRITTEN_URL = "https://tm-wochenende.de/fortgeschritten/";
+const LABEL_KEY: Record<Category, string> = {
+  ueberpruefung: "catUeberpruefung",
+  vertiefung: "catVertiefung",
+  treffen: "catTreffen",
+  fortgeschritten: "catFortgeschritten",
+};
 
-type Category = "ueberpruefung" | "vertiefung" | "treffen" | "fortgeschritten";
+const TAB_LABEL_KEY: Record<Category, string> = {
+  ueberpruefung: "catUeberpruefungTab",
+  vertiefung: "catVertiefungTab",
+  treffen: "catTreffenTab",
+  fortgeschritten: "catFortgeschrittenTab",
+};
 
-
-const CATEGORIES: { id: Category; label: string; tabLabel: string; betreff: string; showInTabs: boolean; icon: React.ReactNode }[] = [
+const CATEGORIES: { id: Category; betreff: string; showInTabs: boolean; icon: React.ReactNode }[] = [
   {
     id: "treffen",
-    label: "Regelmäßige Treffen",
-    tabLabel: "Regelmäßige Treffen",
     betreff: "MeditierendenTreffen",
     showInTabs: false,
     icon: (
@@ -31,8 +38,6 @@ const CATEGORIES: { id: Category; label: string; tabLabel: string; betreff: stri
   },
   {
     id: "ueberpruefung",
-    label: "TM-Überprüfung",
-    tabLabel: "TM-Überprüfung",
     betreff: "TM-Überprüfung",
     showInTabs: true,
     icon: (
@@ -44,8 +49,6 @@ const CATEGORIES: { id: Category; label: string; tabLabel: string; betreff: stri
   },
   {
     id: "vertiefung",
-    label: "Vertiefungs-Wochenende",
-    tabLabel: "Wochenende",
     betreff: "Vertiefungs-Wochenende",
     showInTabs: true,
     icon: (
@@ -56,8 +59,6 @@ const CATEGORIES: { id: Category; label: string; tabLabel: string; betreff: stri
   },
   {
     id: "fortgeschritten",
-    label: "Fortgeschrittenentechniken",
-    tabLabel: "Fortgeschritten",
     betreff: "Fortgeschrittenentechniken",
     showInTabs: true,
     icon: (
@@ -75,43 +76,46 @@ const CARD_IMAGES: Record<Category, string> = {
   fortgeschritten: "/meditierenden/fortgeschritten.webp",
 };
 
-// Vertiefung and Fortgeschritten always have a national default URL → always link out.
-// Überprüfung and Treffen have no national default → show inline form unless tenant overrides.
-function getExternalUrl(tenant: TenantConfig, id: Category): string | null {
-  switch (id) {
-    case "ueberpruefung": return tenant.meditators_ueberpruefung_url;
-    case "vertiefung": return tenant.meditators_vertiefung_url ?? DEFAULT_VERTIEFUNG_URL;
-    case "treffen": return tenant.meditators_treffen_url;
-    case "fortgeschritten": return tenant.meditators_fortgeschrittenentechniken_url ?? DEFAULT_FORTGESCHRITTEN_URL;
-  }
-}
-
 // ── Tab layout (with events) ──────────────────────────────────
 
 function TabLayout({
   events,
   tenant,
+  initialTab,
   whatsappLink,
   contactEmail,
 }: {
   events: Veranstaltung[];
   tenant: TenantConfig;
+  initialTab: Tab;
   whatsappLink?: string | null;
   contactEmail?: string | null;
 }) {
   const t = useTranslations("Events");
+  const locale = useLocale();
   const formHeadings: Partial<Record<Category, string>> = {
     ueberpruefung: t("ueberpruefungHeading"),
     treffen: t("treffenHeading"),
   };
-  const [activeTab, setActiveTab] = useState<"im-center" | Category>("im-center");
+  const [activeTab, setActiveTab] = useState<Tab>(initialTab);
+
+  // Normalize the URL on mount: an invalid or external slug resolves to im-center,
+  // so rewrite the address bar to the canonical path for the resolved tab.
+  useEffect(() => {
+    window.history.replaceState(null, "", pathForTab(locale, initialTab));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function selectTab(tab: Tab) {
+    setActiveTab(tab);
+    window.history.pushState(null, "", pathForTab(locale, tab));
+  }
 
   function handleCategoryClick(cat: typeof CATEGORIES[number]) {
     const url = getExternalUrl(tenant, cat.id);
     if (url) {
       window.open(url, "_blank", "noopener,noreferrer");
     } else {
-      setActiveTab(cat.id);
+      selectTab(cat.id);
     }
   }
 
@@ -129,10 +133,10 @@ function TabLayout({
       <div className="relative">
         <div className="flex overflow-x-auto mb-6 border-b border-[#DBEAFE] scrollbar-none md:justify-center">
           <button
-            onClick={() => setActiveTab("im-center")}
+            onClick={() => selectTab("im-center")}
             className={`${tabBase} ${activeTab === "im-center" ? tabActive : tabInactive}`}
           >
-            Im Center
+            {t("tabImCenter")}
           </button>
 
           {CATEGORIES.filter(cat => cat.showInTabs).map((cat) => {
@@ -144,7 +148,7 @@ function TabLayout({
                 onClick={() => handleCategoryClick(cat)}
                 className={`${tabBase} ${isActive ? tabActive : tabInactive}`}
               >
-                {cat.tabLabel}
+                {t(TAB_LABEL_KEY[cat.id])}
                 {url && (
                   <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true" className="inline ml-1 opacity-40">
                     <path d="M5.5 1H9m0 0v3.5M9 1L4 6M1 4v5h5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
@@ -173,21 +177,30 @@ function TabLayout({
 
 // ── Card grid (no events) ─────────────────────────────────────
 
-function CardGrid({ tenant }: { tenant: TenantConfig }) {
+function CardGrid({ tenant, initialTab }: { tenant: TenantConfig; initialTab: Tab }) {
   const t = useTranslations("Events");
+  const locale = useLocale();
   const formHeadings: Partial<Record<Category, string>> = {
     ueberpruefung: t("ueberpruefungHeading"),
     treffen: t("treffenHeading"),
   };
-  const [openForm, setOpenForm] = useState<Category | null>(null);
+  const [openForm, setOpenForm] = useState<Category | null>(
+    initialTab === "im-center" ? null : initialTab,
+  );
+
+  useEffect(() => {
+    window.history.replaceState(null, "", pathForTab(locale, initialTab));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleCardClick(cat: typeof CATEGORIES[number]) {
     const url = getExternalUrl(tenant, cat.id);
     if (url) {
       window.open(url, "_blank", "noopener,noreferrer");
-    } else {
-      setOpenForm(openForm === cat.id ? null : cat.id);
+      return;
     }
+    const next = openForm === cat.id ? null : cat.id;
+    setOpenForm(next);
+    window.history.pushState(null, "", pathForTab(locale, next ?? "im-center"));
   }
 
   return (
@@ -224,8 +237,8 @@ function CardGrid({ tenant }: { tenant: TenantConfig }) {
               <div className="flex-1 flex flex-col justify-center gap-1.5 px-5 py-4 md:px-6 md:py-4 bg-[#F8F5EF] group-hover:bg-[#F2EDE5] transition-colors">
                 <div className="flex flex-col md:flex-row md:items-center md:gap-2.5">
                   <div className="text-[#BCA075] flex-shrink-0">{cat.icon}</div>
-                  <p className="font-display font-semibold text-[1.05rem] md:text-[1.1rem] text-[#1A3352] leading-tight hyphens-auto" lang="de">
-                    {cat.label}
+                  <p className="font-display font-semibold text-[1.05rem] md:text-[1.1rem] text-[#1A3352] leading-tight hyphens-auto" lang={locale}>
+                    {t(LABEL_KEY[cat.id])}
                   </p>
                 </div>
                 {!url && (
@@ -250,11 +263,13 @@ function CardGrid({ tenant }: { tenant: TenantConfig }) {
 export default function MeditierendenAngebote({
   events,
   tenant,
+  initialTab,
   whatsappLink,
   contactEmail,
 }: {
   events: Veranstaltung[];
   tenant: TenantConfig;
+  initialTab: Tab;
   whatsappLink?: string | null;
   contactEmail?: string | null;
 }) {
@@ -263,10 +278,11 @@ export default function MeditierendenAngebote({
       <TabLayout
         events={events}
         tenant={tenant}
+        initialTab={initialTab}
         whatsappLink={whatsappLink}
         contactEmail={contactEmail}
       />
     );
   }
-  return <CardGrid tenant={tenant} />;
+  return <CardGrid tenant={tenant} initialTab={initialTab} />;
 }
