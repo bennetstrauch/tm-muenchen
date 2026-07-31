@@ -2,7 +2,9 @@ import sharp from 'sharp';
 import { mkdir, stat } from 'node:fs/promises';
 
 // Link-preview crops: 1200×630 JPG, the OG standard aspect (1.91:1).
-// Sources are the existing category photos + the retreat photo for /events.
+// Deliberately JPG, not the project-wide WebP rule — WhatsApp and several
+// social scrapers don't render WebP OG images. Sources are the existing
+// category photos + the retreat photo for /events.
 const OUT_DIR = 'public/og';
 
 const JOBS = [

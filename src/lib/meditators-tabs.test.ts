@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { resolveInitialTab, slugForTab, pathForTab, OG_BY_TAB, type MeditatorsUrls, type Tab } from "./meditators-tabs";
+import { resolveInitialTab, pathForTab, TAB_META, type MeditatorsUrls, type Tab } from "./meditators-tabs";
+import de from "../../messages/de.json";
 
 const noUrls: MeditatorsUrls = {
   meditators_ueberpruefung_url: null,
@@ -7,6 +8,8 @@ const noUrls: MeditatorsUrls = {
   meditators_treffen_url: null,
   meditators_fortgeschrittenentechniken_url: null,
 };
+
+const ALL_TABS: Tab[] = ["im-center", "ueberpruefung", "vertiefung", "treffen", "fortgeschritten"];
 
 describe("resolveInitialTab", () => {
   it("falls back to im-center when no slug is given", () => {
@@ -35,19 +38,6 @@ describe("resolveInitialTab", () => {
   });
 });
 
-describe("OG_BY_TAB", () => {
-  const tabs: Tab[] = ["im-center", "ueberpruefung", "vertiefung", "treffen", "fortgeschritten"];
-
-  it("has a preview descriptor with a jpg image for every tab", () => {
-    for (const tab of tabs) {
-      const og = OG_BY_TAB[tab];
-      expect(og.titleKey).toBeTruthy();
-      expect(og.blurbKey).toBeTruthy();
-      expect(og.image).toMatch(/^\/og\/.+\.jpg$/);
-    }
-  });
-});
-
 describe("pathForTab", () => {
   it("gives the default locale a bare /events path", () => {
     expect(pathForTab("de", "im-center")).toBe("/events");
@@ -60,13 +50,20 @@ describe("pathForTab", () => {
   });
 });
 
-describe("slugForTab", () => {
-  it("gives im-center no slug (bare /events)", () => {
-    expect(slugForTab("im-center")).toBeNull();
+describe("TAB_META", () => {
+  it("has a jpg link-preview image for every tab", () => {
+    for (const tab of ALL_TABS) {
+      expect(TAB_META[tab].ogImage).toMatch(/^\/og\/.+\.jpg$/);
+    }
   });
 
-  it("maps a category to its url slug", () => {
-    expect(slugForTab("ueberpruefung")).toBe("checking");
-    expect(slugForTab("treffen")).toBe("treffen");
+  it("references only message keys that exist in de.json", () => {
+    const events = de.Events as Record<string, string>;
+    for (const tab of ALL_TABS) {
+      const meta = TAB_META[tab];
+      expect(events[meta.labelKey]).toBeTruthy();
+      expect(events[meta.tabLabelKey]).toBeTruthy();
+      expect(events[meta.blurbKey]).toBeTruthy();
+    }
   });
 });

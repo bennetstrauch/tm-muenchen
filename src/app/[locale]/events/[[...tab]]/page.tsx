@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { getVeranstaltungen } from '@/lib/veranstaltungen';
 import MeditierendenAngebote from '@/components/meditierenden-angebote';
 import { getCurrentTenant } from '@/lib/tenant';
-import { resolveInitialTab, OG_BY_TAB } from '@/lib/meditators-tabs';
+import { resolveInitialTab, pathForTab, TAB_META } from '@/lib/meditators-tabs';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,29 +17,30 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, tab } = await params;
   const tenant = await getCurrentTenant();
-  const activeTab = resolveInitialTab(tab?.[0], tenant);
-  const og = OG_BY_TAB[activeTab];
+  const meta = TAB_META[resolveInitialTab(tab?.[0], tenant)];
   const t = await getTranslations({ locale, namespace: 'Events' });
 
-  const title = `${t(og.titleKey)} – ${tenant.city}`;
-  const description = t(og.blurbKey, { city: tenant.city });
+  const title = `${t(meta.labelKey)} – ${tenant.city}`;
+  const description = t(meta.blurbKey, { city: tenant.city });
 
   return {
     title,
     description,
-    openGraph: { title, description, images: [{ url: og.image, width: 1200, height: 630 }] },
-    twitter: { card: 'summary_large_image', title, description, images: [og.image] },
+    openGraph: { title, description, images: [{ url: meta.ogImage, width: 1200, height: 630 }] },
+    twitter: { card: 'summary_large_image', title, description, images: [meta.ogImage] },
   };
 }
 
 export default async function EventsPage({ params }: { params: Promise<Params> }) {
-  const { tab } = await params;
+  const { locale, tab } = await params;
   const tenant = await getCurrentTenant();
   if (!tenant.show_meditators_section) redirect('/');
   const events = await getVeranstaltungen(tenant.tenant).catch(() => []);
   const whatsappLink = tenant.whatsapp_link;
   const contactEmail = tenant.contact_email;
-  const initialTab = resolveInitialTab(tab?.[0], tenant);
+  const t = await getTranslations({ locale, namespace: 'Events' });
+  const active = resolveInitialTab(tab?.[0], tenant);
+  if (tab?.[0] !== undefined && tab[0] !== TAB_META[active].slug) redirect(pathForTab(locale, active));
 
   return (
     <main className="min-h-screen bg-white pt-16 pb-20">
@@ -47,11 +48,11 @@ export default async function EventsPage({ params }: { params: Promise<Params> }
 
         <div className="pt-1 pb-4 text-center">
           <h1 className="font-display font-light text-[2rem] sm:text-[2.75rem] text-[#1A3352] leading-tight">
-            Events für Meditierende
+            {t('ogEventsTitle')}
           </h1>
         </div>
 
-        <MeditierendenAngebote events={events} tenant={tenant} initialTab={initialTab} whatsappLink={whatsappLink} contactEmail={contactEmail} />
+        <MeditierendenAngebote events={events} tenant={tenant} active={active} whatsappLink={whatsappLink} contactEmail={contactEmail} />
 
         {whatsappLink && (
           <div className="mt-16 border-t border-[#DBEAFE] pt-10 text-center">
