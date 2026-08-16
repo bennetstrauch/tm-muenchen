@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import type { TenantSettings } from '@/lib/tenant';
 import { INPUT_CLS } from '@/lib/admin-styles';
 import { isValidEmail } from '@/lib/validation';
+import { resolveWhatsappDigits } from '@/lib/whatsapp';
 
 const ALL_LOCALES = [
   { code: 'de', label: 'Deutsch' },
@@ -152,6 +153,19 @@ export default function EinstellungenTab() {
                   onChange={e => setSettings(prev => ({ ...prev, whatsapp_number: e.target.value || null }))}
                 />
                 <p className="text-xs text-gray-400 mt-1">Nur ausfüllen, falls abweichend von der Kontakttelefonnummer</p>
+                {(() => {
+                  const digits = resolveWhatsappDigits(settings.whatsapp_number, settings.contact_phone);
+                  if (!digits || digits.length < 8) return null;
+                  const href = `https://wa.me/${digits}`;
+                  return (
+                    <p className="text-xs text-gray-500 mt-1">
+                      WhatsApp öffnet:{' '}
+                      <a href={href} target="_blank" rel="noopener noreferrer" className="text-[#BCA075] hover:underline break-all">
+                        {href}
+                      </a>
+                    </p>
+                  );
+                })()}
               </div>
             </div>
           )}

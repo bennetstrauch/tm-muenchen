@@ -237,6 +237,10 @@ Invite link: `https://chat.whatsapp.com/L8cvH1LG3cu5aavhZkte3D`
 
 WhatsApp tracking: no localStorage flag for "already joined" — CTA always shown, small and non-intrusive.
 
+### Direktnachricht-Link (wa.me)
+
+The contact bar's WhatsApp icon links to a direct chat (`wa.me/<number>`), built by `buildWhatsappDirectLink` from `whatsapp_number` (falling back to `contact_phone`). The number is **auto-normalized at read time** to international digits — the stored value stays human-format so `tel:`/display keep the leading zero. Handled forms: `+49…`, `0049…`, `0163…` (national), `49…` (already country-coded), and the `+49 (0)…` parenthetical notation. The country code is hardcoded to `49` (`DEFAULT_COUNTRY_CODE` in `lib/whatsapp.ts`); onboarding a non-German center means making it per-tenant config. The Einstellungen tab shows a clickable preview of the resulting `wa.me` link once the number is plausibly complete (≥ 8 digits).
+
 ### Admin: WhatsApp post generation
 
 In the Veranstaltungen tab, each event row has a **"WhatsApp-Post erstellen"** button. Clicking expands an inline panel (no page navigation) with:

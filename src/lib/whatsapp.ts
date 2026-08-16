@@ -10,6 +10,34 @@ type Options = {
   showSignupLink?: boolean;
 };
 
+// German country code. If this product ever onboards a non-German center, this
+// must become per-tenant config: the leading-0 → country-code replacement below
+// assumes German national format.
+// See CONTEXT.md → WhatsApp Community → Direktnachricht-Link (wa.me).
+const DEFAULT_COUNTRY_CODE = '49';
+
+/**
+ * Resolve the wa.me international digits for a tenant.
+ * Prefers whatsapp_number, falls back to contact_phone, returns null when neither is set.
+ * Normalizes the common German forms: +49…, 0049…, 0163… (national),
+ * 49… (already country-coded), and the +49 (0)… parenthetical notation.
+ */
+export function resolveWhatsappDigits(
+  whatsappNumber: string | null | undefined,
+  contactPhone: string | null | undefined,
+): string | null {
+  const raw = whatsappNumber?.trim() || contactPhone?.trim() || '';
+  if (!raw) return null;
+  let digits = raw.replace(/\D/g, '');
+  if (digits.startsWith('00')) digits = digits.slice(2);
+  else if (digits.startsWith('0')) digits = DEFAULT_COUNTRY_CODE + digits.slice(1);
+  // Drop a leading 0 that survived the (0) notation after the country code.
+  if (digits.startsWith(DEFAULT_COUNTRY_CODE + '0')) {
+    digits = DEFAULT_COUNTRY_CODE + digits.slice(DEFAULT_COUNTRY_CODE.length + 1);
+  }
+  return digits;
+}
+
 /**
  * Build a wa.me direct-chat link from a phone number.
  * Prefers whatsapp_number; falls back to contact_phone.
@@ -19,10 +47,8 @@ export function buildWhatsappDirectLink(
   whatsappNumber: string | null | undefined,
   contactPhone: string | null | undefined,
 ): string | null {
-  const raw = whatsappNumber?.trim() || contactPhone?.trim() || '';
-  if (!raw) return null;
-  const digits = raw.replace(/\D/g, '');
-  return `https://wa.me/${digits}`;
+  const digits = resolveWhatsappDigits(whatsappNumber, contactPhone);
+  return digits ? `https://wa.me/${digits}` : null;
 }
 
 export function buildWhatsappUrl(text: string): string {
