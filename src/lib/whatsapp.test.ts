@@ -148,8 +148,44 @@ describe('buildWhatsappDirectLink', () => {
     );
   });
 
+  it('converts a German national number (leading 0) to country code 49', () => {
+    expect(buildWhatsappDirectLink('0163 7354836', null)).toBe(
+      'https://wa.me/491637354836'
+    );
+    expect(buildWhatsappDirectLink('089 123456', null)).toBe(
+      'https://wa.me/4989123456'
+    );
+  });
+
+  it('drops the 00 international prefix', () => {
+    expect(buildWhatsappDirectLink('0049 163 7354836', null)).toBe(
+      'https://wa.me/491637354836'
+    );
+  });
+
+  it('leaves an already country-coded number (49, no +) unchanged', () => {
+    expect(buildWhatsappDirectLink('49 163 7354836', null)).toBe(
+      'https://wa.me/491637354836'
+    );
+  });
+
+  it('strips the parenthetical (0) in +49 (0)… and 0049 (0)… notation', () => {
+    expect(buildWhatsappDirectLink('+49 (0)163 7354836', null)).toBe(
+      'https://wa.me/491637354836'
+    );
+    expect(buildWhatsappDirectLink('0049 (0)163 7354836', null)).toBe(
+      'https://wa.me/491637354836'
+    );
+  });
+
   it('falls back to contact_phone when whatsapp_number is null', () => {
     expect(buildWhatsappDirectLink(null, '+49 89 123456')).toBe(
+      'https://wa.me/4989123456'
+    );
+  });
+
+  it('normalizes the contact_phone fallback too (national format)', () => {
+    expect(buildWhatsappDirectLink(null, '089 123456')).toBe(
       'https://wa.me/4989123456'
     );
   });
