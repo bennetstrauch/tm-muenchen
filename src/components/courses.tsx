@@ -6,6 +6,7 @@ import type { TMCourse, CourseSlot } from "@/lib/courses";
 import { IndividualAppointment } from "./individual-appointment";
 import { formatEventDate } from "@/lib/events";
 import { lookupCityByPlz } from "@/lib/plz-city";
+import { isValidEmail } from "@/lib/validation";
 
 const INITIAL_COUNT = 3;
 
@@ -180,7 +181,7 @@ function ContactStep({
     const errs: Record<string, string> = {};
     if (!data.firstName.trim()) errs.firstName = t("validationRequired");
     if (!data.lastName.trim()) errs.lastName = t("validationRequired");
-    if (!data.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errs.email = t("validationEmail");
+    if (!data.email.trim() || !isValidEmail(data.email)) errs.email = t("validationEmail");
     if (!data.gender) errs.gender = t("validationRequired");
     if (!data.dobDay || !data.dobMonth || !data.dobYear || data.dobYear.length < 4) errs.dob = t("validationDob");
     if (!data.plz.trim()) errs.plz = t("validationRequired");

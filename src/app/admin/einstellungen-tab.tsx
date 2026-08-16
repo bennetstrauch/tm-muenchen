@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import type { TenantSettings } from '@/lib/tenant';
 import { INPUT_CLS } from '@/lib/admin-styles';
+import { isValidEmail } from '@/lib/validation';
 
 const ALL_LOCALES = [
   { code: 'de', label: 'Deutsch' },
@@ -78,7 +79,7 @@ export default function EinstellungenTab() {
   async function handleSave() {
     const errors: Record<string, string> = {};
     if (!settings.contact_email.trim()) errors.contact_email = 'Pflichtfeld';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(settings.contact_email)) errors.contact_email = 'Ungültige E-Mail-Adresse';
+    else if (!isValidEmail(settings.contact_email)) errors.contact_email = 'Ungültige E-Mail-Adresse';
     if (!settings.contact_phone.trim()) errors.contact_phone = 'Pflichtfeld';
     if (Object.keys(errors).length > 0) { setFieldErrors(errors); return; }
     setFieldErrors({});

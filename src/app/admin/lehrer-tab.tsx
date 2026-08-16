@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { TMTeacher } from '@/lib/teachers';
+import type { TMTeacher, ContactRow } from '@/lib/teachers';
 import { INPUT_CLS as INPUT_BASE } from '@/lib/admin-styles';
+import { isValidEmail } from '@/lib/validation';
 
 const LOCALES = [
   { code: 'en', label: 'English' },
@@ -12,9 +13,12 @@ const LOCALES = [
 
 type Assignment = { teacher_name: string; locale: string; bio_override: string | null };
 
+type ContactState = { email: string; phone: string; useCenterContacts: boolean };
+
 type TeacherState = {
   locales: Set<string>;
   overrides: Record<string, string>;
+  contact: ContactState;
 };
 
 const INPUT_CLS = `${INPUT_BASE} resize-y min-h-[60px]`;
@@ -30,16 +34,22 @@ export default function LehrerTab() {
   useEffect(() => {
     fetch('/api/admin/lehrer')
       .then(r => r.json())
-      .then(({ teachers: t, assignments }: { teachers: TMTeacher[]; assignments: Assignment[] }) => {
+      .then(({ teachers: t, assignments, contacts }: { teachers: TMTeacher[]; assignments: Assignment[]; contacts: ContactRow[] }) => {
         setTeachers(t);
         const initial: Record<string, TeacherState> = {};
         for (const teacher of t) {
           const rows = assignments.filter(a => a.teacher_name === teacher.name);
+          const contact = contacts.find(c => c.teacher_name === teacher.name);
           initial[teacher.name] = {
             locales: new Set(rows.map(r => r.locale)),
             overrides: Object.fromEntries(
               rows.filter(r => r.bio_override).map(r => [r.locale, r.bio_override!])
             ),
+            contact: {
+              email: contact?.email ?? '',
+              phone: contact?.phone ?? '',
+              useCenterContacts: contact?.use_center_contacts ?? false,
+            },
           };
         }
         setState(initial);
@@ -54,7 +64,7 @@ export default function LehrerTab() {
       if (next.has(locale)) {
         next.delete(locale);
         const { [locale]: _, ...rest } = ts.overrides;
-        return { ...prev, [name]: { locales: next, overrides: rest } };
+        return { ...prev, [name]: { ...ts, locales: next, overrides: rest } };
       }
       next.add(locale);
       return { ...prev, [name]: { ...ts, locales: next } };
@@ -68,20 +78,44 @@ export default function LehrerTab() {
     }));
   }
 
+  function setContact(name: string, patch: Partial<ContactState>) {
+    setState(prev => ({
+      ...prev,
+      [name]: { ...prev[name], contact: { ...prev[name].contact, ...patch } },
+    }));
+  }
+
   async function handleSave() {
+    for (const ts of Object.values(state)) {
+      if (ts.contact.email.trim() && !isValidEmail(ts.contact.email.trim())) {
+        setResult({ ok: false, msg: 'Ungültige E-Mail-Adresse.' });
+        return;
+      }
+    }
+
     setSaving(true);
     setResult(null);
-    const rows: Assignment[] = [];
+    const assignments: Assignment[] = [];
+    const contacts: ContactRow[] = [];
     for (const [teacher_name, ts] of Object.entries(state)) {
       for (const locale of ts.locales) {
-        rows.push({ teacher_name, locale, bio_override: ts.overrides[locale] || null });
+        assignments.push({ teacher_name, locale, bio_override: ts.overrides[locale] || null });
+      }
+      const { email, phone, useCenterContacts } = ts.contact;
+      if (useCenterContacts || email.trim() || phone.trim()) {
+        contacts.push({
+          teacher_name,
+          email: email.trim() || null,
+          phone: phone.trim() || null,
+          use_center_contacts: useCenterContacts,
+        });
       }
     }
     try {
       const res = await fetch('/api/admin/lehrer', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(rows),
+        body: JSON.stringify({ assignments, contacts }),
       });
       setResult(res.ok ? { ok: true, msg: 'Gespeichert.' } : { ok: false, msg: 'Fehler beim Speichern.' });
     } catch {
@@ -97,7 +131,10 @@ export default function LehrerTab() {
   return (
     <div className="space-y-4">
       {teachers.map(teacher => {
-        const ts = state[teacher.name] ?? { locales: new Set(), overrides: {} };
+        const ts = state[teacher.name] ?? { locales: new Set(), overrides: {}, contact: { email: '', phone: '', useCenterContacts: false } };
+        const centerUsedElsewhere = Object.entries(state).some(
+          ([name, s]) => name !== teacher.name && s.contact.useCenterContacts
+        );
         return (
           <div key={teacher.name} className="bg-white rounded-lg border border-gray-200 px-6 py-4">
             <p className="font-medium text-gray-800 mb-3">{teacher.name}</p>
@@ -125,6 +162,37 @@ export default function LehrerTab() {
                 />
               </div>
             ))}
+
+            <div className="border-t border-gray-100 mt-4 pt-4">
+              <p className="text-xs text-gray-400 mb-2">Kontaktdaten anzeigen unter diesem Lehrer (optional)</p>
+              {!ts.contact.useCenterContacts && (
+                <div className="space-y-2 mb-3">
+                  <input
+                    type="email"
+                    className={INPUT_BASE}
+                    value={ts.contact.email}
+                    onChange={e => setContact(teacher.name, { email: e.target.value })}
+                    placeholder="E-Mail"
+                  />
+                  <input
+                    className={INPUT_BASE}
+                    value={ts.contact.phone}
+                    onChange={e => setContact(teacher.name, { phone: e.target.value })}
+                    placeholder="Telefon"
+                  />
+                </div>
+              )}
+              <label className={`flex items-center gap-2 text-sm ${centerUsedElsewhere ? 'text-gray-300 cursor-not-allowed' : 'text-gray-700 cursor-pointer'}`}>
+                <input
+                  type="checkbox"
+                  className={CHECK_CLS}
+                  checked={ts.contact.useCenterContacts}
+                  disabled={centerUsedElsewhere}
+                  onChange={e => setContact(teacher.name, { useCenterContacts: e.target.checked })}
+                />
+                Zentrums-Kontaktdaten verwenden
+              </label>
+            </div>
           </div>
         );
       })}

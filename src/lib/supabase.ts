@@ -17,6 +17,15 @@ type TeacherLanguagesRow = {
   updated_at: string;
 };
 
+type TeacherContactsRow = {
+  tenant: string;
+  teacher_name: string;
+  email: string | null;
+  phone: string | null;
+  use_center_contacts: boolean;
+  created_at: string;
+};
+
 type VeranstaltungRow = {
   id: string;
   tenant: string;
@@ -223,6 +232,12 @@ export type Database = {
         Row: TeacherLanguagesRow;
         Insert: Omit<TeacherLanguagesRow, "created_at" | "updated_at">;
         Update: Partial<Omit<TeacherLanguagesRow, "created_at" | "updated_at">>;
+        Relationships: [];
+      };
+      teacher_contacts: {
+        Row: TeacherContactsRow;
+        Insert: Omit<TeacherContactsRow, "created_at">;
+        Update: Partial<Omit<TeacherContactsRow, "created_at">>;
         Relationships: [];
       };
       tenants: {
