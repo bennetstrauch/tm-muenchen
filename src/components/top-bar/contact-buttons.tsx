@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import type { ResolvedContact } from "@/lib/contact";
+import { PhoneIcon, MailIcon } from "@/components/icons";
 
 export default function ContactButtons({
   showWhatsApp,
@@ -53,9 +54,7 @@ export default function ContactButtons({
               : "text-[#1A3352]/60 hover:text-[#1A3352] hover:bg-[#1A3352]/8"
           }`}
         >
-          <svg width="18" height="18" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-            <path d="M2 1.5C2 1.5 1 1.5 1 2.5C1 3.5 1.5 6.5 4.5 9.5C7.5 12.5 10.5 13 11.5 13C12.5 13 12.5 12 12.5 12L13.5 10C13.5 10 13.5 9.5 13 9L11 8C11 8 10.5 7.75 10 8.25L9 9.25C9 9.25 8.5 9.5 8 9C8 9 7 8.25 6 7C4.75 5.75 4 4.75 4 4.75C3.5 4.25 3.75 3.75 3.75 3.75L4.75 2.75C5.25 2.25 5 1.75 5 1.75L4 .75C3.5 .25 3 .25 2.5 .5L2 1.5Z" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <PhoneIcon width={18} height={18} />
         </button>
 
         {open && (
@@ -65,9 +64,7 @@ export default function ContactButtons({
               onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 px-3.5 py-2 text-[0.78rem] text-[#1A3352]/70 hover:text-[#1A3352] hover:bg-[#1A3352]/4 transition-colors"
             >
-              <svg width="13" height="13" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-                <path d="M2 1.5C2 1.5 1 1.5 1 2.5C1 3.5 1.5 6.5 4.5 9.5C7.5 12.5 10.5 13 11.5 13C12.5 13 12.5 12 12.5 12L13.5 10C13.5 10 13.5 9.5 13 9L11 8C11 8 10.5 7.75 10 8.25L9 9.25C9 9.25 8.5 9.5 8 9C8 9 7 8.25 6 7C4.75 5.75 4 4.75 4 4.75C3.5 4.25 3.75 3.75 3.75 3.75L4.75 2.75C5.25 2.25 5 1.75 5 1.75L4 .75C3.5 .25 3 .25 2.5 .5L2 1.5Z" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <PhoneIcon width={13} height={13} />
               {phoneDisplay}
             </a>
             <a
@@ -75,10 +72,7 @@ export default function ContactButtons({
               onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 px-3.5 py-2 text-[0.78rem] text-[#1A3352]/70 hover:text-[#1A3352] hover:bg-[#1A3352]/4 transition-colors"
             >
-              <svg width="14" height="11" viewBox="0 0 16 12" fill="none" aria-hidden="true">
-                <rect x="0.75" y="0.75" width="14.5" height="10.5" rx="1.5" stroke="currentColor" strokeWidth="1" />
-                <path d="M1 1.5L8 7L15 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-              </svg>
+              <MailIcon width={14} height={11} />
               {emailDisplay}
             </a>
             {showWhatsApp && (

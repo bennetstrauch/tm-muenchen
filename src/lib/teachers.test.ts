@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { applyLocaleFilter, getTeachersRaw } from "./teachers";
+import {
+  applyLocaleFilter,
+  applyTeacherContacts,
+  getTeachersRaw,
+  hasMultipleCenterContacts,
+} from "./teachers";
 import type { TMTeacher } from "./teachers";
 
 const make = (name: string, bio = "Bio"): TMTeacher => ({ name, imageUrl: "", bio });
@@ -44,6 +49,69 @@ describe("applyLocaleFilter", () => {
     const result = applyLocaleFilter(teachers, entries);
     expect(result[0].bio).toBe("English bio");
     expect(result[1].bio).toBe("German bio");
+  });
+});
+
+describe("applyTeacherContacts", () => {
+  const center = { email: "center@tm.de", phone: "089 111" };
+
+  it("attaches a teacher's own email and phone from a matching row", () => {
+    const teachers = [make("Anna")];
+    const rows = [
+      { teacher_name: "Anna", email: "anna@tm.de", phone: "089 222", use_center_contacts: false },
+    ];
+    const [anna] = applyTeacherContacts(teachers, rows, center);
+    expect(anna.email).toBe("anna@tm.de");
+    expect(anna.phone).toBe("089 222");
+  });
+
+  it("swaps in center contacts when use_center_contacts is true", () => {
+    const teachers = [make("Anna")];
+    const rows = [
+      { teacher_name: "Anna", email: "anna@tm.de", phone: "089 222", use_center_contacts: true },
+    ];
+    const [anna] = applyTeacherContacts(teachers, rows, center);
+    expect(anna.email).toBe("center@tm.de");
+    expect(anna.phone).toBe("089 111");
+  });
+
+  it("leaves email/phone undefined for a teacher with no matching row", () => {
+    const teachers = [make("Anna"), make("Ben")];
+    const rows = [
+      { teacher_name: "Anna", email: "anna@tm.de", phone: null, use_center_contacts: false },
+    ];
+    const [, ben] = applyTeacherContacts(teachers, rows, center);
+    expect(ben.email).toBeUndefined();
+    expect(ben.phone).toBeUndefined();
+  });
+
+  it("preserves attached contacts through an applyLocaleFilter spread", () => {
+    const teachers = [make("Anna")];
+    const rows = [
+      { teacher_name: "Anna", email: "anna@tm.de", phone: null, use_center_contacts: false },
+    ];
+    const withContacts = applyTeacherContacts(teachers, rows, center);
+    const filtered = applyLocaleFilter(withContacts, [
+      { teacher_name: "Anna", bio_override: "English bio" },
+    ]);
+    expect(filtered[0].email).toBe("anna@tm.de");
+    expect(filtered[0].bio).toBe("English bio");
+  });
+});
+
+describe("hasMultipleCenterContacts", () => {
+  it("is false when zero or one row uses center contacts", () => {
+    expect(hasMultipleCenterContacts([])).toBe(false);
+    expect(hasMultipleCenterContacts([{ use_center_contacts: true }])).toBe(false);
+    expect(
+      hasMultipleCenterContacts([{ use_center_contacts: true }, { use_center_contacts: false }])
+    ).toBe(false);
+  });
+
+  it("is true when more than one row uses center contacts", () => {
+    expect(
+      hasMultipleCenterContacts([{ use_center_contacts: true }, { use_center_contacts: true }])
+    ).toBe(true);
   });
 });
 

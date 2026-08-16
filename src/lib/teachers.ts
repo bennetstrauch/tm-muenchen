@@ -2,9 +2,35 @@ export type TMTeacher = {
   name: string;
   imageUrl: string;
   bio: string;
+  email?: string;
+  phone?: string;
 };
 
 type LocaleEntry = { teacher_name: string; bio_override: string | null };
+
+export type ContactRow = {
+  teacher_name: string;
+  email: string | null;
+  phone: string | null;
+  use_center_contacts: boolean;
+};
+
+type CenterContact = { email: string; phone: string };
+
+export function applyTeacherContacts(
+  teachers: TMTeacher[],
+  rows: ContactRow[],
+  center: CenterContact
+): TMTeacher[] {
+  const byName = new Map(rows.map(r => [r.teacher_name, r]));
+  return teachers.map(t => {
+    const row = byName.get(t.name);
+    if (!row) return t;
+    const email = row.use_center_contacts ? center.email : row.email;
+    const phone = row.use_center_contacts ? center.phone : row.phone;
+    return { ...t, ...(email ? { email } : {}), ...(phone ? { phone } : {}) };
+  });
+}
 
 export function applyLocaleFilter(teachers: TMTeacher[], entries: LocaleEntry[]): TMTeacher[] {
   if (entries.length === 0) return teachers;
@@ -15,6 +41,10 @@ export function applyLocaleFilter(teachers: TMTeacher[], entries: LocaleEntry[])
       const override = byName.get(t.name)!.bio_override;
       return override ? { ...t, bio: override } : t;
     });
+}
+
+export function hasMultipleCenterContacts(rows: { use_center_contacts: boolean }[]): boolean {
+  return rows.filter(r => r.use_center_contacts).length > 1;
 }
 
 async function fetchTeachersForCenter(id: number, token: string): Promise<TMTeacher[]> {
@@ -54,13 +84,23 @@ export async function getTeachersRaw(centerIds: number[]): Promise<TMTeacher[]> 
 
 export async function getTeachers(
   locale = "de",
-  tenant: { tmw_center_ids: number[]; tenant: string }
+  tenant: { tmw_center_ids: number[]; tenant: string; contact_email: string; contact_phone: string }
 ): Promise<TMTeacher[]> {
   try {
     const deduped = await getTeachersRaw(tenant.tmw_center_ids);
-    if (locale === "de") return deduped;
 
     const { getSupabase } = await import("./supabase");
+    const { data: contacts } = await getSupabase()
+      .from("teacher_contacts")
+      .select("teacher_name, email, phone, use_center_contacts")
+      .eq("tenant", tenant.tenant);
+
+    const withContacts = applyTeacherContacts(deduped, contacts ?? [], {
+      email: tenant.contact_email,
+      phone: tenant.contact_phone,
+    });
+    if (locale === "de") return withContacts;
+
     const { data: entries } = await getSupabase()
       .from("teacher_languages")
       .select("teacher_name, bio_override")
@@ -68,7 +108,7 @@ export async function getTeachers(
       .eq("tenant", tenant.tenant);
 
     const { getTranslation } = await import("./translate");
-    const filtered = applyLocaleFilter(deduped, entries ?? []);
+    const filtered = applyLocaleFilter(withContacts, entries ?? []);
     return Promise.all(
       filtered.map(async t => ({ ...t, bio: await getTranslation(t.bio, locale, "teacher bio") }))
     );

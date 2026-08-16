@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import Carousel from "./carousel";
+import { MailIcon, PhoneIcon } from "./icons";
 import { type TMTeacher } from "../lib/teachers";
 
 const AUTO_MS = 5000;
@@ -37,7 +38,7 @@ function TeacherCard({
         {teacher.name}
       </p>
 
-      <p className={`text-sm text-[#3D5573] leading-relaxed ${!expanded ? "line-clamp-3 md:line-clamp-1" : "text-left"}`}>
+      <p className={`text-sm text-[#3D5573] leading-relaxed ${!expanded ? "line-clamp-3" : "text-left"}`}>
         {teacher.bio}
       </p>
 
@@ -47,6 +48,23 @@ function TeacherCard({
       >
         {expanded ? <>{t("collapse")} <span>↑</span></> : <>{t("readMore")} <span>↓</span></>}
       </button>
+
+      {(teacher.email || teacher.phone) && (
+        <div className="mt-3 flex flex-col items-center gap-1.5 text-[0.8rem] text-[#3D5573]">
+          {teacher.email && (
+            <a href={`mailto:${teacher.email}`} className="inline-flex items-center gap-2 hover:text-[#1A3352] transition-colors">
+              <MailIcon width={14} height={11} />
+              {teacher.email}
+            </a>
+          )}
+          {teacher.phone && (
+            <a href={`tel:${teacher.phone.replace(/\s/g, "")}`} className="inline-flex items-center gap-2 hover:text-[#1A3352] transition-colors">
+              <PhoneIcon width={13} height={13} />
+              {teacher.phone}
+            </a>
+          )}
+        </div>
+      )}
 
     </div>
   );

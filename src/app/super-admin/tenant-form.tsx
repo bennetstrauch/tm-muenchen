@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { TenantConfig } from '@/lib/tenant';
+import { isValidEmail } from '@/lib/validation';
 
 const LOCALES = ['de', 'en', 'fr', 'es'] as const;
 
@@ -38,7 +39,7 @@ export default function TenantForm({ tenant }: Props) {
     if (!isEdit && !fd.get('password')) errs.password = 'Pflichtfeld';
     if (!fd.get('tmw_center_ids')) errs.tmw_center_ids = 'Pflichtfeld';
     if (!fd.get('contact_email')) errs.contact_email = 'Pflichtfeld';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(fd.get('contact_email')))) errs.contact_email = 'Ungültige E-Mail-Adresse';
+    else if (!isValidEmail(String(fd.get('contact_email')))) errs.contact_email = 'Ungültige E-Mail-Adresse';
     if (!fd.get('contact_phone')) errs.contact_phone = 'Pflichtfeld';
     if (!fd.get('from_email')) errs.from_email = 'Pflichtfeld';
     if (!fd.get('legal_entity')) errs.legal_entity = 'Pflichtfeld';
