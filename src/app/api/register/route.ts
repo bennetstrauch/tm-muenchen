@@ -17,7 +17,7 @@ type RequestBody = {
   eventType: "Online" | "Präsenz";
   locale?: string;
   eventId?: string;
-  hasConsent?: boolean;
+  trackingAllowed?: boolean;
   newsSubscribed?: boolean;
   plz?: string;
   path?: string;
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
   const {
     name, email, phone, lectureId,
     eventDate, eventTime, eventType,
-    locale = "de", eventId, hasConsent, newsSubscribed = false,
+    locale = "de", eventId, trackingAllowed = false, newsSubscribed = false,
     plz, path = "/", params = {},
   } = body;
 
@@ -90,7 +90,9 @@ export async function POST(request: Request) {
   insertInfoAnmeldung({
     tenant: tenant.tenant,
     locale,
-    has_consent: hasConsent ?? false,
+    // Truthful record of an actual opt-in. Under track_without_consent the
+    // visitor never consented, so this stays false even though we track. See ADR 0011.
+    has_consent: tenant.track_without_consent ? false : trackingAllowed,
     meta_pixel_event_id: eventId ?? null,
     tmw_registration_id: tmwId,
     name,
@@ -105,18 +107,23 @@ export async function POST(request: Request) {
     news_subscribed: newsSubscribed,
   }).catch(err => console.error("[register] Supabase write failed:", err));
 
-  // Facebook Conversions API — non-fatal
+  // Facebook Conversions API — non-fatal.
+  // trackingAllowed is client-authoritative by necessity: consent/opt-out lives
+  // only in the browser (localStorage), so the server cannot re-derive it. It
+  // already encodes the tenant mode via shouldTrack(tenant.track_without_consent).
+  // Do not "harden" this into `tenant.track_without_consent && trackingAllowed`
+  // — that would suppress PII for genuinely consenting visitors on normal tenants.
   if (eventId && tenant.meta_pixel_id && tenant.meta_pixel_capi_token) {
     sendCapiLead({
       pixelId: tenant.meta_pixel_id,
       capiToken: tenant.meta_pixel_capi_token,
       eventId,
       eventSourceUrl,
-      clientIp: hasConsent ? clientIp : undefined,
+      clientIp: trackingAllowed ? clientIp : undefined,
       clientUserAgent,
-      email: hasConsent ? email : undefined,
-      name: hasConsent ? name : undefined,
-      phone: hasConsent ? normalizedPhone : undefined,
+      email: trackingAllowed ? email : undefined,
+      name: trackingAllowed ? name : undefined,
+      phone: trackingAllowed ? normalizedPhone : undefined,
     }).catch(err => console.error("CAPI failed:", err));
   }
 

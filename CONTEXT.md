@@ -293,9 +293,27 @@ Fires three standard events:
 - `ViewContent` — when a visitor opens the Infoabend registration form (Anmelden button clicked)
 - `Lead` — when a registration is successfully submitted
 
-**Consent**: Pixel only loads after explicit opt-in via the Cookie-Banner. Consent stored in `localStorage` key `tm_cookie_consent`. Not loaded on admin pages (consistent with Vercel Analytics exclusion).
+**Consent**: Pixel only loads after explicit opt-in via the Cookie-Banner. Consent stored in `localStorage` key `tm_cookie_consent`. Not loaded on admin pages (consistent with Vercel Analytics exclusion). **Exception:** tenants with `track_without_consent = true` skip the banner and load the Pixel on page load — see **Tracking ohne Einwilligung**.
 
 **Cookie-Banner**: Custom bottom-bar component (no external CMP library). One sentence of copy + "Akzeptieren" / "Ablehnen" buttons. Styled in the site's blue/gold theme. Shown only on first visit; subsequent visits read localStorage directly.
+
+## Tracking ohne Einwilligung
+
+A per-tenant setting (`tenants.track_without_consent`, boolean, **default `false`**) that abandons the consent-first model for one center: the Cookie-Banner is not shown at all and the Meta Pixel loads on page load, tracking every visitor without opt-in. Deliberately accepted DSGVO/TTDSG risk — see ADR 0001.
+
+- **Who may enable it:** super-admin only, via the `/super-admin` tenant form (never the tenant Einstellungen tab) — a plain checkbox like the form's other fields, no confirm gate (the sole operator is trusted and already knows the risk). A one-line helper describes what it does. The per-tenant `Verantwortlicher` (`legal_entity`) carries the legal exposure, but the switch stays with the operator.
+- **When `true`:**
+  - Cookie-Banner renders nothing; Pixel `PageView` fires on load — **unless** the visitor has opted out (see below).
+  - `events.tsx` fires `ViewContent`/`Lead` without a consent gate — otherwise the conversion signal, the whole point, would never fire since consent is never recorded — again subject to the opt-out.
+  - Server CAPI (`/api/register`, `/api/info-anfrage`) sends full PII (email, name, phone, IP, `fbc`/`fbp`) to Meta for this tenant's traffic.
+- **Opt-out (Widerspruch):** the single client rule that makes the Datenschutz opt-out real —
+  `fireTracking = track_without_consent ? (localStorage.tm_cookie_consent !== "declined") : (localStorage.tm_cookie_consent === "accepted")`.
+  A "Tracking deaktivieren" link on the Datenschutz page writes `tm_cookie_consent = "declined"` and reloads; from then on the Pixel does not load for that visitor. This is the only UI a `track_without_consent` tenant exposes — no site-wide banner.
+- **Datenschutz copy:** the Meta-Pixel section switches to an honest "ohne Einwilligung / berechtigtes Interesse (Art. 6(1)(f))" variant when the flag is on, including the opt-out link. The default consent-first wording ("ausschließlich nach Ihrer ausdrücklichen Zustimmung") must never render for a `track_without_consent` tenant — it would be a demonstrably false privacy statement.
+  - **`has_consent` stays truthful — `false`** for these registrations. It records whether the *user* actually opted in, which they never did; it is never forged to `true`. The reason tracking happened is the tenant flag, not a consent record.
+- **Default and safety:** the dangerous state is the non-default `true`, so every existing and newly-created tenant is consent-first unless deliberately switched. `NULL`/missing fails safe (consent-first).
+
+> Canonical term: **Tracking ohne Einwilligung** (flag `track_without_consent`). Not "cookie-free mode", not "marketing mode".
 
 ## Kampagnen-Tracking (Attribution)
 

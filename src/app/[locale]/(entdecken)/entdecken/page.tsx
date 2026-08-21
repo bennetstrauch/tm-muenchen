@@ -31,7 +31,7 @@ export default async function EntdeckenPage() {
       <PageClient
         initialTheme="stress"
         heroSlot={null}
-        conversionSlot={<><InfoabendPreview /><Events events={events} plzAbfrage={tenant.plz_abfrage} /></>}
+        conversionSlot={<><InfoabendPreview /><Events events={events} plzAbfrage={tenant.plz_abfrage} trackWithoutConsent={tenant.track_without_consent} /></>}
       />
       <Testimonials testimonials={getTestimonials("stress")} />
       <WhyTm />

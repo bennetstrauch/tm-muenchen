@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getCurrentTenant } from "@/lib/tenant";
+import TrackingOptOut from "./tracking-opt-out";
 
 export async function generateMetadata(): Promise<Metadata> {
   const tenant = await getCurrentTenant();
@@ -112,7 +113,23 @@ export default async function DatenschutzPage() {
                 </p>
               </div>
 
-              {tenant.meta_pixel_id && <div>
+              {tenant.meta_pixel_id && (tenant.track_without_consent ? <div>
+                <p className="font-medium text-[#1A3352]/85 mb-1">Meta Pixel (Werbe-Tracking)</p>
+                <p>
+                  Wir verwenden das Meta Pixel der Meta Platforms Ireland Ltd., 4 Grand Canal
+                  Square, Dublin 2, Irland. Das Pixel wird beim Aufruf unserer Seiten geladen
+                  und übermittelt Conversion-Daten (Seitenaufruf, Formularöffnung, Anmeldung)
+                  an Meta. Rechtsgrundlage ist unser berechtigtes Interesse an der Messung und
+                  Optimierung unserer Werbung (Art. 6 Abs. 1 lit. f DSGVO). Sie können dem
+                  jederzeit widersprechen:{" "}
+                  <TrackingOptOut label="Tracking deaktivieren" />. Ihre Auswahl wird auf
+                  diesem Gerät gespeichert; das Pixel wird danach nicht mehr geladen.
+                  Weitere Informationen:{" "}
+                  <a href="https://www.facebook.com/policy.php" target="_blank" rel="noopener noreferrer" className="hover:text-[#1A3352] transition-colors">
+                    facebook.com/policy.php
+                  </a>
+                </p>
+              </div> : <div>
                 <p className="font-medium text-[#1A3352]/85 mb-1">Meta Pixel (Werbe-Tracking)</p>
                 <p>
                   Mit Ihrer Einwilligung verwenden wir das Meta Pixel der Meta Platforms
@@ -126,7 +143,7 @@ export default async function DatenschutzPage() {
                     facebook.com/policy.php
                   </a>
                 </p>
-              </div>}
+              </div>)}
 
             </div>
           </section>

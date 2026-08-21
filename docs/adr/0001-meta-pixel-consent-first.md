@@ -1,7 +1,7 @@
 # ADR 0001 — Meta Pixel: Consent-First mit Custom Banner
 
 ## Status
-Accepted
+Accepted — ergänzt durch [ADR 0011](0011-tracking-ohne-einwilligung-opt-in.md) (per-Tenant-Opt-in `track_without_consent`; Consent-First bleibt Standard).
 
 ## Kontext
 Instagram-Anzeigen sollen auf Infoabend-Anmeldungen optimiert werden. Dafür braucht Meta ein Conversion-Signal (`Lead`). Der Meta Pixel setzt Marketing-Cookies im Browser — nach DSGVO/ePrivacy ist dafür eine explizite Einwilligung vor dem Laden des Pixels erforderlich.
