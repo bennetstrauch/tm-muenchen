@@ -43,6 +43,7 @@ export async function PUT(
     logo_url: body.logo_url || null,
     logo_label: body.logo_label || null,
     infoabend_duration_minutes: body.infoabend_duration_minutes ?? 30,
+    track_without_consent: body.track_without_consent ?? false,
     show_teachers: body.show_teachers ?? true,
     show_meditators_section: body.show_meditators_section ?? true,
     center_banner_label: body.center_banner_label || null,

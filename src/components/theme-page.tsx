@@ -29,7 +29,7 @@ export default async function ThemePage({ theme }: { theme: ThemeKey }) {
       <PageClient
         initialTheme={theme}
         nextDates={nextDates}
-        conversionSlot={<><InfoabendPreview /><Events events={events} plzAbfrage={tenant.plz_abfrage} /></>}
+        conversionSlot={<><InfoabendPreview /><Events events={events} plzAbfrage={tenant.plz_abfrage} trackWithoutConsent={tenant.track_without_consent} /></>}
       />
       <Testimonials testimonials={getTestimonials(theme)} />
       <WhyTm />

@@ -77,6 +77,7 @@ export default function TenantForm({ tenant }: Props) {
       logo_label: fd.get('logo_label'),
       infoabend_duration_minutes: Number(fd.get('infoabend_duration_minutes') ?? 30),
       plz_abfrage: fd.get('plz_abfrage') === 'on',
+      track_without_consent: fd.get('track_without_consent') === 'on',
       center_banner_label: fd.get('center_banner_label'),
       impressum_content: fd.get('impressum_content'),
       legal_entity: fd.get('legal_entity'),
@@ -353,6 +354,21 @@ export default function TenantForm({ tenant }: Props) {
               />
               PLZ im Anmeldeformular abfragen
             </label>
+            <div>
+              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="track_without_consent"
+                  defaultChecked={tenant?.track_without_consent ?? false}
+                  className="rounded border-gray-300 text-[#BCA075]"
+                />
+                Tracking ohne Einwilligung (Meta Pixel ohne Cookie-Banner)
+              </label>
+              <p className="text-xs text-red-500 ml-6 mt-1">
+                Lädt den Meta Pixel für alle Besucher beim Seitenaufruf, ohne Einwilligung.
+                Bewusst gewähltes DSGVO-/TTDSG-Risiko — nur aktivieren, wenn der Betreiber es ausdrücklich will. Siehe ADR 0011.
+              </p>
+            </div>
             <Field label="Center-Bild URL">
               <input name="center_image_url" defaultValue={tenant?.center_image_url ?? ''} className={inputCls()} />
             </Field>

@@ -25,8 +25,8 @@ export default async function SiteShell({
       <NavPanel activeLocales={tenant.active_locales} showMeditatorsSection={tenant.show_meditators_section} showCourses={showCourses} />
       <MainOffset>{children}</MainOffset>
       <Footer />
-      <StickyCta />
-      <CookieBanner pixelId={tenant.meta_pixel_id} />
+      <StickyCta trackWithoutConsent={tenant.track_without_consent} />
+      <CookieBanner pixelId={tenant.meta_pixel_id} trackWithoutConsent={tenant.track_without_consent} />
       <AttributionCapture />
     </NavProvider>
   );

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { shouldTrack } from "@/lib/tracking-consent";
 
 const STORAGE_KEY = "tm_cookie_consent";
 
@@ -28,18 +29,30 @@ function loadPixel(pixelId: string) {
   window.fbq!("track", "PageView");
 }
 
-export default function CookieBanner({ pixelId }: { pixelId: string | null }) {
+export default function CookieBanner({
+  pixelId,
+  trackWithoutConsent = false,
+}: {
+  pixelId: string | null;
+  trackWithoutConsent?: boolean;
+}) {
   const t = useTranslations("CookieBanner");
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
+    // Tracking ohne Einwilligung: no banner, load the Pixel on first paint
+    // unless the visitor opted out via the Datenschutz link. See ADR 0011.
+    if (trackWithoutConsent) {
+      if (pixelId && shouldTrack(true, stored)) loadPixel(pixelId);
+      return;
+    }
     if (stored === "accepted") {
       if (pixelId) loadPixel(pixelId);
     } else if (!stored) {
       setVisible(true);
     }
-  }, [pixelId]);
+  }, [pixelId, trackWithoutConsent]);
 
   function dismiss() {
     setVisible(false);

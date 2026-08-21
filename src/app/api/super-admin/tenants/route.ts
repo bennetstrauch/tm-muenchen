@@ -38,6 +38,7 @@ export async function POST(request: Request) {
     logo_label: body.logo_label || null,
     infoabend_duration_minutes: body.infoabend_duration_minutes ?? 30,
     plz_abfrage: body.plz_abfrage ?? false,
+    track_without_consent: body.track_without_consent ?? false,
     show_teachers: body.show_teachers ?? true,
     show_meditators_section: body.show_meditators_section ?? true,
     center_banner_label: body.center_banner_label || null,

@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { type TMEvent, formatEventDate } from "../lib/events";
 import { isValidPlz } from "@/lib/geo";
 import { getAttribution } from "@/lib/attribution";
+import { shouldTrack } from "@/lib/tracking-consent";
 import { IndividualAppointment } from "./individual-appointment";
 
 export { IndividualAppointment };
@@ -18,7 +19,7 @@ const INPUT_CLS = `
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
-function RegistrationForm({ event, onClose, plzAbfrage }: { event: TMEvent; onClose: () => void; plzAbfrage: boolean }) {
+function RegistrationForm({ event, onClose, plzAbfrage, trackWithoutConsent }: { event: TMEvent; onClose: () => void; plzAbfrage: boolean; trackWithoutConsent: boolean }) {
   const t = useTranslations("Events");
   const locale = useLocale();
   const [formState, setFormState] = useState<FormState>("idle");
@@ -40,7 +41,7 @@ function RegistrationForm({ event, onClose, plzAbfrage }: { event: TMEvent; onCl
     setErrorMsg("");
 
     const eventId = crypto.randomUUID();
-    const hasConsent = localStorage.getItem("tm_cookie_consent") === "accepted";
+    const trackingAllowed = shouldTrack(trackWithoutConsent, localStorage.getItem("tm_cookie_consent"));
     const { path, params } = getAttribution();
 
     try {
@@ -57,7 +58,7 @@ function RegistrationForm({ event, onClose, plzAbfrage }: { event: TMEvent; onCl
           eventType: event.type,
           locale,
           eventId,
-          hasConsent,
+          trackingAllowed,
           newsSubscribed: fd.get("newsSubscribed") === "on",
           plz: plzAbfrage ? plz || undefined : undefined,
           path,
@@ -71,7 +72,7 @@ function RegistrationForm({ event, onClose, plzAbfrage }: { event: TMEvent; onCl
       }
 
       setFormState("success");
-      if (hasConsent) window.fbq?.("track", "Lead", {}, { eventID: eventId });
+      if (trackingAllowed) window.fbq?.("track", "Lead", {}, { eventID: eventId });
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : t("formErrorFailed"));
       setFormState("error");
@@ -167,11 +168,13 @@ function EventRow({
   isOpen,
   onToggle,
   plzAbfrage,
+  trackWithoutConsent,
 }: {
   event: TMEvent;
   isOpen: boolean;
   onToggle: () => void;
   plzAbfrage: boolean;
+  trackWithoutConsent: boolean;
 }) {
   const t = useTranslations("Events");
   const locale = useLocale();
@@ -234,14 +237,14 @@ function EventRow({
 
       </div>
 
-      {isOpen && <RegistrationForm event={event} onClose={onToggle} plzAbfrage={plzAbfrage} />}
+      {isOpen && <RegistrationForm event={event} onClose={onToggle} plzAbfrage={plzAbfrage} trackWithoutConsent={trackWithoutConsent} />}
     </li>
   );
 }
 
 const INITIAL_COUNT = 3;
 
-export default function Events({ events, plzAbfrage = false }: { events: TMEvent[]; plzAbfrage?: boolean }) {
+export default function Events({ events, plzAbfrage = false, trackWithoutConsent = false }: { events: TMEvent[]; plzAbfrage?: boolean; trackWithoutConsent?: boolean }) {
   const t = useTranslations("Events");
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [showAll, setShowAll] = useState(false);
@@ -271,6 +274,7 @@ export default function Events({ events, plzAbfrage = false }: { events: TMEvent
                   isOpen={openIdx === i}
                   onToggle={() => setOpenIdx(openIdx === i ? null : i)}
                   plzAbfrage={plzAbfrage}
+                  trackWithoutConsent={trackWithoutConsent}
                 />
               ))}
             </ul>

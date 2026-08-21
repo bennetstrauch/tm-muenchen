@@ -171,6 +171,7 @@ type TenantRow = {
   can_edit_copy: boolean;
   meta_pixel_id: string | null;
   meta_pixel_capi_token: string | null;
+  track_without_consent: boolean;
   show_courses: boolean;
   course_locales: string[];
   meditators_ueberpruefung_url: string | null;

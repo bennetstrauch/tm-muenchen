@@ -15,7 +15,7 @@ const SUPPRESSED_IDS = [
   "kurse",
 ];
 
-export default function StickyCta() {
+export default function StickyCta({ trackWithoutConsent = false }: { trackWithoutConsent?: boolean }) {
   const t = useTranslations("Hero");
   const tSticky = useTranslations("StickyCta");
   const { hero } = content;
@@ -27,13 +27,16 @@ export default function StickyCta() {
   const [ctaHref, setCtaHref] = useState<string>("#infoevent");
 
   useEffect(() => {
+    // No cookie banner is shown for track_without_consent tenants, so there is
+    // nothing to wait for — never hide the CTA behind a banner that never appears.
+    if (trackWithoutConsent) return;
     if (!localStorage.getItem("tm_cookie_consent")) {
       setBannerVisible(true);
       const handler = () => setBannerVisible(false);
       window.addEventListener("cookie-consent-dismissed", handler);
       return () => window.removeEventListener("cookie-consent-dismissed", handler);
     }
-  }, []);
+  }, [trackWithoutConsent]);
 
   useEffect(() => {
     setHidden(true);
