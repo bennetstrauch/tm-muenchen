@@ -83,7 +83,7 @@ export default async function WissenschaftSection() {
           ))}
         </div>
 
-        <ul className="flex flex-col gap-4 mb-12 max-w-lg mx-auto" aria-label="Inhalte des Infoabends zu Wissenschaft">
+        <ul className="flex flex-col gap-4 mb-12 max-w-lg mx-auto" aria-label="Inhalte des Info-Termins zu Wissenschaft">
           {bullets.map((point) => (
             <li key={point} className="flex items-start gap-3">
               <svg
