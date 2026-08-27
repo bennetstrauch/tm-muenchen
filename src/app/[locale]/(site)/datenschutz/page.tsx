@@ -48,9 +48,9 @@ export default async function DatenschutzPage() {
           <section>
             <Eyebrow>Erhobene Daten und Verarbeitungszweck</Eyebrow>
             <p>
-              Wenn Sie sich über diese Website zu einem Infoabend anmelden, verarbeiten wir
+              Wenn Sie sich über diese Website zu einem Info-Termin anmelden, verarbeiten wir
               die von Ihnen angegebenen Daten (Name, E-Mail-Adresse, Telefonnummer)
-              ausschließlich zur Bearbeitung Ihrer Anmeldung, zur Durchführung des Infoabends
+              ausschließlich zur Bearbeitung Ihrer Anmeldung, zur Durchführung des Info-Termins
               sowie zur Zusendung von Bestätigungs- und Erinnerungsmails.
             </p>
           </section>
@@ -65,7 +65,7 @@ export default async function DatenschutzPage() {
           <section>
             <Eyebrow>Speicherdauer</Eyebrow>
             <p>
-              Ihre Daten werden gelöscht, sobald sie für die Durchführung des Infoabends
+              Ihre Daten werden gelöscht, sobald sie für die Durchführung des Info-Termins
               nicht mehr erforderlich sind, soweit keine gesetzlichen Aufbewahrungspflichten
               bestehen.
             </p>
