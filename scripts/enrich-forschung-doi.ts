@@ -13,9 +13,6 @@ import { loadEnvLocal, loadDoiMap } from './forschung/source';
 import { isConfidentDoiMatch, type CrossRefWork } from '../src/lib/forschung/doi-match';
 import type { ParsedCitation } from '../src/lib/forschung/parse-citation';
 
-loadEnvLocal();
-const { getSupabase } = await import('../src/lib/supabase');
-
 const CACHE_PATH = 'data/forschung/doi-cache.json';
 const MAILTO = process.env.FORSCHUNG_CROSSREF_MAILTO ?? 'info@tm-muenchen.de';
 const THROTTLE_MS = 250; // be a polite CrossRef/PubMed citizen
@@ -90,50 +87,60 @@ async function pubMedLookup(c: ParsedCitation): Promise<CrossRefWork | null> {
   return null;
 }
 
-const supabase = getSupabase();
-const { data, error } = await supabase
-  .from('studies')
-  .select('id, authors, title, journal, year')
-  .is('doi_url', null);
-if (error) throw error;
+async function main() {
+  loadEnvLocal();
+  const { getSupabase } = await import('../src/lib/supabase');
 
-const studies = (data ?? []) as StudyLite[];
-console.log(`${studies.length} studies without a DOI — looking up…`);
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from('studies')
+    .select('id, authors, title, journal, year')
+    .is('doi_url', null);
+  if (error) throw error;
 
-const cache = loadDoiMap(CACHE_PATH);
-let found = 0;
-let processed = 0;
+  const studies = (data ?? []) as StudyLite[];
+  console.log(`${studies.length} studies without a DOI — looking up…`);
 
-for (const s of studies) {
-  processed++;
-  const c = citationOf(s);
-  if (!c.title) continue;
+  const cache = loadDoiMap(CACHE_PATH);
+  let found = 0;
+  let processed = 0;
 
-  let match: CrossRefWork | null = null;
-  try {
-    match = await crossRefLookup(c);
-    if (!match) {
-      await sleep(THROTTLE_MS);
-      match = await pubMedLookup(c);
+  for (const s of studies) {
+    processed++;
+    const c = citationOf(s);
+    if (!c.title) continue;
+
+    let match: CrossRefWork | null = null;
+    try {
+      match = await crossRefLookup(c);
+      if (!match) {
+        await sleep(THROTTLE_MS);
+        match = await pubMedLookup(c);
+      }
+    } catch (e) {
+      console.warn(`  lookup failed for ${s.id}: ${(e as Error).message}`);
     }
-  } catch (e) {
-    console.warn(`  lookup failed for ${s.id}: ${(e as Error).message}`);
+
+    if (match?.DOI) {
+      const doiUrl = `https://doi.org/${match.DOI}`;
+      cache[s.id] = doiUrl;
+      const { error: upErr } = await supabase.from('studies').update({ doi_url: doiUrl }).eq('id', s.id);
+      if (upErr) throw upErr;
+      found++;
+    }
+
+    if (processed % 25 === 0) {
+      writeFileSync(CACHE_PATH, JSON.stringify(cache, null, 2) + '\n');
+      console.log(`  …${processed}/${studies.length} processed, ${found} DOIs found`);
+    }
+    await sleep(THROTTLE_MS);
   }
 
-  if (match?.DOI) {
-    const doiUrl = `https://doi.org/${match.DOI}`;
-    cache[s.id] = doiUrl;
-    const { error: upErr } = await supabase.from('studies').update({ doi_url: doiUrl }).eq('id', s.id);
-    if (upErr) throw upErr;
-    found++;
-  }
-
-  if (processed % 25 === 0) {
-    writeFileSync(CACHE_PATH, JSON.stringify(cache, null, 2) + '\n');
-    console.log(`  …${processed}/${studies.length} processed, ${found} DOIs found`);
-  }
-  await sleep(THROTTLE_MS);
+  writeFileSync(CACHE_PATH, JSON.stringify(cache, null, 2) + '\n');
+  console.log(`✅ Enrichment complete: ${found} new DOIs (cache: ${CACHE_PATH}).`);
 }
 
-writeFileSync(CACHE_PATH, JSON.stringify(cache, null, 2) + '\n');
-console.log(`✅ Enrichment complete: ${found} new DOIs (cache: ${CACHE_PATH}).`);
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
