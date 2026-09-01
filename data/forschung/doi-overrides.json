@@ -1,0 +1,3 @@
+{
+  "_comment": "Hand-filled DOIs for studies the automated CrossRef/PubMed lookup missed or got wrong. Keys are study ids (the 16-char content hash printed by scripts/import-forschung.ts); values are full https://doi.org/... URLs. Entries here win over inline and CrossRef matches. See data/forschung/README.md."
+}

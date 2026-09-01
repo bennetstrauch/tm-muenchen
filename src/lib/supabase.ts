@@ -216,6 +216,26 @@ type KursAnmeldungRow = {
   created_at: string;
 };
 
+// Forschung research corpus — global, not tenant-scoped (ADR 0012).
+type StudyRow = {
+  id: string;
+  topic: string;
+  field: string | null;
+  specialty: string | null;
+  specific_results: string | null;
+  is_rct_meta: boolean;
+  year: number | null;
+  authors: string | null;
+  title: string | null;
+  journal: string | null;
+  abstract: string | null;
+  abstract_de: string | null;
+  citation_raw: string;
+  citation_raw_de: string | null;
+  doi_url: string | null;
+  updated_at: string;
+};
+
 // Nullable columns are optional on insert (the DB defaults them to null).
 type NullableKeys<T> = { [K in keyof T]: null extends T[K] ? K : never }[keyof T];
 type Insertable<T> = Omit<T, NullableKeys<T>> & Partial<Pick<T, NullableKeys<T>>>;
@@ -287,6 +307,13 @@ export type Database = {
         Row: EmailActionRow;
         Insert: Omit<EmailActionRow, "id"> & { id?: string };
         Update: Partial<EmailActionRow>;
+        Relationships: [];
+      };
+      studies: {
+        Row: StudyRow;
+        // id is a caller-supplied content hash; updated_at defaults in the DB.
+        Insert: Insertable<Omit<StudyRow, "updated_at">> & { updated_at?: string };
+        Update: Partial<StudyRow>;
         Relationships: [];
       };
     };
