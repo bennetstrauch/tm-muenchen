@@ -743,3 +743,31 @@ Phase 1 (Narrative-Sequenz) braucht **keinen Content-Workshop** — sie ist voll
 - **Sebastian + Maike**: Workshop für Phase 2 — Inhalte der Äste, Blätter, Studien
 
 Phase 2 benötigt den Workshop **bevor** die Branch-Navigation gebaut wird.
+
+## Forschung
+
+A global, cross-tenant module for browsing the TM & TM-Sidhi research corpus (~461 studies from the "January 2026 TM & TM-Sidhi Research Spreadsheet," courtesy of the Global Mother Divine Organization). Unlike `veranstaltungen`/`anmeldungen`, the research data is **not** tenant-scoped — every center shows the identical corpus. Route: `/forschung`. Positioned as the studies backend that the **Wissenschaft & Forschung** section and **Baum des Lebens** Phase 3 (studies-per-topic pop-ups) already anticipate. Built to be **extractable** into its own codebase later — it keeps its coupling to tenant/admin abstractions deliberately thin.
+
+> Canonical term: **Forschung** (not "Research", not "Studien" as the module name — a single study is a **Study**).
+
+Surfaced via the hamburger menu and a link from the **Wissenschaft & Forschung** section — never promoted on the conversion hero. It is primarily its own standalone destination (what teachers link clients to, what the national WordPress site embeds). Future: the Wissenschaft section itself embeds a live slice of Forschung (featured studies / mini-browser) rather than only linking out.
+
+### Study
+One row of the research corpus. Source columns: **Topic** (A: Health · Mental Potential · Social Behavior · World Peace), **Field** (B), **Specialty** (C: Cardiovascular, Cognitive, Rehabilitation, …), **Specific Results** (D), **RCT/Meta-analysis** flag (E — populated for only ~77 gold-standard studies), **Year** (F), **Citation/Abstract** (H — currently one mashed cell). Publication links do **not** exist in the source and are enrichment we add.
+
+### Collection
+A curated, human-chosen bundle of Studies cutting across Topics, with a title, a short intro, themed sub-sections, and plain-language one-sentence rewrites of each study (see the Children/Elderly example PDFs). A Collection is a **product** people browse and share; it is authored once (Bennet + AI), not query-generated. First three: **Kinder & Jugendliche**, **Ältere Menschen**, **Schlaf**.
+
+> Canonical term: **Collection** (not "category" — "category" was ambiguous between this and the Topic taxonomy).
+
+### Topic / Specialty
+The spreadsheet's built-in taxonomy (columns A and C). Used as **filters/tags** over the full library — filter by Topic, then optionally by Specialty within it. Not curated products (that's a Collection).
+
+### Collection PDF
+The pre-authored, high-polish downloadable document for a Collection (like the two example PDFs). Editorial, not mechanical. Distinct from **Custom Export PDF** (phase 2): a plainer, on-the-fly PDF generated from studies a user ticks in the library — mechanical layout of citation + existing summary, no rewriting.
+
+### Sprachen (Forschung)
+Forschung has its **own locale set, decoupled from the marketing site's DE/EN/FR/ES.** Rationale: the research library serves people (e.g. Croatian teachers/researchers) who are not landing-page customers, so it may offer locales the site never adds. New research locales (e.g. **Croatian**, later) are added to Forschung alone — no site-wide switcher/routing change. Study text uses the spreadsheet's built-in DE column where filled; gaps and all other languages are AI-translated as a **once-a-year batch on Bennet's Claude subscription** (not the paid API pipeline used elsewhere) and persisted, so the running site never calls a paid API for research text. Full abstracts may lag in their source language until backfilled; short authored Collection text is translated for MVP.
+
+### Publication link
+A stable **DOI link** (`https://doi.org/…`) added to a Study by an automated CrossRef/PubMed lookup at import. Coverage is partial by nature (~60–80%): pre-1990 papers, book chapters, and the movement's own "Collected Papers" volumes often have no DOI to find. Unmatched studies stay linkless (hand-fillable later); the promise is "a link wherever a published record exists," not one on every study.
