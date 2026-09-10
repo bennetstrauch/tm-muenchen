@@ -182,7 +182,8 @@
     "logo0Caption": "Méta-analyse portant sur 146 études sur la réduction de l'anxiété",
     "logo1Caption": "La MT réduit la tension artérielle et le risque cardiovasculaire",
     "logo2Caption": "Découverte de la réponse de relaxation grâce à la MT",
-    "logo3Caption": "Étude NIH : 48 % de crises cardiaques et d'AVC en moins"
+    "logo3Caption": "Étude NIH : 48 % de crises cardiaques et d'AVC en moins",
+    "libraryLink": "Explorer la bibliothèque de recherche"
   },
   "InfoabendPreview": {
     "heading": "Comment se déroule la soirée d'introduction",
@@ -201,6 +202,7 @@
     "link3": "Prochaines soirées d'introduction",
     "link4": "Pour ceux qui méditent déjà",
     "link5": "Cours MT",
+    "link6": "Recherche",
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
     "prevTheme": "Thème précédent",

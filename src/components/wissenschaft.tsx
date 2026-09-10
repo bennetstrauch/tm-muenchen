@@ -150,6 +150,15 @@ export default async function WissenschaftSection() {
             {t("cta")}
             <span aria-hidden="true">→</span>
           </a>
+          <div className="mt-6">
+            <a
+              href="/forschung"
+              className="inline-flex items-center gap-2 text-[0.8rem] tracking-[0.08em] text-[#A5C3D7] hover:text-white transition-colors duration-200"
+            >
+              {t("libraryLink")}
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
         </div>
 
       </div>

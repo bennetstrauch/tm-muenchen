@@ -1,0 +1,26 @@
+{
+  "library": {
+    "title": "Forschung",
+    "subtitle": "Über 460 wissenschaftliche Studien zur Transzendentalen Meditation – durchsuchbar nach Thema, Fachgebiet und Studientyp.",
+    "searchPlaceholder": "Studien durchsuchen …",
+    "topicLabel": "Thema",
+    "allTopics": "Alle Themen",
+    "specialtyLabel": "Fachgebiet",
+    "allSpecialties": "Alle Fachgebiete",
+    "rctToggle": "Nur RCT / Meta-Analysen",
+    "rctBadge": "RCT / Meta-Analyse",
+    "resultCount": "{count, plural, =0 {Keine Studien} one {# Studie} other {# Studien}}",
+    "empty": "Keine Studien entsprechen deinen Filtern.",
+    "clearFilters": "Filter zurücksetzen",
+    "showAbstract": "Abstract anzeigen",
+    "hideAbstract": "Abstract ausblenden",
+    "publicationLink": "Zur Publikation",
+    "languageLabel": "Sprache"
+  },
+  "topics": {
+    "Health": "Gesundheit",
+    "Mental Potential": "Geistiges Potenzial",
+    "Social Behavior": "Sozialverhalten",
+    "World Peace": "Weltfrieden"
+  }
+}

@@ -232,7 +232,8 @@
     "logo1Caption": "TM senkt Blutdruck und kardiovaskuläres Risiko",
     "logo2Caption": "Entdeckung der Entspannungsantwort durch TM",
     "logo3Caption": "NIH-Studie: 48 % weniger Herzinfarkt & Schlaganfall",
-    "cta": "Beim Info-Termin mehr erfahren"
+    "cta": "Beim Info-Termin mehr erfahren",
+    "libraryLink": "Zur Forschungsbibliothek"
   },
   "InfoabendPreview": {
     "heading": "So läuft der Info-Event ab",
@@ -251,6 +252,7 @@
     "link3": "Nächste Info-Termine",
     "link4": "Für bereits Meditierende",
     "link5": "TM Kurse",
+    "link6": "Forschung",
     "openMenu": "Menü öffnen",
     "closeMenu": "Menü schließen",
     "prevTheme": "Vorheriges Thema",

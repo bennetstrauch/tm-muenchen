@@ -1,22 +1,6 @@
 import { getRequestConfig } from "next-intl/server";
 import { routing } from "./routing";
-
-type Messages = { [key: string]: string | Messages };
-
-// Per-key fallback to German: a partially-translated namespace keeps the
-// German values for keys the locale hasn't translated yet, instead of losing
-// the whole namespace to a shallow overwrite.
-function deepMerge(base: Messages, override: Messages): Messages {
-  const out: Messages = { ...base };
-  for (const [key, value] of Object.entries(override)) {
-    const existing = out[key];
-    out[key] =
-      existing && typeof existing === "object" && typeof value === "object"
-        ? deepMerge(existing, value)
-        : value;
-  }
-  return out;
-}
+import { deepMergeMessages } from "@/lib/deep-merge";
 
 export default getRequestConfig(async ({ requestLocale }) => {
   let locale = await requestLocale;
@@ -32,6 +16,6 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   return {
     locale,
-    messages: fallback ? deepMerge(fallback, messages) : messages,
+    messages: fallback ? deepMergeMessages(fallback, messages) : messages,
   };
 });

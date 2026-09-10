@@ -73,6 +73,14 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next(withTenant);
   }
 
+  // Forschung: global, non-tenant-scoped module with its own locale set (ADR 0012).
+  // It lives outside the [locale] segment, so skip next-intl locale routing —
+  // otherwise "as-needed" would rewrite /forschung to /de/forschung and 404.
+  // Still forward x-tenant so the shared root layout resolves a tenant as usual.
+  if (pathname.startsWith("/forschung")) {
+    return NextResponse.next(withTenant);
+  }
+
   // Everything else: next-intl locale routing. Pass the request carrying x-tenant
   // so next-intl forwards it downstream when it rewrites the URL.
   return handleLocale(new NextRequest(request.url, { headers: requestHeaders }));
