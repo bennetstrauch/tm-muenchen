@@ -182,7 +182,8 @@
     "logo0Caption": "Meta-analysis across 146 studies on anxiety reduction",
     "logo1Caption": "TM lowers blood pressure and cardiovascular risk",
     "logo2Caption": "Discovery of the relaxation response through TM",
-    "logo3Caption": "NIH study: 48% fewer heart attacks & strokes"
+    "logo3Caption": "NIH study: 48% fewer heart attacks & strokes",
+    "libraryLink": "Explore the research library"
   },
   "InfoabendPreview": {
     "heading": "Here's what to expect at the info session",
@@ -201,6 +202,7 @@
     "link3": "Upcoming Info Sessions",
     "link4": "For existing meditators",
     "link5": "TM Courses",
+    "link6": "Research",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "prevTheme": "Previous topic",

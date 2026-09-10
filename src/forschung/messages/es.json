@@ -1,0 +1,26 @@
+{
+  "library": {
+    "title": "Investigación",
+    "subtitle": "Más de 460 estudios científicos sobre la Meditación Trascendental – explorables por tema, especialidad y tipo de estudio.",
+    "searchPlaceholder": "Buscar estudios …",
+    "topicLabel": "Tema",
+    "allTopics": "Todos los temas",
+    "specialtyLabel": "Especialidad",
+    "allSpecialties": "Todas las especialidades",
+    "rctToggle": "Solo ECA / metaanálisis",
+    "rctBadge": "ECA / metaanálisis",
+    "resultCount": "{count, plural, =0 {Ningún estudio} one {# estudio} other {# estudios}}",
+    "empty": "Ningún estudio coincide con tus filtros.",
+    "clearFilters": "Restablecer filtros",
+    "showAbstract": "Mostrar resumen",
+    "hideAbstract": "Ocultar resumen",
+    "publicationLink": "Ver publicación",
+    "languageLabel": "Idioma"
+  },
+  "topics": {
+    "Health": "Salud",
+    "Mental Potential": "Potencial mental",
+    "Social Behavior": "Comportamiento social",
+    "World Peace": "Paz mundial"
+  }
+}

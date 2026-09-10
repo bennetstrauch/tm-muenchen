@@ -17,6 +17,7 @@ const NAV_LINKS: NavLink[] = [
   { labelKey: "link3", href: "#anmeldung",             type: "anchor" },
   { labelKey: "link4", href: "/events",                type: "page"   },
   { labelKey: "link5", href: "#kurse",                 type: "anchor" },
+  { labelKey: "link6", href: "/forschung",             type: "page"   },
 ];
 
 const ITEM_BASE_CLS = `
