@@ -26,7 +26,7 @@ export default async function ForschungPage({
   const locale = resolveForschungLocale(lang);
   const [messages, studies] = await Promise.all([
     getForschungMessages(locale),
-    getStudies(),
+    getStudies(locale),
   ]);
 
   return (

@@ -56,19 +56,37 @@ async function main() {
   };
 
   // Key by content hash so identical citations collapse to one row (a second row
-  // with the same id in a single upsert batch would error in Postgres).
+  // with the same id in a single upsert batch would error in Postgres). The DE
+  // sheet's structured columns are free German (ADR 0013) and become locale='de'
+  // study_translations, keyed by the same id so re-runs upsert in place.
   const byId = new Map<string, ReturnType<typeof toRow>>();
+  const trById = new Map<string, Record<string, string>>();
   for (const row of source) {
     const mapped = toRow(row);
     byId.set(mapped.id, mapped);
+    const de: Record<string, string> = {};
+    if (row.specialtyDe) de.specialty = row.specialtyDe;
+    if (row.specificResultsDe) de.specific_results = row.specificResultsDe;
+    if (Object.keys(de).length) trById.set(mapped.id, de);
   }
 
   const rows = [...byId.values()];
+  const now = new Date().toISOString();
+  const translationRows = [...trById.entries()].flatMap(([study_id, fields]) =>
+    Object.entries(fields).map(([field, value]) => ({
+      study_id,
+      locale: 'de',
+      field,
+      value,
+      updated_at: now,
+    })),
+  );
   const withDoi = rows.filter((r) => r.doi_url).length;
   console.log(
     `Prepared ${rows.length} unique studies · ${withDoi} with DOI ` +
       `(${inlineDois} inline, ${Object.keys(overrides).length} overrides, ${Object.keys(cache).length} cached)`,
   );
+  console.log(`Prepared ${translationRows.length} DE study_translations (structured columns)`);
 
   const supabase = getSupabase();
   const CHUNK = 200;
@@ -77,6 +95,15 @@ async function main() {
     const { error } = await supabase.from('studies').upsert(chunk, { onConflict: 'id' });
     if (error) throw error;
     console.log(`Upserted ${Math.min(i + CHUNK, rows.length)}/${rows.length}`);
+  }
+
+  for (let i = 0; i < translationRows.length; i += CHUNK) {
+    const chunk = translationRows.slice(i, i + CHUNK);
+    const { error } = await supabase
+      .from('study_translations')
+      .upsert(chunk, { onConflict: 'study_id,locale,field' });
+    if (error) throw error;
+    console.log(`Upserted ${Math.min(i + CHUNK, translationRows.length)}/${translationRows.length} translations`);
   }
 
   console.log('✅ Import complete.');

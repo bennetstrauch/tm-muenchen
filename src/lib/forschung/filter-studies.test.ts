@@ -7,6 +7,7 @@ function makeStudy(overrides: Partial<Study> & { id: string }): Study {
     topic: 'Health',
     field: 'Physiological',
     specialty: 'Cardiovascular',
+    specialtyLabel: 'Cardiovascular',
     specificResults: 'Reduced hypertension',
     isRctMeta: false,
     year: 1989,
@@ -14,9 +15,8 @@ function makeStudy(overrides: Partial<Study> & { id: string }): Study {
     title: 'A study of transcendental meditation',
     journal: 'Journal of Personality',
     abstract: 'A randomized controlled trial on blood pressure.',
-    abstractDe: '',
+    abstractPending: false,
     citationRaw: '',
-    citationRawDe: '',
     ...overrides,
   };
 }

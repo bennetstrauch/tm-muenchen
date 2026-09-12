@@ -763,11 +763,21 @@ A curated, human-chosen bundle of Studies cutting across Topics, with a title, a
 ### Topic / Specialty
 The spreadsheet's built-in taxonomy (columns A and C). Used as **filters/tags** over the full library — filter by Topic, then optionally by Specialty within it. Not curated products (that's a Collection).
 
+A Topic/Specialty value plays two roles that are deliberately kept apart: as a **taxonomy key** it is the canonical **English** string a Study carries and is filtered on (locale-independent, so filtering is identical in every language); as **display text** it is what the visitor reads, resolved per locale (Topic via a fixed 4-value label set, Specialty from translated study text). Translating the label never changes the key.
+
+### Anzeigetext / Studientext (Forschung)
+The visitor-facing text of a Study — **Specific Results** (the card headline), abstract, title, journal, citation — as opposed to its taxonomy keys. Display text is resolved for the active Forschung locale, falling back to the source-of-record English when a translation is missing. The English row is always the source of record; every other language, including German, is an overlay on top of it.
+
 ### Collection PDF
 The pre-authored, high-polish downloadable document for a Collection (like the two example PDFs). Editorial, not mechanical. Distinct from **Custom Export PDF** (phase 2): a plainer, on-the-fly PDF generated from studies a user ticks in the library — mechanical layout of citation + existing summary, no rewriting.
 
 ### Sprachen (Forschung)
-Forschung has its **own locale set, decoupled from the marketing site's DE/EN/FR/ES.** Rationale: the research library serves people (e.g. Croatian teachers/researchers) who are not landing-page customers, so it may offer locales the site never adds. New research locales (e.g. **Croatian**, later) are added to Forschung alone — no site-wide switcher/routing change. Study text uses the spreadsheet's built-in DE column where filled; gaps and all other languages are AI-translated as a **once-a-year batch on Bennet's Claude subscription** (not the paid API pipeline used elsewhere) and persisted, so the running site never calls a paid API for research text. Full abstracts may lag in their source language until backfilled; short authored Collection text is translated for MVP.
+Forschung has its **own locale set, decoupled from the marketing site's DE/EN/FR/ES.** Rationale: the research library serves people (e.g. Croatian teachers/researchers) who are not landing-page customers, so it may offer locales the site never adds. New research locales (e.g. **Croatian**, later) are added to Forschung alone — no site-wide switcher/routing change.
+
+The source spreadsheet's German sheet ("Alle Forschung") supplies German only for the **structured** columns — Topic, Specialty, Specific Results, Field — and those are imported as free German display text. Its **abstracts (column H) are still English**; German abstracts, and all FR/ES study text, do not exist in the source and must be produced by the **Übersetzungs-Batch**. The running site never calls a translation API for research text — it only reads persisted translations.
+
+### Übersetzungs-Batch (Forschung)
+The offline, periodic pass that produces the study text that is not free from the source sheet (German abstracts first; FR/ES later), persists it, and is re-runnable. It is a **build/author-time** job (a machine-translation first draft refined for terminology, reusing the site's translation glossary/locks), **not** the site's runtime/CI translation pipeline and never a per-request call. Full abstracts may show their source language behind a "translation pending" marker until the batch backfills them.
 
 ### Publication link
 A stable **DOI link** (`https://doi.org/…`) added to a Study by an automated CrossRef/PubMed lookup at import. Coverage is partial by nature (~60–80%): pre-1990 papers, book chapters, and the movement's own "Collected Papers" volumes often have no DOI to find. Unmatched studies stay linkless (hand-fillable later); the promise is "a link wherever a published record exists," not one on every study.

@@ -229,10 +229,23 @@ type StudyRow = {
   title: string | null;
   journal: string | null;
   abstract: string | null;
-  abstract_de: string | null;
   citation_raw: string;
-  citation_raw_de: string | null;
   doi_url: string | null;
+  updated_at: string;
+  // Superseded by study_translations (ADR 0013): these held the DE sheet's col H,
+  // which is still English, so they only duplicate the English base. No longer
+  // read; to be dropped in the abstract-batch slice's migration.
+  abstract_de: string | null;
+  citation_raw_de: string | null;
+};
+
+// Translated Forschung display text overlaid on the English `studies` row
+// (ADR 0013). Keyed by (study_id, locale, field); not tenant-scoped.
+type StudyTranslationRow = {
+  study_id: string;
+  locale: string;
+  field: string;
+  value: string;
   updated_at: string;
 };
 
@@ -314,6 +327,12 @@ export type Database = {
         // id is a caller-supplied content hash; updated_at defaults in the DB.
         Insert: Insertable<Omit<StudyRow, "updated_at">> & { updated_at?: string };
         Update: Partial<StudyRow>;
+        Relationships: [];
+      };
+      study_translations: {
+        Row: StudyTranslationRow;
+        Insert: Omit<StudyTranslationRow, "updated_at"> & { updated_at?: string };
+        Update: Partial<StudyTranslationRow>;
         Relationships: [];
       };
     };
