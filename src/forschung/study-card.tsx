@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import type { Study } from '@/lib/forschung/studies';
 import { isTopic, TOPIC_ACCENT } from './topics';
 import { TopicIcon } from './topic-icon';
@@ -23,12 +23,8 @@ function formatCitation(study: Study): string {
 export function StudyCard({ study }: { study: Study }) {
   const t = useTranslations('library');
   const tTopics = useTranslations('topics');
-  const locale = useLocale();
   const [expanded, setExpanded] = useState(false);
 
-  // German UI prefers the sheet's German abstract where filled; other locales
-  // fall back to the source-language abstract until the yearly batch backfills.
-  const abstract = locale === 'de' && study.abstractDe ? study.abstractDe : study.abstract;
   const accent = isTopic(study.topic) ? TOPIC_ACCENT[study.topic] : '#3D5573';
 
   return (
@@ -43,9 +39,9 @@ export function StudyCard({ study }: { study: Study }) {
             {tTopics(study.topic)}
           </span>
         )}
-        {study.specialty && (
+        {study.specialtyLabel && (
           <span className="rounded-full bg-[#1A3352]/6 px-2.5 py-1 text-[0.7rem] text-[#3D5573]">
-            {study.specialty}
+            {study.specialtyLabel}
           </span>
         )}
         {study.year && (
@@ -68,7 +64,7 @@ export function StudyCard({ study }: { study: Study }) {
 
       <p className="text-[0.85rem] text-[#3D5573] leading-relaxed">{formatCitation(study)}</p>
 
-      {abstract && (
+      {study.abstract && (
         <div className="mt-3">
           <button
             type="button"
@@ -79,7 +75,14 @@ export function StudyCard({ study }: { study: Study }) {
             {expanded ? t('hideAbstract') : t('showAbstract')}
           </button>
           {expanded && (
-            <p className="mt-2 text-[0.9rem] text-[#3D5573] leading-relaxed">{abstract}</p>
+            <div className="mt-2">
+              {study.abstractPending && (
+                <span className="mb-1.5 inline-block rounded-full bg-[#1A3352]/6 px-2 py-0.5 text-[0.65rem] text-[#3D5573]">
+                  {t('abstractPending')}
+                </span>
+              )}
+              <p className="text-[0.9rem] text-[#3D5573] leading-relaxed">{study.abstract}</p>
+            </div>
           )}
         </div>
       )}

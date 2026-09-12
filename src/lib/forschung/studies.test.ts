@@ -2,7 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getStudies } from './studies';
 
 // Proxy-based Supabase chain mock (same pattern as veranstaltungen.test.ts).
-// Any method returns the chain; eq calls are captured so we can assert that
+// from() dispatches per table so we can supply both the base `studies` rows and
+// the `study_translations` overlay rows. eq() calls are captured to assert that
 // Forschung applies NO tenant filter (ADR 0012 — the corpus is not tenant-scoped).
 function makeChain(result: unknown, captured: { eqCalls: [string, unknown][] }): unknown {
   return new Proxy({} as Record<string, unknown>, {
@@ -17,14 +18,24 @@ function makeChain(result: unknown, captured: { eqCalls: [string, unknown][] }):
   });
 }
 
-function mockSupabase(data: unknown) {
+function mockSupabase(studiesData: unknown, translationsData: unknown = []) {
   const captured = { eqCalls: [] as [string, unknown][] };
-  const client = { from: (_: string) => makeChain({ data, error: null }, captured) };
+  const client = {
+    from: (table: string) =>
+      makeChain(
+        { data: table === 'study_translations' ? translationsData : studiesData, error: null },
+        captured,
+      ),
+  };
   return { client, captured };
 }
 
 vi.mock('../supabase', () => ({ getSupabase: vi.fn() }));
 import { getSupabase } from '../supabase';
+
+function useClient(client: unknown) {
+  vi.mocked(getSupabase).mockReturnValue(client as unknown as ReturnType<typeof getSupabase>);
+}
 
 const DB_ROW = {
   id: 'abc123',
@@ -38,49 +49,90 @@ const DB_ROW = {
   title: 'Transcendental Meditation, mindfulness, and longevity',
   journal: 'Journal of Personality and Social Psychology',
   abstract: 'A meticulously controlled randomized study…',
-  abstract_de: 'Eine sorgfältig kontrollierte randomisierte Studie…',
   citation_raw: 'Alexander CN … 1989 57(6):950-964 …',
-  citation_raw_de: 'Alexander CN … 1989 … Eine sorgfältig …',
   doi_url: 'https://doi.org/10.1037/0022-3514.57.6.950',
   updated_at: '2026-08-30T00:00:00Z',
 };
 
+const tr = (field: string, value: string, locale = 'de') => ({ study_id: 'abc123', locale, field, value });
+
 describe('getStudies', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('maps a snake_case DB row to a camelCase Study', async () => {
-    const { client } = mockSupabase([DB_ROW]);
-    vi.mocked(getSupabase).mockReturnValue(client as unknown as ReturnType<typeof getSupabase>);
+  it('maps a snake_case DB row to a camelCase Study, English display when locale is en', async () => {
+    useClient(mockSupabase([DB_ROW]).client);
 
-    const result = await getStudies();
+    const [study] = await getStudies('en');
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).toMatchObject({
+    expect(study).toMatchObject({
       id: 'abc123',
       topic: 'Health',
+      specialty: 'Cardiovascular',
+      specialtyLabel: 'Cardiovascular',
       specificResults: 'Reduced Hypertension',
+      abstract: 'A meticulously controlled randomized study…',
+      abstractPending: false,
       isRctMeta: true,
       year: 1989,
-      abstractDe: 'Eine sorgfältig kontrollierte randomisierte Studie…',
-      citationRaw: 'Alexander CN … 1989 57(6):950-964 …',
-      citationRawDe: 'Alexander CN … 1989 … Eine sorgfältig …',
       doiUrl: 'https://doi.org/10.1037/0022-3514.57.6.950',
     });
   });
 
-  it('applies NO tenant filter (Forschung is global — ADR 0012)', async () => {
-    const { client, captured } = mockSupabase([DB_ROW]);
-    vi.mocked(getSupabase).mockReturnValue(client as unknown as ReturnType<typeof getSupabase>);
+  it('overlays translated display text over the English base for the given locale', async () => {
+    const translations = [
+      tr('specific_results', 'Verringerte Hypertonie'),
+      tr('specialty', 'Herz-Kreislauf'),
+    ];
+    useClient(mockSupabase([DB_ROW], translations).client);
 
-    await getStudies();
+    const [study] = await getStudies('de');
+
+    expect(study.specificResults).toBe('Verringerte Hypertonie');
+    expect(study.specialtyLabel).toBe('Herz-Kreislauf');
+  });
+
+  it('keeps topic/specialty as canonical English keys even when a label is translated', async () => {
+    useClient(mockSupabase([DB_ROW], [tr('specialty', 'Herz-Kreislauf')]).client);
+
+    const [study] = await getStudies('de');
+
+    expect(study.specialty).toBe('Cardiovascular');
+    expect(study.specialtyLabel).toBe('Herz-Kreislauf');
+  });
+
+  it('falls back to the English abstract and flags it pending when no translation exists', async () => {
+    useClient(mockSupabase([DB_ROW], [tr('specific_results', 'Verringerte Hypertonie')]).client);
+
+    const [study] = await getStudies('de');
+
+    expect(study.abstract).toBe('A meticulously controlled randomized study…');
+    expect(study.abstractPending).toBe(true);
+  });
+
+  it('does not flag pending for the English source locale', async () => {
+    useClient(mockSupabase([DB_ROW]).client);
+
+    const [study] = await getStudies('en');
+
+    expect(study.abstractPending).toBe(false);
+  });
+
+  it('applies NO tenant filter (Forschung is global — ADR 0012)', async () => {
+    const { client, captured } = mockSupabase([DB_ROW], [tr('specialty', 'Herz-Kreislauf')]);
+    useClient(client);
+
+    await getStudies('de');
 
     expect(captured.eqCalls.some(([col]) => col === 'tenant')).toBe(false);
   });
 
-  it('returns an empty array when the table is empty', async () => {
-    const { client } = mockSupabase(null);
-    vi.mocked(getSupabase).mockReturnValue(client as unknown as ReturnType<typeof getSupabase>);
+  it('returns an empty array when the corpus is empty', async () => {
+    useClient(mockSupabase([]).client);
+    expect(await getStudies('de')).toEqual([]);
+  });
 
-    expect(await getStudies()).toEqual([]);
+  it('throws when the studies query returns null (masking an error as empty is wrong — craft R1)', async () => {
+    useClient(mockSupabase(null).client);
+    await expect(getStudies('de')).rejects.toThrow();
   });
 });

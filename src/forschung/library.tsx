@@ -22,6 +22,14 @@ export function Library({ studies }: { studies: Study[] }) {
     [studies, topic],
   );
 
+  // Specialty is filtered on its canonical English key; the dropdown shows the
+  // locale-resolved label (ADR 0013).
+  const specialtyLabels = useMemo(() => {
+    const labels: Record<string, string> = {};
+    for (const s of studies) if (s.specialty) labels[s.specialty] = s.specialtyLabel || s.specialty;
+    return labels;
+  }, [studies]);
+
   const filtered = useMemo(
     () => filterStudies(studies, { keyword, topic, specialty, rctOnly }),
     [studies, keyword, topic, specialty, rctOnly],
@@ -111,7 +119,7 @@ export function Library({ studies }: { studies: Study[] }) {
                 <option value="">{t('allSpecialties')}</option>
                 {specialties.map((s) => (
                   <option key={s} value={s}>
-                    {s}
+                    {specialtyLabels[s] ?? s}
                   </option>
                 ))}
               </select>

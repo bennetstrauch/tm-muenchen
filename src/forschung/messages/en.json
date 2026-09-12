@@ -14,6 +14,7 @@
     "clearFilters": "Clear filters",
     "showAbstract": "Show abstract",
     "hideAbstract": "Hide abstract",
+    "abstractPending": "Translation pending",
     "publicationLink": "View publication",
     "languageLabel": "Language"
   },

@@ -54,6 +54,10 @@ export type SourceRow = {
   year?: number;
   rawEn: string;
   rawDe: string;
+  // Free German from the DE sheet's structured columns (its abstract in col H is
+  // still English). These become locale='de' study_translations at import time.
+  specialtyDe: string;
+  specificResultsDe: string;
 };
 
 const EN_SHEET = 'All Research';
@@ -79,6 +83,7 @@ export async function readCorpus(xlsxPath: string): Promise<SourceRow[]> {
 
     const yearText = cellText(enRow.getCell(6).value).trim();
     const year = /^\d{4}$/.test(yearText) ? Number(yearText) : undefined;
+    const deRow = de ? de.getRow(r) : null;
 
     rows.push({
       rowNum: r,
@@ -89,7 +94,9 @@ export async function readCorpus(xlsxPath: string): Promise<SourceRow[]> {
       rctFlag: cellText(enRow.getCell(5).value).trim(),
       year,
       rawEn,
-      rawDe: de ? cellText(de.getRow(r).getCell(8).value).trim() : '',
+      rawDe: deRow ? cellText(deRow.getCell(8).value).trim() : '',
+      specialtyDe: deRow ? cellText(deRow.getCell(3).value).trim() : '',
+      specificResultsDe: deRow ? cellText(deRow.getCell(4).value).trim() : '',
     });
   }
   return rows;
