@@ -8,14 +8,20 @@
 // then any DOI already inline in the cell, then the cache written by the separate
 // enrichment pass, scripts/enrich-forschung-doi.ts). Studies with no link stay
 // linkless by design (~60–80% coverage).
+import { existsSync, readFileSync } from 'fs';
 import { loadEnvLocal, readCorpus, isRctMeta, loadDoiMap, type SourceRow } from './forschung/source';
 import { parseCitation } from '../src/lib/forschung/parse-citation';
 import { studyId } from '../src/lib/forschung/study-id';
 import { extractInlineDoi } from '../src/lib/forschung/doi-match';
+import { translationFileToRows, type TranslationFile } from '../src/lib/forschung/translate';
 
 const XLSX_PATH = 'data/forschung/january-2026-tm-research.xlsx';
 const OVERRIDES_PATH = 'data/forschung/doi-overrides.json';
 const CACHE_PATH = 'data/forschung/doi-cache.json';
+// Committed translation files produced by scripts/translate-forschung.ts, one per
+// non-English locale (ADR 0013). Each is upserted into study_translations.
+const TRANSLATION_LOCALES = ['de', 'fr', 'es'];
+const translationPath = (locale: string) => `data/forschung/translations/${locale}.json`;
 
 async function main() {
   loadEnvLocal();
@@ -30,7 +36,6 @@ async function main() {
   let inlineDois = 0;
   const toRow = (row: SourceRow) => {
     const en = parseCitation(row.rawEn);
-    const de = row.rawDe ? parseCitation(row.rawDe) : null;
     const id = studyId(en, row.rawEn);
     const inline = extractInlineDoi(row.rawEn);
     if (inline) inlineDois++;
@@ -47,9 +52,7 @@ async function main() {
       title: en.title || null,
       journal: en.journal || null,
       abstract: en.abstract || null,
-      abstract_de: de?.abstract || null,
       citation_raw: row.rawEn,
-      citation_raw_de: row.rawDe || null,
       doi_url: overrides[id] ?? inline ?? cache[id] ?? null,
       updated_at: new Date().toISOString(),
     };
@@ -72,15 +75,20 @@ async function main() {
 
   const rows = [...byId.values()];
   const now = new Date().toISOString();
-  const translationRows = [...trById.entries()].flatMap(([study_id, fields]) =>
-    Object.entries(fields).map(([field, value]) => ({
-      study_id,
-      locale: 'de',
-      field,
-      value,
-      updated_at: now,
-    })),
-  );
+  const knownIds = new Set(rows.map((r) => r.id));
+  const translationRows = translationFileToRows('de', Object.fromEntries(trById), now);
+
+  // Committed translation files (scripts/translate-forschung.ts) — e.g. German
+  // abstracts. Upserted into the same study_translations table; a row whose id
+  // isn't in the current corpus is skipped (a stale entry from an older edition).
+  for (const locale of TRANSLATION_LOCALES) {
+    const path = translationPath(locale);
+    if (!existsSync(path)) continue;
+    const file = JSON.parse(readFileSync(path, 'utf-8')) as TranslationFile;
+    const fileRows = translationFileToRows(locale, file, now).filter((r) => knownIds.has(r.study_id));
+    console.log(`Prepared ${fileRows.length} ${locale} study_translations (${path})`);
+    translationRows.push(...fileRows);
+  }
   const withDoi = rows.filter((r) => r.doi_url).length;
   console.log(
     `Prepared ${rows.length} unique studies · ${withDoi} with DOI ` +

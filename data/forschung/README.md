@@ -93,3 +93,23 @@ without re-hitting the network:
 Two-step refresh: `npm run import-forschung` (upsert rows + inline/override DOIs) →
 `npm run import-forschung:doi` (network enrichment, updates the DB and rewrites `doi-cache.json`) →
 commit the updated `doi-cache.json`.
+
+## Translation files & reproducibility
+
+The `studies` row is the **canonical English** source (ADR 0013). Translated study
+text — currently German abstracts — lives in `study_translations` as an overlay,
+generated offline and committed so the running site never calls a translation API:
+
+- **`translations/{locale}.json`** — `{ studyId: { field: value } }`, written by
+  `npm run translate-forschung`. DeepL Free drafts each English abstract into German,
+  then Claude refines it against the source under the shared TM glossary
+  (`src/i18n/translation-glossary.json`). Idempotent and resumable — only abstracts
+  missing a committed translation are (re)done, and progress is flushed each batch,
+  so a DeepL/Claude quota cutoff just means "re-run". Use `--limit N` to chunk under
+  the DeepL Free monthly quota (500,000 chars).
+- `npm run import-forschung` upserts these files into `study_translations` (any
+  `studyId` not in the current corpus is skipped). The German structured columns
+  from the *Alle Forschung* sheet (specialty, specific results) are also upserted
+  as `locale='de'` rows at import time.
+
+Requires `DEEPL_API_KEY` (free key ends in `:fx`) and `ANTHROPIC_API_KEY` in `.env.local`.
