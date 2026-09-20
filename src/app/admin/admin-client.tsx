@@ -12,6 +12,7 @@ import InfoRegistrationsTable from './registrations-table';
 import AnmeldungenTab from './anmeldungen-tab';
 import { buildAnmeldungenView } from '@/lib/anmeldungen-groups';
 import EmailActionsTab from './email-tab';
+import RescheduleNotifyPanel from './reschedule-notify-panel';
 import LehrerTab from './lehrer-tab';
 import EinstellungenTab from './einstellungen-tab';
 import TexteTab from './texte-tab';
@@ -23,6 +24,10 @@ type Mode =
   | { view: 'list' }
   | { view: 'new'; initialVorlage?: Vorlage }
   | { view: 'edit'; event: Veranstaltung };
+
+type PendingReschedule =
+  | { kind: 'update'; id: string; form: Omit<Veranstaltung, 'id'> }
+  | { kind: 'update-vorlage'; id: string; form: Omit<Veranstaltung, 'id'>; vorlageId: string };
 
 type VorlagePhase =
   | { kind: 'none' }
@@ -1077,6 +1082,8 @@ export default function AdminClient({
   const [mode, setMode] = useState<Mode>({ view: 'list' });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [pendingReschedule, setPendingReschedule] = useState<PendingReschedule | null>(null);
+  const [notifyReschedule, setNotifyReschedule] = useState<{ event: Veranstaltung; oldDate: string; oldTime: string } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
@@ -1251,21 +1258,65 @@ export default function AdminClient({
     }
   }
 
+  // A Verschiebung is a date-or-time change to an event that already has
+  // Anmeldungen — it must be confirmed and the Angemeldeten informed (see
+  // CONTEXT.md → Verschiebung). Both save buttons route through this guard.
+  function isVerschiebung(id: string, form: Omit<Veranstaltung, 'id'>): boolean {
+    const orig = events.find(e => e.id === id);
+    if (!orig) return false;
+    const scheduleChanged = form.date !== orig.date || form.time !== orig.time;
+    const hasSignups = eventRegistrations.some(r => r.eventId === id);
+    return scheduleChanged && hasSignups;
+  }
+
+  async function commitEventUpdate(id: string, form: Omit<Veranstaltung, 'id'>): Promise<Veranstaltung> {
+    const updated = { ...form, id };
+    const res = await fetch(`/api/admin/events/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated),
+    });
+    if (!res.ok) throw new Error((await res.json()).error);
+    setEvents(prev => prev.map(e => (e.id === id ? updated : e)));
+    return updated;
+  }
+
   async function handleUpdate(form: Omit<Veranstaltung, 'id'>) {
     if (mode.view !== 'edit') return;
     const id = mode.event.id;
+    if (isVerschiebung(id, form)) {
+      setPendingReschedule({ kind: 'update', id, form });
+      return;
+    }
     setSaving(true);
     setError('');
     try {
-      const updated = { ...form, id };
-      const res = await fetch(`/api/admin/events/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updated),
-      });
-      if (!res.ok) throw new Error((await res.json()).error);
-      setEvents(prev => prev.map(e => (e.id === id ? updated : e)));
+      await commitEventUpdate(id, form);
       setMode({ view: 'list' });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Fehler');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function confirmReschedule() {
+    if (!pendingReschedule) return;
+    const p = pendingReschedule;
+    // Capture the pre-update date/time before commitEventUpdate mutates events.
+    const orig = events.find(e => e.id === p.id);
+    const oldDate = orig?.date ?? '';
+    const oldTime = orig?.time ?? '';
+    setSaving(true);
+    setError('');
+    try {
+      const updated = await commitEventUpdate(p.id, p.form);
+      if (p.kind === 'update-vorlage') {
+        await handleUpdateVorlageData(p.vorlageId, p.form);
+      }
+      setPendingReschedule(null);
+      setMode({ view: 'list' });
+      setNotifyReschedule({ event: updated, oldDate, oldTime });
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Fehler');
     } finally {
@@ -1338,17 +1389,14 @@ export default function AdminClient({
   async function handleSaveAndUpdateVorlage(form: Omit<Veranstaltung, 'id'>, vorlageId: string) {
     if (mode.view !== 'edit') return;
     const id = mode.event.id;
+    if (isVerschiebung(id, form)) {
+      setPendingReschedule({ kind: 'update-vorlage', id, form, vorlageId });
+      return;
+    }
     setSaving(true);
     setError('');
     try {
-      const updated = { ...form, id };
-      const res = await fetch(`/api/admin/events/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updated),
-      });
-      if (!res.ok) throw new Error((await res.json()).error);
-      setEvents(prev => prev.map(e => (e.id === id ? updated : e)));
+      await commitEventUpdate(id, form);
       await handleUpdateVorlageData(vorlageId, form);
       setMode({ view: 'list' });
     } catch (e) {
@@ -1841,6 +1889,47 @@ export default function AdminClient({
       {tab === 'lehrer' && <LehrerTab />}
       {tab === 'einstellungen' && <EinstellungenTab />}
       {tab === 'texte' && canEditCopy && <TexteTab />}
+
+      {pendingReschedule && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 space-y-4">
+            <h3 className="font-medium text-gray-800">Veranstaltung verschieben?</h3>
+            <p className="text-sm text-gray-600">
+              Diese Veranstaltung hat bereits Anmeldungen. Wenn du Datum oder Uhrzeit änderst,
+              sollten die Angemeldeten informiert werden.
+            </p>
+            {error && <p className="text-sm text-red-500 bg-red-50 px-3 py-2 rounded">{error}</p>}
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => { setPendingReschedule(null); setError(''); }}
+                className="px-4 py-2 border border-gray-200 rounded text-sm text-gray-600 hover:bg-gray-50"
+              >
+                Abbrechen
+              </button>
+              <button
+                onClick={confirmReschedule}
+                disabled={saving}
+                className="px-4 py-2 bg-[#BCA075] text-white rounded text-sm font-medium hover:bg-[#a88d65] disabled:opacity-40"
+              >
+                {saving ? 'Wird verschoben…' : 'Trotzdem verschieben'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {notifyReschedule && (
+        <RescheduleNotifyPanel
+          event={notifyReschedule.event}
+          oldDate={notifyReschedule.oldDate}
+          oldTime={notifyReschedule.oldTime}
+          recipients={eventRegistrations
+            .filter(r => r.eventId === notifyReschedule.event.id)
+            .map(r => ({ name: r.name, email: r.email }))}
+          events={events}
+          onClose={() => setNotifyReschedule(null)}
+        />
+      )}
     </>
   );
 }
