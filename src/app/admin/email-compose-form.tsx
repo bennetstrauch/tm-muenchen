@@ -10,6 +10,7 @@ import { INPUT_CLS, TEXTAREA_CLS } from '@/lib/admin-styles';
 
 export type ComposeTarget =
   | { mode: 'new' }
+  | { mode: 'prefill'; eventId: string; subject: string; body: string }
   | { mode: 'edit-action'; action: EmailAction }
   | { mode: 'edit-reminder'; event: Veranstaltung; slot: 'reminder-1' | 'reminder-2' };
 
@@ -130,16 +131,19 @@ export default function ComposeForm({
   const initialEventId =
     target.mode === 'edit-action' ? target.action.eventId :
     target.mode === 'edit-reminder' ? target.event.id :
+    target.mode === 'prefill' ? target.eventId :
     lockedEventId ?? '';
 
   const initialSubject =
     target.mode === 'edit-action' ? target.action.subject :
+    target.mode === 'prefill' ? target.subject :
     target.mode === 'edit-reminder'
       ? (target.slot === 'reminder-1' ? target.event.reminderSubject1 : target.event.reminderSubject2) ?? ''
       : '';
 
   const initialBody =
     target.mode === 'edit-action' ? target.action.body :
+    target.mode === 'prefill' ? target.body :
     target.mode === 'edit-reminder'
       ? (target.slot === 'reminder-1' ? target.event.reminderBody1 : target.event.reminderBody2) ?? ''
       : '';

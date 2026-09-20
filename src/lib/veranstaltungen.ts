@@ -200,8 +200,8 @@ export async function updateWhatsappPosted(id: string, timestamp: string, tenant
   if (error) throw error;
 }
 
-export async function appendEventRegistration(r: EventRegistration, tenant: string): Promise<void> {
-  const { error } = await getSupabase()
+export async function appendEventRegistration(r: EventRegistration, tenant: string): Promise<{ id: string }> {
+  const { data, error } = await getSupabase()
     .from('anmeldungen')
     .insert({
       tenant,
@@ -213,7 +213,43 @@ export async function appendEventRegistration(r: EventRegistration, tenant: stri
       phone: r.phone || null,
       tm_lehrer: r.tmLehrer || null,
       datum_erlernen: r.datumErlernen || null,
-    });
+    })
+    .select('id')
+    .single();
+  if (error) throw error;
+  return { id: data.id };
+}
+
+export type ReminderTarget = {
+  id: string;
+  reminder1EmailId: string | null;
+  reminder2EmailId: string | null;
+};
+
+export async function getEventReminderTargets(eventId: string, tenant: string): Promise<ReminderTarget[]> {
+  const { data, error } = await getSupabase()
+    .from('anmeldungen')
+    .select('id, reminder1_email_id, reminder2_email_id')
+    .eq('tenant', tenant)
+    .eq('event_id', eventId);
+  if (error) throw error;
+  return (data ?? []).map(row => ({
+    id: row.id,
+    reminder1EmailId: row.reminder1_email_id ?? null,
+    reminder2EmailId: row.reminder2_email_id ?? null,
+  }));
+}
+
+export async function setReminderEmailIds(
+  id: string,
+  ids: { id1: string | null; id2: string | null },
+  tenant: string,
+): Promise<void> {
+  const { error } = await getSupabase()
+    .from('anmeldungen')
+    .update({ reminder1_email_id: ids.id1, reminder2_email_id: ids.id2 })
+    .eq('id', id)
+    .eq('tenant', tenant);
   if (error) throw error;
 }
 
