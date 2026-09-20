@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { appendEventRegistration, getVeranstaltungById } from '@/lib/veranstaltungen';
+import { appendEventRegistration, getVeranstaltungById, setReminderEmailIds } from '@/lib/veranstaltungen';
 import { calcReminderTime } from '@/lib/format';
 import { buildEventConfirmationHtml, buildEventReminderHtml, buildLeiterNotificationHtml, type EventEmailParams } from '@/lib/email-veranstaltung';
 import { lookupTeachersByFirstNames } from '@/lib/tmw-teachers';
@@ -115,7 +115,7 @@ export async function POST(request: Request) {
 
   const replyTo = tenant.contact_email || undefined;
 
-  await Promise.all([
+  const [, reminder1Result, reminder2Result] = await Promise.all([
     resend.emails.send({
       from: tenant.from_email,
       replyTo: replyTo,
@@ -133,7 +133,7 @@ export async function POST(request: Request) {
           html: buildEventReminderHtml(params, event?.reminderBody1),
           scheduledAt: r1,
         })
-      : Promise.resolve(),
+      : Promise.resolve(null),
 
     r2
       ? resend.emails.send({
@@ -144,8 +144,11 @@ export async function POST(request: Request) {
           html: buildEventReminderHtml(params, event?.reminderBody2),
           scheduledAt: r2,
         })
-      : Promise.resolve(),
+      : Promise.resolve(null),
   ]);
+
+  const reminder1EmailId = reminder1Result?.data?.id ?? null;
+  const reminder2EmailId = reminder2Result?.data?.id ?? null;
 
   appendEventRegistration({
     eventId,
@@ -156,7 +159,13 @@ export async function POST(request: Request) {
     phone: phone ?? '',
     tmLehrer,
     datumErlernen,
-  }, tenant.tenant).catch(err => console.error('Registration logging failed:', err));
+  }, tenant.tenant)
+    .then(({ id }) => {
+      if (reminder1EmailId || reminder2EmailId) {
+        return setReminderEmailIds(id, { id1: reminder1EmailId, id2: reminder2EmailId }, tenant.tenant);
+      }
+    })
+    .catch(err => console.error('Registration logging failed:', err));
 
   notifyLeiter({
     hosts,

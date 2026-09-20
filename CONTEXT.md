@@ -220,6 +220,15 @@ Section at the bottom of the Anmeldungen tab showing one line per Veranstaltungs
 ## Verwaiste Anmeldung
 An Anmeldung whose Veranstaltung was deleted (registrations survive event deletion). Still displayed in the Anmeldungen tab: its group is built from the event title/date stored on the Anmeldung itself and marked "(gelöscht)". Never silently hidden.
 
+## Verschiebung (einer Veranstaltung)
+A **date-or-time change** to a Veranstaltung that already has Anmeldungen. (A location/online-link change is *not* a Verschiebung for now.) Detected when the admin saves an edited event whose `date` or `time` differs and registrations exist. Two things then happen, kept deliberately separate:
+
+1. **Reminder-Resync (data correctness, always).** The event's scheduled reminder emails are moved to the new time — see **ADR 0014**. Runs server-side in the reschedule commit regardless of what the admin chooses below.
+2. **Benachrichtigung (human heads-up, admin's choice).** A warning ("Diese Veranstaltung hat bereits Anmeldungen") gates the save; on *"Trotzdem verschieben"* the event is committed first, then a notify panel offers a radio choice:
+   - **Manuell (empfohlen, vorausgewählt)** — a "alle E-Mails kopieren" button plus a suggested Betreff to copy; the admin mails the registrants from their own client. We send nothing.
+   - **Automatisch** — the existing **E-Mail Compose Form** pre-filled with an auto-generated old→new Betreff/Nachricht, editable, sent immediately via the `email-send` rail.
+   - Closing the panel = notify later/never.
+
 ## E-Mail Compose Form
 Shared form used for both creating and editing E-Mail Aktionen (custom and reminder overrides). Fields: Veranstaltung (locked when editing), Betreff, Nachricht (plain text, injected into center email template with automatic "Hallo [Name]," salutation per recipient; sign-off and footer use `centerName` / `contactPhone` from tenant config), Sendezeit (Jetzt / Planen with datetime picker), Empfänger (read-only count). Optional preview button + mandatory preview/confirmation modal on "Jetzt senden" (server-rendered iframe showing exact email HTML).
 

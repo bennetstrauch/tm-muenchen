@@ -140,6 +140,8 @@ type AnmeldungRow = {
   phone: string | null;
   tm_lehrer: string | null;
   datum_erlernen: string | null;
+  reminder1_email_id?: string | null;
+  reminder2_email_id?: string | null;
 };
 
 type TenantRow = {

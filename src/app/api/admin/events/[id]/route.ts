@@ -1,8 +1,12 @@
+import { Resend } from 'resend';
 import { updateVeranstaltung, deleteVeranstaltung, getVeranstaltungById, updateWhatsappPosted } from '@/lib/veranstaltungen';
 import type { Veranstaltung } from '@/lib/veranstaltungen';
 import { updateCalendarEvent, deleteCalendarEvent, isGuldeinEvent } from '@/lib/calendar';
+import { resyncRemindersAfterUpdate } from '@/lib/reschedule-reminders';
 import { getCurrentTenant } from '@/lib/tenant';
 import { checkAdminRequest } from '@/lib/admin-api-gate';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function PATCH(
   request: Request,
@@ -36,7 +40,12 @@ export async function PUT(
     const { tenant } = await getCurrentTenant();
     const body: Veranstaltung = await request.json();
     const event = { ...body, id };
+    const previous = await getVeranstaltungById(id, tenant);
     await updateVeranstaltung(event, tenant);
+
+    if (previous) {
+      await resyncRemindersAfterUpdate(previous, event, tenant, resend);
+    }
 
     if (isGuldeinEvent(event)) {
       try {
