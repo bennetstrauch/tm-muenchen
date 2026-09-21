@@ -56,9 +56,9 @@ export function StudyCard({ study }: { study: Study }) {
         )}
       </div>
 
-      {study.specificResults && (
+      {study.headline && (
         <h2 className="font-display text-[1.35rem] leading-snug text-[#1A3352] mb-2">
-          {study.specificResults}
+          {study.headline}
         </h2>
       )}
 

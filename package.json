@@ -10,7 +10,9 @@
     "test": "vitest run",
     "import-forschung": "tsx scripts/import-forschung.ts",
     "import-forschung:doi": "tsx scripts/enrich-forschung-doi.ts",
+    "generate-headlines": "tsx scripts/generate-headlines.ts",
     "translate-forschung": "tsx scripts/translate-forschung.ts",
+    "translate-headlines": "tsx scripts/translate-headlines.ts",
     "hash-password": "node -e \"require('bcryptjs').hash(process.argv[1], 10).then(console.log)\" --"
   },
   "dependencies": {

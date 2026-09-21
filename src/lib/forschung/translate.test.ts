@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { pendingAbstracts, translationFileToRows } from './translate';
+import { pendingAbstracts, pendingHeadlineTranslations, translationFileToRows } from './translate';
 
 describe('pendingAbstracts', () => {
   it('returns studies with source text and no committed translation', () => {
@@ -38,6 +38,39 @@ describe('pendingAbstracts', () => {
   it('trims the source text it hands on for translation', () => {
     const result = pendingAbstracts([{ id: 'a', abstract: '  padded  ' }], {});
     expect(result).toEqual([{ id: 'a', abstract: 'padded' }]);
+  });
+});
+
+describe('pendingHeadlineTranslations', () => {
+  it('returns studies with an English headline and no committed headline translation', () => {
+    const result = pendingHeadlineTranslations({ a: 'Reduced blood pressure' }, {});
+    expect(result).toEqual([{ id: 'a', headline: 'Reduced blood pressure' }]);
+  });
+
+  it('skips studies whose headline is already translated', () => {
+    const result = pendingHeadlineTranslations(
+      { a: 'Reduced blood pressure' },
+      { a: { headline: 'Reduzierter Blutdruck' } },
+    );
+    expect(result).toEqual([]);
+  });
+
+  it('skips studies with no English headline (empty or whitespace)', () => {
+    const result = pendingHeadlineTranslations({ a: '', b: '   ' }, {});
+    expect(result).toEqual([]);
+  });
+
+  it('translates the headline even when another field is already translated', () => {
+    const result = pendingHeadlineTranslations(
+      { a: 'Reduced blood pressure' },
+      { a: { abstract: 'Deutsche Zusammenfassung.' } },
+    );
+    expect(result).toEqual([{ id: 'a', headline: 'Reduced blood pressure' }]);
+  });
+
+  it('trims the source headline it hands on for translation', () => {
+    const result = pendingHeadlineTranslations({ a: '  padded headline  ' }, {});
+    expect(result).toEqual([{ id: 'a', headline: 'padded headline' }]);
   });
 });
 

@@ -42,3 +42,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# forschung translation work files (in-CLI agent handoff; committed output is translations/{locale}.json)
+data/forschung/translations/*.work.json
+data/forschung/translations/*.drafts.json

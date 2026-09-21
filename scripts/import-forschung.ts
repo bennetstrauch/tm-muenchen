@@ -18,6 +18,9 @@ import { translationFileToRows, type TranslationFile } from '../src/lib/forschun
 const XLSX_PATH = 'data/forschung/january-2026-tm-research.xlsx';
 const OVERRIDES_PATH = 'data/forschung/doi-overrides.json';
 const CACHE_PATH = 'data/forschung/doi-cache.json';
+// Generated English card headlines (scripts/generate-headlines.ts), a flat
+// id→headline map like the DOI files, applied onto studies.headline (Slice 3a).
+const HEADLINES_PATH = 'data/forschung/headlines.json';
 // Committed translation files produced by scripts/translate-forschung.ts, one per
 // non-English locale (ADR 0013). Each is upserted into study_translations.
 const TRANSLATION_LOCALES = ['de', 'fr', 'es'];
@@ -29,6 +32,7 @@ async function main() {
 
   const overrides = loadDoiMap(OVERRIDES_PATH);
   const cache = loadDoiMap(CACHE_PATH);
+  const headlines = loadDoiMap(HEADLINES_PATH);
 
   const source = await readCorpus(XLSX_PATH);
   console.log(`Read ${source.length} studies from ${XLSX_PATH}`);
@@ -46,6 +50,7 @@ async function main() {
       field: row.field || null,
       specialty: row.specialty || null,
       specific_results: row.specificResults || null,
+      headline: headlines[id] ?? null,
       is_rct_meta: isRctMeta(row.rctFlag),
       year: row.year ?? null,
       authors: en.authors || null,

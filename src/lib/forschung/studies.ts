@@ -1,4 +1,5 @@
 import { getSupabase } from '../supabase';
+import { resolveHeadline } from './headline';
 
 // A single row of the research corpus. Global, not tenant-scoped (ADR 0012):
 // every center shows the identical library, so there is no `tenant` field.
@@ -13,6 +14,7 @@ export type Study = {
   field: string;
   specialty: string;
   specialtyLabel: string;
+  headline: string;
   specificResults: string;
   isRctMeta: boolean;
   year?: number;
@@ -36,6 +38,7 @@ function fromRow(row: any, tr: Record<string, string>, translated: boolean): Stu
     field: row.field ?? '',
     specialty: row.specialty ?? '',
     specialtyLabel: tr.specialty ?? row.specialty ?? '',
+    headline: resolveHeadline(tr, row),
     specificResults: tr.specific_results ?? row.specific_results ?? '',
     isRctMeta: row.is_rct_meta,
     year: row.year ?? undefined,

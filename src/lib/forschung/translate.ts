@@ -1,3 +1,5 @@
+import type { HeadlineFile } from './headline';
+
 // Pure helpers for the offline Forschung translation batch (ADR 0013).
 //
 // The batch (scripts/translate-forschung.ts) produces translated study text as a
@@ -25,6 +27,22 @@ export function pendingAbstracts(
     if (!abstract) return [];
     if (existing[s.id]?.abstract) return [];
     return [{ id: s.id, abstract }];
+  });
+}
+
+// Studies whose English card headline (data/forschung/headlines.json, Slice 3a)
+// still needs a translated headline in this locale: it has source text and no
+// committed 'headline' translation yet. Keeps the headline batch idempotent — a
+// re-run only touches the gaps, so it survives a Claude quota cutoff.
+export function pendingHeadlineTranslations(
+  headlines: HeadlineFile,
+  existing: TranslationFile,
+): { id: string; headline: string }[] {
+  return Object.entries(headlines).flatMap(([id, raw]) => {
+    const headline = raw.trim();
+    if (!headline) return [];
+    if (existing[id]?.headline) return [];
+    return [{ id, headline }];
   });
 }
 
