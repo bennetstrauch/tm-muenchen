@@ -225,6 +225,7 @@ type StudyRow = {
   field: string | null;
   specialty: string | null;
   specific_results: string | null;
+  headline: string | null;
   is_rct_meta: boolean;
   year: number | null;
   authors: string | null;
